@@ -1,0 +1,1298 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Using Pants for Python development &mdash; pants 0.1 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/pants-logo.ico"/>
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'./',
+        VERSION:'0.1',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+    <link rel="top" title="pants 0.1 documentation" href="index.html"/>
+        <link rel="next" title="BUILD files" href="build_files.html"/>
+        <link rel="prev" title="Pants for Maven Experts" href="from_maven.html"/>
+ 
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-39101739-2']);
+  _gaq.push(['_trackPageview']);
+</script>
+<script type="text/javascript">
+  // In a plain template, we'd put this in the footer block.
+  // In the read-the-docs template, there is no footer. So use jQuery ready:
+  $(document).ready(function() {
+    var ga = document.createElement('script');
+    ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ?
+              'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    ga.setAttribute('async', 'true');
+    $(document).append(ga);
+  });
+</script>
+<style type="text/css">
+/* Shoehorn in pants logo */
+body .icon-home:before {
+   content: "";
+}
+
+body .icon-home{
+  background: transparent url(./_static/pants-logo.ico) center left no-repeat;
+  background-position-x: 5px;
+  padding-left: 40px;
+  padding-right: 35px;
+  line-height: 40px;
+}
+
+body a.icon-home:hover{
+  background: #3d8cbf url(./_static/pants-logo.ico) center left no-repeat;
+  background-position-x: 5px;
+}
+
+</style>
+
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" class="icon icon-home"> pants</a>
+        <form class="wy-form" action="search.html" method="get">
+  <input type="text" name="q" placeholder="Search docs" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="first_concepts.html">Pants Conceptual Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="first_concepts.html#goals-and-targets">Goals and Targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="first_concepts.html#target-types">Target Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="first_concepts.html#what-pants-does">What Pants Does</a></li>
+<li class="toctree-l2"><a class="reference internal" href="first_concepts.html#next-step">Next Step</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="first_tutorial.html">First Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="first_tutorial.html#invoking-pants">Invoking Pants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="first_tutorial.html#build-files">BUILD Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="first_tutorial.html#the-usual-commands">The Usual Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="first_tutorial.html#next">Next</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="target_addresses.html">Target Addresses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="JVMProjects.html">JVM Projects with Pants</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="JVMProjects.html#relevant-goals-and-targets">Relevant Goals and Targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="JVMProjects.html#build-for-a-simple-binary">BUILD for a Simple Binary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="JVMProjects.html#the-usual-commands-jvm">The Usual Commands: JVM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="JVMProjects.html#toolchain">Toolchain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="JVMProjects.html#java7-vs-java6-which-java">Java7 vs Java6, Which Java</a></li>
+<li class="toctree-l2"><a class="reference internal" href="JVMProjects.html#bundles-deploy-able-runnable-file-trees">Bundles: Deploy-able Runnable File Trees</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Using Pants for Python development</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#why-use-pants-for-python-development">Why use Pants for Python development?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tl-dr-hello-world-with-pants-python">TL;DR - &#8216;Hello world!&#8217; with Pants Python</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#describing-python-environments-in-pants">Describing Python environments in Pants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#building-your-first-pex">Building your first PEX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#environment-manipulation-with-pants-py">Environment manipulation with <cite>pants py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">Python Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#manipulating-pex-behavior-with-environment-variables">Manipulating PEX behavior with environment variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-pex-files-work">How PEX files work</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#advanced-pants-pex-features">Advanced Pants/PEX features</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="build_files.html">BUILD files</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="build_files.html#debugging-a-build-file">Debugging a BUILD File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_files.html#default-target">Default Target</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_files.html#avoid-rglobs">Avoid rglobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_files.html#define-separate-targets-for-interface-and-implementation">Define Separate Targets for Interface and Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_files.html#depend-on-api-in-library-targets-implementation-in-binary-targets">Depend on API in Library Targets, Implementation in Binary Targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_files.html#which-build-files-are-executed-and-how">Which <tt class="docutils literal"><span class="pre">BUILD</span></tt> Files are &#8220;Executed&#8221;? (and how?)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_files.html#id1">BUILD.* files</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="invoking.html">Invoking Pants Build</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="invoking.html#rc-files">rc files</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="3rdparty.html">Third-Party Dependencies</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="3rdparty_jvm.html">JVM 3rdparty Pattern</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3rdparty_py.html">Python 3rdparty Pattern</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ThriftDeps.html">Using Pants with Thrift Dependencies</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ThriftDeps.html#same-repo">Same-repo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ThriftDeps.html#consuming-thrift-from-elsewhere">Consuming Thrift from Elsewhere</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ThriftDeps.html#thrift-client-server-example">Thrift Client &amp; Server Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="publish.html">Publishing Artifacts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="publish.html#life-of-a-publish">Life of a Publish</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publish.html#how-to">How To</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publish.html#restricting-to-release-branch">Restricting to &#8220;Release Branch&#8221;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publish.html#troubleshooting">Troubleshooting</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="setup_repo.html">Set up Your Source Tree for Pants</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="setup_repo.html#configuring-with-pants-ini">Configuring with <tt class="docutils literal"><span class="pre">pants.ini</span></tt></a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup_repo.html#configure-code-layout-with-source-root">Configure Code Layout with <cite>source_root</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup_repo.html#top-level-build-for-tree-global-config">Top-level <cite>BUILD.*</cite> for tree-global config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup_repo.html#build-in-the-source-tree-for-special-targets">BUILD.* in the source tree for special targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup_repo.html#restricting-publish-to-release-branch">Restricting Publish to &#8220;Release Branch&#8221;</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="install.html#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#tl-dr">TL;DR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#troubleshooting">Troubleshooting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="README.html">Pants Build: Read Me First (Old)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="README.html#installing-and-troubleshooting-pants-installations">Installing and Troubleshooting Pants Installations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="README.html#target-types">Target Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="README.html#common-tasks">Common Tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="README.html#credits">Credits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="migration.html">Migrating from older versions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="migration.html#migrate-targets-with-fake-sources">Migrate targets with fake sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migration.html#migrate-targets-used-with-dist-bundle-and-zip">Migrate targets used with dist, bundle and zip</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="targets.html">Targets Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.annotation_processor"><tt class="docutils literal"><span class="pre">annotation_processor</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.anonymous"><tt class="docutils literal"><span class="pre">anonymous</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.artifact"><tt class="docutils literal"><span class="pre">artifact</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.benchmark"><tt class="docutils literal"><span class="pre">benchmark</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.credentials"><tt class="docutils literal"><span class="pre">credentials</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.doc"><tt class="docutils literal"><span class="pre">doc</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.exclude"><tt class="docutils literal"><span class="pre">exclude</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.exportable_jvm_library"><tt class="docutils literal"><span class="pre">exportable_jvm_library</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.external_dependency"><tt class="docutils literal"><span class="pre">external_dependency</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.internal"><tt class="docutils literal"><span class="pre">internal</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.jar_dependency"><tt class="docutils literal"><span class="pre">jar_dependency</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.jar_library"><tt class="docutils literal"><span class="pre">jar_library</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.jarable"><tt class="docutils literal"><span class="pre">jarable</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.java_antlr_library"><tt class="docutils literal"><span class="pre">java_antlr_library</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.java_library"><tt class="docutils literal"><span class="pre">java_library</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.java_protobuf_library"><tt class="docutils literal"><span class="pre">java_protobuf_library</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.java_tests"><tt class="docutils literal"><span class="pre">java_tests</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.java_thrift_library"><tt class="docutils literal"><span class="pre">java_thrift_library</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.jvm_binary"><tt class="docutils literal"><span class="pre">jvm_binary</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.jvm_target"><tt class="docutils literal"><span class="pre">jvm_target</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.pants_target"><tt class="docutils literal"><span class="pre">pants_target</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.python_antlr_library"><tt class="docutils literal"><span class="pre">python_antlr_library</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.python_artifact"><tt class="docutils literal"><span class="pre">python_artifact</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.python_binary"><tt class="docutils literal"><span class="pre">python_binary</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.python_egg"><tt class="docutils literal"><span class="pre">python_egg</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.python_library"><tt class="docutils literal"><span class="pre">python_library</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.python_requirement"><tt class="docutils literal"><span class="pre">python_requirement</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.python_target"><tt class="docutils literal"><span class="pre">python_target</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.python_tests"><tt class="docutils literal"><span class="pre">python_tests</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.python_thrift_library"><tt class="docutils literal"><span class="pre">python_thrift_library</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.repository"><tt class="docutils literal"><span class="pre">repository</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.resources"><tt class="docutils literal"><span class="pre">resources</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.scala_library"><tt class="docutils literal"><span class="pre">scala_library</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.scala_tests"><tt class="docutils literal"><span class="pre">scala_tests</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.scalac_plugin"><tt class="docutils literal"><span class="pre">scalac_plugin</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.sources"><tt class="docutils literal"><span class="pre">sources</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.util"><tt class="docutils literal"><span class="pre">util</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.with_dependencies"><tt class="docutils literal"><span class="pre">with_dependencies</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.with_sources"><tt class="docutils literal"><span class="pre">with_sources</span></tt> Module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tasks.html">Tasks Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.__init__"><tt class="docutils literal"><span class="pre">__init__</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.antlr_gen"><tt class="docutils literal"><span class="pre">antlr_gen</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.args_resource_mapper"><tt class="docutils literal"><span class="pre">args_resource_mapper</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.benchmark_run"><tt class="docutils literal"><span class="pre">benchmark_run</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.binary_create"><tt class="docutils literal"><span class="pre">binary_create</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.bootstrap_jvm_tools"><tt class="docutils literal"><span class="pre">bootstrap_jvm_tools</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.build_lint"><tt class="docutils literal"><span class="pre">build_lint</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.builddictionary"><tt class="docutils literal"><span class="pre">builddictionary</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.bundle_create"><tt class="docutils literal"><span class="pre">bundle_create</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.cache_manager"><tt class="docutils literal"><span class="pre">cache_manager</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.check_exclusives"><tt class="docutils literal"><span class="pre">check_exclusives</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.check_published_deps"><tt class="docutils literal"><span class="pre">check_published_deps</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.checkstyle"><tt class="docutils literal"><span class="pre">checkstyle</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.code_gen"><tt class="docutils literal"><span class="pre">code_gen</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.confluence_publish"><tt class="docutils literal"><span class="pre">confluence_publish</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.console_task"><tt class="docutils literal"><span class="pre">console_task</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.dependees"><tt class="docutils literal"><span class="pre">dependees</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.dependencies"><tt class="docutils literal"><span class="pre">dependencies</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.depmap"><tt class="docutils literal"><span class="pre">depmap</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.detect_duplicates"><tt class="docutils literal"><span class="pre">detect_duplicates</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.eclipse_gen"><tt class="docutils literal"><span class="pre">eclipse_gen</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.filedeps"><tt class="docutils literal"><span class="pre">filedeps</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.filemap"><tt class="docutils literal"><span class="pre">filemap</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.filter"><tt class="docutils literal"><span class="pre">filter</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.ide_gen"><tt class="docutils literal"><span class="pre">ide_gen</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.idea_gen"><tt class="docutils literal"><span class="pre">idea_gen</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.ivy_resolve"><tt class="docutils literal"><span class="pre">ivy_resolve</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.ivy_utils"><tt class="docutils literal"><span class="pre">ivy_utils</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.jar_create"><tt class="docutils literal"><span class="pre">jar_create</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.jar_publish"><tt class="docutils literal"><span class="pre">jar_publish</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.javadoc_gen"><tt class="docutils literal"><span class="pre">javadoc_gen</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.junit_run"><tt class="docutils literal"><span class="pre">junit_run</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.jvm_binary_task"><tt class="docutils literal"><span class="pre">jvm_binary_task</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.jvm_run"><tt class="docutils literal"><span class="pre">jvm_run</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.jvm_task"><tt class="docutils literal"><span class="pre">jvm_task</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.jvm_tool_bootstrapper"><tt class="docutils literal"><span class="pre">jvm_tool_bootstrapper</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.jvmdoc_gen"><tt class="docutils literal"><span class="pre">jvmdoc_gen</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.listtargets"><tt class="docutils literal"><span class="pre">listtargets</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.markdown_to_html"><tt class="docutils literal"><span class="pre">markdown_to_html</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.minimal_cover"><tt class="docutils literal"><span class="pre">minimal_cover</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.nailgun_task"><tt class="docutils literal"><span class="pre">nailgun_task</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.pathdeps"><tt class="docutils literal"><span class="pre">pathdeps</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.paths"><tt class="docutils literal"><span class="pre">paths</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.prepare_resources"><tt class="docutils literal"><span class="pre">prepare_resources</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.protobuf_gen"><tt class="docutils literal"><span class="pre">protobuf_gen</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.provides"><tt class="docutils literal"><span class="pre">provides</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.roots"><tt class="docutils literal"><span class="pre">roots</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.scala_repl"><tt class="docutils literal"><span class="pre">scala_repl</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.scaladoc_gen"><tt class="docutils literal"><span class="pre">scaladoc_gen</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.scalastyle"><tt class="docutils literal"><span class="pre">scalastyle</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.scm_publish"><tt class="docutils literal"><span class="pre">scm_publish</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.scrooge_gen"><tt class="docutils literal"><span class="pre">scrooge_gen</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.sorttargets"><tt class="docutils literal"><span class="pre">sorttargets</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.specs_run"><tt class="docutils literal"><span class="pre">specs_run</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.targets_help"><tt class="docutils literal"><span class="pre">targets_help</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.task"><tt class="docutils literal"><span class="pre">task</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.task_error"><tt class="docutils literal"><span class="pre">task_error</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#thrift-gemerator-module"><tt class="docutils literal"><span class="pre">thrift_gemerator</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.thrift_gen"><tt class="docutils literal"><span class="pre">thrift_gen</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html#module-twitter.pants.tasks.what_changed"><tt class="docutils literal"><span class="pre">what_changed</span></tt> Module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="base.html">Base Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="base.html#module-twitter.pants.base.abbreviate_target_ids"><tt class="docutils literal"><span class="pre">abbreviate_target_ids</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base.html#module-twitter.pants.base.address"><tt class="docutils literal"><span class="pre">address</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base.html#module-twitter.pants.base.build_environment"><tt class="docutils literal"><span class="pre">build_environment</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base.html#module-twitter.pants.base.build_file"><tt class="docutils literal"><span class="pre">build_file</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base.html#module-twitter.pants.base.build_file_aliases"><tt class="docutils literal"><span class="pre">build_file_aliases</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base.html#module-twitter.pants.base.build_file_context"><tt class="docutils literal"><span class="pre">build_file_context</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base.html#module-twitter.pants.base.build_file_helpers"><tt class="docutils literal"><span class="pre">build_file_helpers</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base.html#module-twitter.pants.base.build_invalidator"><tt class="docutils literal"><span class="pre">build_invalidator</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base.html#module-twitter.pants.base.build_manual"><tt class="docutils literal"><span class="pre">build_manual</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base.html#module-twitter.pants.base.build_root"><tt class="docutils literal"><span class="pre">build_root</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base.html#module-twitter.pants.base.config"><tt class="docutils literal"><span class="pre">config</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base.html#module-twitter.pants.base.double_dag"><tt class="docutils literal"><span class="pre">double_dag</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base.html#module-twitter.pants.base.generator"><tt class="docutils literal"><span class="pre">generator</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base.html#module-twitter.pants.base.hash_utils"><tt class="docutils literal"><span class="pre">hash_utils</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base.html#module-twitter.pants.base.mustache"><tt class="docutils literal"><span class="pre">mustache</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base.html#module-twitter.pants.base.parse_context"><tt class="docutils literal"><span class="pre">parse_context</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base.html#module-twitter.pants.base.rcfile"><tt class="docutils literal"><span class="pre">rcfile</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base.html#module-twitter.pants.base.revision"><tt class="docutils literal"><span class="pre">revision</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base.html#module-twitter.pants.base.run_info"><tt class="docutils literal"><span class="pre">run_info</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base.html#module-twitter.pants.base.target"><tt class="docutils literal"><span class="pre">target</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base.html#module-twitter.pants.base.timer"><tt class="docutils literal"><span class="pre">timer</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base.html#module-twitter.pants.base.worker_pool"><tt class="docutils literal"><span class="pre">worker_pool</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base.html#module-twitter.pants.base.workunit"><tt class="docutils literal"><span class="pre">workunit</span></tt> Module</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="howto_develop.html">Pants Developers Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="howto_develop.html#running-from-sources">Running from sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto_develop.html#building-a-pants-pex">Building a Pants PEX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto_develop.html#testing">Testing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="howto_contribute.html">Pants Contributors Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="howto_contribute.html#mailing-list">Mailing List</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="internals.html">Pants Internals</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="internals.html#how-some-base-classes-interrelate">How Some Base Classes Interrelate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="internals.html#examining-a-phase-goal-task-chain">Examining a Phase-Goal-Task Chain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="internals.html#defining-a-goal-task">Defining a Goal/Task</a></li>
+<li class="toctree-l2"><a class="reference internal" href="internals.html#code-layout">Code Layout</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dev_tasks.html">Task Developer&#8217;s Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dev_tasks.html#pagerank-example">PageRank Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev_tasks.html#core-concepts">Core Concepts</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="docs.html">About the documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="docs.html#generating-the-site">Generating the site</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs.html#publishing-the-site">Publishing the site</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top">
+        <i data-toggle="wy-nav-top" class="icon icon-reorder"></i>
+        <a href="/">pants</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <ul class="wy-breadcrumbs">
+  <li><a href="index.html">Docs</a> &raquo;</li>
+  <li><a href="">Using Pants for Python development</a></li>
+  
+</ul>
+<hr/>
+
+          
+  <div class="section" id="using-pants-for-python-development">
+<h1>Using Pants for Python development<a class="headerlink" href="#using-pants-for-python-development" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="why-use-pants-for-python-development">
+<h2>Why use Pants for Python development?<a class="headerlink" href="#why-use-pants-for-python-development" title="Permalink to this headline">¶</a></h2>
+<p>Pants makes the manipulation and distribution of hermetically sealed Python environments
+painless.</p>
+<p>But why another system?</p>
+<div class="section" id="alternatives">
+<h3>Alternatives<a class="headerlink" href="#alternatives" title="Permalink to this headline">¶</a></h3>
+<p>There are several solutions for package management in Python.  Almost
+everyone is familiar with running <cite>sudo easy_install PackageXYZ</cite>.  This
+leaves a lot to be desired.  Over time, your Python installation will
+collect dozens of packages, become annoyingly slow or even broken, and
+reinstalling it will invariably break a number of the applications
+that you were using.</p>
+<p>A marked improvement over the <cite>sudo easy_install</cite> model is <a class="reference external" href="http://www.virtualenv.org">virtualenv</a>
+to isolate Python environments on a project by project basis.  This is
+useful for development but does not directly solve any problems
+related to deployment, whether it be to a production environment or to
+your peers.  It is also challenging to explain to a Python non-expert.</p>
+<p>A different solution altogether, <a class="reference external" href="http://www.buildout.org/">zc.buildout</a> attempts to provide a
+framework and recipes for many common development environments.  It
+has arguably gone the farthest for automating environment
+reproducibility amongst the popular tools, but shares the same
+complexity problems as all the other abovementioned solutions.</p>
+<p>Most solutions leave deployment as an afterthought.  Why not make the
+development and deployment environments the same by taking the
+environment along with you?</p>
+</div>
+<div class="section" id="pants-and-pex">
+<h3>Pants and PEX<a class="headerlink" href="#pants-and-pex" title="Permalink to this headline">¶</a></h3>
+<p>The lingua franca of Pants is the PEX file (PEX itself does not stand for
+anything in particular, though in spirit you can think of it as a &#8220;Python
+EXecutable&#8221;.)</p>
+<p><strong>PEX files are single-file lightweight virtual Python environments.</strong></p>
+<p>The only difference is no virtualenv setup instructions or
+<cite>pip install foo bar baz</cite>.  PEX files are self-bootstrapping Python
+environments with no strings attached and no side-effects.  Just a simple
+mechanism that unifies both your development and your deployment.</p>
+</div>
+</div>
+<div class="section" id="getting-started">
+<h2>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
+<p>First it is necessary to install Pants.  See <a class="reference internal" href="install.html"><em>Installing</em></a>.</p>
+<p>It is also helpful to read the main Pants Introduction <a class="reference internal" href="README.html"><em>Getting Started with Pants</em></a></p>
+</div>
+<div class="section" id="tl-dr-hello-world-with-pants-python">
+<h2>TL;DR - &#8216;Hello world!&#8217; with Pants Python<a class="headerlink" href="#tl-dr-hello-world-with-pants-python" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>git clone git://github.com/twitter/commons
+<span class="nv">$ </span><span class="nb">cd </span>commons
+<span class="nv">$ </span>mkdir -p src/python/twitter/my_project
+<span class="nv">$ </span>vi src/python/twitter/my_project/BUILD
+</pre></div>
+</div>
+<p><cite>src/python/twitter/my_project/BUILD</cite>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">python_binary</span><span class="p">(</span>
+  <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;hello_world&#39;</span><span class="p">,</span>
+  <span class="n">source</span> <span class="o">=</span> <span class="s">&#39;hello_world.py&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>vi src/python/twitter/my_project/hello_world.py
+</pre></div>
+</div>
+<p><cite>src/python/twitter/my_project/hello_world.py</cite> might have contents:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">print</span><span class="p">(</span><span class="s">&#39;Hello world!&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To run directly:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>./pants py src/python/twitter/my_project:hello_world
+Build operating on target: PythonBinary<span class="o">(</span>src/python/twitter/my_project/BUILD:hello_world<span class="o">)</span>
+Hello world!
+</pre></div>
+</div>
+<p>To build:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>./pants src/python/twitter/my_project:hello_world
+Build operating on targets: OrderedSet<span class="o">([</span>PythonBinary<span class="o">(</span>src/python/twitter/my_project/BUILD:hello_world<span class="o">)])</span>
+Building PythonBinary PythonBinary<span class="o">(</span>src/python/twitter/my_project/BUILD:hello_world<span class="o">)</span>:
+Wrote /Users/wickman/clients/science-py-csl/dist/hello_world.pex
+</pre></div>
+</div>
+<p>and run separately:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>dist/hello_world.pex
+Hello world!
+</pre></div>
+</div>
+<p>NOTE: The first time you run <cite>./pants</cite> will likely take a ridiculous amount
+of time as Pants bootstraps itself inside your directory.  Note, it never
+installs anything in a global site-packages.</p>
+</div>
+<div class="section" id="describing-python-environments-in-pants">
+<h2>Describing Python environments in Pants<a class="headerlink" href="#describing-python-environments-in-pants" title="Permalink to this headline">¶</a></h2>
+<p>Build dependencies in Pants are managed with <cite>BUILD</cite> files that are
+co-located with your source.  These files are used to describe the following:</p>
+<ol class="arabic simple">
+<li>libraries:  bundles of sources and resources, that may or may not also depend on other libraries</li>
+<li>binaries:  a single source (the executable) and libraries it depends upon</li>
+<li>requirements:  external dependencies as resolved by dependency managers e.g. pypi in Python or ivy on the JVM</li>
+</ol>
+<p>The main point of Pants is to take these <cite>BUILD</cite> files and do something useful with them.</p>
+<div class="section" id="build-file-format">
+<h3>BUILD file format<a class="headerlink" href="#build-file-format" title="Permalink to this headline">¶</a></h3>
+<p>These descriptions are stored in files named BUILD and colocated near the
+binaries/libraries they describe.  Let&#8217;s take for example the
+src/python/twitter/tutorial subtree in commons:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>ls -lR src/python/twitter/tutorial/
+total 16
+-rw-r--r--  1 wickman  wheel  137 Apr  9 22:59 BUILD
+-rw-r--r--  1 wickman  wheel  118 Apr  9 22:59 hello_world.py
+</pre></div>
+</div>
+<p>Let&#8217;s take a look at the BUILD file in <cite>src/python/twitter/tutorial/BUILD</cite>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">python_binary</span><span class="p">(</span>
+  <span class="n">name</span> <span class="o">=</span> <span class="s">&quot;hello_world&quot;</span><span class="p">,</span>
+  <span class="n">source</span> <span class="o">=</span> <span class="s">&quot;hello_world.py&quot;</span><span class="p">,</span>
+  <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&quot;src/python/twitter/common/app&quot;</span><span class="p">),</span>
+  <span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>This BUILD file names one target: <cite>hello_world</cite>, which is a <cite>python_binary</cite> target.  The <cite>hello_world</cite> target
+contains one source file, <cite>hello_world.py</cite> and depends upon one other
+target, the format of which will be described shortly.</p>
+<p>It should be noted that sources are relative to the location of the BUILD
+file itself, e.g.  <cite>hello_world.py</cite> inside of <cite>src/python/twitter/tutorial/BUILD</cite> actually refers to
+<cite>src/python/twitter/tutorial/hello_world.py</cite>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">twitter.common</span> <span class="kn">import</span> <span class="n">app</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+  <span class="k">print</span><span class="p">(</span><span class="s">&#39;Hello world!&#39;</span><span class="p">)</span>
+
+<span class="n">app</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Dependencies, on the other hand, are relative to the <em>source root</em> of the repository which is defined
+by the BUILD file that sits next to the <cite>pants</cite> command:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Define the repository layout</span>
+
+<span class="n">source_root</span><span class="p">(</span><span class="s">&#39;src/antlr&#39;</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">page</span><span class="p">,</span> <span class="n">java_antlr_library</span><span class="p">,</span> <span class="n">python_antlr_library</span><span class="p">)</span>
+<span class="n">source_root</span><span class="p">(</span><span class="s">&#39;src/java&#39;</span><span class="p">,</span> <span class="n">annotation_processor</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">jvm_binary</span><span class="p">,</span> <span class="n">java_library</span><span class="p">,</span> <span class="n">page</span><span class="p">)</span>
+<span class="n">source_root</span><span class="p">(</span><span class="s">&#39;src/protobuf&#39;</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">java_protobuf_library</span><span class="p">,</span> <span class="n">page</span><span class="p">)</span>
+<span class="n">source_root</span><span class="p">(</span><span class="s">&#39;src/python&#39;</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">page</span><span class="p">,</span> <span class="n">python_binary</span><span class="p">,</span> <span class="n">python_library</span><span class="p">)</span>
+<span class="n">source_root</span><span class="p">(</span><span class="s">&#39;src/scala&#39;</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">jvm_binary</span><span class="p">,</span> <span class="n">page</span><span class="p">,</span> <span class="n">scala_library</span><span class="p">)</span>
+<span class="n">source_root</span><span class="p">(</span><span class="s">&#39;src/thrift&#39;</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">java_thrift_library</span><span class="p">,</span> <span class="n">page</span><span class="p">,</span> <span class="n">python_thrift_library</span><span class="p">)</span>
+
+<span class="n">source_root</span><span class="p">(</span><span class="s">&#39;tests/java&#39;</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">java_library</span><span class="p">,</span> <span class="n">java_tests</span><span class="p">,</span> <span class="n">page</span><span class="p">)</span>
+<span class="n">source_root</span><span class="p">(</span><span class="s">&#39;tests/python&#39;</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">page</span><span class="p">,</span> <span class="n">python_library</span><span class="p">,</span> <span class="n">python_tests</span><span class="p">,</span> <span class="n">python_test_suite</span><span class="p">)</span>
+<span class="n">source_root</span><span class="p">(</span><span class="s">&#39;tests/scala&#39;</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">page</span><span class="p">,</span> <span class="n">scala_library</span><span class="p">,</span> <span class="n">scala_tests</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This file can be tailored to map to any source root structure such as Maven
+style, Twitter style (as described above) or something more flat such as a
+<cite>setup.py</cite>-based project.  This however is an advanced topic that is not
+covered in this document.</p>
+</div>
+<div class="section" id="addressing-targets">
+<h3>Addressing targets<a class="headerlink" href="#addressing-targets" title="Permalink to this headline">¶</a></h3>
+<p>Within the <cite>src/python/twitter/tutorial/BUILD</cite>, only one target is defined,
+specifically <cite>hello_world</cite>.  This target is addressed by
+<cite>src/python/twitter/tutorial:hello_world</cite> which means the target
+<cite>hello_world</cite> within <cite>src/python/twitter/tutorial/BUILD</cite>.  In general,
+targets take the form <cite>&lt;path&gt;:&lt;target name&gt;</cite> with the special cases:</p>
+<ol class="arabic simple">
+<li>in the case of <cite>path/to/directory/BUILD:target</cite>, the <cite>BUILD</cite> component may be elided and instead <cite>path/to/directory:target</cite> may be used</li>
+<li><cite>path/to/directory</cite> is short form for <cite>path/to/directory:directory</cite>, so <cite>src/python/twitter/common/app</cite> is short form for <cite>src/python/twitter/common/app/BUILD:app</cite></li>
+</ol>
+<p><cite>src/python/twitter/tutorial/BUILD</cite> referenced <cite>pants(&#8216;src/python/twitter/common/app&#8217;)</cite> in its
+dependencies.  The <cite>pants()</cite> keyword is akin to a &#8220;pointer dereference&#8221; for an address.  It will point
+to whatever target is described at that address, in this case a <cite>python_library</cite> target:</p>
+<p><cite>src/python/twitter/common/app/BUILD</cite>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">python_library</span><span class="p">(</span>
+  <span class="n">name</span> <span class="o">=</span> <span class="s">&quot;app&quot;</span><span class="p">,</span>
+  <span class="n">sources</span> <span class="o">=</span> <span class="n">globs</span><span class="p">(</span><span class="s">&#39;*.py&#39;</span><span class="p">),</span>
+  <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;src/python/twitter/common/dirutil&#39;</span><span class="p">),</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;src/python/twitter/common/lang&#39;</span><span class="p">),</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;src/python/twitter/common/options&#39;</span><span class="p">),</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;src/python/twitter/common/util&#39;</span><span class="p">),</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;src/python/twitter/common/app/modules&#39;</span><span class="p">),</span>
+  <span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>which in turn includes even more dependencies.  The job of Pants is to manage the transitive closure
+of all these dependencies and manipulate collections of these targets for you.</p>
+</div>
+<div class="section" id="python-target-types">
+<h3>Python target types<a class="headerlink" href="#python-target-types" title="Permalink to this headline">¶</a></h3>
+<p>BUILD files themselves are just Python.  The only thing magical is that the
+statement <cite>from twitter.pants import *</cite> has been autoinjected.  This
+provides a number of Python-specific targets such as:</p>
+<ol class="arabic simple">
+<li><cite>python_library</cite></li>
+<li><cite>python_binary</cite></li>
+<li><cite>python_requirement</cite></li>
+<li><cite>python_thrift_library</cite></li>
+</ol>
+<p>and a whole host of other targets including Java, Scala, Python, Markdown,
+the universal <cite>pants</cite> target and so forth.  See
+<cite>src/python/twitter/pants/__init__.py</cite> for a comprehensive list of targets.</p>
+<div class="section" id="python-library">
+<h4><cite>python_library</cite><a class="headerlink" href="#python-library" title="Permalink to this headline">¶</a></h4>
+<p>A <cite>python_library</cite> target has a name, zero or more source files, zero or
+more resource files, and zero or more dependencies.  These dependencies may
+include other <cite>python_library</cite>-like targets (<cite>python_library</cite>,
+<cite>python_thrift_library</cite>, <cite>python_antlr_library</cite> and so forth) or
+<cite>python_requirement</cite> targets.</p>
+</div>
+<div class="section" id="python-binary">
+<h4><cite>python_binary</cite><a class="headerlink" href="#python-binary" title="Permalink to this headline">¶</a></h4>
+<p>A <cite>python_binary</cite> target is almost identical to a <cite>python_library</cite> target except instead of <cite>sources</cite>, it takes one
+of two possible parameters:</p>
+<ol class="arabic simple">
+<li><cite>source</cite>: The source file that should be executed within the &#8220;library&#8221; otherwise defined by <cite>python_binary</cite></li>
+</ol>
+<p>2. <cite>entry_point</cite>: The entry point that should be executed within the &#8220;library&#8221; otherwise defined by
+<cite>python_binary</cite>.  Entry points take the format of <cite>pkg_resources.EntryPoint</cite>, which is something
+akin to <cite>some.module.name:my.attr</cite> which means run the function pointed by <cite>my.attr</cite> inside the
+module <cite>some.module</cite> inside the environment.  The <cite>:my.attr</cite> component can be omitted and the
+module is executed directly (presuming it has a <cite>__main__.py</cite>.)</p>
+</div>
+<div class="section" id="python-requirement">
+<h4><cite>python_requirement</cite><a class="headerlink" href="#python-requirement" title="Permalink to this headline">¶</a></h4>
+<p>A <cite>python_requirement</cite> target describes an external dependency as understood by easy_install or pip.  It takes only
+a single non-keyword argument of the <cite>Requirement</cite>-style string, e.g.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">python_requirement</span><span class="p">(</span><span class="s">&#39;django-celery&#39;</span><span class="p">)</span>
+<span class="n">python_requirement</span><span class="p">(</span><span class="s">&#39;tornado==2.2&#39;</span><span class="p">)</span>
+<span class="n">python_requirement</span><span class="p">(</span><span class="s">&#39;kombu&gt;=2.1.1,&lt;3.0&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This will resolve the dependency and its transitive closure, for example <cite>django-celery</cite> pulls down the following
+dependencies: <cite>celery&gt;=2.5.1</cite>, <cite>django-picklefield&gt;=0.2.0</cite>, <cite>ordereddict</cite>, <cite>python-dateutil</cite>,
+<cite>kombu&gt;=2.1.1,&lt;3.0</cite>, <cite>anyjson&gt;=0.3.1</cite>, <cite>importlib</cite>, and <cite>amqplib&gt;=1.0</cite>.</p>
+<p>Pants takes care of handling these dependencies for you.  It will never install anything globally.  Instead it will
+build the dependency and cache it in <cite>.pants.d</cite> and assemble them a la carte into an execution environment.</p>
+<p>The <cite>python_requirement</cite> for a particular dependency should appear
+only once in a BUILD file.  It creates a local target name which can
+then be included in other dependencies in the file.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">python_requirement</span><span class="p">(</span><span class="s">&#39;django-celery&#39;</span><span class="p">)</span>
+
+<span class="n">python_library</span><span class="p">(</span>
+  <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;mylib_1&#39;</span><span class="p">,</span>
+  <span class="n">sources</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s">&#39;mylib_1.py&#39;</span><span class="p">,</span>
+  <span class="p">],</span>
+  <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;:django-celery&#39;</span><span class="p">)</span>
+  <span class="p">]</span>
+<span class="p">)</span>
+
+<span class="n">python_library</span><span class="p">(</span>
+  <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;mylib_2&#39;</span><span class="p">,</span>
+  <span class="n">sources</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s">&#39;mylib_2.py&#39;</span><span class="p">,</span>
+  <span class="p">],</span>
+  <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;:django-celery&#39;</span><span class="p">)</span>
+  <span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="python-thrift-library">
+<h4><cite>python_thrift_library</cite><a class="headerlink" href="#python-thrift-library" title="Permalink to this headline">¶</a></h4>
+<p>A <cite>python_thrift_library</cite> target takes the same arguments as <cite>python_library</cite> arguments, except that files described
+in <cite>sources</cite> must be thrift files.  If your library or binary depends upon this target type, Python bindings
+will be autogeNerated and included within your environment.</p>
+</div>
+<div class="section" id="python-tests">
+<h4><cite>python_tests</cite><a class="headerlink" href="#python-tests" title="Permalink to this headline">¶</a></h4>
+<p>A <cite>python_tests</cite> target takes the same arguments as <cite>python_library</cite> arguments, with the addition of the optional
+<cite>coverage</cite> argument that is a list of namespaces that you want to generate coverage data for.</p>
+</div>
+</div>
+</div>
+<div class="section" id="building-your-first-pex">
+<h2>Building your first PEX<a class="headerlink" href="#building-your-first-pex" title="Permalink to this headline">¶</a></h2>
+<p>Now you&#8217;re ready to build your first PEX file (technically you already have,
+by building Pants itself.)  By default if you specify <cite>./pants &lt;target&gt;</cite>, it
+assumes you mean <cite>./pants build &lt;target&gt;</cite> and does precisely that:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ PANTS_VERBOSE</span><span class="o">=</span>1 ./pants src/python/twitter/tutorial:hello_world
+Build operating on targets: OrderedSet<span class="o">([</span>PythonBinary<span class="o">(</span>src/python/twitter/tutorial/BUILD:hello_world<span class="o">)])</span>
+  Resolver: Calling environment <span class="nv">super</span> <span class="o">=</span>&gt; 0.046ms
+Building PythonBinary PythonBinary<span class="o">(</span>src/python/twitter/tutorial/BUILD:hello_world<span class="o">)</span>:
+Building PythonBinary PythonBinary<span class="o">(</span>src/python/twitter/tutorial/BUILD:hello_world<span class="o">)</span>:
+  Dumping library: PythonLibrary<span class="o">(</span>src/python/twitter/common/app/BUILD:app<span class="o">)</span> <span class="o">[</span>relative module: <span class="o">]</span>
+  Dumping library: PythonLibrary<span class="o">(</span>src/python/twitter/common/dirutil/BUILD:dirutil<span class="o">)</span> <span class="o">[</span>relative module: <span class="o">]</span>
+  Dumping library: PythonLibrary<span class="o">(</span>src/python/twitter/common/lang/BUILD:lang<span class="o">)</span> <span class="o">[</span>relative module: <span class="o">]</span>
+  Dumping library: PythonLibrary<span class="o">(</span>src/python/twitter/common/options/BUILD:options<span class="o">)</span> <span class="o">[</span>relative module: <span class="o">]</span>
+  Dumping library: PythonLibrary<span class="o">(</span>src/python/twitter/common/util/BUILD:util<span class="o">)</span> <span class="o">[</span>relative module: <span class="o">]</span>
+  Dumping library: PythonLibrary<span class="o">(</span>src/python/twitter/common/app/modules/BUILD:modules<span class="o">)</span> <span class="o">[</span>relative module: <span class="o">]</span>
+  Resolver: Calling environment <span class="nv">super</span> <span class="o">=</span>&gt; 0.016ms
+  Dumping binary: twitter/tutorial/hello_world.py
+Wrote /private/tmp/wickman-commons/dist/hello_world.pex
+</pre></div>
+</div>
+<p>You will see that despite specifying just one dependency, the transitive
+closure of <cite>hello_world</cite> pulled in all of <cite>src/python/twitter/common/app</cite>
+and its direct descendants.  That&#8217;s because those library targets depended
+upon other library targets, than in turn depending on even more.  At the end
+of the day, we bundle up the closed set of all dependencies and bundle them
+into <cite>hello_world.pex</cite>.</p>
+<p>Since it uses the <cite>twitter.common.app</cite> framework, we know we can fire it up
+and poke around with <cite>&#8211;help</cite>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>dist/hello_world.pex --help
+Options:
+  -h, --help, --short-help
+                        show this <span class="nb">help </span>message and exit.
+  --long-help           show options from all registered modules, not just the
+                        __main__ module.
+</pre></div>
+</div>
+<p>If we specify <cite>&#8211;long-help</cite>, we can see the help of transitively included
+modules, e.g.  <cite>twitter.common.app</cite> itself:</p>
+<div class="highlight-bash"><div class="highlight"><pre>$ dist/hello_world.pex --long-help
+Options:
+  -h, --help, --short-help
+                        show this help message and exit.
+  --long-help           show options from all registered modules, not just the
+                        __main__ module.
+
+  From module twitter.common.app:
+    --app_daemonize     Daemonize this application. [default: False]
+    --app_profile_output=FILENAME
+                        Dump the profiling output to a binary profiling
+                        format. [default: None]
+    --app_daemon_stderr=TWITTER_COMMON_APP_DAEMON_STDERR
+                        Direct this app\&#39;s stderr to this file if daemonized.
+                        [default: /dev/null]
+    --app_debug         Print extra debugging information during application
+                        initialization. [default: False]
+    --app_daemon_stdout=TWITTER_COMMON_APP_DAEMON_STDOUT
+                        Direct this app&#39;s stdout to this file if daemonized .
+                        [default: /dev/null]
+    --app_profiling     Run profiler on the code while it runs.  Note this can
+                        cause slowdowns. [default: False]
+    --app_ignore_rc_file
+                        Ignore default arguments from the rc file. [default:
+                        False]
+    --app_pidfile=TWITTER_COMMON_APP_PIDFILE
+                        The pidfile to use if --app_daemonize is specified.
+                        [default: None]
+</pre></div>
+</div>
+<p>Or we can simply execute it as intended:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>dist/hello_world.pex
+Hello world!
+</pre></div>
+</div>
+</div>
+<div class="section" id="environment-manipulation-with-pants-py">
+<h2>Environment manipulation with <cite>pants py</cite><a class="headerlink" href="#environment-manipulation-with-pants-py" title="Permalink to this headline">¶</a></h2>
+<p>We&#8217;ve only discussed so far the &#8220;pants build&#8221; command.  There&#8217;s also a
+dedicated &#8220;py&#8221; command that allows you to manipulate the environments
+described by <cite>python_binary</cite> and <cite>python_library</cite> targets, such as drop into
+an interpreter with the environment set up for you.</p>
+<div class="section" id="pants-py-semantics">
+<h3><cite>pants py</cite> semantics<a class="headerlink" href="#pants-py-semantics" title="Permalink to this headline">¶</a></h3>
+<p>The default behavior of <cite>pants py &lt;target&gt;</cite> is the following:</p>
+<ol class="arabic simple">
+<li>For <cite>python_binary</cite> targets, build the environment and execute the target</li>
+<li>For one or more <cite>python_library</cite> targets, build the environment that is the transitive closure of all targets and drop into an interpreter.</li>
+<li>For a combination of <cite>python_binary</cite> and <cite>python_library</cite> targets, build the transitive closure of all targets and execute the first binary target.</li>
+</ol>
+</div>
+<div class="section" id="external-dependencies">
+<h3>external dependencies<a class="headerlink" href="#external-dependencies" title="Permalink to this headline">¶</a></h3>
+<p>Let&#8217;s take <cite>src/python/twitter/tutorial/BUILD</cite> and split out the dependencies from
+our <cite>hello_world</cite> target into <cite>hello_world_lib</cite> and add dependencies upon
+<a class="reference external" href="http://github.com/facebook/tornado">Tornado</a> and <a class="reference external" href="http://code.google.com/p/psutil/">psutil</a>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">python_binary</span><span class="p">(</span>
+  <span class="n">name</span> <span class="o">=</span> <span class="s">&quot;hello_world&quot;</span><span class="p">,</span>
+  <span class="n">source</span> <span class="o">=</span> <span class="s">&quot;hello_world.py&quot;</span><span class="p">,</span>
+  <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&quot;:hello_world_lib&quot;</span><span class="p">)</span>
+  <span class="p">]</span>
+<span class="p">)</span>
+
+<span class="n">python_library</span><span class="p">(</span>
+  <span class="n">name</span> <span class="o">=</span> <span class="s">&quot;hello_world_lib&quot;</span><span class="p">,</span>
+  <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&quot;src/python/twitter/common/app&quot;</span><span class="p">),</span>
+    <span class="n">python_requirement</span><span class="p">(</span><span class="s">&quot;tornado&quot;</span><span class="p">),</span>
+    <span class="n">python_requirement</span><span class="p">(</span><span class="s">&quot;psutil&quot;</span><span class="p">),</span>
+  <span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>This uses the <cite>python_requirement</cite> target which can refer to any string in <cite>pkg_resources.Requirement</cite> format as
+recognized by tools such as <cite>easy_install</cite> and <cite>pip</cite> as described above.</p>
+<p>Now that we&#8217;ve created a library-only target <cite>src/python/twitter/tutorial:hello_world_lib</cite>, let&#8217;s drop
+into it using <cite>pants py</cite> with verbosity turned on so that we can see what&#8217;s
+going on in the background:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ PANTS_VERBOSE</span><span class="o">=</span>1 ./pants py src/python/twitter/tutorial:hello_world_lib
+Build operating on target: PythonLibrary<span class="o">(</span>src/python/twitter/tutorial/BUILD:hello_world_lib<span class="o">)</span>
+  Resolver: Calling environment <span class="nv">super</span> <span class="o">=</span>&gt; 0.019ms
+Building PythonBinary PythonLibrary<span class="o">(</span>src/python/twitter/tutorial/BUILD:hello_world_lib<span class="o">)</span>:
+  Dumping library: PythonLibrary<span class="o">(</span>src/python/twitter/tutorial/BUILD:hello_world_lib<span class="o">)</span> <span class="o">[</span>relative module: <span class="o">]</span>
+  Dumping library: PythonLibrary<span class="o">(</span>src/python/twitter/common/app/BUILD:app<span class="o">)</span> <span class="o">[</span>relative module: <span class="o">]</span>
+  Dumping library: PythonLibrary<span class="o">(</span>src/python/twitter/common/dirutil/BUILD:dirutil<span class="o">)</span> <span class="o">[</span>relative module: <span class="o">]</span>
+  Dumping library: PythonLibrary<span class="o">(</span>src/python/twitter/common/lang/BUILD:lang<span class="o">)</span> <span class="o">[</span>relative module: <span class="o">]</span>
+  Dumping library: PythonLibrary<span class="o">(</span>src/python/twitter/common/options/BUILD:options<span class="o">)</span> <span class="o">[</span>relative module: <span class="o">]</span>
+  Dumping library: PythonLibrary<span class="o">(</span>src/python/twitter/common/util/BUILD:util<span class="o">)</span> <span class="o">[</span>relative module: <span class="o">]</span>
+  Dumping library: PythonLibrary<span class="o">(</span>src/python/twitter/common/app/modules/BUILD:modules<span class="o">)</span> <span class="o">[</span>relative module: <span class="o">]</span>
+  Dumping requirement: tornado
+  Dumping requirement: psutil
+  Resolver: Calling environment <span class="nv">super</span> <span class="o">=</span>&gt; 0.029ms
+  Resolver: Activating cache /private/tmp/wickman-commons/3rdparty/python <span class="o">=</span>&gt; 356.432ms
+  Resolver: Resolved <span class="nv">tornado</span> <span class="o">=</span>&gt; 357.219ms
+  Resolver: Activating cache /private/tmp/wickman-commons/.pants.d/.python.install.cache <span class="o">=</span>&gt; 41.117ms
+  Resolver: Fetching <span class="nv">psutil</span> <span class="o">=</span>&gt; 10144.264ms
+  Resolver: Building <span class="nv">psutil</span> <span class="o">=</span>&gt; 1794.474ms
+  Resolver: Distilling <span class="nv">psutil</span> <span class="o">=</span>&gt; 224.896ms
+  Resolver: Constructing distribution <span class="nv">psutil</span> <span class="o">=</span>&gt; 2.855ms
+  Resolver: Resolved <span class="nv">psutil</span> <span class="o">=</span>&gt; 12210.066ms
+  Dumping distribution: .../tornado-2.2-py2.6.egg
+  Dumping distribution: .../psutil-0.4.1-py2.6-macosx-10.4-x86_64.egg
+Python 2.6.7 <span class="o">(</span>r267:88850, Aug 31 2011, 15:49:05<span class="o">)</span>
+<span class="o">[</span>GCC 4.2.1 <span class="o">(</span>Apple Inc. build 5664<span class="o">)]</span> on darwin
+Type <span class="s2">&quot;help&quot;</span>, <span class="s2">&quot;copyright&quot;</span>, <span class="s2">&quot;credits&quot;</span> or <span class="s2">&quot;license&quot;</span> <span class="k">for </span>more information.
+<span class="o">(</span>InteractiveConsole<span class="o">)</span>
+&gt;&gt;&gt;
+</pre></div>
+</div>
+<p>In the background, <cite>pants</cite> used cached version of <cite>tornado</cite> but fetched
+<cite>psutil</cite> from pypi and any necessary transitive dependencies (none in this
+case) and built a platform-specific version for us.</p>
+<p>You can convince yourself that the environment contains all the dependencies
+by inspecting <cite>sys.path</cite> and importing libraries as you desire:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">psutil</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">help</span><span class="p">(</span><span class="n">psutil</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">twitter.common</span> <span class="kn">import</span> <span class="n">app</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">help</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>It should be stressed that <em>dependencies built by Pants are never installed globally</em>.
+These dependencies only exist for the duration of the Python interpreter forked by Pants.</p>
+</div>
+<div class="section" id="running-an-application-using-pants-py">
+<h3>Running an application using <cite>pants py</cite><a class="headerlink" href="#running-an-application-using-pants-py" title="Permalink to this headline">¶</a></h3>
+<p>Let us turn our <cite>hello_world.py</cite> into a basic <cite>top</cite> application using <cite>tornado</cite>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">twitter.common</span> <span class="kn">import</span> <span class="n">app</span>
+
+<span class="kn">import</span> <span class="nn">psutil</span>
+<span class="kn">import</span> <span class="nn">tornado.ioloop</span>
+<span class="kn">import</span> <span class="nn">tornado.web</span>
+
+<span class="k">class</span> <span class="nc">MainHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&lt;pre&gt;Running pids:</span><span class="se">\n</span><span class="si">%s</span><span class="s">&lt;/pre&gt;&#39;</span> <span class="o">%</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">psutil</span><span class="o">.</span><span class="n">get_pid_list</span><span class="p">())))</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+  <span class="n">application</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">([</span>
+    <span class="p">(</span><span class="s">r&quot;/&quot;</span><span class="p">,</span> <span class="n">MainHandler</span><span class="p">)</span>
+  <span class="p">])</span>
+  <span class="n">application</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">8888</span><span class="p">)</span>
+  <span class="n">tornado</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">IOLoop</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+<span class="n">app</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>We have now split our application into two parts: the <cite>hello_world</cite> binary
+target and the <cite>hello_world_lib</cite> library target.  If we run <cite>pants py
+src/python/twitter/tutorial:hello_world_lib</cite>, the default behavior is to
+drop into an interpreter.</p>
+<p>If we run <cite>pants py src/python/twitter/tutorial:hello_world</cite>, the default behavior is to run
+the binary target pointed to by <cite>hello_world</cite>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>./pants py src/python/twitter/tutorial:hello_world
+</pre></div>
+</div>
+<p>Then point your browser to <a class="reference external" href="http://localhost:8888">http://localhost:8888</a></p>
+</div>
+<div class="section" id="pants-py-pex">
+<h3>pants py &#8211;pex<a class="headerlink" href="#pants-py-pex" title="Permalink to this headline">¶</a></h3>
+<p>There is also a <cite>&#8211;pex</cite> option to pants py that allows you to build a PEX
+file from a union of python_library targets that does not necessarily have a
+<cite>python_binary</cite> target defined for it.  Since there is no entry point
+specified, the resulting .pex file just behaves like a Python interpreter,
+but with the sys.path bootstrapped for you:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>./pants py --pex src/python/twitter/tutorial:hello_world_lib
+Build operating on target: PythonLibrary<span class="o">(</span>src/python/twitter/tutorial/BUILD:hello_world_lib<span class="o">)</span>
+Wrote /private/tmp/wickman-commons/dist/hello_world_lib.pex
+
+<span class="nv">$ </span>ls -la dist/hello_world_lib.pex
+-rwxr-xr-x  1 wickman  wheel  1404174 Apr 10 13:00 dist/hello_world_lib.pex
+</pre></div>
+</div>
+<p>Now if you use dist/hello_world_lib.pex, since it has no entry point, it will drop you into an interpreter:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>dist/hello_world_lib.pex
+Python 2.6.7 <span class="o">(</span>r267:88850, Aug 31 2011, 15:49:05<span class="o">)</span>
+<span class="o">[</span>GCC 4.2.1 <span class="o">(</span>Apple Inc. build 5664<span class="o">)]</span> on darwin
+Type <span class="s2">&quot;help&quot;</span>, <span class="s2">&quot;copyright&quot;</span>, <span class="s2">&quot;credits&quot;</span> or <span class="s2">&quot;license&quot;</span> <span class="k">for </span>more information.
+<span class="o">(</span>InteractiveConsole<span class="o">)</span>
+&gt;&gt;&gt; import tornado
+</pre></div>
+</div>
+<p>As mentioned before, it&#8217;s like a single-file lightweight alternative to a
+virtualenv.  We can even use it to run our <cite>hello_world.py</cite> application:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>dist/hello_world_lib.pex src/python/twitter/tutorial/hello_world.py
+</pre></div>
+</div>
+<p>This can be an incredibly powerful and lightweight way to manage and deploy
+virtual environments without using <cite>virtualenv</cite>.</p>
+</div>
+<div class="section" id="pex-file-as-interpreter">
+<h3>PEX file as interpreter<a class="headerlink" href="#pex-file-as-interpreter" title="Permalink to this headline">¶</a></h3>
+<p>As mentioned above, PEX files without default entry points behave like Python interpreters that
+carry their dependencies with them.  For example, let&#8217;s create a target that
+provides a Fabric dependency within <cite>src/python/twitter/tutorial/BUILD</cite>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">python_library</span><span class="p">(</span>
+  <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;fabric&#39;</span><span class="p">,</span>
+  <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">python_requirement</span><span class="p">(</span><span class="s">&#39;Fabric&#39;</span><span class="p">)</span>
+  <span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>And let&#8217;s build a fabric PEX file:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>./pants py --pex src/python/twitter/tutorial:fabric
+Build operating on target: PythonLibrary<span class="o">(</span>src/python/twitter/tutorial/BUILD:fabric<span class="o">)</span>
+Wrote /private/tmp/wickman-commons/dist/fabric.pex
+</pre></div>
+</div>
+<p>By default it does nothing more than drop us into an interpreter:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>dist/fabric.pex
+Python 2.6.7 <span class="o">(</span>r267:88850, Aug 31 2011, 15:49:05<span class="o">)</span>
+<span class="o">[</span>GCC 4.2.1 <span class="o">(</span>Apple Inc. build 5664<span class="o">)]</span> on darwin
+Type <span class="s2">&quot;help&quot;</span>, <span class="s2">&quot;copyright&quot;</span>, <span class="s2">&quot;credits&quot;</span> or <span class="s2">&quot;license&quot;</span> <span class="k">for </span>more information.
+<span class="o">(</span>InteractiveConsole<span class="o">)</span>
+&gt;&gt;&gt;
+</pre></div>
+</div>
+<p>But suppose we have a local script that depends upon Fabric, <cite>fabric_hello_world.py</cite>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">fabric.api</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+  <span class="n">local</span><span class="p">(</span><span class="s">&#39;echo hello world&#39;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+  <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>We can now use <cite>fabric.pex</cite> as if it were a Python interpreter but with
+fabric available in its environment.  Note that fabric has never been
+installed globally in any site-packages anywhere.  It is just bundled inside
+of fabric.pex:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>dist/fabric.pex fabric_hello_world.py
+<span class="o">[</span>localhost<span class="o">]</span> <span class="nb">local</span>: <span class="nb">echo </span>hello world
+hello world
+</pre></div>
+</div>
+</div>
+<div class="section" id="python-binary-entry-point">
+<h3>python_binary entry_point<a class="headerlink" href="#python-binary-entry-point" title="Permalink to this headline">¶</a></h3>
+<p>An advanced feature of <cite>python_binary</cite> targets, you may in addition specify
+direct entry points into PEX files rather than a source file.  For example,
+if we wanted to build an a la carte <cite>fab</cite> wrapper for fabric:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">python_binary</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;fab&quot;</span><span class="p">,</span>
+  <span class="n">entry_point</span> <span class="o">=</span> <span class="s">&quot;fabric.main:main&quot;</span><span class="p">,</span>
+  <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">python_requirement</span><span class="p">(</span><span class="s">&quot;fabric&quot;</span><span class="p">),</span>
+  <span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>We build:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>./pants src/python/twitter/tutorial:fab
+Build operating on targets: OrderedSet<span class="o">([</span>PythonBinary<span class="o">(</span>src/python/twitter/tutorial/BUILD:fab<span class="o">)])</span>
+Building PythonBinary PythonBinary<span class="o">(</span>src/python/twitter/tutorial/BUILD:fab<span class="o">)</span>:
+Wrote /private/tmp/wickman-commons/dist/fab.pex
+</pre></div>
+</div>
+<p>And now <cite>dist/fab.pex</cite> behaves like a standalone <cite>fab</cite> binary:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>dist/fab.pex -h
+Usage: fab <span class="o">[</span>options<span class="o">]</span> &lt;<span class="nb">command</span>&gt;<span class="o">[</span>:arg1,arg2<span class="o">=</span>val2,host<span class="o">=</span>foo,hosts<span class="o">=</span><span class="s1">&#39;h1;h2&#39;</span>,...<span class="o">]</span> ...
+
+Options:
+  -h, --help            show this <span class="nb">help </span>message and <span class="nb">exit</span>
+  -d NAME, --display<span class="o">=</span>NAME
+                        print detailed info about <span class="nb">command </span>NAME
+  -F FORMAT, --list-format<span class="o">=</span>FORMAT
+                        formats --list, choices: short, normal, nested
+  -l, --list            print list of possible commands and <span class="nb">exit</span>
+  --set<span class="o">=</span><span class="nv">KEY</span><span class="o">=</span>VALUE,...   comma separated <span class="nv">KEY</span><span class="o">=</span>VALUE pairs to <span class="nb">set </span>Fab env vars
+  --shortlist           <span class="nb">alias </span><span class="k">for</span> -F short --list
+  -V, --version         show program<span class="s1">&#39;s version number and exit</span>
+<span class="s1">  -a, --no_agent        don&#39;</span>t use the running SSH agent
+  -A, --forward-agent   forward <span class="nb">local </span>agent to remote end
+  --abort-on-prompts    abort instead of prompting <span class="o">(</span><span class="k">for </span>password, host, etc<span class="o">)</span>
+  ...
+</pre></div>
+</div>
+<p>Pants also has excellent support for JVM-based builds and can do similar
+things like resolving external JARs and packaging them as standalone
+environments with default entry points.</p>
+</div>
+</div>
+<div class="section" id="id1">
+<h2>Python Tests<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>By default Python tests are run via <cite>pytest</cite>. Any option that <cite>py.test</cite> has can be used since
+arguments are passed on by <cite>pants</cite>.</p>
+<div class="section" id="defining-python-tests-targets">
+<h3>Defining <cite>python_tests</cite> Targets<a class="headerlink" href="#defining-python-tests-targets" title="Permalink to this headline">¶</a></h3>
+<p>When setting up your test targets, the BUILD file will be something like:</p>
+<div class="highlight-python"><div class="highlight"><pre>python_tests(
+  name = &quot;your_tests&quot;,
+  sources = globs(&quot;*.py&quot;),
+  coverage = [&quot;twitter.your_namespace&quot;],
+  dependencies = [
+    pants(&quot;3rdparty/python:mock&quot;)
+    pants(&quot;src/python/twitter/your_namespace&quot;)
+ ]
+)
+</pre></div>
+</div>
+<p>The above target is very similar to a <cite>python_library</cite> with the addition of the <cite>coverage</cite> argument.
+<cite>coverage</cite> allows you to retrict the namespaces for which code coverage data is generated.</p>
+</div>
+<div class="section" id="running-python-tests">
+<h3>Running Python Tests<a class="headerlink" href="#running-python-tests" title="Permalink to this headline">¶</a></h3>
+<p>To run your Python tests, you use <cite>./pants build</cite> although <cite>build</cite> can be left off:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>./pants tests/python/twitter/your_tests/BUILD:your_tests
+Build operating on targets: OrderedSet<span class="o">([</span>PythonTests<span class="o">(</span>tests/python/twitter/your_tests/BUILD:your_tests<span class="o">)])</span>
+<span class="o">==================================================</span> <span class="nb">test </span>session <span class="nv">starts</span> <span class="o">===================================================</span>
+platform darwin -- Python 2.6.7 -- pytest-2.3.5
+collected 15 items:
+
+tests/python/twitter/your_tests/module1_test.py ....
+tests/python/twitter/your_tests/module2_test.py ....
+tests/python/twitter/your_tests/module3_test.py ....
+
+<span class="o">===============================================</span> 15 passed in 0.44 <span class="nv">seconds</span> <span class="o">================================================</span>
+tests.python.twitter.your_tests.your_tests                                    .....   SUCCESS
+</pre></div>
+</div>
+<p>Sometimes you only want to run specific tests (or exclude them). The <cite>-k</cite> option controls the
+tests to run. <cite>-k</cite> will do substring matches on test method names and can also use keywords like
+<cite>not</cite> and <cite>or</cite> to refine results.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>./pants tests/python/twitter/your_tests/BUILD:your_tests -k <span class="s1">&#39;module1_instantiation_test or module1_foo_test&#39;</span> -v
+Build operating on targets: OrderedSet<span class="o">([</span>PythonTests<span class="o">(</span>tests/python/twitter/your_tests/BUILD:your_tests<span class="o">)])</span>
+<span class="o">==================================================</span> <span class="nb">test </span>session <span class="nv">starts</span> <span class="o">===================================================</span>
+platform darwin -- Python 2.6.7 -- pytest-2.3.5
+collected 15 items:
+
+tests/python/twitter/your_tests/module1_test.py:3: Module1Test.module1_instantiation_test PASSED
+tests/python/twitter/your_tests/module1_test.py:21: Module1Test.module1_foo_test <span class="nv">PASSED</span>
+
+<span class="o">=======================</span> 13 tests deselected by <span class="s1">&#39;-kmodule1_instantiation_test or module1_foo_test&#39;</span> <span class="o">========================</span>
+<span class="o">================================================</span> 2 passed in 0.14 <span class="nv">seconds</span> <span class="o">================================================</span>
+tests.python.twitter.your_tests.your_tests                                    .....   SUCCESS
+</pre></div>
+</div>
+<p>You can also mark tests via a decorator:</p>
+<div class="highlight-python"><div class="highlight"><pre>@pytest.mark.module1
+def module1_instantiation_test():
+    # testing code here
+</pre></div>
+</div>
+<p>Using <cite>-m</cite> you can specify the marks of tests that you want to execute.</p>
+</div>
+<div class="section" id="getting-python-code-coverage">
+<h3>Getting Python Code Coverage<a class="headerlink" href="#getting-python-code-coverage" title="Permalink to this headline">¶</a></h3>
+<p>To get code coverage data, set the <cite>PANTS_PY_COVERAGE</cite> environment variable:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ PANTS_PY_COVERAGE</span><span class="o">=</span>1 ./pants tests/python/twitter/your_tests/BUILD:your_tests
+Build operating on targets: OrderedSet<span class="o">([</span>PythonTests<span class="o">(</span>tests/python/twitter/your_tests/BUILD:your_tests<span class="o">)])</span>
+<span class="o">============================================================</span> <span class="nb">test </span>session <span class="nv">starts</span> <span class="o">============================================================</span>
+platform darwin -- Python 2.6.7 -- pytest-2.3.5
+collected 15 items:
+
+tests/python/twitter/your_tests/module1_test.py ....
+tests/python/twitter/your_tests/module2_test.py ....
+tests/python/twitter/your_tests/module3_test.py ....
+---------------------------------------------- coverage: platform darwin, python 2.6.7-final-0 ----------------------------------------------
+Name                                                                                                     Stmts   Miss Branch BrMiss  Cover
+------------------------------------------------------------------------------------------------------------------------------------------
+/private/var/folders/p0/ztm93vq94qzfc1nyfkq_4l7r0000gn/T/tmp6BcJ1r/twitter/your_namespace/__init__           0      0      0      0   100%
+/private/var/folders/p0/ztm93vq94qzfc1nyfkq_4l7r0000gn/T/tmp6BcJ1r/twitter/your_namespace/module1           62     62      8      8     0%
+/private/var/folders/p0/ztm93vq94qzfc1nyfkq_4l7r0000gn/T/tmp6BcJ1r/twitter/your_namespace/module2           34      6      6      0    85%
+/private/var/folders/p0/ztm93vq94qzfc1nyfkq_4l7r0000gn/T/tmp6BcJ1r/twitter/your_namespace/module3          170    170     51     51     0%
+------------------------------------------------------------------------------------------------------------------------------------------
+TOTAL                                                                                                      266    238     57     59    11%
+Coverage HTML written to dir /Users/your_username/workspace/science/dist/coverage/tests/python/twitter/your_tests
+<span class="o">=========================================================</span> 15 passed in 2.07 <span class="nv">seconds</span> <span class="o">=========================================================</span>
+tests.python.twitter.your_tests.your_tests                                    .....   SUCCESS
+</pre></div>
+</div>
+</div>
+<div class="section" id="interactve-debugging-on-test-failure">
+<h3>Interactve Debugging on Test Failure<a class="headerlink" href="#interactve-debugging-on-test-failure" title="Permalink to this headline">¶</a></h3>
+<p>Passing <cite>&#8211;pdb</cite> to your test build will invoke the Python debugger if one of the tests fails. This can be useful for
+inspecting the stat of objects especially if you are mocking interfaces.</p>
+</div>
+<div class="section" id="using-other-testing-frameworks">
+<h3>Using Other Testing Frameworks<a class="headerlink" href="#using-other-testing-frameworks" title="Permalink to this headline">¶</a></h3>
+<p>Although most tests can run under <cite>pytest</cite>, if you need to use a different testing framework, you
+can. Set the <cite>entry_point</cite> keyword argument when calling python_tests:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">python_tests</span><span class="p">(</span>
+  <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;tests&#39;</span><span class="p">,</span>
+  <span class="n">sources</span> <span class="o">=</span> <span class="p">[],</span>
+  <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;src/python/twitter/infraops/supplybird:supplybird-lib&#39;</span><span class="p">),</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;3rdparty/python:mock&#39;</span><span class="p">)</span>
+  <span class="p">],</span>
+  <span class="n">entry_point</span><span class="o">=</span><span class="s">&quot;twitter.infraops.supplybird.core.run_tests&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The <cite>entry_point</cite> should exit with a non-zero status if there are any test failures.</p>
+<p>Keep in mind, however, that much of the above documentation assumes you are using <cite>pytest</cite>.</p>
+</div>
+</div>
+<div class="section" id="manipulating-pex-behavior-with-environment-variables">
+<h2>Manipulating PEX behavior with environment variables<a class="headerlink" href="#manipulating-pex-behavior-with-environment-variables" title="Permalink to this headline">¶</a></h2>
+<p>Given a PEX file, it is possible to alter its default behavior during invocation.</p>
+<div class="section" id="pex-interpreter-1">
+<h3>PEX_INTERPRETER=1<a class="headerlink" href="#pex-interpreter-1" title="Permalink to this headline">¶</a></h3>
+<p>If you have a PEX file with a prescribed executable source or <cite>entry_point</cite> specified, it may still
+occasionally be useful to drop into an interpreter with the environment bootstrapped.  If you
+set <cite>PEX_INTERPRETER=1</cite> in your environment, the PEX bootstrapper will skip any execution and instead
+launch an interactive interpreter session.</p>
+</div>
+<div class="section" id="pex-verbose-1">
+<h3>PEX_VERBOSE=1<a class="headerlink" href="#pex-verbose-1" title="Permalink to this headline">¶</a></h3>
+<p>If your environment is failing to bootstrap or simply bootstrapping very slowly, it can be useful to
+set <cite>PEX_VERBOSE=1</cite> in your environment to get debugging output printed to the console.  Debugging output
+includes:</p>
+<ol class="arabic simple">
+<li>Fetched dependencies</li>
+<li>Built dependencies</li>
+<li>Activated dependencies</li>
+<li>Packages scrubbed out of <cite>sys.path</cite></li>
+<li>The <cite>sys.path</cite> used to launch the interpreter</li>
+</ol>
+</div>
+<div class="section" id="pex-module-entry-point">
+<h3>PEX_MODULE=entry_point<a class="headerlink" href="#pex-module-entry-point" title="Permalink to this headline">¶</a></h3>
+<p>If you have a PEX file without a prescribed entry point, or want to change
+the <cite>entry_point</cite> for the duration of a single invocation, you can set
+<cite>PEX_MODULE=entry_point</cite> using the same format as described in the
+<cite>python_binary</cite> Pants target.</p>
+<p>This can be a useful tool for bundling up a number of packages together and
+being able to use a single file to execute scripts from each of them.</p>
+<p>Another common pattern is to link <cite>pytest</cite> into your PEX file, and run
+<cite>PEX_MODULE=pytest my_pex.pex tests/*.py</cite> to run your test suite in its
+isolated environment.</p>
+</div>
+<div class="section" id="pex-coverage">
+<h3>PEX_COVERAGE<a class="headerlink" href="#pex-coverage" title="Permalink to this headline">¶</a></h3>
+<p>There is nascent support for performing code coverage within PEX files by
+setting <cite>PEX_COVERAGE=&lt;suffix&gt;</cite>.  By default the coverage files will be written
+into the current working directory with the file pattern <cite>.coverage.&lt;suffix&gt;</cite>.  This
+requires that the <cite>coverage</cite> Python module has been linked into your PEX.</p>
+<p>You can then combine the coverage files by running <cite>PEX_MODULE=coverage
+my_pex.pex .coverage.suffix*</cite> and run a report using <cite>PEX_MODULE=coverage
+my_pex.pex report</cite>.  Since PEX files are just zip files, <cite>coverage</cite> is able
+to understand and extract source and line numbers from them in order to
+produce coverage reports.</p>
+</div>
+</div>
+<div class="section" id="how-pex-files-work">
+<h2>How PEX files work<a class="headerlink" href="#how-pex-files-work" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="the-utility-of-zipimport-and-main-py">
+<h3>the utility of zipimport and <cite>__main__.py</cite><a class="headerlink" href="#the-utility-of-zipimport-and-main-py" title="Permalink to this headline">¶</a></h3>
+<p>As an aside, in Python, you may not know that you can import code from directories:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>mkdir -p foo
+<span class="nv">$ </span>touch foo/__init__.py
+<span class="nv">$ </span><span class="nb">echo</span> <span class="s2">&quot;print &#39;spam&#39;&quot;</span> &gt; foo/bar.py
+<span class="nv">$ </span>python -c <span class="s1">&#39;import foo.bar&#39;</span>
+spam
+</pre></div>
+</div>
+<p>All that is necessary is the presence of <cite>__init__.py</cite> to signal to the importer that we
+are dealing with a package.  Similarly, a directory can be made &#8220;executable&#8221;:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span><span class="nb">echo</span> <span class="s2">&quot;print &#39;i like flowers&#39;&quot;</span> &gt; foo/__main__.py
+<span class="nv">$ </span>python foo
+i like flowers
+</pre></div>
+</div>
+<p>And because the <cite>zipimport</cite> module now provides a default import hook for
+Pythons &gt;= 2.4, if the Python import framework sees a zip file, with the
+inclusion of a proper <cite>__init__.py</cite>, it can be treated similarly to a
+directory.  But since a directory can be executable, if we just drop a
+<cite>__main__.py</cite> into a zip file, it suddenly becomes executable:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span><span class="nb">pushd </span>foo <span class="o">&amp;&amp;</span> zip /tmp/flower.zip __main__.py <span class="o">&amp;&amp;</span> <span class="nb">popd</span>
+/tmp/foo /tmp
+  adding: __main__.py <span class="o">(</span>stored 0%<span class="o">)</span>
+/tmp
+<span class="nv">$ </span>python flower.zip
+i like flowers
+</pre></div>
+</div>
+<p>And since zip files don&#8217;t actually start until the zip magic number, you can
+embed arbitrary strings at the beginning of them and they&#8217;re still valid
+zips.  Hence simple PEX files are born:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span><span class="nb">echo</span> <span class="s1">&#39;#!/usr/bin/env python2.6&#39;</span> &gt; flower.pex <span class="o">&amp;&amp;</span> cat flower.zip &gt;&gt; flower.pex
+<span class="nv">$ </span>chmod +x flower.pex
+<span class="nv">$ </span>./flower.pex
+i like flowers
+</pre></div>
+</div>
+<p>Remember <cite>pants.pex</cite>?</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>unzip -l pants.pex | tail -2
+warning <span class="o">[</span>pants.pex<span class="o">]</span>:  25 extra bytes at beginning or within zipfile
+  <span class="o">(</span>attempting to process anyway<span class="o">)</span>
+ --------                   -------
+  7900812                   543 files
+
+<span class="nv">$ </span>head -c 25 pants.pex
+<span class="c">#!/usr/bin/env python2.6</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="pex-main-py">
+<h3>PEX <cite>__main__.py</cite><a class="headerlink" href="#pex-main-py" title="Permalink to this headline">¶</a></h3>
+<p>The <cite>__main__.py</cite> in a real PEX file is somewhat special:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="n">__entry_point__</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="k">if</span> <span class="s">&#39;__file__&#39;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">()</span> <span class="ow">and</span> <span class="n">__file__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+  <span class="n">__entry_point__</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">)</span>
+<span class="k">elif</span> <span class="s">&#39;__loader__&#39;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">():</span>
+  <span class="kn">from</span> <span class="nn">pkgutil</span> <span class="kn">import</span> <span class="n">ImpLoader</span>
+  <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">__loader__</span><span class="p">,</span> <span class="s">&#39;archive&#39;</span><span class="p">):</span>
+    <span class="n">__entry_point__</span> <span class="o">=</span> <span class="n">__loader__</span><span class="o">.</span><span class="n">archive</span>
+  <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">__loader__</span><span class="p">,</span> <span class="n">ImpLoader</span><span class="p">):</span>
+    <span class="n">__entry_point__</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__loader__</span><span class="o">.</span><span class="n">get_filename</span><span class="p">())</span>
+
+<span class="k">if</span> <span class="n">__entry_point__</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+  <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;Could not launch python executable!</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+  <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">__entry_point__</span><span class="p">,</span> <span class="s">&#39;.bootstrap&#39;</span><span class="p">))</span>
+
+<span class="kn">from</span> <span class="nn">twitter.common.python.importer</span> <span class="kn">import</span> <span class="n">monkeypatch</span>
+<span class="n">monkeypatch</span><span class="p">()</span>
+<span class="k">del</span> <span class="n">monkeypatch</span>
+
+<span class="kn">from</span> <span class="nn">twitter.common.python.pex</span> <span class="kn">import</span> <span class="n">PEX</span>
+<span class="n">PEX</span><span class="p">(</span><span class="n">__entry_point__</span><span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><cite>PEX</cite> is just a class that manages requirements (often embedded within PEX
+files as egg distributions in the <cite>.deps</cite> directory) and autoimports them
+into the <cite>sys.path</cite>, then executes a prescribed entry point.</p>
+<p>If you read the code closely, you&#8217;ll notice that it relies upon monkeypatching <cite>zipimport</cite>.  Inside
+the <cite>twitter.common.python</cite> library we&#8217;ve provided a recursive zip importer derived from Google&#8217;s
+<a class="reference external" href="http://code.google.com/appengine/articles/django10_zipimport.html">pure Python zipimport</a> module
+that allows for depending upon eggs within eggs or zips (and so forth) so that PEX files need not
+extract egg dependencies to disk a priori.  This even extends to C extensions (.so and .dylib
+files) which are written to disk long enough to be dlopened before being unlinked.</p>
+<p>Strictly speaking this monkeypatching is not necessary and we may consider
+making that optional.</p>
+</div>
+</div>
+<div class="section" id="advanced-pants-pex-features">
+<h2>Advanced Pants/PEX features<a class="headerlink" href="#advanced-pants-pex-features" title="Permalink to this headline">¶</a></h2>
+<p>TODO: converting python_library targets to eggs</p>
+<p>TODO: auto dependency resolution from within PEX files</p>
+<p>TODO: dynamically self-updating PEX files</p>
+<p>TODO: tailoring your dependency resolution environment with pants.ini, including local cheeseshop mirrors</p>
+</div>
+</div>
+
+
+          <footer>
+  
+    <div class="rst-footer-buttons">
+      
+        <a href="build_files.html" class="btn btn-neutral float-right" title="BUILD files"/>Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="from_maven.html" class="btn btn-neutral" title="Pants for Maven Experts"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <p>
+      &copy; Copyright 2013, Twitter.
+  </p>
+
+  <a href="https://www.github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="http://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+</body>
+</html>
