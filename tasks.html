@@ -226,6 +226,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.jar_dependency"><tt class="docutils literal"><span class="pre">jar_dependency</span></tt> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.jar_library"><tt class="docutils literal"><span class="pre">jar_library</span></tt> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.jarable"><tt class="docutils literal"><span class="pre">jarable</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.java_agent"><tt class="docutils literal"><span class="pre">java_agent</span></tt> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.java_antlr_library"><tt class="docutils literal"><span class="pre">java_antlr_library</span></tt> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.java_library"><tt class="docutils literal"><span class="pre">java_library</span></tt> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.java_protobuf_library"><tt class="docutils literal"><span class="pre">java_protobuf_library</span></tt> Module</a></li>
@@ -353,6 +354,13 @@ body a.icon-home:hover{
 </li>
 <li class="toctree-l1"><a class="reference internal" href="howto_contribute.html">Pants Contributors Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="howto_contribute.html#mailing-list">Mailing List</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto_contribute.html#life-of-a-change">Life of a Change</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="intellij.html">Pants Development with IntelliJ IDEA</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="intellij.html#intellij-setup">IntelliJ Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intellij.html#project-setup">Project Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intellij.html#running-pants-within-intellij-idea">Running Pants within IntelliJ IDEA</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="internals.html">Pants Internals</a><ul>
@@ -736,7 +744,7 @@ set of a target.</p>
 <span id="filemap-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">filemap</span></tt> Module<a class="headerlink" href="#module-twitter.pants.tasks.filemap" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="twitter.pants.tasks.filemap.Filemap">
-<em class="property">class </em><tt class="descclassname">twitter.pants.tasks.filemap.</tt><tt class="descname">Filemap</tt><big>(</big><em>context</em>, <em>outstream=&lt;open file '&lt;stdout&gt;'</em>, <em>mode 'w' at 0x100254150&gt;</em><big>)</big><a class="reference internal" href="_modules/twitter/pants/tasks/filemap.html#Filemap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#twitter.pants.tasks.filemap.Filemap" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">twitter.pants.tasks.filemap.</tt><tt class="descname">Filemap</tt><big>(</big><em>context</em>, <em>outstream=&lt;open file '&lt;stdout&gt;'</em>, <em>mode 'w' at 0x103840150&gt;</em><big>)</big><a class="reference internal" href="_modules/twitter/pants/tasks/filemap.html#Filemap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#twitter.pants.tasks.filemap.Filemap" title="Permalink to this definition">¶</a></dt>
 <dd><p>Outputs a mapping from source file to the target that owns the source file.</p>
 </dd></dl>
 
@@ -745,7 +753,7 @@ set of a target.</p>
 <span id="filter-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">filter</span></tt> Module<a class="headerlink" href="#module-twitter.pants.tasks.filter" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="twitter.pants.tasks.filter.Filter">
-<em class="property">class </em><tt class="descclassname">twitter.pants.tasks.filter.</tt><tt class="descname">Filter</tt><big>(</big><em>context</em>, <em>outstream=&lt;open file '&lt;stdout&gt;'</em>, <em>mode 'w' at 0x100254150&gt;</em><big>)</big><a class="reference internal" href="_modules/twitter/pants/tasks/filter.html#Filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#twitter.pants.tasks.filter.Filter" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">twitter.pants.tasks.filter.</tt><tt class="descname">Filter</tt><big>(</big><em>context</em>, <em>outstream=&lt;open file '&lt;stdout&gt;'</em>, <em>mode 'w' at 0x103840150&gt;</em><big>)</big><a class="reference internal" href="_modules/twitter/pants/tasks/filter.html#Filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#twitter.pants.tasks.filter.Filter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Filters targets based on various criteria.</p>
 </dd></dl>
 
@@ -812,10 +820,7 @@ is_test: true iff the sources contained by this set implement test cases</p>
 <dl class="attribute">
 <dt id="twitter.pants.tasks.ivy_utils.IvyArtifact.path">
 <tt class="descname">path</tt><a class="headerlink" href="#twitter.pants.tasks.ivy_utils.IvyArtifact.path" title="Permalink to this definition">¶</a></dt>
-<dd><p>itemgetter(item, ...) &#8211;&gt; itemgetter object</p>
-<p>Return a callable object that fetches the given item(s) from its operand.
-After, f=itemgetter(2), the call f(r) returns r[2].
-After, g=itemgetter(2,5,3), the call g(r) returns (r[2], r[5], r[3])</p>
+<dd><p>Alias for field number 0</p>
 </dd></dl>
 
 </dd></dl>
@@ -827,28 +832,19 @@ After, g=itemgetter(2,5,3), the call g(r) returns (r[2], r[5], r[3])</p>
 <dl class="attribute">
 <dt id="twitter.pants.tasks.ivy_utils.IvyModule.artifacts">
 <tt class="descname">artifacts</tt><a class="headerlink" href="#twitter.pants.tasks.ivy_utils.IvyModule.artifacts" title="Permalink to this definition">¶</a></dt>
-<dd><p>itemgetter(item, ...) &#8211;&gt; itemgetter object</p>
-<p>Return a callable object that fetches the given item(s) from its operand.
-After, f=itemgetter(2), the call f(r) returns r[2].
-After, g=itemgetter(2,5,3), the call g(r) returns (r[2], r[5], r[3])</p>
+<dd><p>Alias for field number 1</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="twitter.pants.tasks.ivy_utils.IvyModule.callers">
 <tt class="descname">callers</tt><a class="headerlink" href="#twitter.pants.tasks.ivy_utils.IvyModule.callers" title="Permalink to this definition">¶</a></dt>
-<dd><p>itemgetter(item, ...) &#8211;&gt; itemgetter object</p>
-<p>Return a callable object that fetches the given item(s) from its operand.
-After, f=itemgetter(2), the call f(r) returns r[2].
-After, g=itemgetter(2,5,3), the call g(r) returns (r[2], r[5], r[3])</p>
+<dd><p>Alias for field number 2</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="twitter.pants.tasks.ivy_utils.IvyModule.ref">
 <tt class="descname">ref</tt><a class="headerlink" href="#twitter.pants.tasks.ivy_utils.IvyModule.ref" title="Permalink to this definition">¶</a></dt>
-<dd><p>itemgetter(item, ...) &#8211;&gt; itemgetter object</p>
-<p>Return a callable object that fetches the given item(s) from its operand.
-After, f=itemgetter(2), the call f(r) returns r[2].
-After, g=itemgetter(2,5,3), the call g(r) returns (r[2], r[5], r[3])</p>
+<dd><p>Alias for field number 0</p>
 </dd></dl>
 
 </dd></dl>
@@ -860,37 +856,25 @@ After, g=itemgetter(2,5,3), the call g(r) returns (r[2], r[5], r[3])</p>
 <dl class="attribute">
 <dt id="twitter.pants.tasks.ivy_utils.IvyModuleRef.conf">
 <tt class="descname">conf</tt><a class="headerlink" href="#twitter.pants.tasks.ivy_utils.IvyModuleRef.conf" title="Permalink to this definition">¶</a></dt>
-<dd><p>itemgetter(item, ...) &#8211;&gt; itemgetter object</p>
-<p>Return a callable object that fetches the given item(s) from its operand.
-After, f=itemgetter(2), the call f(r) returns r[2].
-After, g=itemgetter(2,5,3), the call g(r) returns (r[2], r[5], r[3])</p>
+<dd><p>Alias for field number 3</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="twitter.pants.tasks.ivy_utils.IvyModuleRef.name">
 <tt class="descname">name</tt><a class="headerlink" href="#twitter.pants.tasks.ivy_utils.IvyModuleRef.name" title="Permalink to this definition">¶</a></dt>
-<dd><p>itemgetter(item, ...) &#8211;&gt; itemgetter object</p>
-<p>Return a callable object that fetches the given item(s) from its operand.
-After, f=itemgetter(2), the call f(r) returns r[2].
-After, g=itemgetter(2,5,3), the call g(r) returns (r[2], r[5], r[3])</p>
+<dd><p>Alias for field number 1</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="twitter.pants.tasks.ivy_utils.IvyModuleRef.org">
 <tt class="descname">org</tt><a class="headerlink" href="#twitter.pants.tasks.ivy_utils.IvyModuleRef.org" title="Permalink to this definition">¶</a></dt>
-<dd><p>itemgetter(item, ...) &#8211;&gt; itemgetter object</p>
-<p>Return a callable object that fetches the given item(s) from its operand.
-After, f=itemgetter(2), the call f(r) returns r[2].
-After, g=itemgetter(2,5,3), the call g(r) returns (r[2], r[5], r[3])</p>
+<dd><p>Alias for field number 0</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="twitter.pants.tasks.ivy_utils.IvyModuleRef.rev">
 <tt class="descname">rev</tt><a class="headerlink" href="#twitter.pants.tasks.ivy_utils.IvyModuleRef.rev" title="Permalink to this definition">¶</a></dt>
-<dd><p>itemgetter(item, ...) &#8211;&gt; itemgetter object</p>
-<p>Return a callable object that fetches the given item(s) from its operand.
-After, f=itemgetter(2), the call f(r) returns r[2].
-After, g=itemgetter(2,5,3), the call g(r) returns (r[2], r[5], r[3])</p>
+<dd><p>Alias for field number 2</p>
 </dd></dl>
 
 </dd></dl>
@@ -1059,19 +1043,13 @@ Ivy settings file to use when publishing is required.</p>
 <dl class="attribute">
 <dt id="twitter.pants.tasks.jvmdoc_gen.Jvmdoc.product_type">
 <tt class="descname">product_type</tt><a class="headerlink" href="#twitter.pants.tasks.jvmdoc_gen.Jvmdoc.product_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>itemgetter(item, ...) &#8211;&gt; itemgetter object</p>
-<p>Return a callable object that fetches the given item(s) from its operand.
-After, f=itemgetter(2), the call f(r) returns r[2].
-After, g=itemgetter(2,5,3), the call g(r) returns (r[2], r[5], r[3])</p>
+<dd><p>Alias for field number 1</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="twitter.pants.tasks.jvmdoc_gen.Jvmdoc.tool_name">
 <tt class="descname">tool_name</tt><a class="headerlink" href="#twitter.pants.tasks.jvmdoc_gen.Jvmdoc.tool_name" title="Permalink to this definition">¶</a></dt>
-<dd><p>itemgetter(item, ...) &#8211;&gt; itemgetter object</p>
-<p>Return a callable object that fetches the given item(s) from its operand.
-After, f=itemgetter(2), the call f(r) returns r[2].
-After, g=itemgetter(2,5,3), the call g(r) returns (r[2], r[5], r[3])</p>
+<dd><p>Alias for field number 0</p>
 </dd></dl>
 
 </dd></dl>
@@ -1101,7 +1079,7 @@ targets.</p>
 <span id="minimal-cover-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">minimal_cover</span></tt> Module<a class="headerlink" href="#module-twitter.pants.tasks.minimal_cover" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="twitter.pants.tasks.minimal_cover.MinimalCover">
-<em class="property">class </em><tt class="descclassname">twitter.pants.tasks.minimal_cover.</tt><tt class="descname">MinimalCover</tt><big>(</big><em>context</em>, <em>outstream=&lt;open file '&lt;stdout&gt;'</em>, <em>mode 'w' at 0x100254150&gt;</em><big>)</big><a class="reference internal" href="_modules/twitter/pants/tasks/minimal_cover.html#MinimalCover"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#twitter.pants.tasks.minimal_cover.MinimalCover" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">twitter.pants.tasks.minimal_cover.</tt><tt class="descname">MinimalCover</tt><big>(</big><em>context</em>, <em>outstream=&lt;open file '&lt;stdout&gt;'</em>, <em>mode 'w' at 0x103840150&gt;</em><big>)</big><a class="reference internal" href="_modules/twitter/pants/tasks/minimal_cover.html#MinimalCover"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#twitter.pants.tasks.minimal_cover.MinimalCover" title="Permalink to this definition">¶</a></dt>
 <dd><p>Outputs a minimal covering set of targets.</p>
 <p>For a given set of input targets, the output targets transitive dependency set will include all
 the input targets without gaps.</p>
@@ -1136,7 +1114,7 @@ the input targets without gaps.</p>
 <span id="roots-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">roots</span></tt> Module<a class="headerlink" href="#module-twitter.pants.tasks.roots" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="twitter.pants.tasks.roots.ListRoots">
-<em class="property">class </em><tt class="descclassname">twitter.pants.tasks.roots.</tt><tt class="descname">ListRoots</tt><big>(</big><em>context</em>, <em>outstream=&lt;open file '&lt;stdout&gt;'</em>, <em>mode 'w' at 0x100254150&gt;</em><big>)</big><a class="reference internal" href="_modules/twitter/pants/tasks/roots.html#ListRoots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#twitter.pants.tasks.roots.ListRoots" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">twitter.pants.tasks.roots.</tt><tt class="descname">ListRoots</tt><big>(</big><em>context</em>, <em>outstream=&lt;open file '&lt;stdout&gt;'</em>, <em>mode 'w' at 0x103840150&gt;</em><big>)</big><a class="reference internal" href="_modules/twitter/pants/tasks/roots.html#ListRoots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#twitter.pants.tasks.roots.ListRoots" title="Permalink to this definition">¶</a></dt>
 <dd><p>List the registered source roots of the repo.</p>
 </dd></dl>
 
@@ -1177,55 +1155,37 @@ expressions are relative to the repository root
 <dl class="attribute">
 <dt id="twitter.pants.tasks.scrooge_gen.CompilerConfig.calc_srcs">
 <tt class="descname">calc_srcs</tt><a class="headerlink" href="#twitter.pants.tasks.scrooge_gen.CompilerConfig.calc_srcs" title="Permalink to this definition">¶</a></dt>
-<dd><p>itemgetter(item, ...) &#8211;&gt; itemgetter object</p>
-<p>Return a callable object that fetches the given item(s) from its operand.
-After, f=itemgetter(2), the call f(r) returns r[2].
-After, g=itemgetter(2,5,3), the call g(r) returns (r[2], r[5], r[3])</p>
+<dd><p>Alias for field number 4</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="twitter.pants.tasks.scrooge_gen.CompilerConfig.config_section">
 <tt class="descname">config_section</tt><a class="headerlink" href="#twitter.pants.tasks.scrooge_gen.CompilerConfig.config_section" title="Permalink to this definition">¶</a></dt>
-<dd><p>itemgetter(item, ...) &#8211;&gt; itemgetter object</p>
-<p>Return a callable object that fetches the given item(s) from its operand.
-After, f=itemgetter(2), the call f(r) returns r[2].
-After, g=itemgetter(2,5,3), the call g(r) returns (r[2], r[5], r[3])</p>
+<dd><p>Alias for field number 1</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="twitter.pants.tasks.scrooge_gen.CompilerConfig.langs">
 <tt class="descname">langs</tt><a class="headerlink" href="#twitter.pants.tasks.scrooge_gen.CompilerConfig.langs" title="Permalink to this definition">¶</a></dt>
-<dd><p>itemgetter(item, ...) &#8211;&gt; itemgetter object</p>
-<p>Return a callable object that fetches the given item(s) from its operand.
-After, f=itemgetter(2), the call f(r) returns r[2].
-After, g=itemgetter(2,5,3), the call g(r) returns (r[2], r[5], r[3])</p>
+<dd><p>Alias for field number 5</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="twitter.pants.tasks.scrooge_gen.CompilerConfig.main">
 <tt class="descname">main</tt><a class="headerlink" href="#twitter.pants.tasks.scrooge_gen.CompilerConfig.main" title="Permalink to this definition">¶</a></dt>
-<dd><p>itemgetter(item, ...) &#8211;&gt; itemgetter object</p>
-<p>Return a callable object that fetches the given item(s) from its operand.
-After, f=itemgetter(2), the call f(r) returns r[2].
-After, g=itemgetter(2,5,3), the call g(r) returns (r[2], r[5], r[3])</p>
+<dd><p>Alias for field number 3</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="twitter.pants.tasks.scrooge_gen.CompilerConfig.name">
 <tt class="descname">name</tt><a class="headerlink" href="#twitter.pants.tasks.scrooge_gen.CompilerConfig.name" title="Permalink to this definition">¶</a></dt>
-<dd><p>itemgetter(item, ...) &#8211;&gt; itemgetter object</p>
-<p>Return a callable object that fetches the given item(s) from its operand.
-After, f=itemgetter(2), the call f(r) returns r[2].
-After, g=itemgetter(2,5,3), the call g(r) returns (r[2], r[5], r[3])</p>
+<dd><p>Alias for field number 0</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="twitter.pants.tasks.scrooge_gen.CompilerConfig.profile">
 <tt class="descname">profile</tt><a class="headerlink" href="#twitter.pants.tasks.scrooge_gen.CompilerConfig.profile" title="Permalink to this definition">¶</a></dt>
-<dd><p>itemgetter(item, ...) &#8211;&gt; itemgetter object</p>
-<p>Return a callable object that fetches the given item(s) from its operand.
-After, f=itemgetter(2), the call f(r) returns r[2].
-After, g=itemgetter(2,5,3), the call g(r) returns (r[2], r[5], r[3])</p>
+<dd><p>Alias for field number 2</p>
 </dd></dl>
 
 </dd></dl>
@@ -1248,7 +1208,7 @@ Returns an interable of services</p>
 <span id="targets-help-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">targets_help</span></tt> Module<a class="headerlink" href="#module-twitter.pants.tasks.targets_help" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="twitter.pants.tasks.targets_help.TargetsHelp">
-<em class="property">class </em><tt class="descclassname">twitter.pants.tasks.targets_help.</tt><tt class="descname">TargetsHelp</tt><big>(</big><em>context</em>, <em>outstream=&lt;open file '&lt;stdout&gt;'</em>, <em>mode 'w' at 0x100254150&gt;</em><big>)</big><a class="reference internal" href="_modules/twitter/pants/tasks/targets_help.html#TargetsHelp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#twitter.pants.tasks.targets_help.TargetsHelp" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">twitter.pants.tasks.targets_help.</tt><tt class="descname">TargetsHelp</tt><big>(</big><em>context</em>, <em>outstream=&lt;open file '&lt;stdout&gt;'</em>, <em>mode 'w' at 0x103840150&gt;</em><big>)</big><a class="reference internal" href="_modules/twitter/pants/tasks/targets_help.html#TargetsHelp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#twitter.pants.tasks.targets_help.TargetsHelp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Provides online help for installed targets.</p>
 <p>This task provides online help modes for installed targets. Without args,
 all installed targets are listed with their one-line description.
@@ -1306,7 +1266,7 @@ help about.</p>
 
 <dl class="class">
 <dt id="twitter.pants.tasks.what_changed.WhatChanged">
-<em class="property">class </em><tt class="descclassname">twitter.pants.tasks.what_changed.</tt><tt class="descname">WhatChanged</tt><big>(</big><em>context</em>, <em>workspace</em>, <em>outstream=&lt;open file '&lt;stdout&gt;'</em>, <em>mode 'w' at 0x100254150&gt;</em><big>)</big><a class="reference internal" href="_modules/twitter/pants/tasks/what_changed.html#WhatChanged"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#twitter.pants.tasks.what_changed.WhatChanged" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">twitter.pants.tasks.what_changed.</tt><tt class="descname">WhatChanged</tt><big>(</big><em>context</em>, <em>workspace</em>, <em>outstream=&lt;open file '&lt;stdout&gt;'</em>, <em>mode 'w' at 0x103840150&gt;</em><big>)</big><a class="reference internal" href="_modules/twitter/pants/tasks/what_changed.html#WhatChanged"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#twitter.pants.tasks.what_changed.WhatChanged" title="Permalink to this definition">¶</a></dt>
 <dd><p>Emits the targets that have been modified since a given commit.</p>
 </dd></dl>
 

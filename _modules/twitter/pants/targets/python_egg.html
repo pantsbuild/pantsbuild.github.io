@@ -225,6 +225,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../../targets.html#module-twitter.pants.targets.jar_dependency"><tt class="docutils literal"><span class="pre">jar_dependency</span></tt> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../targets.html#module-twitter.pants.targets.jar_library"><tt class="docutils literal"><span class="pre">jar_library</span></tt> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../targets.html#module-twitter.pants.targets.jarable"><tt class="docutils literal"><span class="pre">jarable</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../targets.html#module-twitter.pants.targets.java_agent"><tt class="docutils literal"><span class="pre">java_agent</span></tt> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../targets.html#module-twitter.pants.targets.java_antlr_library"><tt class="docutils literal"><span class="pre">java_antlr_library</span></tt> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../targets.html#module-twitter.pants.targets.java_library"><tt class="docutils literal"><span class="pre">java_library</span></tt> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../targets.html#module-twitter.pants.targets.java_protobuf_library"><tt class="docutils literal"><span class="pre">java_protobuf_library</span></tt> Module</a></li>
@@ -352,6 +353,13 @@ body a.icon-home:hover{
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../howto_contribute.html">Pants Contributors Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../howto_contribute.html#mailing-list">Mailing List</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../howto_contribute.html#life-of-a-change">Life of a Change</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../intellij.html">Pants Development with IntelliJ IDEA</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../intellij.html#intellij-setup">IntelliJ Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../intellij.html#project-setup">Project Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../intellij.html#running-pants-within-intellij-idea">Running Pants within IntelliJ IDEA</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../internals.html">Pants Internals</a><ul>
@@ -416,8 +424,6 @@ body a.icon-home:hover{
 <span class="c"># limitations under the License.</span>
 <span class="c"># ==================================================================================================</span>
 
-<span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;Brian Wickman&#39;</span>
-
 <span class="kn">import</span> <span class="nn">os</span>
 
 <span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span> <span class="k">as</span> <span class="n">fsglob</span>
@@ -425,6 +431,7 @@ body a.icon-home:hover{
 <span class="kn">from</span> <span class="nn">zipimport</span> <span class="kn">import</span> <span class="n">zipimporter</span>
 
 <span class="kn">from</span> <span class="nn">twitter.pants.base.build_manual</span> <span class="kn">import</span> <span class="n">manual</span>
+<span class="kn">from</span> <span class="nn">twitter.pants.base.parse_context</span> <span class="kn">import</span> <span class="n">ParseContext</span>
 
 <span class="kn">from</span> <span class="nn">.python_requirement</span> <span class="kn">import</span> <span class="n">PythonRequirement</span>
 
@@ -441,7 +448,8 @@ body a.icon-home:hover{
 <span class="sd">  :param string glob: File glob pattern.</span>
 <span class="sd">  :param string name: Target name; by default uses the egg&#39;s project name.</span>
 <span class="sd">  &quot;&quot;&quot;</span>
-  <span class="n">eggs</span> <span class="o">=</span> <span class="n">fsglob</span><span class="p">(</span><span class="n">glob</span><span class="p">)</span>
+  <span class="c"># TODO(John Sirois): Rationalize with globs handling in ParseContext</span>
+  <span class="n">eggs</span> <span class="o">=</span> <span class="n">fsglob</span><span class="p">(</span><span class="n">ParseContext</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="n">glob</span><span class="p">))</span>
 
   <span class="n">requirements</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
   <span class="k">for</span> <span class="n">egg</span> <span class="ow">in</span> <span class="n">eggs</span><span class="p">:</span>

@@ -226,6 +226,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.jar_dependency"><tt class="docutils literal"><span class="pre">jar_dependency</span></tt> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.jar_library"><tt class="docutils literal"><span class="pre">jar_library</span></tt> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.jarable"><tt class="docutils literal"><span class="pre">jarable</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.java_agent"><tt class="docutils literal"><span class="pre">java_agent</span></tt> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.java_antlr_library"><tt class="docutils literal"><span class="pre">java_antlr_library</span></tt> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.java_library"><tt class="docutils literal"><span class="pre">java_library</span></tt> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.java_protobuf_library"><tt class="docutils literal"><span class="pre">java_protobuf_library</span></tt> Module</a></li>
@@ -353,6 +354,13 @@ body a.icon-home:hover{
 </li>
 <li class="toctree-l1"><a class="reference internal" href="howto_contribute.html">Pants Contributors Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="howto_contribute.html#mailing-list">Mailing List</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto_contribute.html#life-of-a-change">Life of a Change</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="intellij.html">Pants Development with IntelliJ IDEA</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="intellij.html#intellij-setup">IntelliJ Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intellij.html#project-setup">Project Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intellij.html#running-pants-within-intellij-idea">Running Pants within IntelliJ IDEA</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="internals.html">Pants Internals</a><ul>
@@ -457,14 +465,18 @@ source code tree structure.</p>
 <tt class="docutils literal"><span class="pre">top/src/java/com/foo/</span></tt> and your Java tests are in <tt class="docutils literal"><span class="pre">top/src/javatest/com/foo/</span></tt>,
 then your top-level <cite>BUILD</cite> file might look like:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="c"># top/BUILD</span>
+<span class="n">source_root</span><span class="p">(</span><span class="s">&#39;src/java&#39;</span><span class="p">)</span>
+<span class="n">source_root</span><span class="p">(</span><span class="s">&#39;src/javatest&#39;</span><span class="p">)</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+<p>Pants can optionally enforce that only certain target types are allowed under each source root:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># top/BUILD</span>
 <span class="n">source_root</span><span class="p">(</span><span class="s">&#39;src/java&#39;</span><span class="p">,</span> <span class="n">annotation_processor</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">jvm_binary</span><span class="p">,</span> <span class="n">java_library</span><span class="p">,</span> <span class="n">page</span><span class="p">)</span>
 <span class="n">source_root</span><span class="p">(</span><span class="s">&#39;src/javatest&#39;</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">java_library</span><span class="p">,</span> <span class="n">java_tests</span><span class="p">,</span> <span class="n">page</span><span class="p">)</span>
 <span class="o">...</span>
 </pre></div>
 </div>
-<p>With this layout, if you build a <tt class="docutils literal"><span class="pre">jvm_binary</span></tt> target, it uses <tt class="docutils literal"><span class="pre">top/src/java</span></tt> as
-a base when figuring out whence to import <tt class="docutils literal"><span class="pre">com.top.amazing.service</span></tt>; if you
-build a <tt class="docutils literal"><span class="pre">java_library</span></tt>, it uses <tt class="docutils literal"><span class="pre">top/src/java</span></tt> and <tt class="docutils literal"><span class="pre">top/src/javatest</span></tt> as bases.</p>
 </div>
 <div class="section" id="organized-by-project">
 <h3>Organized by Project<a class="headerlink" href="#organized-by-project" title="Permalink to this headline">¶</a></h3>
@@ -473,13 +485,18 @@ Theodore and Hank projects live in <tt class="docutils literal"><span class="pre
 then your top-level <cite>BUILD</cite> file might not contain any <tt class="docutils literal"><span class="pre">source_root</span></tt> statements.
 Instead, <tt class="docutils literal"><span class="pre">theodore/BUILD</span></tt> and <tt class="docutils literal"><span class="pre">hank/BUILD</span></tt> might look like:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="c"># top/(project)/BUILD</span>
+<span class="n">source_root</span><span class="p">(</span><span class="s">&#39;src/java&#39;</span><span class="p">)</span>
+<span class="n">source_root</span><span class="p">(</span><span class="s">&#39;src/javatest&#39;</span><span class="p">)</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+<p>Or:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># top/(project)/BUILD</span>
 <span class="n">source_root</span><span class="p">(</span><span class="s">&#39;src/java&#39;</span><span class="p">,</span> <span class="n">annotation_processor</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">jvm_binary</span><span class="p">,</span> <span class="n">java_library</span><span class="p">,</span> <span class="n">page</span><span class="p">)</span>
 <span class="n">source_root</span><span class="p">(</span><span class="s">&#39;src/javatest&#39;</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">java_library</span><span class="p">,</span> <span class="n">java_tests</span><span class="p">,</span> <span class="n">page</span><span class="p">)</span>
 <span class="o">...</span>
 </pre></div>
 </div>
-<p>With this layout, if you build a <tt class="docutils literal"><span class="pre">jvm_binary</span></tt> target under the <tt class="docutils literal"><span class="pre">top/hank/</span></tt> directory,
-it uses <tt class="docutils literal"><span class="pre">top/hank/src/java</span></tt> as a base when figuring out whence to import <tt class="docutils literal"><span class="pre">com.top.hank</span></tt>.</p>
 <div class="section" id="build-and-environment-specific-config">
 <h4><cite>BUILD.*</cite> and environment-specific config<a class="headerlink" href="#build-and-environment-specific-config" title="Permalink to this headline">¶</a></h4>
 <p>When we said <cite>BUILD</cite> files were named <cite>BUILD</cite>, we really meant <cite>BUILD</cite>

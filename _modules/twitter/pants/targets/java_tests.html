@@ -225,6 +225,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../../targets.html#module-twitter.pants.targets.jar_dependency"><tt class="docutils literal"><span class="pre">jar_dependency</span></tt> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../targets.html#module-twitter.pants.targets.jar_library"><tt class="docutils literal"><span class="pre">jar_library</span></tt> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../targets.html#module-twitter.pants.targets.jarable"><tt class="docutils literal"><span class="pre">jarable</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../targets.html#module-twitter.pants.targets.java_agent"><tt class="docutils literal"><span class="pre">java_agent</span></tt> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../targets.html#module-twitter.pants.targets.java_antlr_library"><tt class="docutils literal"><span class="pre">java_antlr_library</span></tt> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../targets.html#module-twitter.pants.targets.java_library"><tt class="docutils literal"><span class="pre">java_library</span></tt> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../targets.html#module-twitter.pants.targets.java_protobuf_library"><tt class="docutils literal"><span class="pre">java_protobuf_library</span></tt> Module</a></li>
@@ -352,6 +353,13 @@ body a.icon-home:hover{
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../howto_contribute.html">Pants Contributors Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../howto_contribute.html#mailing-list">Mailing List</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../howto_contribute.html#life-of-a-change">Life of a Change</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../intellij.html">Pants Development with IntelliJ IDEA</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../intellij.html#intellij-setup">IntelliJ Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../intellij.html#project-setup">Project Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../intellij.html#running-pants-within-intellij-idea">Running Pants within IntelliJ IDEA</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../internals.html">Pants Internals</a><ul>
@@ -419,11 +427,11 @@ body a.icon-home:hover{
 <span class="kn">from</span> <span class="nn">twitter.pants.base</span> <span class="kn">import</span> <span class="n">manual</span>
 
 <span class="kn">from</span> <span class="nn">.jvm_target</span> <span class="kn">import</span> <span class="n">JvmTarget</span>
-<span class="kn">from</span> <span class="nn">.resources</span> <span class="kn">import</span> <span class="n">Resources</span>
+<span class="kn">from</span> <span class="nn">.resources</span> <span class="kn">import</span> <span class="n">WithResources</span>
 
 
 <span class="nd">@manual.builddict</span><span class="p">(</span><span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;jvm&#39;</span><span class="p">])</span>
-<div class="viewcode-block" id="JavaTests"><a class="viewcode-back" href="../../../../targets.html#twitter.pants.targets.java_tests.JavaTests">[docs]</a><span class="k">class</span> <span class="nc">JavaTests</span><span class="p">(</span><span class="n">JvmTarget</span><span class="p">):</span>
+<div class="viewcode-block" id="JavaTests"><a class="viewcode-back" href="../../../../targets.html#twitter.pants.targets.java_tests.JavaTests">[docs]</a><span class="k">class</span> <span class="nc">JavaTests</span><span class="p">(</span><span class="n">JvmTarget</span><span class="p">,</span> <span class="n">WithResources</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Tests JVM sources with JUnit.&quot;&quot;&quot;</span>
 
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
@@ -451,10 +459,9 @@ body a.icon-home:hover{
 <span class="sd">     file resources to place in this module&#39;s jar.</span>
 <span class="sd">   :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.</span>
 <span class="sd">   &quot;&quot;&quot;</span>
-
     <span class="nb">super</span><span class="p">(</span><span class="n">JavaTests</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">sources</span><span class="p">,</span> <span class="n">dependencies</span><span class="p">,</span> <span class="n">excludes</span><span class="p">,</span> <span class="n">exclusives</span><span class="o">=</span><span class="n">exclusives</span><span class="p">)</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">resources</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resolve_all</span><span class="p">(</span><span class="n">resources</span><span class="p">,</span> <span class="n">Resources</span><span class="p">))</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">resources</span> <span class="o">=</span> <span class="n">resources</span>
 
     <span class="c"># TODO(John Sirois): These could be scala, clojure, etc.  &#39;jvm&#39; and &#39;tests&#39; are the only truly</span>
     <span class="c"># applicable labels - fixup the &#39;java&#39; misnomer.</span>
