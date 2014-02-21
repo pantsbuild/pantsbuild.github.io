@@ -226,7 +226,6 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.jar_dependency"><tt class="docutils literal"><span class="pre">jar_dependency</span></tt> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.jar_library"><tt class="docutils literal"><span class="pre">jar_library</span></tt> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.jarable"><tt class="docutils literal"><span class="pre">jarable</span></tt> Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.java_agent"><tt class="docutils literal"><span class="pre">java_agent</span></tt> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.java_antlr_library"><tt class="docutils literal"><span class="pre">java_antlr_library</span></tt> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.java_library"><tt class="docutils literal"><span class="pre">java_library</span></tt> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="targets.html#module-twitter.pants.targets.java_protobuf_library"><tt class="docutils literal"><span class="pre">java_protobuf_library</span></tt> Module</a></li>
@@ -354,13 +353,6 @@ body a.icon-home:hover{
 </li>
 <li class="toctree-l1"><a class="reference internal" href="howto_contribute.html">Pants Contributors Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="howto_contribute.html#mailing-list">Mailing List</a></li>
-<li class="toctree-l2"><a class="reference internal" href="howto_contribute.html#life-of-a-change">Life of a Change</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="intellij.html">Pants Development with IntelliJ IDEA</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="intellij.html#intellij-setup">IntelliJ Setup</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intellij.html#project-setup">Project Setup</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intellij.html#running-pants-within-intellij-idea">Running Pants within IntelliJ IDEA</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="internals.html">Pants Internals</a><ul>
@@ -497,7 +489,7 @@ specific target types.</p>
 target dependencies. As expected, foundational jars and targets
 are identified. Let&#8217;s say we wanted to restrict this report to
 internal or external-only targets. Well... that&#8217;s your homework :)</p>
-<div class="highlight-python"><div class="highlight"><pre>$ ./pants goal pagerank src/java/com/twitter/common/:: | head
+<div class="highlight-python"><pre>$ ./pants goal pagerank src/java/com/twitter/common/:: | head
 8.283371 - com.google.code.findbugs-jsr305-1.3.9
 7.433371 - javax.inject-javax.inject-1
 7.433371 - com.google.guava-guava-14.0.1
@@ -507,8 +499,7 @@ internal or external-only targets. Well... that&#8217;s your homework :)</p>
 2.205346 - javax.servlet-servlet-api-2.5
 2.042915 - org.hamcrest-hamcrest-core-1.2
 1.898855 - org.slf4j-slf4j-jdk14-1.6.1
-1.898855 - org.slf4j-slf4j-api-1.6.1
-</pre></div>
+1.898855 - org.slf4j-slf4j-api-1.6.1</pre>
 </div>
 <p>As you can see, generating reports is quite simple. We have the opportunity
 to configure the task, and implement a simple interface that processes the
@@ -550,12 +541,11 @@ these targets are reachable by one or more <tt class="docutils literal"><span cl
 the command-line; <em>concrete</em> meaning all targets resolve to themselves,
 with any intermediate bags of <tt class="docutils literal"><span class="pre">dependencies</span></tt> removed.</p>
 <p>Let&#8217;s explore how to collect all targets of a particular type.</p>
-<div class="highlight-python"><div class="highlight"><pre>def execute(self, targets):
+<div class="highlight-python"><pre>def execute(self, targets):
   interesting_targets = set()
   for target in targets:
     target.walk(lambda t: interesting_targets.add(t),
-                lambda t: isinstance(t, FooLibrary)
-</pre></div>
+                lambda t: isinstance(t, FooLibrary)</pre>
 </div>
 <p>First we need to iterate over <tt class="docutils literal"><span class="pre">targets</span></tt>, which are the active concrete targets.
 Then we <tt class="docutils literal"><span class="pre">walk</span></tt> each concrete target, providing as the first parameter
@@ -616,22 +606,21 @@ for scala code. Let&#8217;s examine a simplified task that uses this tool. This 
 condensed from the Scalastyle task provided by pants; please see its sources for a real-world
 example, including exemplary configuration and error handling (which your task will have too,
 right :)</p>
-<div class="highlight-python"><div class="highlight"><pre>class Scalastyle(NailgunTask):
+<div class="highlight-python"><pre>class Scalastyle(NailgunTask):
   def __init__(self, context):
     NailgunTask.__init__(self, context)
-    self._scalastyle_config = self.context.config.get_required(&#39;scalastyle, &#39;config&#39;)
-    self._scalastyle_bootstrap_key = &#39;scalastyle&#39;
-    self.register_jvm_tool(self._scalastyle_bootstrap_key, [&#39;:scalastyle&#39;])
+    self._scalastyle_config = self.context.config.get_required('scalastyle, 'config')
+    self._scalastyle_bootstrap_key = 'scalastyle'
+    self.register_jvm_tool(self._scalastyle_bootstrap_key, [':scalastyle'])
 
   def execute(self, targets):
     srcs = get_scala_sources(targets)
     cp = self._jvm_tool_bootstrapper.get_jvm_tool_classpath(self._scalastyle_bootstrap_key)
-    result = self.runjava(main=&#39;org.scalastyle.Main&#39;,
+    result = self.runjava(main='org.scalastyle.Main',
                           classpath=cp,
-                          args=[&#39;-c&#39;, self._scalastyle_config] + srcs)
+                          args=['-c', self._scalastyle_config] + srcs)
     if result != 0:
-      raise TaskError(&#39;java %s ... exited non-zero (%i)&#39; % (&#39;org.scalastyle.Main&#39;, result))
-</pre></div>
+      raise TaskError('java %s ... exited non-zero (%i)' % ('org.scalastyle.Main', result))</pre>
 </div>
 <p>Notice how we subclass <tt class="docutils literal"><span class="pre">NailgunTask</span></tt>. This takes advantage of
 <a class="reference external" href="http://www.martiansoftware.com/nailgun/">Nailgun</a> to speed up any tool with
