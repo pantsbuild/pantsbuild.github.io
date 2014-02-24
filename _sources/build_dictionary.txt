@@ -25,6 +25,7 @@ targets; some are handy utilities.
 `goal`_ |
 `jar`_ |
 `jar_library`_ |
+`java_agent`_ |
 `java_antlr_library`_ |
 `java_library`_ |
 `java_protobuf_library`_ |
@@ -66,6 +67,7 @@ targets; some are handy utilities.
 `exclude`_ |
 `fancy_pants`_ |
 `jar`_ |
+`java_agent`_ |
 `java_antlr_library`_ |
 `java_library`_ |
 `java_protobuf_library`_ |
@@ -212,7 +214,7 @@ benchmark
 bundle
 -------------------------------------------------------------------------------
 
-.. py:function:: bundle(mapper=None, relative_to=None)
+.. py:function:: bundle(base=None, mapper=None, relative_to=None)
 
  A set of files to include in an application bundle.
  
@@ -234,7 +236,8 @@ bundle
 
 
  :param mapper: Function that takes a path string and returns a path string. Takes a path in
-   the source tree, returns a path to use in the resulting bundle. By default, an identity mapper.
+   the source tree, returns a path to use in the resulting bundle. By default, an identity
+   mapper.
  :param string relative_to: Set up a simple mapping from source path to bundle path.
    E.g., ``relative_to='common'`` removes that prefix from all files in the application bundle.
 
@@ -274,17 +277,20 @@ credentials
 dependencies
 -------------------------------------------------------------------------------
 
-.. py:function:: dependencies(name, dependencies, exclusives=None)
+.. py:function:: dependencies(name, dependencies, overrides=None, exclusives=None)
 
  A set of dependencies that may be depended upon,
  as if depending upon the set of dependencies directly.
 
 
- name: The name of this module target, addressable via pants via the portion of the spec
-     following the colon
- dependencies: one or more JarDependencies this JarLibrary bundles or Pants pointing to other
-     JarLibraries or JavaTargets
- exclusives:   An optional map of exclusives tags. See CheckExclusives for details.
+ :param string name: The name of this target, which combined with this
+   build file defines the target :class:`twitter.pants.base.address.Address`.
+ :param dependencies: List of :class:`twitter.pants.base.target.Target` instances
+   this target depends on.
+ :param overrides: List of strings, each of which will be recursively resolved to
+   any targets that provide artifacts. Those artifacts will override corresponding
+   direct/transitive dependencies in the dependencies list.
+ :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
 
 **Methods:**
 
@@ -451,6 +457,48 @@ jar_library
  Old name for `dependencies`_
 
 
+
+.. _bdict_java_agent:
+
+java_agent
+-------------------------------------------------------------------------------
+
+.. py:function:: java_agent(name, sources=None, dependencies=None, excludes=None, resources=None, exclusives=None, premain=None, agent_class=None, can_redefine=False, can_retransform=False, can_set_native_method_prefix=False)
+
+ Defines a java agent entrypoint.
+
+
+ :param string name: The name of this target, which combined with this
+   build file defines the target :class:`twitter.pants.base.address.Address`.
+ :param sources: A list of filenames representing the source code
+   this library is compiled from.
+ :type sources: list of strings
+ :param dependencies: List of :class:`twitter.pants.base.target.Target` instances
+   this target depends on.
+ :type dependencies: list of targets
+ :param excludes: List of :class:`twitter.pants.targets.exclude.Exclude` instances
+   to filter this target's transitive dependencies against.
+ :param resources: An optional list of file paths (DEPRECATED) or
+   ``resources`` targets (which in turn point to file paths). The paths
+   indicate text file resources to place in this module's jar.
+ :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
+ :param string premain: When an agent is specified at JVM launch time this attribute specifies
+   the agent class. Exactly one of ``premain`` or ``agent_class`` must be specified.
+ :param string agent_class: If an implementation supports a mechanism to start agents sometime
+   after the VM has started then this attribute specifies the agent class. Exactly one of
+   ``premain`` or ``agent_class`` must be specified.
+ :param bool can_redefine: `True` if the ability to redefine classes is needed by this agent;
+   `False` by default.
+ :param bool can_retransform: `True` if the ability to retransform classes is needed by this
+   agent; `False` by default.
+ :param bool can_set_native_method_prefix: `True` if the ability to set he native method prefix
+   is needed by this agent; `False` by default.
+
+**Methods:**
+
+ .. py:method:: with_description(description)
+
+ Set a human-readable description of this target.
 
 .. _bdict_java_antlr_library:
 
