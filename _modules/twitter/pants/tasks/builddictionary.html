@@ -293,7 +293,6 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../../goals_reference.html#jar">jar</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../goals_reference.html#killserver">killserver</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../goals_reference.html#list">list</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../goals_reference.html#markdown">markdown</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../goals_reference.html#minimize">minimize</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../goals_reference.html#ng-killall">ng-killall</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../goals_reference.html#path">path</a></li>
@@ -528,6 +527,7 @@ body a.icon-home:hover{
 <span class="c"># limitations under the License.</span>
 <span class="c"># =============================================================================</span>
 
+<span class="kn">import</span> <span class="nn">collections</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">import</span> <span class="nn">os</span>
 
@@ -537,12 +537,45 @@ body a.icon-home:hover{
 <span class="kn">from</span> <span class="nn">twitter.common.dirutil</span> <span class="kn">import</span> <span class="n">Fileset</span><span class="p">,</span> <span class="n">safe_open</span>
 <span class="kn">from</span> <span class="nn">twitter.pants.base.build_file_helpers</span> <span class="kn">import</span> <span class="n">maven_layout</span>
 <span class="kn">from</span> <span class="nn">twitter.pants.base.generator</span> <span class="kn">import</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">TemplateData</span>
+
 <span class="kn">from</span> <span class="nn">twitter.pants.goal.phase</span> <span class="kn">import</span> <span class="n">Phase</span>
 <span class="kn">from</span> <span class="nn">twitter.pants.tasks</span> <span class="kn">import</span> <span class="n">Task</span><span class="p">,</span> <span class="n">TaskError</span>
 
 <span class="kn">from</span> <span class="nn">pkg_resources</span> <span class="kn">import</span> <span class="n">resource_string</span>
 
+<div class="viewcode-block" id="indent_docstring_by_n"><a class="viewcode-back" href="../../../../tasks.html#twitter.pants.tasks.builddictionary.indent_docstring_by_n">[docs]</a><span class="k">def</span> <span class="nf">indent_docstring_by_n</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Return a ReST-friendly-indented string converted from a Python docstring</span>
 
+<span class="sd">  :param s: string indented a la docstring</span>
+<span class="sd">  :param n: number of spaces to indent (by which ReST imputes outline-level)</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="c"># Docstring indentation: more gnarly than you&#39;d think:</span>
+  <span class="c"># http://www.python.org/dev/peps/pep-0257/#handling-docstring-indentation</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="n">s</span><span class="p">:</span> <span class="k">return</span> <span class="n">s</span>
+  <span class="c"># Convert tabs to spaces (following the normal Python rules)</span>
+  <span class="c"># and split into a list of lines:</span>
+  <span class="n">lines</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">expandtabs</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+  <span class="c"># Determine minimum indentation (first line doesn&#39;t count):</span>
+  <span class="n">indent</span> <span class="o">=</span> <span class="mi">999</span>
+  <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+    <span class="n">stripped</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">stripped</span><span class="p">:</span>
+      <span class="n">indent</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">indent</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">stripped</span><span class="p">))</span>
+  <span class="c"># Remove indentation (first line is special):</span>
+  <span class="n">trimmed</span> <span class="o">=</span> <span class="p">[</span><span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
+  <span class="k">if</span> <span class="n">indent</span> <span class="o">&lt;</span> <span class="mi">999</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+      <span class="n">trimmed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="n">indent</span><span class="p">:]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span>
+  <span class="c"># Strip off trailing and leading blank lines:</span>
+  <span class="k">while</span> <span class="n">trimmed</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">trimmed</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+    <span class="n">trimmed</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+  <span class="k">while</span> <span class="n">trimmed</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">trimmed</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+    <span class="n">trimmed</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+  <span class="c"># Return a single string:</span>
+  <span class="n">spaces</span> <span class="o">=</span> <span class="n">n</span> <span class="o">*</span> <span class="s">&quot; &quot;</span>
+  <span class="k">return</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">spaces</span> <span class="o">+</span> <span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">trimmed</span><span class="p">])</span>
+
+</div>
 <div class="viewcode-block" id="entry"><a class="viewcode-back" href="../../../../tasks.html#twitter.pants.tasks.builddictionary.entry">[docs]</a><span class="k">def</span> <span class="nf">entry</span><span class="p">(</span><span class="n">nom</span><span class="p">,</span> <span class="n">classdoc</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">msg_rst</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">argspec</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">funcdoc</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Create a struct that our template expects to see.</span>
 
@@ -554,46 +587,12 @@ body a.icon-home:hover{
 <span class="sd">  :param methods: list of entries for class&#39; methods</span>
 <span class="sd">  &quot;&quot;&quot;</span>
 
-  <span class="k">def</span> <span class="nf">indent_docstring_by_1</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Given a non-empty docstring, return a version indented by a space.</span>
-<span class="sd">    Given an empty thing, return the thing itself</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># In reST, it&#39;s useful to have strings that are similarly-indented.</span>
-    <span class="c"># If we have a classdoc indented by 2 next to an __init__ funcdoc indented</span>
-    <span class="c"># by 4, reST doesn&#39;t format things nicely. Oh, totally-dedenting doesn&#39;t</span>
-    <span class="c"># format nicely either.</span>
-
-    <span class="c"># Docstring indentation: more gnarly than you&#39;d think:</span>
-    <span class="c"># http://www.python.org/dev/peps/pep-0257/#handling-docstring-indentation</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">s</span><span class="p">:</span> <span class="k">return</span> <span class="n">s</span>
-    <span class="c"># Convert tabs to spaces (following the normal Python rules)</span>
-    <span class="c"># and split into a list of lines:</span>
-    <span class="n">lines</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">expandtabs</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
-    <span class="c"># Determine minimum indentation (first line doesn&#39;t count):</span>
-    <span class="n">indent</span> <span class="o">=</span> <span class="mi">999</span>
-    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
-      <span class="n">stripped</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()</span>
-      <span class="k">if</span> <span class="n">stripped</span><span class="p">:</span>
-        <span class="n">indent</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">indent</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">stripped</span><span class="p">))</span>
-    <span class="c"># Remove indentation (first line is special):</span>
-    <span class="n">trimmed</span> <span class="o">=</span> <span class="p">[</span><span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
-    <span class="k">if</span> <span class="n">indent</span> <span class="o">&lt;</span> <span class="mi">999</span><span class="p">:</span>
-      <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
-        <span class="n">trimmed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="n">indent</span><span class="p">:]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span>
-    <span class="c"># Strip off trailing and leading blank lines:</span>
-    <span class="k">while</span> <span class="n">trimmed</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">trimmed</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
-      <span class="n">trimmed</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
-    <span class="k">while</span> <span class="n">trimmed</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">trimmed</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-      <span class="n">trimmed</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-    <span class="c"># Return a single string:</span>
-    <span class="k">return</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&quot; &quot;</span> <span class="o">+</span> <span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">trimmed</span><span class="p">])</span>
-
   <span class="k">return</span> <span class="n">TemplateData</span><span class="p">(</span>
     <span class="n">nom</span><span class="o">=</span><span class="n">nom</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
-    <span class="n">classdoc</span><span class="o">=</span><span class="n">indent_docstring_by_1</span><span class="p">(</span><span class="n">classdoc</span><span class="p">),</span>
-    <span class="n">msg_rst</span><span class="o">=</span><span class="n">indent_docstring_by_1</span><span class="p">(</span><span class="n">msg_rst</span><span class="p">),</span>
+    <span class="n">classdoc</span><span class="o">=</span><span class="n">indent_docstring_by_n</span><span class="p">(</span><span class="n">classdoc</span><span class="p">),</span>
+    <span class="n">msg_rst</span><span class="o">=</span><span class="n">indent_docstring_by_n</span><span class="p">(</span><span class="n">msg_rst</span><span class="p">),</span>
     <span class="n">argspec</span><span class="o">=</span><span class="n">argspec</span><span class="p">,</span>
-    <span class="n">funcdoc</span><span class="o">=</span><span class="n">indent_docstring_by_1</span><span class="p">(</span><span class="n">funcdoc</span><span class="p">),</span>
+    <span class="n">funcdoc</span><span class="o">=</span><span class="n">indent_docstring_by_n</span><span class="p">(</span><span class="n">funcdoc</span><span class="p">),</span>
     <span class="n">methods</span><span class="o">=</span><span class="n">methods</span><span class="p">,</span>
     <span class="n">showmethods</span><span class="o">=</span><span class="p">(</span><span class="n">methods</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">methods</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">))</span>
 
@@ -757,7 +756,63 @@ body a.icon-home:hover{
     <span class="k">if</span> <span class="ow">not</span> <span class="s">&quot;defn&quot;</span> <span class="ow">in</span> <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span>
       <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s">&quot;defn&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">entry_for_one</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">symbol_hash</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
   <span class="k">return</span> <span class="n">d</span>
+</div>
+<div class="viewcode-block" id="gref_template_data_from_options"><a class="viewcode-back" href="../../../../tasks.html#twitter.pants.tasks.builddictionary.gref_template_data_from_options">[docs]</a><span class="k">def</span> <span class="nf">gref_template_data_from_options</span><span class="p">(</span><span class="n">og</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Get data for the Goals Reference from an optparse.OptionGroup&quot;&quot;&quot;</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="n">og</span><span class="p">:</span> <span class="k">return</span> <span class="bp">None</span>
+  <span class="n">title</span> <span class="o">=</span> <span class="n">og</span><span class="o">.</span><span class="n">title</span> <span class="ow">or</span> <span class="s">&quot;&quot;</span>
+  <span class="n">option_l</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">og</span><span class="o">.</span><span class="n">option_list</span><span class="p">:</span>
+    <span class="n">default</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="n">o</span><span class="o">.</span><span class="n">default</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">(</span><span class="n">o</span><span class="o">.</span><span class="n">default</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;(&#39;NO&#39;,&quot;</span><span class="p">):</span>
+      <span class="n">default</span> <span class="o">=</span> <span class="n">o</span><span class="o">.</span><span class="n">default</span>
+    <span class="n">help</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="n">o</span><span class="o">.</span><span class="n">help</span><span class="p">:</span>
+      <span class="n">help</span> <span class="o">=</span> <span class="n">o</span><span class="o">.</span><span class="n">help</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;[</span><span class="si">%d</span><span class="s">efault]&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">option_l</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TemplateData</span><span class="p">(</span>
+        <span class="n">st</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">o</span><span class="p">),</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span>
+        <span class="n">hlp</span><span class="o">=</span><span class="n">help</span><span class="p">,</span>
+        <span class="n">typ</span><span class="o">=</span><span class="n">o</span><span class="o">.</span><span class="n">type</span><span class="p">))</span>
+  <span class="k">return</span> <span class="n">TemplateData</span><span class="p">(</span>
+    <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="n">og</span><span class="o">.</span><span class="n">get_description</span><span class="p">(),</span>
+    <span class="n">options</span><span class="o">=</span><span class="n">option_l</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="gen_goals_reference_data"><a class="viewcode-back" href="../../../../tasks.html#twitter.pants.tasks.builddictionary.gen_goals_reference_data">[docs]</a><span class="k">def</span> <span class="nf">gen_goals_reference_data</span><span class="p">():</span>
+  <span class="sd">&quot;&quot;&quot;Generate the goals reference rst doc.&quot;&quot;&quot;</span>
+  <span class="n">phase_dict</span> <span class="o">=</span> <span class="p">{}</span>
+  <span class="n">phase_names</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="k">for</span> <span class="n">phase</span><span class="p">,</span> <span class="n">raw_goals</span> <span class="ow">in</span> <span class="n">Phase</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">phase</span><span class="o">.</span><span class="n">setup_parser_for_help</span><span class="p">()</span>
+    <span class="n">options_by_title</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">None</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">parser</span><span class="o">.</span><span class="n">option_groups</span><span class="p">:</span>
+      <span class="n">options_by_title</span><span class="p">[</span><span class="n">group</span><span class="o">.</span><span class="n">title</span><span class="p">]</span> <span class="o">=</span> <span class="n">group</span>
+    <span class="n">found_option_groups</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">goals</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">goal</span> <span class="ow">in</span> <span class="n">raw_goals</span><span class="p">:</span>
+      <span class="n">doc</span> <span class="o">=</span> <span class="n">indent_docstring_by_n</span><span class="p">(</span><span class="n">goal</span><span class="o">.</span><span class="n">task_type</span><span class="o">.</span><span class="n">__doc__</span> <span class="ow">or</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+      <span class="n">options_title</span> <span class="o">=</span> <span class="n">goal</span><span class="o">.</span><span class="n">title_for_option_group</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span>
+      <span class="n">og</span> <span class="o">=</span> <span class="n">options_by_title</span><span class="p">[</span><span class="n">options_title</span><span class="p">]</span>
+      <span class="k">if</span> <span class="n">og</span><span class="p">:</span>
+        <span class="n">found_option_groups</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">options_title</span><span class="p">)</span>
+        <span class="n">og_title</span> <span class="o">=</span> <span class="n">og</span><span class="o">.</span><span class="n">title</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">og_title</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+      <span class="n">goals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TemplateData</span><span class="p">(</span>
+          <span class="n">name</span><span class="o">=</span><span class="n">goal</span><span class="o">.</span><span class="n">task_type</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span>
+          <span class="n">doc</span><span class="o">=</span><span class="n">doc</span><span class="p">,</span>
+          <span class="n">sought</span><span class="o">=</span><span class="n">options_title</span><span class="p">,</span>
+          <span class="n">og_title</span><span class="o">=</span><span class="n">og_title</span><span class="p">,</span>
+          <span class="n">option_group</span><span class="o">=</span><span class="n">og</span><span class="p">,</span>
+          <span class="n">ogroup</span><span class="o">=</span><span class="n">gref_template_data_from_options</span><span class="p">(</span><span class="n">og</span><span class="p">)))</span>
 
+    <span class="n">phase_dict</span><span class="p">[</span><span class="n">phase</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">TemplateData</span><span class="p">(</span><span class="n">phase</span><span class="o">=</span><span class="n">phase</span><span class="p">,</span>
+                                          <span class="n">goals</span><span class="o">=</span><span class="n">goals</span><span class="p">)</span>
+    <span class="n">phase_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">phase</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+  <span class="n">phases</span> <span class="o">=</span> <span class="p">[</span><span class="n">phase_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">phase_names</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="nb">str</span><span class="o">.</span><span class="n">lower</span><span class="p">)]</span>
+  <span class="k">return</span> <span class="n">phases</span>
 </div>
 <div class="viewcode-block" id="BuildBuildDictionary"><a class="viewcode-back" href="../../../../tasks.html#twitter.pants.tasks.builddictionary.BuildBuildDictionary">[docs]</a><span class="k">class</span> <span class="nc">BuildBuildDictionary</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Generate documentation for the Sphinx site.&quot;&quot;&quot;</span>
@@ -768,8 +823,19 @@ body a.icon-home:hover{
     <span class="bp">self</span><span class="o">.</span><span class="n">_outdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">getdefault</span><span class="p">(</span><span class="s">&quot;pants_distdir&quot;</span><span class="p">),</span> <span class="s">&quot;builddict&quot;</span><span class="p">)</span>
 
   <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_gen_goals_reference</span><span class="p">()</span>
+    <span class="c"># GOALS REFERENCE</span>
+    <span class="n">phases</span> <span class="o">=</span> <span class="n">gen_goals_reference_data</span><span class="p">()</span>
 
+    <span class="n">template</span> <span class="o">=</span> <span class="n">resource_string</span><span class="p">(</span><span class="n">__name__</span><span class="p">,</span>
+                               <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_templates_dir</span><span class="p">,</span> <span class="s">&#39;goals_reference.mustache&#39;</span><span class="p">))</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_outdir</span><span class="p">,</span> <span class="s">&#39;goals_reference.rst&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Generating </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">safe_open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
+      <span class="n">generator</span> <span class="o">=</span> <span class="n">Generator</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">phases</span><span class="o">=</span><span class="n">phases</span><span class="p">)</span>
+      <span class="n">generator</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">outfile</span><span class="p">)</span>
+
+
+    <span class="c"># BUILD DICTIONARY</span>
     <span class="n">d</span> <span class="o">=</span> <span class="n">assemble</span><span class="p">()</span>
     <span class="n">template</span> <span class="o">=</span> <span class="n">resource_string</span><span class="p">(</span><span class="n">__name__</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_templates_dir</span><span class="p">,</span> <span class="s">&#39;page.mustache&#39;</span><span class="p">))</span>
     <span class="n">tocs</span> <span class="o">=</span> <span class="p">[</span><span class="n">tocl</span><span class="p">(</span><span class="n">d</span><span class="p">),</span>
@@ -783,30 +849,7 @@ body a.icon-home:hover{
                             <span class="n">tocs</span><span class="o">=</span><span class="n">tocs</span><span class="p">,</span>
                             <span class="n">defns</span><span class="o">=</span><span class="n">defns</span><span class="p">)</span>
       <span class="n">generator</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">outfile</span><span class="p">)</span>
-
-  <span class="k">def</span> <span class="nf">_gen_goals_reference</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Generate the goals reference rst doc.&quot;&quot;&quot;</span>
-    <span class="n">phase_dict</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">phase_names</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">phase</span><span class="p">,</span> <span class="n">raw_goals</span> <span class="ow">in</span> <span class="n">Phase</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
-      <span class="n">goals</span> <span class="o">=</span> <span class="p">[]</span>
-      <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">raw_goals</span><span class="p">:</span>
-        <span class="c"># TODO(lahosken) generalize indent_docstring, use here</span>
-        <span class="n">doc</span> <span class="o">=</span> <span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">task_type</span><span class="o">.</span><span class="n">__doc__</span> <span class="ow">or</span> <span class="s">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        <span class="n">goals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TemplateData</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">g</span><span class="o">.</span><span class="n">task_type</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="n">doc</span><span class="p">))</span>
-      <span class="n">phase_dict</span><span class="p">[</span><span class="n">phase</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">TemplateData</span><span class="p">(</span><span class="n">phase</span><span class="o">=</span><span class="n">phase</span><span class="p">,</span> <span class="n">goals</span><span class="o">=</span><span class="n">goals</span><span class="p">)</span>
-      <span class="n">phase_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">phase</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-
-    <span class="n">phases</span> <span class="o">=</span> <span class="p">[</span><span class="n">phase_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">phase_names</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="nb">str</span><span class="o">.</span><span class="n">lower</span><span class="p">)]</span>
-
-    <span class="n">template</span> <span class="o">=</span> <span class="n">resource_string</span><span class="p">(</span><span class="n">__name__</span><span class="p">,</span>
-                               <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_templates_dir</span><span class="p">,</span> <span class="s">&#39;goals_reference.mustache&#39;</span><span class="p">))</span>
-    <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_outdir</span><span class="p">,</span> <span class="s">&#39;goals_reference.rst&#39;</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Generating </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>
-    <span class="k">with</span> <span class="n">safe_open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
-      <span class="n">generator</span> <span class="o">=</span> <span class="n">Generator</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">phases</span><span class="o">=</span><span class="n">phases</span><span class="p">)</span>
-      <span class="n">generator</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">outfile</span><span class="p">)</span></div>
-</pre></div>
+</pre></div></div>
 
           <footer>
   

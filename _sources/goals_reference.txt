@@ -46,7 +46,6 @@ goal.
   * :ref:`gref_phase_jar` - Create one or more jars.
   * :ref:`gref_phase_killserver` - Kill the pants reporting server.
   * :ref:`gref_phase_list` - List available BUILD targets.
-  * :ref:`gref_phase_markdown` - Generate html from markdown docs.
   * :ref:`gref_phase_minimize` - Print the minimal cover of the given targets.
   * :ref:`gref_phase_ng-killall` - Kill any running nailgun servers spawned by pants.
   * :ref:`gref_phase_path` - Find a dependency path from one target to another
@@ -74,9 +73,107 @@ bench
 -----------------------------------------------------------------------------
 
 
-**Installed tasks:**
 
-* Implemented by class ``BenchmarkRun``
+.. _gref_cli_bench:
+
+* **bench** Implemented by class ``BenchmarkRun``
+
+
+  * ``--bench-target``
+    ``string``
+
+    Name of the benchmark class.
+
+  * ``--bench-memory/--no-bench-memory``
+
+    Enable memory profiling.
+
+  * ``--bench-debug/--no-bench-debug``
+
+    Enable caliper debug mode.
+
+  * ``--bench-caliper-args``
+    ``string``
+
+    Allows the user to pass additional command line options to caliper. Can be used multiple times and arguments will be concatenated. Example use: --bench-caliper-args='-Dsize=10,20 -Dcomplex=true,false' --bench-caliper-args=-Dmem=1,2,3
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
+  ``--ng-daemons/--no-ng-daemons``
+
+  :ref:`gen:thrift <gref_cli_genthrift>`
+  ``--gen-thrift-outdir``
+  ``--gen-thrift-version``
+  ``--gen-thrift-lang``
+
+  :ref:`gen:scrooge <gref_cli_genscrooge>`
+  ``--gen-scrooge-outdir``
+  ``--gen-scrooge-quiet``
+
+  :ref:`gen:protoc <gref_cli_genprotoc>`
+  ``--gen-protoc-outdir``
+  ``--gen-protoc-lang``
+
+  :ref:`check-exclusives <gref_cli_checkexclusives>`
+  ``--check-exclusives-error_on_collision/--no-check-exclusives-error_on_collision``
+
+  :ref:`ivy <gref_cli_ivy>`
+  ``--ivy-override``
+  ``--ivy-report/--no-ivy-report``
+  ``--ivy-open/--no-ivy-open``
+  ``--ivy-outdir``
+  ``--ivy-args``
+  ``--ivy-mutable-pattern``
+
+  :ref:`compile:scala <gref_cli_compilescala>`
+  ``--compile-scala-warnings/--no-compile-scala-warnings``
+  ``--compile-scala-partition-size-hint``
+  ``--compile-scala-missing-deps``
+  ``--compile-scala-missing-direct-deps``
+  ``--compile-scala-unnecessary-deps``
+  ``--compile-scala-delete-scratch/--no-compile-scala-delete-scratch``
+  ``--compile-scala-plugins``
+
+  :ref:`compile:apt <gref_cli_compileapt>`
+  ``--compile-apt-warnings/--no-compile-apt-warnings``
+  ``--compile-apt-partition-size-hint``
+  ``--compile-apt-missing-deps``
+  ``--compile-apt-missing-direct-deps``
+  ``--compile-apt-unnecessary-deps``
+  ``--compile-apt-delete-scratch/--no-compile-apt-delete-scratch``
+  ``--compile-apt-args``
+
+  :ref:`compile:java <gref_cli_compilejava>`
+  ``--compile-java-warnings/--no-compile-java-warnings``
+  ``--compile-java-partition-size-hint``
+  ``--compile-java-missing-deps``
+  ``--compile-java-missing-direct-deps``
+  ``--compile-java-unnecessary-deps``
+  ``--compile-java-delete-scratch/--no-compile-java-delete-scratch``
+  ``--compile-java-args``
+
+  :ref:`compile:checkstyle <gref_cli_compilecheckstyle>`
+  ``--compile-checkstyle-skip/--no-compile-checkstyle-skip``
 
 
 
@@ -87,17 +184,166 @@ binary
 
 Create a jvm binary jar.
 
-**Installed tasks:**
 
-* Implemented by class ``BinaryCreate``
+.. _gref_cli_binary:
+
+* **binary** Implemented by class ``BinaryCreate``
 
   Creates a runnable monolithic binary deploy jar.
 
-* Implemented by class ``DuplicateDetector``
+  * ``--binary-outdir``
+    ``string``
+
+    Create bundles and archives in this directory.
+
+  * ``--binary-deployjar/--no-binary-deployjar``
+
+    Create a monolithic deploy jar containing this binaries classfiles as well as all classfiles it depends on transitively.
+
+  * ``--binary-compressed/--no-binary-compressed``
+    Default: ``True``
+
+    Create a compressed binary jar.
+
+  * ``--binary-zip64/--no-binary-zip64``
+
+    Create the binary jar with zip64 extensions.
+
+
+
+.. _gref_cli_binarydup:
+
+* **binary:dup** Implemented by class ``DuplicateDetector``
 
   Detect classes and resources with the same qualified name on the classpath.
 
-* Implemented by class ``BinaryArgsResourceMapper``
+  * ``--binary-dup-outdir``
+    ``string``
+
+    Create bundles and archives in this directory.
+
+  * ``--binary-dup-deployjar/--no-binary-dup-deployjar``
+
+    Create a monolithic deploy jar containing this binaries classfiles as well as all classfiles it depends on transitively.
+
+  * ``--binary-dup-fail-fast/--no-binary-dup-fail-fast``
+
+    Fail fast if duplicate classes/resources are found.
+
+
+
+.. _gref_cli_binaryargsapt:
+
+* **binary:args-apt** Implemented by class ``BinaryArgsResourceMapper``
+
+
+  * ``--binary-args-apt-include_all/--no-binary-args-apt-include_all``
+
+    Include all arg fields resources.
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
+
+  :ref:`jar:javadoc_publish <gref_cli_jarjavadocpublish>`
+  ``--jar-javadoc_publish-outdir``
+  ``--jar-javadoc_publish-include-codegen/--no-jar-javadoc_publish-include-codegen``
+  ``--jar-javadoc_publish-transitive/--no-jar-javadoc_publish-transitive``
+  ``--jar-javadoc_publish-combined/--no-jar-javadoc_publish-combined``
+  ``--jar-javadoc_publish-open/--no-jar-javadoc_publish-open``
+  ``--jar-javadoc_publish-ignore-failure/--no-jar-javadoc_publish-ignore-failure``
+
+  :ref:`jar:scaladoc_publish <gref_cli_jarscaladocpublish>`
+  ``--jar-scaladoc_publish-outdir``
+  ``--jar-scaladoc_publish-include-codegen/--no-jar-scaladoc_publish-include-codegen``
+  ``--jar-scaladoc_publish-transitive/--no-jar-scaladoc_publish-transitive``
+  ``--jar-scaladoc_publish-combined/--no-jar-scaladoc_publish-combined``
+  ``--jar-scaladoc_publish-open/--no-jar-scaladoc_publish-open``
+  ``--jar-scaladoc_publish-ignore-failure/--no-jar-scaladoc_publish-ignore-failure``
+
+  :ref:`gen:thrift <gref_cli_genthrift>`
+  ``--gen-thrift-outdir``
+  ``--gen-thrift-version``
+  ``--gen-thrift-lang``
+
+  :ref:`gen:scrooge <gref_cli_genscrooge>`
+  ``--gen-scrooge-outdir``
+  ``--gen-scrooge-quiet``
+
+  :ref:`gen:protoc <gref_cli_genprotoc>`
+  ``--gen-protoc-outdir``
+  ``--gen-protoc-lang``
+
+  :ref:`check-exclusives <gref_cli_checkexclusives>`
+  ``--check-exclusives-error_on_collision/--no-check-exclusives-error_on_collision``
+
+  :ref:`ivy <gref_cli_ivy>`
+  ``--ivy-override``
+  ``--ivy-report/--no-ivy-report``
+  ``--ivy-open/--no-ivy-open``
+  ``--ivy-outdir``
+  ``--ivy-args``
+  ``--ivy-mutable-pattern``
+
+  :ref:`compile:scala <gref_cli_compilescala>`
+  ``--compile-scala-warnings/--no-compile-scala-warnings``
+  ``--compile-scala-partition-size-hint``
+  ``--compile-scala-missing-deps``
+  ``--compile-scala-missing-direct-deps``
+  ``--compile-scala-unnecessary-deps``
+  ``--compile-scala-delete-scratch/--no-compile-scala-delete-scratch``
+  ``--compile-scala-plugins``
+
+  :ref:`compile:apt <gref_cli_compileapt>`
+  ``--compile-apt-warnings/--no-compile-apt-warnings``
+  ``--compile-apt-partition-size-hint``
+  ``--compile-apt-missing-deps``
+  ``--compile-apt-missing-direct-deps``
+  ``--compile-apt-unnecessary-deps``
+  ``--compile-apt-delete-scratch/--no-compile-apt-delete-scratch``
+  ``--compile-apt-args``
+
+  :ref:`compile:java <gref_cli_compilejava>`
+  ``--compile-java-warnings/--no-compile-java-warnings``
+  ``--compile-java-partition-size-hint``
+  ``--compile-java-missing-deps``
+  ``--compile-java-missing-direct-deps``
+  ``--compile-java-unnecessary-deps``
+  ``--compile-java-delete-scratch/--no-compile-java-delete-scratch``
+  ``--compile-java-args``
+
+  :ref:`compile:checkstyle <gref_cli_compilecheckstyle>`
+  ``--compile-checkstyle-skip/--no-compile-checkstyle-skip``
+
+  :ref:`jar <gref_cli_jar>`
+  ``--jar-outdir``
+  ``--jar-compressed/--no-jar-compressed``
+  ``--jar-transitive/--no-jar-transitive``
+  ``--jar-classes/--no-jar-classes``
+  ``--jar-sources/--no-jar-sources``
+  ``--jar-javadoc/--no-jar-javadoc``
+
+  :ref:`jar:args-apt <gref_cli_jarargsapt>`
+  ``--jar-args-apt-include_all/--no-jar-args-apt-include_all``
 
 
 
@@ -108,9 +354,34 @@ bootstrap
 
 Bootstrap tools needed for building
 
-**Installed tasks:**
 
-* Implemented by class ``BootstrapJvmTools``
+.. _gref_cli_:
+
+* **** Implemented by class ``BootstrapJvmTools``
+
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
 
 
 
@@ -120,11 +391,36 @@ builddict
 -----------------------------------------------------------------------------
 
 
-**Installed tasks:**
 
-* Implemented by class ``BuildBuildDictionary``
+.. _gref_cli_:
+
+* **** Implemented by class ``BuildBuildDictionary``
 
   Generate documentation for the Sphinx site.
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
+
 
 
 .. _gref_phase_buildlint:
@@ -133,9 +429,101 @@ buildlint
 -----------------------------------------------------------------------------
 
 
-**Installed tasks:**
 
-* Implemented by class ``BuildLint``
+.. _gref_cli_buildlint:
+
+* **buildlint** Implemented by class ``BuildLint``
+
+
+  * ``--buildlint-transitive/--no-buildlint-transitive``
+
+    apply lint rules transitively to all dependency buildfiles.
+
+  * ``--buildlint-include-intransitive-deps/--no-buildlint-include-intransitive-deps``
+
+    correct both simple missing dependencies and intransitive missing deps
+
+  * ``--buildlint-action``
+    ``choice``
+
+    diff=print out diffs, rewrite=apply changes to BUILD files directly.
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
+
+  :ref:`gen:thrift <gref_cli_genthrift>`
+  ``--gen-thrift-outdir``
+  ``--gen-thrift-version``
+  ``--gen-thrift-lang``
+
+  :ref:`gen:scrooge <gref_cli_genscrooge>`
+  ``--gen-scrooge-outdir``
+  ``--gen-scrooge-quiet``
+
+  :ref:`gen:protoc <gref_cli_genprotoc>`
+  ``--gen-protoc-outdir``
+  ``--gen-protoc-lang``
+
+  :ref:`check-exclusives <gref_cli_checkexclusives>`
+  ``--check-exclusives-error_on_collision/--no-check-exclusives-error_on_collision``
+
+  :ref:`ivy <gref_cli_ivy>`
+  ``--ivy-override``
+  ``--ivy-report/--no-ivy-report``
+  ``--ivy-open/--no-ivy-open``
+  ``--ivy-outdir``
+  ``--ivy-args``
+  ``--ivy-mutable-pattern``
+
+  :ref:`compile:scala <gref_cli_compilescala>`
+  ``--compile-scala-warnings/--no-compile-scala-warnings``
+  ``--compile-scala-partition-size-hint``
+  ``--compile-scala-missing-deps``
+  ``--compile-scala-missing-direct-deps``
+  ``--compile-scala-unnecessary-deps``
+  ``--compile-scala-delete-scratch/--no-compile-scala-delete-scratch``
+  ``--compile-scala-plugins``
+
+  :ref:`compile:apt <gref_cli_compileapt>`
+  ``--compile-apt-warnings/--no-compile-apt-warnings``
+  ``--compile-apt-partition-size-hint``
+  ``--compile-apt-missing-deps``
+  ``--compile-apt-missing-direct-deps``
+  ``--compile-apt-unnecessary-deps``
+  ``--compile-apt-delete-scratch/--no-compile-apt-delete-scratch``
+  ``--compile-apt-args``
+
+  :ref:`compile:java <gref_cli_compilejava>`
+  ``--compile-java-warnings/--no-compile-java-warnings``
+  ``--compile-java-partition-size-hint``
+  ``--compile-java-missing-deps``
+  ``--compile-java-missing-direct-deps``
+  ``--compile-java-unnecessary-deps``
+  ``--compile-java-delete-scratch/--no-compile-java-delete-scratch``
+  ``--compile-java-args``
+
+  :ref:`compile:checkstyle <gref_cli_compilecheckstyle>`
+  ``--compile-checkstyle-skip/--no-compile-checkstyle-skip``
 
 
 
@@ -146,9 +534,147 @@ bundle
 
 Create an application bundle from binary targets.
 
-**Installed tasks:**
 
-* Implemented by class ``BundleCreate``
+.. _gref_cli_bundle:
+
+* **bundle** Implemented by class ``BundleCreate``
+
+
+  * ``--bundle-outdir``
+    ``string``
+
+    Create bundles and archives in this directory.
+
+  * ``--bundle-deployjar/--no-bundle-deployjar``
+
+    Create a monolithic deploy jar containing this binaries classfiles as well as all classfiles it depends on transitively.
+
+  * ``--bundle-archive``
+    ``choice``
+
+    Create an archive from the bundle. Choose from ['tar', 'tbz2', 'tgz', 'zip']
+
+  * ``--bundle-archive-prefix/--no-bundle-archive-prefix``
+
+    Used in conjunction with --bundle-archive this packs the archive with its basename as the path prefix.
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
+
+  :ref:`jar:javadoc_publish <gref_cli_jarjavadocpublish>`
+  ``--jar-javadoc_publish-outdir``
+  ``--jar-javadoc_publish-include-codegen/--no-jar-javadoc_publish-include-codegen``
+  ``--jar-javadoc_publish-transitive/--no-jar-javadoc_publish-transitive``
+  ``--jar-javadoc_publish-combined/--no-jar-javadoc_publish-combined``
+  ``--jar-javadoc_publish-open/--no-jar-javadoc_publish-open``
+  ``--jar-javadoc_publish-ignore-failure/--no-jar-javadoc_publish-ignore-failure``
+
+  :ref:`jar:scaladoc_publish <gref_cli_jarscaladocpublish>`
+  ``--jar-scaladoc_publish-outdir``
+  ``--jar-scaladoc_publish-include-codegen/--no-jar-scaladoc_publish-include-codegen``
+  ``--jar-scaladoc_publish-transitive/--no-jar-scaladoc_publish-transitive``
+  ``--jar-scaladoc_publish-combined/--no-jar-scaladoc_publish-combined``
+  ``--jar-scaladoc_publish-open/--no-jar-scaladoc_publish-open``
+  ``--jar-scaladoc_publish-ignore-failure/--no-jar-scaladoc_publish-ignore-failure``
+
+  :ref:`gen:thrift <gref_cli_genthrift>`
+  ``--gen-thrift-outdir``
+  ``--gen-thrift-version``
+  ``--gen-thrift-lang``
+
+  :ref:`gen:scrooge <gref_cli_genscrooge>`
+  ``--gen-scrooge-outdir``
+  ``--gen-scrooge-quiet``
+
+  :ref:`gen:protoc <gref_cli_genprotoc>`
+  ``--gen-protoc-outdir``
+  ``--gen-protoc-lang``
+
+  :ref:`check-exclusives <gref_cli_checkexclusives>`
+  ``--check-exclusives-error_on_collision/--no-check-exclusives-error_on_collision``
+
+  :ref:`ivy <gref_cli_ivy>`
+  ``--ivy-override``
+  ``--ivy-report/--no-ivy-report``
+  ``--ivy-open/--no-ivy-open``
+  ``--ivy-outdir``
+  ``--ivy-args``
+  ``--ivy-mutable-pattern``
+
+  :ref:`compile:scala <gref_cli_compilescala>`
+  ``--compile-scala-warnings/--no-compile-scala-warnings``
+  ``--compile-scala-partition-size-hint``
+  ``--compile-scala-missing-deps``
+  ``--compile-scala-missing-direct-deps``
+  ``--compile-scala-unnecessary-deps``
+  ``--compile-scala-delete-scratch/--no-compile-scala-delete-scratch``
+  ``--compile-scala-plugins``
+
+  :ref:`compile:apt <gref_cli_compileapt>`
+  ``--compile-apt-warnings/--no-compile-apt-warnings``
+  ``--compile-apt-partition-size-hint``
+  ``--compile-apt-missing-deps``
+  ``--compile-apt-missing-direct-deps``
+  ``--compile-apt-unnecessary-deps``
+  ``--compile-apt-delete-scratch/--no-compile-apt-delete-scratch``
+  ``--compile-apt-args``
+
+  :ref:`compile:java <gref_cli_compilejava>`
+  ``--compile-java-warnings/--no-compile-java-warnings``
+  ``--compile-java-partition-size-hint``
+  ``--compile-java-missing-deps``
+  ``--compile-java-missing-direct-deps``
+  ``--compile-java-unnecessary-deps``
+  ``--compile-java-delete-scratch/--no-compile-java-delete-scratch``
+  ``--compile-java-args``
+
+  :ref:`compile:checkstyle <gref_cli_compilecheckstyle>`
+  ``--compile-checkstyle-skip/--no-compile-checkstyle-skip``
+
+  :ref:`jar <gref_cli_jar>`
+  ``--jar-outdir``
+  ``--jar-compressed/--no-jar-compressed``
+  ``--jar-transitive/--no-jar-transitive``
+  ``--jar-classes/--no-jar-classes``
+  ``--jar-sources/--no-jar-sources``
+  ``--jar-javadoc/--no-jar-javadoc``
+
+  :ref:`jar:args-apt <gref_cli_jarargsapt>`
+  ``--jar-args-apt-include_all/--no-jar-args-apt-include_all``
+
+  :ref:`binary <gref_cli_binary>`
+  ``--binary-outdir``
+  ``--binary-deployjar/--no-binary-deployjar``
+  ``--binary-compressed/--no-binary-compressed``
+  ``--binary-zip64/--no-binary-zip64``
+
+  :ref:`binary:dup <gref_cli_binarydup>`
+  ``--binary-dup-outdir``
+  ``--binary-dup-deployjar/--no-binary-dup-deployjar``
+  ``--binary-dup-fail-fast/--no-binary-dup-fail-fast``
+
+  :ref:`binary:args-apt <gref_cli_binaryargsapt>`
+  ``--binary-args-apt-include_all/--no-binary-args-apt-include_all``
 
 
 
@@ -159,9 +685,50 @@ changed
 
 Print the targets changed since some prior commit.
 
-**Installed tasks:**
 
-* Implemented by class ``ScmWhatChanged``
+.. _gref_cli_changed:
+
+* **changed** Implemented by class ``ScmWhatChanged``
+
+
+  * ``--changed-sep``
+    ``string``
+    Default: ``\n``
+
+    String to use to separate results.
+
+  * ``--changed-parent``
+    ``string``
+    Default: ``HEAD``
+
+    Identifies the parent tree-ish to calculate changes against.
+
+  * ``--changed-files/--no-changed-files``
+
+    Shows changed files instead of the targets that own them.
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
 
 
 
@@ -172,11 +739,91 @@ check-exclusives
 
 Check exclusives declarations to verify that dependencies are consistent.
 
-**Installed tasks:**
 
-* Implemented by class ``CheckExclusives``
+.. _gref_cli_checkexclusives:
 
-  Task for computing transitive exclusive maps.    This computes transitive exclusive tags for a dependency graph rooted   with a set of build targets specified by a user. If this process produces   any collisions where a single target contains multiple tag values for a single   exclusives key, then it generates an error and the compilation will fail.    The syntax of the exclusives attribute is:       exclusives = {"id": "value", ...}    For example, suppose that we had two java targets, jliba and jlibb. jliba uses   slf4j, which includes in its jar package an implementation of log4j. jlibb uses   log4j directly. But the version of log4j that's packaged inside of slf4j is   different from the version used by jlibb.      java_library(name='jliba',        depedencies = ['slf4j-with-log4j-2.4'])     java_library(name='jlibb',        dependencies=['log4j-1.9'])     java_binary(name='javabin', dependencies=[':jliba', ':jlibb'])    In this case, the binary target 'javabin' depends on both slf4j with its   packaged log4j version 2.4, and on log4j-1.9.   Pants doesn't know that the slf4j and log4j jar_dependencies contain   incompatible versions of the same library, and so it can't detect the error.    With exclusives, the jar_library target for the joda libraries would declare   exclusives tags:      jar_library(name='slf4j-with-log4j-2.4', exclusives={'log4j': '2.4'})     jar_library(name='joda-2.1', exclusives={'log4j': '1.9'})    With the exclusives declared, pants can recognize that 'javabin' has conflicting   dependencies, and can generate an appropriate error message.    Data about exclusives is provided to other tasks via data build products.   If the build data product 'exclusives_groups' is required, then an   ExclusivesMapping object will be created.
+* **check-exclusives** Implemented by class ``CheckExclusives``
+
+  Task for computing transitive exclusive maps.
+  
+  This computes transitive exclusive tags for a dependency graph rooted
+  with a set of build targets specified by a user. If this process produces
+  any collisions where a single target contains multiple tag values for a single
+  exclusives key, then it generates an error and the compilation will fail.
+  
+  The syntax of the exclusives attribute is:
+      exclusives = {"id": "value", ...}
+  
+  For example, suppose that we had two java targets, jliba and jlibb. jliba uses
+  slf4j, which includes in its jar package an implementation of log4j. jlibb uses
+  log4j directly. But the version of log4j that's packaged inside of slf4j is
+  different from the version used by jlibb.
+  
+    java_library(name='jliba',
+       depedencies = ['slf4j-with-log4j-2.4'])
+    java_library(name='jlibb',
+       dependencies=['log4j-1.9'])
+    java_binary(name='javabin', dependencies=[':jliba', ':jlibb'])
+  
+  In this case, the binary target 'javabin' depends on both slf4j with its
+  packaged log4j version 2.4, and on log4j-1.9.
+  Pants doesn't know that the slf4j and log4j jar_dependencies contain
+  incompatible versions of the same library, and so it can't detect the error.
+  
+  With exclusives, the jar_library target for the joda libraries would declare
+  exclusives tags:
+  
+    jar_library(name='slf4j-with-log4j-2.4', exclusives={'log4j': '2.4'})
+    jar_library(name='joda-2.1', exclusives={'log4j': '1.9'})
+  
+  With the exclusives declared, pants can recognize that 'javabin' has conflicting
+  dependencies, and can generate an appropriate error message.
+  
+  Data about exclusives is provided to other tasks via data build products.
+  If the build data product 'exclusives_groups' is required, then an
+  ExclusivesMapping object will be created.
+
+  * ``--check-exclusives-error_on_collision/--no-check-exclusives-error_on_collision``
+    Default: ``True``
+
+    Signal an error and abort the build if an exclusives collision is detected
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
+
+  :ref:`gen:thrift <gref_cli_genthrift>`
+  ``--gen-thrift-outdir``
+  ``--gen-thrift-version``
+  ``--gen-thrift-lang``
+
+  :ref:`gen:scrooge <gref_cli_genscrooge>`
+  ``--gen-scrooge-outdir``
+  ``--gen-scrooge-quiet``
+
+  :ref:`gen:protoc <gref_cli_genprotoc>`
+  ``--gen-protoc-outdir``
+  ``--gen-protoc-lang``
+
 
 
 .. _gref_phase_check_published_deps:
@@ -186,9 +833,44 @@ check_published_deps
 
 Find references to outdated artifacts published from this BUILD tree.
 
-**Installed tasks:**
 
-* Implemented by class ``CheckPublishedDeps``
+.. _gref_cli_checkpublisheddeps:
+
+* **check_published_deps** Implemented by class ``CheckPublishedDeps``
+
+
+  * ``--check_published_deps-sep``
+    ``string``
+    Default: ``\n``
+
+    String to use to separate results.
+
+  * ``--check_published_deps-print-uptodate/--no-check_published_deps-print-uptodate``
+
+    Also print up-to-date dependencies.
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
 
 
 
@@ -199,9 +881,62 @@ checkstyle
 
 Run checkstyle against java source code.
 
-**Installed tasks:**
 
-* Implemented by class ``Checkstyle``
+.. _gref_cli_checkstyle:
+
+* **checkstyle** Implemented by class ``Checkstyle``
+
+
+  * ``--checkstyle-skip/--no-checkstyle-skip``
+
+    Skip checkstyle.
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
+
+  :ref:`gen:thrift <gref_cli_genthrift>`
+  ``--gen-thrift-outdir``
+  ``--gen-thrift-version``
+  ``--gen-thrift-lang``
+
+  :ref:`gen:scrooge <gref_cli_genscrooge>`
+  ``--gen-scrooge-outdir``
+  ``--gen-scrooge-quiet``
+
+  :ref:`gen:protoc <gref_cli_genprotoc>`
+  ``--gen-protoc-outdir``
+  ``--gen-protoc-lang``
+
+  :ref:`check-exclusives <gref_cli_checkexclusives>`
+  ``--check-exclusives-error_on_collision/--no-check-exclusives-error_on_collision``
+
+  :ref:`ivy <gref_cli_ivy>`
+  ``--ivy-override``
+  ``--ivy-report/--no-ivy-report``
+  ``--ivy-open/--no-ivy-open``
+  ``--ivy-outdir``
+  ``--ivy-args``
+  ``--ivy-mutable-pattern``
 
 
 
@@ -212,9 +947,47 @@ clean-all
 
 Cleans all build output
 
-**Installed tasks:**
 
-* Implemented by class ``Cleaner``
+.. _gref_cli_cleanall:
+
+* **clean-all** Implemented by class ``Cleaner``
+
+
+  * ``--clean-all-sep``
+    ``string``
+    Default: ``\n``
+
+    String to use to separate results.
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
+
+  :ref:`ng-killall <gref_cli_ngkillall>`
+  ``--ng-killall-sep``
+  ``--ng-killall-everywhere``
+
+  :ref:`invalidate <gref_cli_invalidate>`
+  ``--invalidate-sep``
 
 
 
@@ -225,9 +998,47 @@ clean-all-async
 
 Cleans all build output in a background process
 
-**Installed tasks:**
 
-* Implemented by class ``AsyncCleaner``
+.. _gref_cli_cleanallasync:
+
+* **clean-all-async** Implemented by class ``AsyncCleaner``
+
+
+  * ``--clean-all-async-sep``
+    ``string``
+    Default: ``\n``
+
+    String to use to separate results.
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
+
+  :ref:`ng-killall <gref_cli_ngkillall>`
+  ``--ng-killall-sep``
+  ``--ng-killall-everywhere``
+
+  :ref:`invalidate <gref_cli_invalidate>`
+  ``--invalidate-sep``
 
 
 
@@ -238,18 +1049,200 @@ compile
 
 Compile both generated and checked in code.
 
-**Installed tasks:**
 
-* Implemented by class ``ScalaCompile``
+.. _gref_cli_compilescala:
 
-
-* Implemented by class ``AptCompile``
+* **compile:scala** Implemented by class ``ScalaCompile``
 
 
-* Implemented by class ``JavaCompile``
+  * ``--compile-scala-warnings/--no-compile-scala-warnings``
+    Default: ``True``
+
+    Compile with all configured warnings enabled.
+
+  * ``--compile-scala-partition-size-hint``
+    ``int``
+    Default: ``-1``
+
+    Roughly how many source files to attempt to compile together. Set to a large number to compile all sources together. Set this to 0 to compile target-by-target. Default is set in pants.ini.
+
+  * ``--compile-scala-missing-deps``
+    ``choice``
+    Default: ``warn``
+
+    One of off, warn, fatal. Check for missing dependencies in scalacode. Reports actual dependencies A -&gt; B where there is no transitive BUILD file dependency path from A to B.If fatal, missing deps are treated as a build error.
+
+  * ``--compile-scala-missing-direct-deps``
+    ``choice``
+    Default: ``off``
+
+    One of off, warn, fatal. Check for missing direct dependencies in scala code. Reports actual dependencies A -&gt; B where there is no direct BUILD file dependency path from A to B. This is a very strict check, as in practice it is common to rely on transitive, non-direct dependencies, e.g., due to type inference or when the main target in a BUILD file is modified to depend on other targets in the same BUILD file as an implementation detail. It may still be useful to set it to fatal temorarily, to detect these.
+
+  * ``--compile-scala-unnecessary-deps``
+    ``choice``
+    Default: ``off``
+
+    One of off, warn, fatal. Check for declared dependencies in scala code that are not needed. This is a very strict check. For example, generated code will often legitimately have BUILD dependencies that are unused in practice.
+
+  * ``--compile-scala-delete-scratch/--no-compile-scala-delete-scratch``
+    Default: ``True``
+
+    Leave intermediate scratch files around, for debugging build problems.
+
+  * ``--compile-scala-plugins``
+    ``string``
+
+    Use these scalac plugins. Default is set in pants.ini.
 
 
-* Implemented by class ``Checkstyle``
+
+.. _gref_cli_compileapt:
+
+* **compile:apt** Implemented by class ``AptCompile``
+
+
+  * ``--compile-apt-warnings/--no-compile-apt-warnings``
+    Default: ``True``
+
+    Compile with all configured warnings enabled.
+
+  * ``--compile-apt-partition-size-hint``
+    ``int``
+    Default: ``-1``
+
+    Roughly how many source files to attempt to compile together. Set to a large number to compile all sources together. Set this to 0 to compile target-by-target. Default is set in pants.ini.
+
+  * ``--compile-apt-missing-deps``
+    ``choice``
+    Default: ``warn``
+
+    One of off, warn, fatal. Check for missing dependencies in javacode. Reports actual dependencies A -&gt; B where there is no transitive BUILD file dependency path from A to B.If fatal, missing deps are treated as a build error.
+
+  * ``--compile-apt-missing-direct-deps``
+    ``choice``
+    Default: ``off``
+
+    One of off, warn, fatal. Check for missing direct dependencies in java code. Reports actual dependencies A -&gt; B where there is no direct BUILD file dependency path from A to B. This is a very strict check, as in practice it is common to rely on transitive, non-direct dependencies, e.g., due to type inference or when the main target in a BUILD file is modified to depend on other targets in the same BUILD file as an implementation detail. It may still be useful to set it to fatal temorarily, to detect these.
+
+  * ``--compile-apt-unnecessary-deps``
+    ``choice``
+    Default: ``off``
+
+    One of off, warn, fatal. Check for declared dependencies in java code that are not needed. This is a very strict check. For example, generated code will often legitimately have BUILD dependencies that are unused in practice.
+
+  * ``--compile-apt-delete-scratch/--no-compile-apt-delete-scratch``
+    Default: ``True``
+
+    Leave intermediate scratch files around, for debugging build problems.
+
+  * ``--compile-apt-args``
+    ``string``
+
+    Pass these extra args to javac.
+
+
+
+.. _gref_cli_compilejava:
+
+* **compile:java** Implemented by class ``JavaCompile``
+
+
+  * ``--compile-java-warnings/--no-compile-java-warnings``
+    Default: ``True``
+
+    Compile with all configured warnings enabled.
+
+  * ``--compile-java-partition-size-hint``
+    ``int``
+    Default: ``-1``
+
+    Roughly how many source files to attempt to compile together. Set to a large number to compile all sources together. Set this to 0 to compile target-by-target. Default is set in pants.ini.
+
+  * ``--compile-java-missing-deps``
+    ``choice``
+    Default: ``warn``
+
+    One of off, warn, fatal. Check for missing dependencies in javacode. Reports actual dependencies A -&gt; B where there is no transitive BUILD file dependency path from A to B.If fatal, missing deps are treated as a build error.
+
+  * ``--compile-java-missing-direct-deps``
+    ``choice``
+    Default: ``off``
+
+    One of off, warn, fatal. Check for missing direct dependencies in java code. Reports actual dependencies A -&gt; B where there is no direct BUILD file dependency path from A to B. This is a very strict check, as in practice it is common to rely on transitive, non-direct dependencies, e.g., due to type inference or when the main target in a BUILD file is modified to depend on other targets in the same BUILD file as an implementation detail. It may still be useful to set it to fatal temorarily, to detect these.
+
+  * ``--compile-java-unnecessary-deps``
+    ``choice``
+    Default: ``off``
+
+    One of off, warn, fatal. Check for declared dependencies in java code that are not needed. This is a very strict check. For example, generated code will often legitimately have BUILD dependencies that are unused in practice.
+
+  * ``--compile-java-delete-scratch/--no-compile-java-delete-scratch``
+    Default: ``True``
+
+    Leave intermediate scratch files around, for debugging build problems.
+
+  * ``--compile-java-args``
+    ``string``
+
+    Pass these extra args to javac.
+
+
+
+.. _gref_cli_compilecheckstyle:
+
+* **compile:checkstyle** Implemented by class ``Checkstyle``
+
+
+  * ``--compile-checkstyle-skip/--no-compile-checkstyle-skip``
+
+    Skip checkstyle.
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
+
+  :ref:`gen:thrift <gref_cli_genthrift>`
+  ``--gen-thrift-outdir``
+  ``--gen-thrift-version``
+  ``--gen-thrift-lang``
+
+  :ref:`gen:scrooge <gref_cli_genscrooge>`
+  ``--gen-scrooge-outdir``
+  ``--gen-scrooge-quiet``
+
+  :ref:`gen:protoc <gref_cli_genprotoc>`
+  ``--gen-protoc-outdir``
+  ``--gen-protoc-lang``
+
+  :ref:`check-exclusives <gref_cli_checkexclusives>`
+  ``--check-exclusives-error_on_collision/--no-check-exclusives-error_on_collision``
+
+  :ref:`ivy <gref_cli_ivy>`
+  ``--ivy-override``
+  ``--ivy-report/--no-ivy-report``
+  ``--ivy-open/--no-ivy-open``
+  ``--ivy-outdir``
+  ``--ivy-args``
+  ``--ivy-mutable-pattern``
 
 
 
@@ -260,11 +1253,55 @@ dependees
 
 Print a reverse dependency mapping for the given targets
 
-**Installed tasks:**
 
-* Implemented by class ``ReverseDepmap``
+.. _gref_cli_dependees:
+
+* **dependees** Implemented by class ``ReverseDepmap``
 
   Outputs all targets whose dependencies include at least one of the input targets.
+
+  * ``--dependees-sep``
+    ``string``
+    Default: ``\n``
+
+    String to use to separate results.
+
+  * ``--dependees-transitive/--no-dependees-transitive``
+
+    List transitive dependees.
+
+  * ``--dependees-closed/--no-dependees-closed``
+
+    Include the input targets in the output along with the dependees.
+
+  * ``--dependees-type``
+    ``string``
+
+    Identifies target types to include. Multiple type inclusions can be specified at once in a comma separated list or else by using multiple instances of this flag.
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
+
 
 
 .. _gref_phase_dependencies:
@@ -274,11 +1311,50 @@ dependencies
 
 Extract textual infomation about the dependencies of a target
 
-**Installed tasks:**
 
-* Implemented by class ``Dependencies``
+.. _gref_cli_dependencies:
+
+* **dependencies** Implemented by class ``Dependencies``
 
   Generates a textual list (using the target format) for the dependency set of a target.
+
+  * ``--dependencies-sep``
+    ``string``
+    Default: ``\n``
+
+    String to use to separate results.
+
+  * ``--dependencies-internal-only``
+
+    Specifies that only internal dependencies should be included in the graph output (no external jars).
+
+  * ``--dependencies-external-only``
+
+    Specifies that only external dependencies should be included in the graph output (only external jars).
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
+
 
 
 .. _gref_phase_depmap:
@@ -288,11 +1364,65 @@ depmap
 
 Generates either a textual dependency tree or a graphviz digraph dotfile for the dependency set of a target
 
-**Installed tasks:**
 
-* Implemented by class ``Depmap``
+.. _gref_cli_depmap:
 
-  Generates either a textual dependency tree or a graphviz digraph dot file for the dependency   set of a target.
+* **depmap** Implemented by class ``Depmap``
+
+  Generates either a textual dependency tree or a graphviz digraph dot file for the dependency
+  set of a target.
+
+  * ``--depmap-sep``
+    ``string``
+    Default: ``\n``
+
+    String to use to separate results.
+
+  * ``--depmap-internal-only``
+
+    Specifies that only internal dependencies should be included in the graph output (no external jars).
+
+  * ``--depmap-external-only``
+
+    Specifies that only external dependencies should be included in the graph output (only external jars).
+
+  * ``--depmap-minimal``
+
+    For a textual dependency tree, only prints a dependency the 1st time it is encountered.  For graph output this does nothing.
+
+  * ``--depmap-separator``
+    ``string``
+    Default: ``-``
+
+    Specifies the separator to use between the org/name/rev components of a dependency's fully qualified name.
+
+  * ``--depmap-graph``
+
+    Specifies the internal dependency graph should be output in the dot digraph format
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
+
 
 
 .. _gref_phase_detect-duplicates:
@@ -302,11 +1432,130 @@ detect-duplicates
 
 Detect duplicate classes and resources on the classpath.
 
-**Installed tasks:**
 
-* Implemented by class ``DuplicateDetector``
+.. _gref_cli_detectduplicates:
+
+* **detect-duplicates** Implemented by class ``DuplicateDetector``
 
   Detect classes and resources with the same qualified name on the classpath.
+
+  * ``--detect-duplicates-outdir``
+    ``string``
+
+    Create bundles and archives in this directory.
+
+  * ``--detect-duplicates-deployjar/--no-detect-duplicates-deployjar``
+
+    Create a monolithic deploy jar containing this binaries classfiles as well as all classfiles it depends on transitively.
+
+  * ``--detect-duplicates-fail-fast/--no-detect-duplicates-fail-fast``
+
+    Fail fast if duplicate classes/resources are found.
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
+
+  :ref:`jar:javadoc_publish <gref_cli_jarjavadocpublish>`
+  ``--jar-javadoc_publish-outdir``
+  ``--jar-javadoc_publish-include-codegen/--no-jar-javadoc_publish-include-codegen``
+  ``--jar-javadoc_publish-transitive/--no-jar-javadoc_publish-transitive``
+  ``--jar-javadoc_publish-combined/--no-jar-javadoc_publish-combined``
+  ``--jar-javadoc_publish-open/--no-jar-javadoc_publish-open``
+  ``--jar-javadoc_publish-ignore-failure/--no-jar-javadoc_publish-ignore-failure``
+
+  :ref:`jar:scaladoc_publish <gref_cli_jarscaladocpublish>`
+  ``--jar-scaladoc_publish-outdir``
+  ``--jar-scaladoc_publish-include-codegen/--no-jar-scaladoc_publish-include-codegen``
+  ``--jar-scaladoc_publish-transitive/--no-jar-scaladoc_publish-transitive``
+  ``--jar-scaladoc_publish-combined/--no-jar-scaladoc_publish-combined``
+  ``--jar-scaladoc_publish-open/--no-jar-scaladoc_publish-open``
+  ``--jar-scaladoc_publish-ignore-failure/--no-jar-scaladoc_publish-ignore-failure``
+
+  :ref:`gen:thrift <gref_cli_genthrift>`
+  ``--gen-thrift-outdir``
+  ``--gen-thrift-version``
+  ``--gen-thrift-lang``
+
+  :ref:`gen:scrooge <gref_cli_genscrooge>`
+  ``--gen-scrooge-outdir``
+  ``--gen-scrooge-quiet``
+
+  :ref:`gen:protoc <gref_cli_genprotoc>`
+  ``--gen-protoc-outdir``
+  ``--gen-protoc-lang``
+
+  :ref:`check-exclusives <gref_cli_checkexclusives>`
+  ``--check-exclusives-error_on_collision/--no-check-exclusives-error_on_collision``
+
+  :ref:`ivy <gref_cli_ivy>`
+  ``--ivy-override``
+  ``--ivy-report/--no-ivy-report``
+  ``--ivy-open/--no-ivy-open``
+  ``--ivy-outdir``
+  ``--ivy-args``
+  ``--ivy-mutable-pattern``
+
+  :ref:`compile:scala <gref_cli_compilescala>`
+  ``--compile-scala-warnings/--no-compile-scala-warnings``
+  ``--compile-scala-partition-size-hint``
+  ``--compile-scala-missing-deps``
+  ``--compile-scala-missing-direct-deps``
+  ``--compile-scala-unnecessary-deps``
+  ``--compile-scala-delete-scratch/--no-compile-scala-delete-scratch``
+  ``--compile-scala-plugins``
+
+  :ref:`compile:apt <gref_cli_compileapt>`
+  ``--compile-apt-warnings/--no-compile-apt-warnings``
+  ``--compile-apt-partition-size-hint``
+  ``--compile-apt-missing-deps``
+  ``--compile-apt-missing-direct-deps``
+  ``--compile-apt-unnecessary-deps``
+  ``--compile-apt-delete-scratch/--no-compile-apt-delete-scratch``
+  ``--compile-apt-args``
+
+  :ref:`compile:java <gref_cli_compilejava>`
+  ``--compile-java-warnings/--no-compile-java-warnings``
+  ``--compile-java-partition-size-hint``
+  ``--compile-java-missing-deps``
+  ``--compile-java-missing-direct-deps``
+  ``--compile-java-unnecessary-deps``
+  ``--compile-java-delete-scratch/--no-compile-java-delete-scratch``
+  ``--compile-java-args``
+
+  :ref:`compile:checkstyle <gref_cli_compilecheckstyle>`
+  ``--compile-checkstyle-skip/--no-compile-checkstyle-skip``
+
+  :ref:`jar <gref_cli_jar>`
+  ``--jar-outdir``
+  ``--jar-compressed/--no-jar-compressed``
+  ``--jar-transitive/--no-jar-transitive``
+  ``--jar-classes/--no-jar-classes``
+  ``--jar-sources/--no-jar-sources``
+  ``--jar-javadoc/--no-jar-javadoc``
+
+  :ref:`jar:args-apt <gref_cli_jarargsapt>`
+  ``--jar-args-apt-include_all/--no-jar-args-apt-include_all``
+
 
 
 .. _gref_phase_doc:
@@ -316,12 +1565,147 @@ doc
 
 Create documentation.
 
-**Installed tasks:**
 
-* Implemented by class ``JavadocGen``
+.. _gref_cli_docjavadoc:
+
+* **doc:javadoc** Implemented by class ``JavadocGen``
 
 
-* Implemented by class ``ScaladocGen``
+  * ``--doc-javadoc-outdir``
+    ``string``
+
+    Emit javadoc in this directory.
+
+  * ``--doc-javadoc-include-codegen/--no-doc-javadoc-include-codegen``
+
+    Create javadoc for generated code.
+
+  * ``--doc-javadoc-transitive/--no-doc-javadoc-transitive``
+    Default: ``True``
+
+    Create javadoc for the transitive closure of internal targets reachable from the roots specified on the command line.
+
+  * ``--doc-javadoc-combined/--no-doc-javadoc-combined``
+
+    Generate javadoc for all targets combined instead of each target individually.
+
+  * ``--doc-javadoc-open/--no-doc-javadoc-open``
+
+    Attempt to open the generated javadoc in a browser (implies --doc-javadoc-combined).
+
+  * ``--doc-javadoc-ignore-failure/--no-doc-javadoc-ignore-failure``
+
+    Specifies that javadoc errors should not cause build errors
+
+
+
+.. _gref_cli_docscaladoc:
+
+* **doc:scaladoc** Implemented by class ``ScaladocGen``
+
+
+  * ``--doc-scaladoc-outdir``
+    ``string``
+
+    Emit scaladoc in this directory.
+
+  * ``--doc-scaladoc-include-codegen/--no-doc-scaladoc-include-codegen``
+
+    Create scaladoc for generated code.
+
+  * ``--doc-scaladoc-transitive/--no-doc-scaladoc-transitive``
+    Default: ``True``
+
+    Create scaladoc for the transitive closure of internal targets reachable from the roots specified on the command line.
+
+  * ``--doc-scaladoc-combined/--no-doc-scaladoc-combined``
+
+    Generate scaladoc for all targets combined instead of each target individually.
+
+  * ``--doc-scaladoc-open/--no-doc-scaladoc-open``
+
+    Attempt to open the generated scaladoc in a browser (implies --doc-scaladoc-combined).
+
+  * ``--doc-scaladoc-ignore-failure/--no-doc-scaladoc-ignore-failure``
+
+    Specifies that scaladoc errors should not cause build errors
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
+
+  :ref:`gen:thrift <gref_cli_genthrift>`
+  ``--gen-thrift-outdir``
+  ``--gen-thrift-version``
+  ``--gen-thrift-lang``
+
+  :ref:`gen:scrooge <gref_cli_genscrooge>`
+  ``--gen-scrooge-outdir``
+  ``--gen-scrooge-quiet``
+
+  :ref:`gen:protoc <gref_cli_genprotoc>`
+  ``--gen-protoc-outdir``
+  ``--gen-protoc-lang``
+
+  :ref:`check-exclusives <gref_cli_checkexclusives>`
+  ``--check-exclusives-error_on_collision/--no-check-exclusives-error_on_collision``
+
+  :ref:`ivy <gref_cli_ivy>`
+  ``--ivy-override``
+  ``--ivy-report/--no-ivy-report``
+  ``--ivy-open/--no-ivy-open``
+  ``--ivy-outdir``
+  ``--ivy-args``
+  ``--ivy-mutable-pattern``
+
+  :ref:`compile:scala <gref_cli_compilescala>`
+  ``--compile-scala-warnings/--no-compile-scala-warnings``
+  ``--compile-scala-partition-size-hint``
+  ``--compile-scala-missing-deps``
+  ``--compile-scala-missing-direct-deps``
+  ``--compile-scala-unnecessary-deps``
+  ``--compile-scala-delete-scratch/--no-compile-scala-delete-scratch``
+  ``--compile-scala-plugins``
+
+  :ref:`compile:apt <gref_cli_compileapt>`
+  ``--compile-apt-warnings/--no-compile-apt-warnings``
+  ``--compile-apt-partition-size-hint``
+  ``--compile-apt-missing-deps``
+  ``--compile-apt-missing-direct-deps``
+  ``--compile-apt-unnecessary-deps``
+  ``--compile-apt-delete-scratch/--no-compile-apt-delete-scratch``
+  ``--compile-apt-args``
+
+  :ref:`compile:java <gref_cli_compilejava>`
+  ``--compile-java-warnings/--no-compile-java-warnings``
+  ``--compile-java-partition-size-hint``
+  ``--compile-java-missing-deps``
+  ``--compile-java-missing-direct-deps``
+  ``--compile-java-unnecessary-deps``
+  ``--compile-java-delete-scratch/--no-compile-java-delete-scratch``
+  ``--compile-java-args``
+
+  :ref:`compile:checkstyle <gref_cli_compilecheckstyle>`
+  ``--compile-checkstyle-skip/--no-compile-checkstyle-skip``
 
 
 
@@ -332,9 +1716,166 @@ eclipse
 
 Create an Eclipse project from the given targets.
 
-**Installed tasks:**
 
-* Implemented by class ``EclipseGen``
+.. _gref_cli_eclipse:
+
+* **eclipse** Implemented by class ``EclipseGen``
+
+
+  * ``--eclipse-project-name``
+    ``string``
+    Default: ``project``
+
+    Specifies the name to use for the generated project.
+
+  * ``--eclipse-project-dir``
+    ``string``
+
+    Specifies the directory to output the generated project files to.
+
+  * ``--eclipse-project-cwd``
+    ``string``
+
+    Specifies the directory the generated project should use as the cwd for processes it launches.  Note that specifying this trumps --eclipse-project-dir and not all project related files will be stored there.
+
+  * ``--eclipse-intransitive``
+
+    Limits the sources included in the generated project to just those owned by the targets specified on the command line
+
+  * ``--eclipse-python/--no-eclipse-python``
+
+    Adds python support to the generated project configuration.
+
+  * ``--eclipse-java/--no-eclipse-java``
+    Default: ``True``
+
+    Includes java sources in the project; otherwise compiles them and adds them to the project classpath.
+
+  * ``--eclipse-java-language-level``
+    ``int``
+    Default: ``6``
+
+    Sets the java language and jdk used to compile the project's java sources.
+
+  * ``--eclipse-java-jdk-name``
+    ``string``
+
+    Sets the jdk used to compile the project's java sources. If unset the default jdk name for the --eclipse-java-language-level is used.
+
+  * ``--eclipse-scala/--no-eclipse-scala``
+    Default: ``True``
+
+    Includes scala sources in the project; otherwise compiles them and adds them to the project classpath.
+
+  * ``--eclipse-eclipse-version``
+    ``choice``
+    Default: ``3.6``
+
+    The Eclipse version the project configuration should be generated for; can be one of: ['3.5', '3.6', '3.7']
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
+
+  :ref:`jar:javadoc_publish <gref_cli_jarjavadocpublish>`
+  ``--jar-javadoc_publish-outdir``
+  ``--jar-javadoc_publish-include-codegen/--no-jar-javadoc_publish-include-codegen``
+  ``--jar-javadoc_publish-transitive/--no-jar-javadoc_publish-transitive``
+  ``--jar-javadoc_publish-combined/--no-jar-javadoc_publish-combined``
+  ``--jar-javadoc_publish-open/--no-jar-javadoc_publish-open``
+  ``--jar-javadoc_publish-ignore-failure/--no-jar-javadoc_publish-ignore-failure``
+
+  :ref:`jar:scaladoc_publish <gref_cli_jarscaladocpublish>`
+  ``--jar-scaladoc_publish-outdir``
+  ``--jar-scaladoc_publish-include-codegen/--no-jar-scaladoc_publish-include-codegen``
+  ``--jar-scaladoc_publish-transitive/--no-jar-scaladoc_publish-transitive``
+  ``--jar-scaladoc_publish-combined/--no-jar-scaladoc_publish-combined``
+  ``--jar-scaladoc_publish-open/--no-jar-scaladoc_publish-open``
+  ``--jar-scaladoc_publish-ignore-failure/--no-jar-scaladoc_publish-ignore-failure``
+
+  :ref:`gen:thrift <gref_cli_genthrift>`
+  ``--gen-thrift-outdir``
+  ``--gen-thrift-version``
+  ``--gen-thrift-lang``
+
+  :ref:`gen:scrooge <gref_cli_genscrooge>`
+  ``--gen-scrooge-outdir``
+  ``--gen-scrooge-quiet``
+
+  :ref:`gen:protoc <gref_cli_genprotoc>`
+  ``--gen-protoc-outdir``
+  ``--gen-protoc-lang``
+
+  :ref:`check-exclusives <gref_cli_checkexclusives>`
+  ``--check-exclusives-error_on_collision/--no-check-exclusives-error_on_collision``
+
+  :ref:`ivy <gref_cli_ivy>`
+  ``--ivy-override``
+  ``--ivy-report/--no-ivy-report``
+  ``--ivy-open/--no-ivy-open``
+  ``--ivy-outdir``
+  ``--ivy-args``
+  ``--ivy-mutable-pattern``
+
+  :ref:`compile:scala <gref_cli_compilescala>`
+  ``--compile-scala-warnings/--no-compile-scala-warnings``
+  ``--compile-scala-partition-size-hint``
+  ``--compile-scala-missing-deps``
+  ``--compile-scala-missing-direct-deps``
+  ``--compile-scala-unnecessary-deps``
+  ``--compile-scala-delete-scratch/--no-compile-scala-delete-scratch``
+  ``--compile-scala-plugins``
+
+  :ref:`compile:apt <gref_cli_compileapt>`
+  ``--compile-apt-warnings/--no-compile-apt-warnings``
+  ``--compile-apt-partition-size-hint``
+  ``--compile-apt-missing-deps``
+  ``--compile-apt-missing-direct-deps``
+  ``--compile-apt-unnecessary-deps``
+  ``--compile-apt-delete-scratch/--no-compile-apt-delete-scratch``
+  ``--compile-apt-args``
+
+  :ref:`compile:java <gref_cli_compilejava>`
+  ``--compile-java-warnings/--no-compile-java-warnings``
+  ``--compile-java-partition-size-hint``
+  ``--compile-java-missing-deps``
+  ``--compile-java-missing-direct-deps``
+  ``--compile-java-unnecessary-deps``
+  ``--compile-java-delete-scratch/--no-compile-java-delete-scratch``
+  ``--compile-java-args``
+
+  :ref:`compile:checkstyle <gref_cli_compilecheckstyle>`
+  ``--compile-checkstyle-skip/--no-compile-checkstyle-skip``
+
+  :ref:`jar <gref_cli_jar>`
+  ``--jar-outdir``
+  ``--jar-compressed/--no-jar-compressed``
+  ``--jar-transitive/--no-jar-transitive``
+  ``--jar-classes/--no-jar-classes``
+  ``--jar-sources/--no-jar-sources``
+  ``--jar-javadoc/--no-jar-javadoc``
+
+  :ref:`jar:args-apt <gref_cli_jarargsapt>`
+  ``--jar-args-apt-include_all/--no-jar-args-apt-include_all``
 
 
 
@@ -345,9 +1886,40 @@ filedeps
 
 Print out a list of all files the target depends on
 
-**Installed tasks:**
 
-* Implemented by class ``FileDeps``
+.. _gref_cli_filedeps:
+
+* **filedeps** Implemented by class ``FileDeps``
+
+
+  * ``--filedeps-sep``
+    ``string``
+    Default: ``\n``
+
+    String to use to separate results.
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
 
 
 
@@ -358,11 +1930,42 @@ filemap
 
 Outputs a mapping from source file to the target that owns the source file
 
-**Installed tasks:**
 
-* Implemented by class ``Filemap``
+.. _gref_cli_filemap:
+
+* **filemap** Implemented by class ``Filemap``
 
   Outputs a mapping from source file to the target that owns the source file.
+
+  * ``--filemap-sep``
+    ``string``
+    Default: ``\n``
+
+    String to use to separate results.
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
+
 
 
 .. _gref_phase_filter:
@@ -372,11 +1975,62 @@ filter
 
 Filter the input targets based on various criteria.
 
-**Installed tasks:**
 
-* Implemented by class ``Filter``
+.. _gref_cli_filter:
+
+* **filter** Implemented by class ``Filter``
 
   Filters targets based on various criteria.
+
+  * ``--filter-sep``
+    ``string``
+    Default: ``\n``
+
+    String to use to separate results.
+
+  * ``--filter-type``
+    ``string``
+
+    Identifies target types to include (optional '+' prefix) or exclude ('-' prefix).  Multiple type inclusions or exclusions can be specified at once in a comma separated list or else by using multiple instances of this flag.
+
+  * ``--filter-target``
+    ``string``
+
+    Identifies specific targets to include (optional '+' prefix) or exclude ('-' prefix).  Multiple target inclusions or exclusions can be specified at once in a comma separated list or else by using multiple instances of this flag.
+
+  * ``--filter-ancestor``
+    ``string``
+
+    Identifies ancestor targets (containing targets) that make a select child (contained) targets to include (optional '+' prefix) or exclude ('-' prefix).  Multiple ancestor inclusions or exclusions can be specified at once in a comma separated list or else by using multiple instances of this flag.
+
+  * ``--filter-regex``
+    ``string``
+
+    Identifies regexes of target addresses to include (optional '+' prefix) or exclude ('-' prefix).  Multiple target inclusions or exclusions can be specified at once in a comma separated list or else by using multiple instances of this flag.
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
+
 
 
 .. _gref_phase_gen:
@@ -386,18 +2040,89 @@ gen
 
 Generate code.
 
-**Installed tasks:**
 
-* Implemented by class ``ThriftGen``
+.. _gref_cli_genthrift:
 
-
-* Implemented by class ``ScroogeGen``
+* **gen:thrift** Implemented by class ``ThriftGen``
 
 
-* Implemented by class ``ProtobufGen``
+  * ``--gen-thrift-outdir``
+    ``string``
+
+    Emit generated code in to this directory.
+
+  * ``--gen-thrift-version``
+    ``string``
+
+    Thrift compiler version.
+
+  * ``--gen-thrift-lang``
+    ``choice``
+
+    Force generation of thrift code for these languages.  Both 'python' and 'java' are supported
 
 
-* Implemented by class ``AntlrGen``
+
+.. _gref_cli_genscrooge:
+
+* **gen:scrooge** Implemented by class ``ScroogeGen``
+
+
+  * ``--gen-scrooge-outdir``
+    ``string``
+
+    Emit generated code in to this directory.
+
+  * ``--gen-scrooge-quiet``
+
+    Suppress output, overrides verbose flag in pants.ini.
+
+
+
+.. _gref_cli_genprotoc:
+
+* **gen:protoc** Implemented by class ``ProtobufGen``
+
+
+  * ``--gen-protoc-outdir``
+    ``string``
+
+    Emit generated code in to this directory.
+
+  * ``--gen-protoc-lang``
+    ``choice``
+
+    Force generation of protobuf code for these languages.  Both 'python' and 'java' are supported
+
+
+
+.. _gref_cli_:
+
+* **** Implemented by class ``AntlrGen``
+
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
 
 
 
@@ -408,9 +2133,44 @@ goals
 
 List all documented goals.
 
-**Installed tasks:**
 
-* Implemented by class ``ListGoals``
+.. _gref_cli_goals:
+
+* **goals** Implemented by class ``ListGoals``
+
+
+  * ``--goals-sep``
+    ``string``
+    Default: ``\n``
+
+    String to use to separate results.
+
+  * ``--goals-all``
+
+    List all goals even if no description is available.
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
 
 
 
@@ -421,9 +2181,39 @@ help
 
 Provide help for the specified goal.
 
-**Installed tasks:**
 
-* Implemented by class ``Help``
+.. _gref_cli_help:
+
+* **help** Implemented by class ``Help``
+
+
+  * ``--help-goal``
+    ``string``
+
+None
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
 
 
 
@@ -434,9 +2224,206 @@ idea
 
 Create an IntelliJ IDEA project from the given targets.
 
-**Installed tasks:**
 
-* Implemented by class ``IdeaGen``
+.. _gref_cli_idea:
+
+* **idea** Implemented by class ``IdeaGen``
+
+
+  * ``--idea-project-name``
+    ``string``
+    Default: ``project``
+
+    Specifies the name to use for the generated project.
+
+  * ``--idea-project-dir``
+    ``string``
+
+    Specifies the directory to output the generated project files to.
+
+  * ``--idea-project-cwd``
+    ``string``
+
+    Specifies the directory the generated project should use as the cwd for processes it launches.  Note that specifying this trumps --idea-project-dir and not all project related files will be stored there.
+
+  * ``--idea-intransitive``
+
+    Limits the sources included in the generated project to just those owned by the targets specified on the command line
+
+  * ``--idea-python/--no-idea-python``
+
+    Adds python support to the generated project configuration.
+
+  * ``--idea-java/--no-idea-java``
+    Default: ``True``
+
+    Includes java sources in the project; otherwise compiles them and adds them to the project classpath.
+
+  * ``--idea-java-language-level``
+    ``int``
+    Default: ``6``
+
+    Sets the java language and jdk used to compile the project's java sources.
+
+  * ``--idea-java-jdk-name``
+    ``string``
+
+    Sets the jdk used to compile the project's java sources. If unset the default jdk name for the --idea-java-language-level is used.
+
+  * ``--idea-scala/--no-idea-scala``
+    Default: ``True``
+
+    Includes scala sources in the project; otherwise compiles them and adds them to the project classpath.
+
+  * ``--idea-idea-version``
+    ``choice``
+    Default: ``11``
+
+    The IntelliJ IDEA version the project configuration should be generated for; can be one of: ['10', '11', '12', '9']
+
+  * ``--idea-merge/--no-idea-merge``
+    Default: ``True``
+
+    Merge any manual customizations in existing Intellij IDEA configuration. If False, manual customizations will be over-written.
+
+  * ``--idea-open/--no-idea-open``
+    Default: ``True``
+
+    Attempts top open the generated project in IDEA.
+
+  * ``--idea-bash/--no-idea-bash``
+
+    Adds a bash facet to the generated project configuration.
+
+  * ``--idea-scala-language-level``
+    ``choice``
+    Default: ``2.9``
+
+    Set the scala language level used for IDEA linting.
+
+  * ``--idea-scala-maximum-heap-size``
+    ``string``
+
+    Sets the maximum heap size (in megabytes) for scalac.
+
+  * ``--idea-fsc/--no-idea-fsc``
+
+    If the project contains any scala targets this specifies the fsc compiler should be enabled.
+
+  * ``--idea-java-encoding``
+    ``string``
+    Default: ``UTF-8``
+
+    Sets the file encoding for java files in this project.
+
+  * ``--idea-java-maximum-heap-size``
+    ``string``
+
+    Sets the maximum heap size (in megabytes) for javac.
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
+
+  :ref:`jar:javadoc_publish <gref_cli_jarjavadocpublish>`
+  ``--jar-javadoc_publish-outdir``
+  ``--jar-javadoc_publish-include-codegen/--no-jar-javadoc_publish-include-codegen``
+  ``--jar-javadoc_publish-transitive/--no-jar-javadoc_publish-transitive``
+  ``--jar-javadoc_publish-combined/--no-jar-javadoc_publish-combined``
+  ``--jar-javadoc_publish-open/--no-jar-javadoc_publish-open``
+  ``--jar-javadoc_publish-ignore-failure/--no-jar-javadoc_publish-ignore-failure``
+
+  :ref:`jar:scaladoc_publish <gref_cli_jarscaladocpublish>`
+  ``--jar-scaladoc_publish-outdir``
+  ``--jar-scaladoc_publish-include-codegen/--no-jar-scaladoc_publish-include-codegen``
+  ``--jar-scaladoc_publish-transitive/--no-jar-scaladoc_publish-transitive``
+  ``--jar-scaladoc_publish-combined/--no-jar-scaladoc_publish-combined``
+  ``--jar-scaladoc_publish-open/--no-jar-scaladoc_publish-open``
+  ``--jar-scaladoc_publish-ignore-failure/--no-jar-scaladoc_publish-ignore-failure``
+
+  :ref:`gen:thrift <gref_cli_genthrift>`
+  ``--gen-thrift-outdir``
+  ``--gen-thrift-version``
+  ``--gen-thrift-lang``
+
+  :ref:`gen:scrooge <gref_cli_genscrooge>`
+  ``--gen-scrooge-outdir``
+  ``--gen-scrooge-quiet``
+
+  :ref:`gen:protoc <gref_cli_genprotoc>`
+  ``--gen-protoc-outdir``
+  ``--gen-protoc-lang``
+
+  :ref:`check-exclusives <gref_cli_checkexclusives>`
+  ``--check-exclusives-error_on_collision/--no-check-exclusives-error_on_collision``
+
+  :ref:`ivy <gref_cli_ivy>`
+  ``--ivy-override``
+  ``--ivy-report/--no-ivy-report``
+  ``--ivy-open/--no-ivy-open``
+  ``--ivy-outdir``
+  ``--ivy-args``
+  ``--ivy-mutable-pattern``
+
+  :ref:`compile:scala <gref_cli_compilescala>`
+  ``--compile-scala-warnings/--no-compile-scala-warnings``
+  ``--compile-scala-partition-size-hint``
+  ``--compile-scala-missing-deps``
+  ``--compile-scala-missing-direct-deps``
+  ``--compile-scala-unnecessary-deps``
+  ``--compile-scala-delete-scratch/--no-compile-scala-delete-scratch``
+  ``--compile-scala-plugins``
+
+  :ref:`compile:apt <gref_cli_compileapt>`
+  ``--compile-apt-warnings/--no-compile-apt-warnings``
+  ``--compile-apt-partition-size-hint``
+  ``--compile-apt-missing-deps``
+  ``--compile-apt-missing-direct-deps``
+  ``--compile-apt-unnecessary-deps``
+  ``--compile-apt-delete-scratch/--no-compile-apt-delete-scratch``
+  ``--compile-apt-args``
+
+  :ref:`compile:java <gref_cli_compilejava>`
+  ``--compile-java-warnings/--no-compile-java-warnings``
+  ``--compile-java-partition-size-hint``
+  ``--compile-java-missing-deps``
+  ``--compile-java-missing-direct-deps``
+  ``--compile-java-unnecessary-deps``
+  ``--compile-java-delete-scratch/--no-compile-java-delete-scratch``
+  ``--compile-java-args``
+
+  :ref:`compile:checkstyle <gref_cli_compilecheckstyle>`
+  ``--compile-checkstyle-skip/--no-compile-checkstyle-skip``
+
+  :ref:`jar <gref_cli_jar>`
+  ``--jar-outdir``
+  ``--jar-compressed/--no-jar-compressed``
+  ``--jar-transitive/--no-jar-transitive``
+  ``--jar-classes/--no-jar-classes``
+  ``--jar-sources/--no-jar-sources``
+  ``--jar-javadoc/--no-jar-javadoc``
+
+  :ref:`jar:args-apt <gref_cli_jarargsapt>`
+  ``--jar-args-apt-include_all/--no-jar-args-apt-include_all``
 
 
 
@@ -447,9 +2434,44 @@ invalidate
 
 Invalidate all targets
 
-**Installed tasks:**
 
-* Implemented by class ``Invalidator``
+.. _gref_cli_invalidate:
+
+* **invalidate** Implemented by class ``Invalidator``
+
+
+  * ``--invalidate-sep``
+    ``string``
+    Default: ``\n``
+
+    String to use to separate results.
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
+
+  :ref:`ng-killall <gref_cli_ngkillall>`
+  ``--ng-killall-sep``
+  ``--ng-killall-everywhere``
 
 
 
@@ -460,18 +2482,193 @@ jar
 
 Create one or more jars.
 
-**Installed tasks:**
 
-* Implemented by class ``JavadocJarShim``
+.. _gref_cli_jarjavadocpublish:
 
-
-* Implemented by class ``ScaladocJarShim``
+* **jar:javadoc_publish** Implemented by class ``JavadocJarShim``
 
 
-* Implemented by class ``JarCreateGoal``
+  * ``--jar-javadoc_publish-outdir``
+    ``string``
+
+    Emit javadoc in this directory.
+
+  * ``--jar-javadoc_publish-include-codegen/--no-jar-javadoc_publish-include-codegen``
+
+    Create javadoc for generated code.
+
+  * ``--jar-javadoc_publish-transitive/--no-jar-javadoc_publish-transitive``
+    Default: ``True``
+
+    Create javadoc for the transitive closure of internal targets reachable from the roots specified on the command line.
+
+  * ``--jar-javadoc_publish-combined/--no-jar-javadoc_publish-combined``
+
+    Generate javadoc for all targets combined instead of each target individually.
+
+  * ``--jar-javadoc_publish-open/--no-jar-javadoc_publish-open``
+
+    Attempt to open the generated javadoc in a browser (implies --jar-javadoc_publish-combined).
+
+  * ``--jar-javadoc_publish-ignore-failure/--no-jar-javadoc_publish-ignore-failure``
+
+    Specifies that javadoc errors should not cause build errors
 
 
-* Implemented by class ``JarArgsResourceMapper``
+
+.. _gref_cli_jarscaladocpublish:
+
+* **jar:scaladoc_publish** Implemented by class ``ScaladocJarShim``
+
+
+  * ``--jar-scaladoc_publish-outdir``
+    ``string``
+
+    Emit scaladoc in this directory.
+
+  * ``--jar-scaladoc_publish-include-codegen/--no-jar-scaladoc_publish-include-codegen``
+
+    Create scaladoc for generated code.
+
+  * ``--jar-scaladoc_publish-transitive/--no-jar-scaladoc_publish-transitive``
+    Default: ``True``
+
+    Create scaladoc for the transitive closure of internal targets reachable from the roots specified on the command line.
+
+  * ``--jar-scaladoc_publish-combined/--no-jar-scaladoc_publish-combined``
+
+    Generate scaladoc for all targets combined instead of each target individually.
+
+  * ``--jar-scaladoc_publish-open/--no-jar-scaladoc_publish-open``
+
+    Attempt to open the generated scaladoc in a browser (implies --jar-scaladoc_publish-combined).
+
+  * ``--jar-scaladoc_publish-ignore-failure/--no-jar-scaladoc_publish-ignore-failure``
+
+    Specifies that scaladoc errors should not cause build errors
+
+
+
+.. _gref_cli_jar:
+
+* **jar** Implemented by class ``JarCreateGoal``
+
+
+  * ``--jar-outdir``
+    ``string``
+
+    Emit jars in to this directory.
+
+  * ``--jar-compressed/--no-jar-compressed``
+    Default: ``True``
+
+    Create compressed jars.
+
+  * ``--jar-transitive/--no-jar-transitive``
+    Default: ``True``
+
+    Create jars for the transitive closure of internal targets reachable from the roots specified on the command line.
+
+  * ``--jar-classes/--no-jar-classes``
+    Default: ``True``
+
+    Create class jars.
+
+  * ``--jar-sources/--no-jar-sources``
+
+    Create source jars.
+
+  * ``--jar-javadoc/--no-jar-javadoc``
+
+    Create javadoc jars.
+
+
+
+.. _gref_cli_jarargsapt:
+
+* **jar:args-apt** Implemented by class ``JarArgsResourceMapper``
+
+
+  * ``--jar-args-apt-include_all/--no-jar-args-apt-include_all``
+
+    Include all arg fields resources.
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
+
+  :ref:`gen:thrift <gref_cli_genthrift>`
+  ``--gen-thrift-outdir``
+  ``--gen-thrift-version``
+  ``--gen-thrift-lang``
+
+  :ref:`gen:scrooge <gref_cli_genscrooge>`
+  ``--gen-scrooge-outdir``
+  ``--gen-scrooge-quiet``
+
+  :ref:`gen:protoc <gref_cli_genprotoc>`
+  ``--gen-protoc-outdir``
+  ``--gen-protoc-lang``
+
+  :ref:`check-exclusives <gref_cli_checkexclusives>`
+  ``--check-exclusives-error_on_collision/--no-check-exclusives-error_on_collision``
+
+  :ref:`ivy <gref_cli_ivy>`
+  ``--ivy-override``
+  ``--ivy-report/--no-ivy-report``
+  ``--ivy-open/--no-ivy-open``
+  ``--ivy-outdir``
+  ``--ivy-args``
+  ``--ivy-mutable-pattern``
+
+  :ref:`compile:scala <gref_cli_compilescala>`
+  ``--compile-scala-warnings/--no-compile-scala-warnings``
+  ``--compile-scala-partition-size-hint``
+  ``--compile-scala-missing-deps``
+  ``--compile-scala-missing-direct-deps``
+  ``--compile-scala-unnecessary-deps``
+  ``--compile-scala-delete-scratch/--no-compile-scala-delete-scratch``
+  ``--compile-scala-plugins``
+
+  :ref:`compile:apt <gref_cli_compileapt>`
+  ``--compile-apt-warnings/--no-compile-apt-warnings``
+  ``--compile-apt-partition-size-hint``
+  ``--compile-apt-missing-deps``
+  ``--compile-apt-missing-direct-deps``
+  ``--compile-apt-unnecessary-deps``
+  ``--compile-apt-delete-scratch/--no-compile-apt-delete-scratch``
+  ``--compile-apt-args``
+
+  :ref:`compile:java <gref_cli_compilejava>`
+  ``--compile-java-warnings/--no-compile-java-warnings``
+  ``--compile-java-partition-size-hint``
+  ``--compile-java-missing-deps``
+  ``--compile-java-missing-direct-deps``
+  ``--compile-java-unnecessary-deps``
+  ``--compile-java-delete-scratch/--no-compile-java-delete-scratch``
+  ``--compile-java-args``
+
+  :ref:`compile:checkstyle <gref_cli_compilecheckstyle>`
+  ``--compile-checkstyle-skip/--no-compile-checkstyle-skip``
 
 
 
@@ -482,9 +2679,40 @@ killserver
 
 Kill the pants reporting server.
 
-**Installed tasks:**
 
-* Implemented by class ``KillServer``
+.. _gref_cli_killserver:
+
+* **killserver** Implemented by class ``KillServer``
+
+
+  * ``--killserver-sep``
+    ``string``
+    Default: ``\n``
+
+    String to use to separate results.
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
 
 
 
@@ -495,23 +2723,57 @@ list
 
 List available BUILD targets.
 
-**Installed tasks:**
 
-* Implemented by class ``ListTargets``
+.. _gref_cli_list:
 
-  Lists all BUILD targets in the system with no arguments, otherwise lists all   the BUILD targets that reside in the the BUILD files hosting the specified   targets.
+* **list** Implemented by class ``ListTargets``
+
+  Lists all BUILD targets in the system with no arguments, otherwise lists all
+  the BUILD targets that reside in the the BUILD files hosting the specified
+  targets.
+
+  * ``--list-sep``
+    ``string``
+    Default: ``\n``
+
+    String to use to separate results.
+
+  * ``--list-provides``
+
+    Specifies only targets that provide an artifact should be listed. The output will be 2 columns in this case: [target address] [artifact id]
+
+  * ``--list-provides-columns``
+    ``string``
+    Default: ``address,artifact_id``
+
+    Specifies the columns to include in listing output when restricting the listing to targets that provide an artifact. Available columns are: address, artifact_id, repo_name, repo_url and repo_db
+
+  * ``--list-documented``
+
+    Prints only targets that are documented with a description.
 
 
-.. _gref_phase_markdown:
 
-markdown
------------------------------------------------------------------------------
 
-Generate html from markdown docs.
+**Other command-line options:**
 
-**Installed tasks:**
-
-* Implemented by class ``MarkdownToHtml``
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
 
 
 
@@ -522,11 +2784,45 @@ minimize
 
 Print the minimal cover of the given targets.
 
-**Installed tasks:**
 
-* Implemented by class ``MinimalCover``
+.. _gref_cli_minimize:
 
-  Outputs a minimal covering set of targets.    For a given set of input targets, the output targets transitive dependency set will include all   the input targets without gaps.
+* **minimize** Implemented by class ``MinimalCover``
+
+  Outputs a minimal covering set of targets.
+  
+  For a given set of input targets, the output targets transitive dependency set will include all
+  the input targets without gaps.
+
+  * ``--minimize-sep``
+    ``string``
+    Default: ``\n``
+
+    String to use to separate results.
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
+
 
 
 .. _gref_phase_ng-killall:
@@ -536,9 +2832,44 @@ ng-killall
 
 Kill any running nailgun servers spawned by pants.
 
-**Installed tasks:**
 
-* Implemented by class ``NailgunKillall``
+.. _gref_cli_ngkillall:
+
+* **ng-killall** Implemented by class ``NailgunKillall``
+
+
+  * ``--ng-killall-sep``
+    ``string``
+    Default: ``\n``
+
+    String to use to separate results.
+
+  * ``--ng-killall-everywhere``
+
+    Kill all nailguns servers launched by pants for all workspaces on the system.
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
 
 
 
@@ -549,9 +2880,40 @@ path
 
 Find a dependency path from one target to another
 
-**Installed tasks:**
 
-* Implemented by class ``Path``
+.. _gref_cli_path:
+
+* **path** Implemented by class ``Path``
+
+
+  * ``--path-sep``
+    ``string``
+    Default: ``\n``
+
+    String to use to separate results.
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
 
 
 
@@ -562,9 +2924,40 @@ pathdeps
 
 Print out a list of all paths containing build files the target depends on
 
-**Installed tasks:**
 
-* Implemented by class ``PathDeps``
+.. _gref_cli_pathdeps:
+
+* **pathdeps** Implemented by class ``PathDeps``
+
+
+  * ``--pathdeps-sep``
+    ``string``
+    Default: ``\n``
+
+    String to use to separate results.
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
 
 
 
@@ -575,9 +2968,40 @@ paths
 
 Find all dependency paths from one target to another
 
-**Installed tasks:**
 
-* Implemented by class ``Paths``
+.. _gref_cli_paths:
+
+* **paths** Implemented by class ``Paths``
+
+
+  * ``--paths-sep``
+    ``string``
+    Default: ``\n``
+
+    String to use to separate results.
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
 
 
 
@@ -588,9 +3012,128 @@ provides
 
 Emit the list of symbols provided by the given targets.
 
-**Installed tasks:**
 
-* Implemented by class ``Provides``
+.. _gref_cli_provides:
+
+* **provides** Implemented by class ``Provides``
+
+
+  * ``--provides-outdir``
+    ``string``
+
+    Emit provides outputs into this directory.
+
+  * ``--provides-transitive``
+
+    Shows the symbols provided not just by the specified targets but by all their transitive dependencies.
+
+  * ``--provides-also-write-to-stdout``
+
+    If set, also outputs the provides information to stdout.
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
+
+  :ref:`jar:javadoc_publish <gref_cli_jarjavadocpublish>`
+  ``--jar-javadoc_publish-outdir``
+  ``--jar-javadoc_publish-include-codegen/--no-jar-javadoc_publish-include-codegen``
+  ``--jar-javadoc_publish-transitive/--no-jar-javadoc_publish-transitive``
+  ``--jar-javadoc_publish-combined/--no-jar-javadoc_publish-combined``
+  ``--jar-javadoc_publish-open/--no-jar-javadoc_publish-open``
+  ``--jar-javadoc_publish-ignore-failure/--no-jar-javadoc_publish-ignore-failure``
+
+  :ref:`jar:scaladoc_publish <gref_cli_jarscaladocpublish>`
+  ``--jar-scaladoc_publish-outdir``
+  ``--jar-scaladoc_publish-include-codegen/--no-jar-scaladoc_publish-include-codegen``
+  ``--jar-scaladoc_publish-transitive/--no-jar-scaladoc_publish-transitive``
+  ``--jar-scaladoc_publish-combined/--no-jar-scaladoc_publish-combined``
+  ``--jar-scaladoc_publish-open/--no-jar-scaladoc_publish-open``
+  ``--jar-scaladoc_publish-ignore-failure/--no-jar-scaladoc_publish-ignore-failure``
+
+  :ref:`gen:thrift <gref_cli_genthrift>`
+  ``--gen-thrift-outdir``
+  ``--gen-thrift-version``
+  ``--gen-thrift-lang``
+
+  :ref:`gen:scrooge <gref_cli_genscrooge>`
+  ``--gen-scrooge-outdir``
+  ``--gen-scrooge-quiet``
+
+  :ref:`gen:protoc <gref_cli_genprotoc>`
+  ``--gen-protoc-outdir``
+  ``--gen-protoc-lang``
+
+  :ref:`check-exclusives <gref_cli_checkexclusives>`
+  ``--check-exclusives-error_on_collision/--no-check-exclusives-error_on_collision``
+
+  :ref:`ivy <gref_cli_ivy>`
+  ``--ivy-override``
+  ``--ivy-report/--no-ivy-report``
+  ``--ivy-open/--no-ivy-open``
+  ``--ivy-outdir``
+  ``--ivy-args``
+  ``--ivy-mutable-pattern``
+
+  :ref:`compile:scala <gref_cli_compilescala>`
+  ``--compile-scala-warnings/--no-compile-scala-warnings``
+  ``--compile-scala-partition-size-hint``
+  ``--compile-scala-missing-deps``
+  ``--compile-scala-missing-direct-deps``
+  ``--compile-scala-unnecessary-deps``
+  ``--compile-scala-delete-scratch/--no-compile-scala-delete-scratch``
+  ``--compile-scala-plugins``
+
+  :ref:`compile:apt <gref_cli_compileapt>`
+  ``--compile-apt-warnings/--no-compile-apt-warnings``
+  ``--compile-apt-partition-size-hint``
+  ``--compile-apt-missing-deps``
+  ``--compile-apt-missing-direct-deps``
+  ``--compile-apt-unnecessary-deps``
+  ``--compile-apt-delete-scratch/--no-compile-apt-delete-scratch``
+  ``--compile-apt-args``
+
+  :ref:`compile:java <gref_cli_compilejava>`
+  ``--compile-java-warnings/--no-compile-java-warnings``
+  ``--compile-java-partition-size-hint``
+  ``--compile-java-missing-deps``
+  ``--compile-java-missing-direct-deps``
+  ``--compile-java-unnecessary-deps``
+  ``--compile-java-delete-scratch/--no-compile-java-delete-scratch``
+  ``--compile-java-args``
+
+  :ref:`compile:checkstyle <gref_cli_compilecheckstyle>`
+  ``--compile-checkstyle-skip/--no-compile-checkstyle-skip``
+
+  :ref:`jar <gref_cli_jar>`
+  ``--jar-outdir``
+  ``--jar-compressed/--no-jar-compressed``
+  ``--jar-transitive/--no-jar-transitive``
+  ``--jar-classes/--no-jar-classes``
+  ``--jar-sources/--no-jar-sources``
+  ``--jar-javadoc/--no-jar-javadoc``
+
+  :ref:`jar:args-apt <gref_cli_jarargsapt>`
+  ``--jar-args-apt-include_all/--no-jar-args-apt-include_all``
 
 
 
@@ -601,9 +3144,34 @@ reinstall
 
 Reinstalls pants from the current source tree.
 
-**Installed tasks:**
 
-* Implemented by class ``FuncTask``
+.. _gref_cli_:
+
+* **** Implemented by class ``FuncTask``
+
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
 
 
 
@@ -614,9 +3182,98 @@ repl
 
 Run a (currently Scala only) REPL with the classpath set according to the targets.
 
-**Installed tasks:**
 
-* Implemented by class ``ScalaRepl``
+.. _gref_cli_scalarepl:
+
+* **scala-repl** Implemented by class ``ScalaRepl``
+
+
+  * ``--scala-repl-jvmargs``
+    ``string``
+
+    Run the repl in a jvm with these extra jvm args.
+
+  * ``--scala-repl-args``
+    ``string``
+
+    run the repl in a jvm with extra args.
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
+
+  :ref:`gen:thrift <gref_cli_genthrift>`
+  ``--gen-thrift-outdir``
+  ``--gen-thrift-version``
+  ``--gen-thrift-lang``
+
+  :ref:`gen:scrooge <gref_cli_genscrooge>`
+  ``--gen-scrooge-outdir``
+  ``--gen-scrooge-quiet``
+
+  :ref:`gen:protoc <gref_cli_genprotoc>`
+  ``--gen-protoc-outdir``
+  ``--gen-protoc-lang``
+
+  :ref:`check-exclusives <gref_cli_checkexclusives>`
+  ``--check-exclusives-error_on_collision/--no-check-exclusives-error_on_collision``
+
+  :ref:`ivy <gref_cli_ivy>`
+  ``--ivy-override``
+  ``--ivy-report/--no-ivy-report``
+  ``--ivy-open/--no-ivy-open``
+  ``--ivy-outdir``
+  ``--ivy-args``
+  ``--ivy-mutable-pattern``
+
+  :ref:`compile:scala <gref_cli_compilescala>`
+  ``--compile-scala-warnings/--no-compile-scala-warnings``
+  ``--compile-scala-partition-size-hint``
+  ``--compile-scala-missing-deps``
+  ``--compile-scala-missing-direct-deps``
+  ``--compile-scala-unnecessary-deps``
+  ``--compile-scala-delete-scratch/--no-compile-scala-delete-scratch``
+  ``--compile-scala-plugins``
+
+  :ref:`compile:apt <gref_cli_compileapt>`
+  ``--compile-apt-warnings/--no-compile-apt-warnings``
+  ``--compile-apt-partition-size-hint``
+  ``--compile-apt-missing-deps``
+  ``--compile-apt-missing-direct-deps``
+  ``--compile-apt-unnecessary-deps``
+  ``--compile-apt-delete-scratch/--no-compile-apt-delete-scratch``
+  ``--compile-apt-args``
+
+  :ref:`compile:java <gref_cli_compilejava>`
+  ``--compile-java-warnings/--no-compile-java-warnings``
+  ``--compile-java-partition-size-hint``
+  ``--compile-java-missing-deps``
+  ``--compile-java-missing-direct-deps``
+  ``--compile-java-unnecessary-deps``
+  ``--compile-java-delete-scratch/--no-compile-java-delete-scratch``
+  ``--compile-java-args``
+
+  :ref:`compile:checkstyle <gref_cli_compilecheckstyle>`
+  ``--compile-checkstyle-skip/--no-compile-checkstyle-skip``
 
 
 
@@ -627,9 +3284,44 @@ repl-dirty
 
 Run a (currently Scala only) REPL with the classpath set according to the targets, using the currently existing binaries, skipping compilation
 
-**Installed tasks:**
 
-* Implemented by class ``ScalaRepl``
+.. _gref_cli_scalarepldirty:
+
+* **scala-repl-dirty** Implemented by class ``ScalaRepl``
+
+
+  * ``--scala-repl-dirty-jvmargs``
+    ``string``
+
+    Run the repl in a jvm with these extra jvm args.
+
+  * ``--scala-repl-dirty-args``
+    ``string``
+
+    run the repl in a jvm with extra args.
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
 
 
 
@@ -640,9 +3332,83 @@ resolve
 
 Resolves jar dependencies and produces dependency reports.
 
-**Installed tasks:**
 
-* Implemented by class ``IvyResolve``
+.. _gref_cli_ivy:
+
+* **ivy** Implemented by class ``IvyResolve``
+
+
+  * ``--ivy-override``
+    ``string``
+
+    Specifies a jar dependency override in the form:
+    [org]#[name]=(revision|url)
+    
+    For example, to specify 2 overrides:
+    --ivy-override=com.foo#bar=0.1.2 \
+    --ivy-override=com.baz#spam=file:///tmp/spam.jar
+
+  * ``--ivy-report/--no-ivy-report``
+
+    Generate an ivy resolve html report
+
+  * ``--ivy-open/--no-ivy-open``
+
+    Attempt to open the generated ivy resolve report in a browser (implies --ivy-report).
+
+  * ``--ivy-outdir``
+    ``string``
+
+    Emit ivy report outputs in to this directory.
+
+  * ``--ivy-args``
+    ``string``
+
+    Pass these extra args to ivy.
+
+  * ``--ivy-mutable-pattern``
+    ``string``
+
+    If specified, all artifact revisions matching this pattern will be treated as mutable unless a matching artifact explicitly marks mutable as False.
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
+
+  :ref:`gen:thrift <gref_cli_genthrift>`
+  ``--gen-thrift-outdir``
+  ``--gen-thrift-version``
+  ``--gen-thrift-lang``
+
+  :ref:`gen:scrooge <gref_cli_genscrooge>`
+  ``--gen-scrooge-outdir``
+  ``--gen-scrooge-quiet``
+
+  :ref:`gen:protoc <gref_cli_genprotoc>`
+  ``--gen-protoc-outdir``
+  ``--gen-protoc-lang``
+
+  :ref:`check-exclusives <gref_cli_checkexclusives>`
+  ``--check-exclusives-error_on_collision/--no-check-exclusives-error_on_collision``
 
 
 
@@ -652,9 +3418,34 @@ resources
 -----------------------------------------------------------------------------
 
 
-**Installed tasks:**
 
-* Implemented by class ``PrepareResources``
+.. _gref_cli_:
+
+* **** Implemented by class ``PrepareResources``
+
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
 
 
 
@@ -665,11 +3456,42 @@ roots
 
 Prints the source roots and associated target types defined in the repo.
 
-**Installed tasks:**
 
-* Implemented by class ``ListRoots``
+.. _gref_cli_roots:
+
+* **roots** Implemented by class ``ListRoots``
 
   List the registered source roots of the repo.
+
+  * ``--roots-sep``
+    ``string``
+    Default: ``\n``
+
+    String to use to separate results.
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
+
 
 
 .. _gref_phase_run:
@@ -679,9 +3501,107 @@ run
 
 Run a (currently JVM only) binary target.
 
-**Installed tasks:**
 
-* Implemented by class ``JvmRun``
+.. _gref_cli_jvmrun:
+
+* **jvm-run** Implemented by class ``JvmRun``
+
+
+  * ``--jvm-run-jvmargs``
+    ``string``
+
+    Run binary in a jvm with these extra jvm args.
+
+  * ``--jvm-run-args``
+    ``string``
+
+    Run binary with these main() args.
+
+  * ``--jvm-run-debug/--no-jvm-run-debug``
+
+    Run binary with a debugger
+
+  * ``--jvm-run-only-write-cmd-line``
+    ``string``
+
+    Instead of running, just write the cmd line to this file
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
+
+  :ref:`gen:thrift <gref_cli_genthrift>`
+  ``--gen-thrift-outdir``
+  ``--gen-thrift-version``
+  ``--gen-thrift-lang``
+
+  :ref:`gen:scrooge <gref_cli_genscrooge>`
+  ``--gen-scrooge-outdir``
+  ``--gen-scrooge-quiet``
+
+  :ref:`gen:protoc <gref_cli_genprotoc>`
+  ``--gen-protoc-outdir``
+  ``--gen-protoc-lang``
+
+  :ref:`check-exclusives <gref_cli_checkexclusives>`
+  ``--check-exclusives-error_on_collision/--no-check-exclusives-error_on_collision``
+
+  :ref:`ivy <gref_cli_ivy>`
+  ``--ivy-override``
+  ``--ivy-report/--no-ivy-report``
+  ``--ivy-open/--no-ivy-open``
+  ``--ivy-outdir``
+  ``--ivy-args``
+  ``--ivy-mutable-pattern``
+
+  :ref:`compile:scala <gref_cli_compilescala>`
+  ``--compile-scala-warnings/--no-compile-scala-warnings``
+  ``--compile-scala-partition-size-hint``
+  ``--compile-scala-missing-deps``
+  ``--compile-scala-missing-direct-deps``
+  ``--compile-scala-unnecessary-deps``
+  ``--compile-scala-delete-scratch/--no-compile-scala-delete-scratch``
+  ``--compile-scala-plugins``
+
+  :ref:`compile:apt <gref_cli_compileapt>`
+  ``--compile-apt-warnings/--no-compile-apt-warnings``
+  ``--compile-apt-partition-size-hint``
+  ``--compile-apt-missing-deps``
+  ``--compile-apt-missing-direct-deps``
+  ``--compile-apt-unnecessary-deps``
+  ``--compile-apt-delete-scratch/--no-compile-apt-delete-scratch``
+  ``--compile-apt-args``
+
+  :ref:`compile:java <gref_cli_compilejava>`
+  ``--compile-java-warnings/--no-compile-java-warnings``
+  ``--compile-java-partition-size-hint``
+  ``--compile-java-missing-deps``
+  ``--compile-java-missing-direct-deps``
+  ``--compile-java-unnecessary-deps``
+  ``--compile-java-delete-scratch/--no-compile-java-delete-scratch``
+  ``--compile-java-args``
+
+  :ref:`compile:checkstyle <gref_cli_compilecheckstyle>`
+  ``--compile-checkstyle-skip/--no-compile-checkstyle-skip``
 
 
 
@@ -692,9 +3612,53 @@ run-dirty
 
 Run a (currently JVM only) binary target, using only currently existing binaries, skipping compilation
 
-**Installed tasks:**
 
-* Implemented by class ``JvmRun``
+.. _gref_cli_jvmrundirty:
+
+* **jvm-run-dirty** Implemented by class ``JvmRun``
+
+
+  * ``--jvm-run-dirty-jvmargs``
+    ``string``
+
+    Run binary in a jvm with these extra jvm args.
+
+  * ``--jvm-run-dirty-args``
+    ``string``
+
+    Run binary with these main() args.
+
+  * ``--jvm-run-dirty-debug/--no-jvm-run-dirty-debug``
+
+    Run binary with a debugger
+
+  * ``--jvm-run-dirty-only-write-cmd-line``
+    ``string``
+
+    Instead of running, just write the cmd line to this file
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
 
 
 
@@ -705,9 +3669,51 @@ server
 
 Run the pants reporting server.
 
-**Installed tasks:**
 
-* Implemented by class ``RunServer``
+.. _gref_cli_server:
+
+* **server** Implemented by class ``RunServer``
+
+
+  * ``--server-sep``
+    ``string``
+    Default: ``\n``
+
+    String to use to separate results.
+
+  * ``--server-port``
+    ``int``
+
+    Serve on this port. Leave unset to choose a free port automatically (recommended if using pants concurrently in multiple workspaces on the same host).
+
+  * ``--server-allowed-clients``
+    ``string``
+    Default: ``['127.0.0.1']``
+
+    Only requests from these IPs may access this server. Useful for temporarily showing build results to a colleague. The special value ALL means any client may connect. Use with caution, as your source code is exposed to all allowed clients!
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
 
 
 
@@ -718,11 +3724,57 @@ setup
 
 Setup the target's build environment.
 
-**Installed tasks:**
 
-* Implemented by class ``SetupPythonEnvironment``
+.. _gref_cli_pythonsetup:
 
-  Establishes the python intepreter(s) for downstream Python tasks e.g. Resolve, Run, PytestRun.      Populates the product namespace (for typename = 'python'):       'intepreters': ordered list of PythonInterpreter objects
+* **python-setup** Implemented by class ``SetupPythonEnvironment``
+
+  Establishes the python intepreter(s) for downstream Python tasks e.g. Resolve, Run, PytestRun.
+  
+  Populates the product namespace (for typename = 'python'):
+    'intepreters': ordered list of PythonInterpreter objects
+
+  * ``--python-setup-force``
+
+    Force clean and install.
+
+  * ``--python-setup-path``
+    ``string``
+
+    Add a path to search for interpreters, by default PATH.
+
+  * ``--python-setup-interpreter``
+    ``string``
+
+    Constrain what Python interpreters to use.  Uses Requirement format from pkg_resources, e.g. 'CPython&gt;=2.6,&lt;3' or 'PyPy'. By default, no constraints are used.  Multiple constraints may be added.  They will be ORed together.
+
+  * ``--python-setup-multi``
+
+    Allow multiple interpreters to be bound to an upstream chroot.
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
+
 
 
 .. _gref_phase_sort:
@@ -732,9 +3784,44 @@ sort
 
 Topologically sort the input targets.
 
-**Installed tasks:**
 
-* Implemented by class ``SortTargets``
+.. _gref_cli_sort:
+
+* **sort** Implemented by class ``SortTargets``
+
+
+  * ``--sort-sep``
+    ``string``
+    Default: ``\n``
+
+    String to use to separate results.
+
+  * ``--sort-reverse/--no-sort-reverse``
+
+    Sort least depenendent to most.
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
 
 
 
@@ -745,11 +3832,52 @@ targets
 
 List all target types.
 
-**Installed tasks:**
 
-* Implemented by class ``TargetsHelp``
+.. _gref_cli_targets:
 
-  Provides online help for installed targets.    This task provides online help modes for installed targets. Without args,   all installed targets are listed with their one-line description.   An optional flag allows users to specify a target they want detailed   help about.
+* **targets** Implemented by class ``TargetsHelp``
+
+  Provides online help for installed targets.
+  
+  This task provides online help modes for installed targets. Without args,
+  all installed targets are listed with their one-line description.
+  An optional flag allows users to specify a target they want detailed
+  help about.
+
+  * ``--targets-sep``
+    ``string``
+    Default: ``\n``
+
+    String to use to separate results.
+
+  * ``--targets-details``
+    ``string``
+
+    Display detailed information about the specific target type.
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
+
 
 
 .. _gref_phase_test:
@@ -759,11 +3887,208 @@ test
 
 Test compiled code.
 
-**Installed tasks:**
 
-* Implemented by class ``JUnitRun``
+.. _gref_cli_testjunit:
+
+* **test:junit** Implemented by class ``JUnitRun``
 
 
-* Implemented by class ``SpecsRun``
+  * ``--test-junit-skip/--no-test-junit-skip``
+
+    Skip running tests
+
+  * ``--test-junit-debug/--no-test-junit-debug``
+
+    Run junit tests with a debugger
+
+  * ``--test-junit-fail-fast/--no-test-junit-fail-fast``
+
+    Fail fast on the first test failure in a suite
+
+  * ``--test-junit-batch-size``
+    ``int``
+    Default: ``9223372036854775807``
+
+    [ALL] Runs at most this many tests in a single test process.
+
+  * ``--test-junit-jvmargs``
+    ``string``
+
+    Runs junit tests in a jvm with these extra jvm args.
+
+  * ``--test-junit-test``
+    ``string``
+
+    Force running of just these tests.  Tests can be specified using any of: [classname], [classname]#[methodname], [filename] or [filename]#[methodname]
+
+  * ``--test-junit-outdir``
+    ``string``
+
+    Emit output in to this directory.
+
+  * ``--test-junit-xmlreport/--no-test-junit-xmlreport``
+
+    Causes an xml report to be output for each test class that is run.
+
+  * ``--test-junit-per-test-timer/--no-test-junit-per-test-timer``
+
+    Shows progress and timer for each test class that is run.
+
+  * ``--test-junit-default-parallel/--no-test-junit-default-parallel``
+
+    Whether to run classes without @TestParallel or @TestSerial annotations in parallel.
+
+  * ``--test-junit-parallel-threads``
+    ``int``
+
+    Number of threads to run tests in parallel. 0 for autoset.
+
+  * ``--test-junit-test-shard``
+    ``string``
+
+    Subset of tests to run, in the form M/N, 0 &lt;= M &lt; N.For example, 1/3 means run tests number 2, 5, 8, 11, ...
+
+  * ``--test-junit-coverage/--no-test-junit-coverage``
+
+    Collects code coverage data
+
+  * ``--test-junit-coverage-patterns``
+    ``string``
+
+    By default all non-test code depended on by the selected tests is measured for coverage during the test run.  By specifying coverage patterns you can select which classes and packages should be counted.  Values should be class name prefixes in dotted form with ? and * wildcard support. If preceded with a - the pattern is excluded. For example, to include all code in com.twitter.raven except claws and the eye you would use: --test-junit-coverage-patterns=com.twitter.raven.* --test-junit-coverage-patterns=-com.twitter.raven.claw --test-junit-coverage-patterns=-com.twitter.raven.EyeThis option can be specified multiple times.
+
+  * ``--test-junit-coverage-console/--no-test-junit-coverage-console``
+    Default: ``True``
+
+    Outputs a simple coverage report to the console.
+
+  * ``--test-junit-coverage-xml/--no-test-junit-coverage-xml``
+
+    Produces an xml coverage report in --test-junit-outdir.
+
+  * ``--test-junit-coverage-html/--no-test-junit-coverage-html``
+
+    Produces an html coverage report in --test-junit-outdir.
+
+  * ``--test-junit-coverage-html-open/--no-test-junit-coverage-html-open``
+
+    Tries to open the generated html coverage report, implies --test-junit-coverage-html.
+
+  * ``--test-junit-suppress-output/--no-test-junit-suppress-output``
+    Default: ``True``
+
+    Redirects test output to files in --test-junit-outdir.  Implied by --test-junit-xmlreport
+
+  * ``--test-junit-arg``
+    ``string``
+
+    An arbitrary argument to pass directly to the test runner. This option can be specified multiple times.
+
+
+
+.. _gref_cli_testspecs:
+
+* **test:specs** Implemented by class ``SpecsRun``
+
+
+  * ``--test-specs-skip/--no-test-specs-skip``
+
+    Skip running specs
+
+  * ``--test-specs-debug/--no-test-specs-debug``
+
+    Run specs with a debugger
+
+  * ``--test-specs-jvmargs``
+    ``string``
+
+    Runs specs in a jvm with these extra jvm options.
+
+  * ``--test-specs-test``
+    ``string``
+
+    Force running of just these specs.  Tests can be specified either by fully qualified classname or full file path.
+
+  * ``--test-specs-color/--no-test-specs-color``
+    Default: ``True``
+
+    Emit test result with ANSI terminal color codes.
+
+
+
+
+**Other command-line options:**
+
+  ``-h/--help``
+  ``-t/--timeout``
+  ``-x/--time``
+  ``-e/--explain``
+  ``-k/--kill-nailguns``
+  ``-d/--logdir``
+  ``-l/--level``
+  ``-q/--quiet``
+  ``--no-colors``
+  ``-n/--dry-run``
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  ``--verify-artifact-cache/--no-verify-artifact-cache``
+  ``--local-artifact-cache-readonly/--no-local-artifact-cache-readonly``
+  ``--remote-artifact-cache-readonly/--no-remote-artifact-cache-readonly``
+  ``--all``
+  ``--all-recursive``
+
+  :ref:`gen:thrift <gref_cli_genthrift>`
+  ``--gen-thrift-outdir``
+  ``--gen-thrift-version``
+  ``--gen-thrift-lang``
+
+  :ref:`gen:scrooge <gref_cli_genscrooge>`
+  ``--gen-scrooge-outdir``
+  ``--gen-scrooge-quiet``
+
+  :ref:`gen:protoc <gref_cli_genprotoc>`
+  ``--gen-protoc-outdir``
+  ``--gen-protoc-lang``
+
+  :ref:`check-exclusives <gref_cli_checkexclusives>`
+  ``--check-exclusives-error_on_collision/--no-check-exclusives-error_on_collision``
+
+  :ref:`ivy <gref_cli_ivy>`
+  ``--ivy-override``
+  ``--ivy-report/--no-ivy-report``
+  ``--ivy-open/--no-ivy-open``
+  ``--ivy-outdir``
+  ``--ivy-args``
+  ``--ivy-mutable-pattern``
+
+  :ref:`compile:scala <gref_cli_compilescala>`
+  ``--compile-scala-warnings/--no-compile-scala-warnings``
+  ``--compile-scala-partition-size-hint``
+  ``--compile-scala-missing-deps``
+  ``--compile-scala-missing-direct-deps``
+  ``--compile-scala-unnecessary-deps``
+  ``--compile-scala-delete-scratch/--no-compile-scala-delete-scratch``
+  ``--compile-scala-plugins``
+
+  :ref:`compile:apt <gref_cli_compileapt>`
+  ``--compile-apt-warnings/--no-compile-apt-warnings``
+  ``--compile-apt-partition-size-hint``
+  ``--compile-apt-missing-deps``
+  ``--compile-apt-missing-direct-deps``
+  ``--compile-apt-unnecessary-deps``
+  ``--compile-apt-delete-scratch/--no-compile-apt-delete-scratch``
+  ``--compile-apt-args``
+
+  :ref:`compile:java <gref_cli_compilejava>`
+  ``--compile-java-warnings/--no-compile-java-warnings``
+  ``--compile-java-partition-size-hint``
+  ``--compile-java-missing-deps``
+  ``--compile-java-missing-direct-deps``
+  ``--compile-java-unnecessary-deps``
+  ``--compile-java-delete-scratch/--no-compile-java-delete-scratch``
+  ``--compile-java-args``
+
+  :ref:`compile:checkstyle <gref_cli_compilecheckstyle>`
+  ``--compile-checkstyle-skip/--no-compile-checkstyle-skip``
 
 
