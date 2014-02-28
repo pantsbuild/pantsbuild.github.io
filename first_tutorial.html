@@ -173,6 +173,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="ThriftDeps.html#same-repo">Same-repo</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ThriftDeps.html#consuming-thrift-from-elsewhere">Consuming Thrift from Elsewhere</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ThriftDeps.html#thrift-client-server-example">Thrift Client &amp; Server Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ThriftDeps.html#publishing-thrift-for-elsewhere">Publishing Thrift for Elsewhere</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="publish.html">Publishing Artifacts</a><ul>
@@ -194,7 +195,6 @@ body a.icon-home:hover{
 </li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installing</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="install.html#requirements">Requirements</a></li>
-<li class="toctree-l2"><a class="reference internal" href="install.html#tl-dr">TL;DR</a></li>
 <li class="toctree-l2"><a class="reference internal" href="install.html#troubleshooting">Troubleshooting</a></li>
 </ul>
 </li>
@@ -294,6 +294,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#jar">jar</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#killserver">killserver</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#list">list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#markdown">markdown</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#minimize">minimize</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#ng-killall">ng-killall</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#path">path</a></li>
@@ -650,6 +651,18 @@ targets. For example, this code snippet of
 <tt class="docutils literal"><span class="pre">java/com/twitter/common/examples/pingpong/main/BUILD</span></tt> defines the binary
 program we compiled and ran.  This target is named <tt class="docutils literal"><span class="pre">main</span></tt> and
 is of type <tt class="docutils literal"><span class="pre">jvm_binary</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># ==================================================================================================</span>
+
+<span class="n">jvm_binary</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;main&#39;</span><span class="p">,</span>
+  <span class="n">basename</span><span class="o">=</span><span class="s">&#39;pingpong&#39;</span><span class="p">,</span>
+  <span class="n">source</span><span class="o">=</span><span class="s">&#39;Main.java&#39;</span><span class="p">,</span>
+  <span class="n">main</span><span class="o">=</span><span class="s">&#39;com.twitter.common.examples.pingpong.main.Main&#39;</span><span class="p">,</span>
+  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;src/java/com/twitter/common/examples/pingpong/handler&#39;</span><span class="p">)</span>
+  <span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
 <p>That <tt class="docutils literal"><span class="pre">dependencies</span></tt> is interesting. This build target depends on
 other build targets; the <tt class="docutils literal"><span class="pre">dependencies</span></tt> lists those other targets.
 To build a runnable Java binary, we need to first compile its dependencies.</p>
@@ -658,6 +671,29 @@ To build a runnable Java binary, we need to first compile its dependencies.</p>
 That src/.../handler is the <em>address</em> of another target. Addresses look,
 roughly, like <tt class="docutils literal"><span class="pre">path/to/BUILD:targetname</span></tt>.
 We can see this build target in the <tt class="docutils literal"><span class="pre">.../pingpong/handler/BUILD</span></tt> file:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">java_library</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&#39;handler&#39;</span><span class="p">,</span>
+  <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;3rdparty:guava&#39;</span><span class="p">),</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;3rdparty:guice&#39;</span><span class="p">),</span>
+    <span class="n">jar</span><span class="p">(</span><span class="n">org</span> <span class="o">=</span> <span class="s">&#39;com.sun.jersey&#39;</span><span class="p">,</span>          <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;jersey-client&#39;</span><span class="p">,</span>  <span class="n">rev</span> <span class="o">=</span> <span class="mf">1.12</span><span class="p">)</span><span class="o">.</span><span class="n">with_sources</span><span class="p">(),</span>
+    <span class="n">jar</span><span class="p">(</span><span class="n">org</span> <span class="o">=</span> <span class="s">&#39;com.sun.jersey&#39;</span><span class="p">,</span>          <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;jersey-core&#39;</span><span class="p">,</span>    <span class="n">rev</span> <span class="o">=</span> <span class="mf">1.12</span><span class="p">)</span><span class="o">.</span><span class="n">with_sources</span><span class="p">(),</span>
+    <span class="n">jar</span><span class="p">(</span><span class="n">org</span> <span class="o">=</span> <span class="s">&#39;com.sun.jersey.contribs&#39;</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;jersey-guice&#39;</span><span class="p">,</span>   <span class="n">rev</span> <span class="o">=</span> <span class="mf">1.12</span><span class="p">)</span><span class="o">.</span><span class="n">with_sources</span><span class="p">(),</span>
+    <span class="n">jar</span><span class="p">(</span><span class="n">org</span> <span class="o">=</span> <span class="s">&#39;com.sun.jersey&#39;</span><span class="p">,</span>          <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;jersey-server&#39;</span><span class="p">,</span>  <span class="n">rev</span> <span class="o">=</span> <span class="mf">1.12</span><span class="p">)</span><span class="o">.</span><span class="n">with_sources</span><span class="p">(),</span>
+    <span class="n">jar</span><span class="p">(</span><span class="n">org</span> <span class="o">=</span> <span class="s">&#39;com.sun.jersey&#39;</span><span class="p">,</span>          <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;jersey-servlet&#39;</span><span class="p">,</span> <span class="n">rev</span> <span class="o">=</span> <span class="mf">1.12</span><span class="p">)</span><span class="o">.</span><span class="n">with_sources</span><span class="p">(),</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;src/java/com/twitter/common/application&#39;</span><span class="p">),</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;src/java/com/twitter/common/application/http&#39;</span><span class="p">),</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;src/java/com/twitter/common/application/modules:http&#39;</span><span class="p">),</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;src/java/com/twitter/common/application/modules:lifecycle&#39;</span><span class="p">),</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;src/java/com/twitter/common/application/modules:log&#39;</span><span class="p">),</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;src/java/com/twitter/common/application/modules:stats&#39;</span><span class="p">),</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;src/java/com/twitter/common/args&#39;</span><span class="p">),</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;src/java/com/twitter/common/base&#39;</span><span class="p">),</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;src/java/com/twitter/common/stats&#39;</span><span class="p">),</span>
+  <span class="p">],</span>
+  <span class="n">sources</span> <span class="o">=</span> <span class="n">globs</span><span class="p">(</span><span class="s">&#39;*.java&#39;</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
 <p>Pants uses dependency information to figure out how to build your code.
 You might find it useful for other purposes, too. For example, if you change
 a library&#8217;s code, you might want to know which test targets depend on that

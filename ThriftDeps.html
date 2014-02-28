@@ -173,6 +173,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="#same-repo">Same-repo</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#consuming-thrift-from-elsewhere">Consuming Thrift from Elsewhere</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#thrift-client-server-example">Thrift Client &amp; Server Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#publishing-thrift-for-elsewhere">Publishing Thrift for Elsewhere</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="publish.html">Publishing Artifacts</a><ul>
@@ -194,7 +195,6 @@ body a.icon-home:hover{
 </li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installing</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="install.html#requirements">Requirements</a></li>
-<li class="toctree-l2"><a class="reference internal" href="install.html#tl-dr">TL;DR</a></li>
 <li class="toctree-l2"><a class="reference internal" href="install.html#troubleshooting">Troubleshooting</a></li>
 </ul>
 </li>
@@ -294,6 +294,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#jar">jar</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#killserver">killserver</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#list">list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#markdown">markdown</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#minimize">minimize</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#ng-killall">ng-killall</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#path">path</a></li>
@@ -553,56 +554,50 @@ on a <em>lang</em>_thrift_library; the associated code can then import the gener
 code from the Thrift IDL files. Users can
 depend on this target like any other internal target. In this case, users would
 add a dependency on <tt class="docutils literal"><span class="pre">pants('src/thrift/com/twitter/mybird')</span></tt>.</p>
-<p>To make this thrift available to other source trees, you might publish it.</p>
+<p>To make this thrift available to other source trees, you might
+<a class="reference internal" href="#thriftdeps-publish"><em>publish it</em></a>.</p>
 </div>
 <div class="section" id="consuming-thrift-from-elsewhere">
-<h2>Consuming Thrift from Elsewhere<a class="headerlink" href="#consuming-thrift-from-elsewhere" title="Permalink to this headline">¶</a></h2>
+<span id="thriftdeps-consume"></span><h2>Consuming Thrift from Elsewhere<a class="headerlink" href="#consuming-thrift-from-elsewhere" title="Permalink to this headline">¶</a></h2>
 <p>Not all Thrift IDL files live in your repo. Pants supports cross-repo IDL
-sharing
-through IDL-only jars. An IDL-only jar is simply a Java <tt class="docutils literal"><span class="pre">jar</span></tt>
+sharing through IDL-only jars. An IDL-only jar is simply a Java <tt class="docutils literal"><span class="pre">jar</span></tt>
 containing raw thrift IDL files. This allows users to depend on a versioned
 artifact to generate and compile the IDL themselves.</p>
 <p>For example, you could consume the <tt class="docutils literal"><span class="pre">mybird</span></tt> artifact published above
 in a different repo.</p>
-<p>Define the IDL jar version that will be used in your repo.
-Use a <tt class="docutils literal"><span class="pre">thrift_jar</span></tt> dependencies for this; this target should live in
-the <tt class="docutils literal"><span class="pre">3rdparty</span></tt> part of the source tree.
-This ensures all users in your repo use a consistent version number.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># Target defined in 3rdparty/jvm/com/twitter/BUILD</span>
-<span class="c"># In jvm tree as jar dependency sharing mechanism is used.</span>
-<span class="n">dependencies</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;mybird-thrift&#39;</span><span class="p">,</span>
-  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
-    <span class="n">thrift_jar</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s">&#39;com.twitter&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;mybird-thrift&#39;</span><span class="p">,</span> <span class="n">rev</span><span class="o">=</span><span class="s">&#39;1.0.0&#39;</span><span class="p">)</span>
-  <span class="p">]</span>
+<p>As with other code from elsewhere, you want to use <a class="reference internal" href="3rdparty.html"><em>Third-Party Dependencies</em></a>.
+For Thrift, there are targets to use to pull in published IDL jars
+and generate code from them, e.g., <em class="xref std std-ref">bdict_idl_jar_thrift_library</em>
+for Java and Scala:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">idl_jar_thrift_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;mybird-thrift-scala&#39;</span><span class="p">,</span>
+  <span class="n">thrift_jar</span><span class="o">=</span><span class="n">thrift_jar</span><span class="p">(</span><span class="s">&#39;org.archimedes&#39;</span><span class="p">,</span> <span class="s">&#39;mybird-thrift-scala-only&#39;</span><span class="p">,</span> <span class="s">&#39;2.7.0&#39;</span><span class="p">),</span>
+  <span class="n">language</span><span class="o">=</span><span class="s">&#39;scala&#39;</span><span class="p">,</span>
+  <span class="n">rpc_style</span><span class="o">=</span><span class="s">&#39;finagle&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">idl_jar_thrift_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;mybird-thrift-java&#39;</span><span class="p">,</span>
+  <span class="n">thrift_jar</span><span class="o">=</span><span class="n">thrift_jar</span><span class="p">(</span><span class="s">&#39;org.archimedes&#39;</span><span class="p">,</span> <span class="s">&#39;mybird-thrift-java-only&#39;</span><span class="p">,</span> <span class="s">&#39;2.7.0&#39;</span><span class="p">),</span>
+  <span class="n">language</span><span class="o">=</span><span class="s">&#39;java&#39;</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>Other targets can depend on
-<cite>pants(&#8216;3rdparty/jvm/com/twitter:mybird-thrift&#8217;)</cite> without worrying
-where the IDL-only jar comes from. For example:</p>
-<div class="highlight-python"><pre># Target defined in src/java/com/twitter/otherbird/BUILD
-java_library(name='otherbird'
-  dependencies=[
-    compiled_idl(
-      # List of one or more IDL-only jar_library targets to compile.
-      idl_deps=[
-        pants('3rdparty/jvm/com/twitter:mybird-thrift'),
-      ],
-      # Use defaults unless you have a good reason not to.
-      # compiler='thrift',
-      # language='java',
-      # rpc_style='finagle',
-    ),
-  ],
-  sources=globs('*.java'),
-)</pre>
-</div>
-<p>In the library where we want to use compiled classes defined in thrift IDL we
-specify a <tt class="docutils literal"><span class="pre">compiled_idl</span></tt> dependency. This happens on the dependee side of the
-relationship because dependees need full control over how they choose to
-generate the code (e.g.: language, namespace mappings).</p>
-<p>You can&#8217;t <em>publish</em> an IDL jar via a <tt class="docutils literal"><span class="pre">compiled_idl</span></tt>; it&#8217;s for consuming
-IDL jars that were published elsewhere.</p>
+<p>Notice something subtle here: these two <tt class="docutils literal"><span class="pre">idl_jar_thrift_library</span></tt> targets
+use different <tt class="docutils literal"><span class="pre">thrift_jar</span></tt> values, one for Scala and one for Java. That
+might seem strange: They consume Thrift IDL code, which is language agnostic.
+Why have different <tt class="docutils literal"><span class="pre">thrift_jar</span></tt>s?</p>
+<p>When you _publish_ an artifact that depends on an <tt class="docutils literal"><span class="pre">idl_jar_thrift_library</span></tt>,
+Pants needs an artifact with the JVM classes generated from the IDL.
+It expects those to have been published by the IDL&#8217;s &#8220;home&#8221; repo, the place
+it was published from.
+Pants uses the <tt class="docutils literal"><span class="pre">idl_jar_thrift_library</span></tt>&#8216;s <tt class="docutils literal"><span class="pre">thrift_jar</span></tt>
+parameter to figure out
+the Jar with the generated code. (This works if Pants published those artifacts,
+since it can assume the &#8220;-only&#8221; suffix naming convention; if the artifacts
+were published some other way, you can specify the generated-code artifact
+address via the <tt class="docutils literal"><span class="pre">idl_jar_thrift_library</span></tt>&#8216;s <tt class="docutils literal"><span class="pre">provided_by</span></tt> parameter.)</p>
+<p>(So far, there is no Python or Ruby way to consume IDL jars. If all Ruby
+thrift lives in the same repo, you can publish the
+<em class="xref std std-ref">bdict_ruby_thrift_library</em> targets.)</p>
 </div>
 <div class="section" id="thrift-client-server-example">
 <h2>Thrift Client &amp; Server Example<a class="headerlink" href="#thrift-client-server-example" title="Permalink to this headline">¶</a></h2>
@@ -637,8 +632,8 @@ control over how code is generated we control that through arguments provided
 by <a class="reference internal" href="build_dictionary.html#bdict-java-thrift-library"><em>java_thrift_library</em></a>.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">While <tt class="docutils literal"><span class="pre">java_thrift_library</span></tt> implies Java as the generated code language,
-in reality it can generate code into a number of target languages via
+<p class="last">While the name <tt class="docutils literal"><span class="pre">java_thrift_library</span></tt> might make you think it generates
+Java, it can also generate other target languages via
 the <tt class="docutils literal"><span class="pre">language</span></tt> parameter (scala for example). For Python code, however,
 use <a class="reference internal" href="build_dictionary.html#bdict-python-thrift-library"><em>python_thrift_library</em></a>.</p>
 </div>
@@ -680,6 +675,68 @@ client. We can run the client locally with:</p>
 <div class="highlight-python"><pre>./pants goal run src/java/com/twitter/common/examples/pingpong_thrift/client:client-bin</pre>
 </div>
 </div>
+</div>
+<div class="section" id="publishing-thrift-for-elsewhere">
+<span id="thriftdeps-publish"></span><h2>Publishing Thrift for Elsewhere<a class="headerlink" href="#publishing-thrift-for-elsewhere" title="Permalink to this headline">¶</a></h2>
+<p>Earlier, you learned how to
+<a class="reference internal" href="#thriftdeps-consume"><em>consume Thrift artifacts published by other repos</em></a>.
+This raises the question: how can you use Pants to publish such artifacts?</p>
+<p>Publishing Thrift artifacts is like <a class="reference internal" href="publish.html"><em>publishing other artifacts</em></a>,
+but with some trickiness. Remember the subtle point in <em>consuming</em>
+Thrift from other repos: although the Thrift IDL is language-agnostic, a
+<em>lang</em>_``library`` that is itself published and consumes a Thrift artifact
+must know about an artifact with <em>lang</em> code generated from that Thrift.
+Thus, if you publish Thrift artifacts, you probably want to publish generated
+code artifacts in a few languages even though your code does not use those
+languages.</p>
+<p>It might look something like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">java_thrift_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;eureka-java&#39;</span><span class="p">,</span>
+  <span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;eureka.thrift&#39;</span><span class="p">],</span>
+  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;src/thrift/org/archimedes/volume:volume-java&#39;</span><span class="p">),</span>
+  <span class="p">],</span>
+  <span class="n">language</span><span class="o">=</span><span class="s">&#39;java&#39;</span><span class="p">,</span>
+  <span class="n">provides</span><span class="o">=</span><span class="n">artifact</span><span class="p">(</span>
+    <span class="n">org</span><span class="o">=</span><span class="s">&#39;org.archimedes&#39;</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s">&#39;eureka-java&#39;</span><span class="p">,</span>
+    <span class="n">repo</span><span class="o">=</span><span class="n">pants</span><span class="p">(</span><span class="s">&#39;BUILD.archimedes:jar-public&#39;</span><span class="p">),</span>
+<span class="p">))</span>
+
+<span class="n">java_thrift_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;eureka-scala&#39;</span><span class="p">,</span>
+  <span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;eureka.thrift&#39;</span><span class="p">],</span>
+  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;src/thrift/org/archimedes/volume:volume-scala&#39;</span><span class="p">),</span>
+  <span class="p">],</span>
+  <span class="n">language</span><span class="o">=</span><span class="s">&#39;scala&#39;</span><span class="p">,</span>
+  <span class="n">provides</span><span class="o">=</span><span class="n">artifact</span><span class="p">(</span>
+    <span class="n">org</span><span class="o">=</span><span class="s">&#39;org.archimedes&#39;</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s">&#39;eureka-scala&#39;</span><span class="p">,</span>
+    <span class="n">repo</span><span class="o">=</span><span class="n">pants</span><span class="p">(</span><span class="s">&#39;BUILD.archimedes:jar-public&#39;</span><span class="p">),</span>
+  <span class="p">))</span>
+
+<span class="n">ruby_thrift_library</span><span class="p">(</span>
+  <span class="n">name</span><span class="o">=</span><span class="s">&#39;eureka-ruby&#39;</span><span class="p">,</span>
+  <span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;eureka.thrift&#39;</span><span class="p">],</span>
+  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;src/thrift/org/archimedes/volume:volume-ruby&#39;</span><span class="p">),</span>
+  <span class="p">],</span>
+  <span class="n">provides</span><span class="o">=</span><span class="n">gem</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s">&#39;eureka-ruby&#39;</span><span class="p">,</span>
+    <span class="n">repo</span><span class="o">=</span><span class="n">pants</span><span class="p">(</span><span class="s">&#39;BUILD.archimedes:gem-public&#39;</span><span class="p">),</span>
+  <span class="p">))</span>
+</pre></div>
+</div>
+<p>Publishing a <tt class="docutils literal"><span class="pre">java_thrift_library</span></tt> target actually publishes <em>two</em>
+artifacts:</p>
+<ul class="simple">
+<li>One jar with generated code (generated Java (or Scala) classes)</li>
+<li>One jar with Thrift IDL; the jar name has <tt class="docutils literal"><span class="pre">-only</span></tt> appended</li>
+</ul>
+<p>For example, publishing the <tt class="docutils literal"><span class="pre">eureka-java</span></tt> example target presented above
+yields two artifacts, one named <tt class="docutils literal"><span class="pre">eureka-java</span></tt> with the generated Java
+(the <tt class="docutils literal"><span class="pre">provides</span></tt>-specified name) and <tt class="docutils literal"><span class="pre">eureka-java-only</span></tt>. A Pants target
+in another repo can depend on <tt class="docutils literal"><span class="pre">eureka-java-only</span></tt>; if Pants needs a
+generated-Java artifact, it &#8220;knows&#8221; to use the <tt class="docutils literal"><span class="pre">eureka-java</span></tt> name.</p>
 </div>
 </div>
 
