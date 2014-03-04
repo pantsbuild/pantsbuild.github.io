@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
@@ -291,6 +292,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../../goals_reference.html#jar">jar</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../goals_reference.html#killserver">killserver</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../goals_reference.html#list">list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../goals_reference.html#markdown">markdown</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../goals_reference.html#minimize">minimize</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../goals_reference.html#ng-killall">ng-killall</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../goals_reference.html#path">path</a></li>
@@ -527,11 +529,10 @@ body a.icon-home:hover{
 <span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">import</span> <span class="nn">os</span>
 
-<span class="kn">import</span> <span class="nn">twitter.pants</span>
-<span class="kn">import</span> <span class="nn">twitter.pants.base</span>
-
 <span class="kn">from</span> <span class="nn">twitter.common.dirutil</span> <span class="kn">import</span> <span class="n">Fileset</span><span class="p">,</span> <span class="n">safe_open</span>
 <span class="kn">from</span> <span class="nn">twitter.pants.base.build_file_helpers</span> <span class="kn">import</span> <span class="n">maven_layout</span>
+<span class="kn">from</span> <span class="nn">twitter.pants.base.build_manual</span> <span class="kn">import</span> <span class="n">get_builddict_info</span>
+<span class="kn">from</span> <span class="nn">twitter.pants.base.parse_context</span> <span class="kn">import</span> <span class="n">ParseContext</span>
 <span class="kn">from</span> <span class="nn">twitter.pants.base.generator</span> <span class="kn">import</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">TemplateData</span>
 <span class="kn">from</span> <span class="nn">twitter.pants.goal.phase</span> <span class="kn">import</span> <span class="n">Phase</span>
 <span class="kn">from</span> <span class="nn">twitter.pants.tasks</span> <span class="kn">import</span> <span class="n">Task</span><span class="p">,</span> <span class="n">TaskError</span>
@@ -661,7 +662,7 @@ body a.icon-home:hover{
 <span class="c"># Returns list of duples [(name, object), (name, object), (name, object),...]</span>
 <span class="k">def</span> <span class="nf">get_syms</span><span class="p">():</span>
   <span class="n">r</span> <span class="o">=</span> <span class="p">{}</span>
-  <span class="n">vc</span> <span class="o">=</span> <span class="n">twitter</span><span class="o">.</span><span class="n">pants</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">ParseContext</span><span class="o">.</span><span class="n">default_globals</span><span class="p">()</span>
+  <span class="n">vc</span> <span class="o">=</span> <span class="n">ParseContext</span><span class="o">.</span><span class="n">default_globals</span><span class="p">()</span>
   <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">vc</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">PREDEFS</span><span class="p">:</span> <span class="k">continue</span>
     <span class="k">if</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">isupper</span><span class="p">():</span> <span class="k">continue</span>  <span class="c"># REMIND see both jvm_binary and JvmBinary??</span>
@@ -704,7 +705,7 @@ body a.icon-home:hover{
     <span class="n">methods</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">attrname</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">klas</span><span class="p">):</span>
       <span class="n">attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">klas</span><span class="p">,</span> <span class="n">attrname</span><span class="p">)</span>
-      <span class="n">attr_bdi</span> <span class="o">=</span> <span class="n">twitter</span><span class="o">.</span><span class="n">pants</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">get_builddict_info</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+      <span class="n">attr_bdi</span> <span class="o">=</span> <span class="n">get_builddict_info</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
       <span class="k">if</span> <span class="ow">not</span> <span class="n">attr_bdi</span><span class="p">:</span> <span class="k">continue</span>
       <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">ismethod</span><span class="p">(</span><span class="n">attr</span><span class="p">):</span>
         <span class="n">methods</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry_for_one_method</span><span class="p">(</span><span class="n">attrname</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span>
@@ -738,7 +739,7 @@ body a.icon-home:hover{
   <span class="k">if</span> <span class="n">symbol_hash</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
     <span class="n">symbol_hash</span> <span class="o">=</span> <span class="n">get_syms</span><span class="p">()</span>
   <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">symbol_hash</span><span class="p">:</span>
-    <span class="n">bdi</span> <span class="o">=</span> <span class="n">twitter</span><span class="o">.</span><span class="n">pants</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">get_builddict_info</span><span class="p">(</span><span class="n">symbol_hash</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+    <span class="n">bdi</span> <span class="o">=</span> <span class="n">get_builddict_info</span><span class="p">(</span><span class="n">symbol_hash</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
     <span class="k">if</span> <span class="n">bdi</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span> <span class="k">continue</span>
     <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">bdi</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="s">&quot;defn&quot;</span> <span class="ow">in</span> <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span>
