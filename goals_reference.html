@@ -197,11 +197,6 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="install.html#troubleshooting">Troubleshooting</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="migration.html">Migrating from older versions</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="migration.html#migrate-targets-with-fake-sources">Migrate targets with fake sources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="migration.html#migrate-targets-used-with-dist-bundle-and-zip">Migrate targets used with dist, bundle and zip</a></li>
-</ul>
-</li>
 </ul>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="build_dictionary.html">BUILD Dictionary</a><ul>
@@ -285,6 +280,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="#jar">jar</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#killserver">killserver</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#list">list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#markdown">markdown</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#minimize">minimize</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#ng-killall">ng-killall</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#path">path</a></li>
@@ -390,6 +386,7 @@ goal.</p>
 <li><a class="reference internal" href="#gref-phase-jar"><em>jar</em></a> - Create one or more jars.</li>
 <li><a class="reference internal" href="#gref-phase-killserver"><em>killserver</em></a> - Kill the pants reporting server.</li>
 <li><a class="reference internal" href="#gref-phase-list"><em>list</em></a> - List available BUILD targets.</li>
+<li><a class="reference internal" href="#gref-phase-markdown"><em>markdown</em></a> - Generate html from markdown docs.</li>
 <li><a class="reference internal" href="#gref-phase-minimize"><em>minimize</em></a> - Print the minimal cover of the given targets.</li>
 <li><a class="reference internal" href="#gref-phase-ng-killall"><em>ng-killall</em></a> - Kill any running nailgun servers spawned by pants.</li>
 <li><a class="reference internal" href="#gref-phase-path"><em>path</em></a> - Find a dependency path from one target to another</li>
@@ -478,7 +475,7 @@ goal.</p>
 <p><strong>Installed tasks:</strong></p>
 <ul>
 <li><p class="first">Implemented by class <tt class="docutils literal"><span class="pre">CheckExclusives</span></tt></p>
-<p>Task for computing transitive exclusive maps.    This computes transitive exclusive tags for a dependency graph rooted   with a set of build targets specified by a user. If this process produces   any collisions where a single target contains multiple tag values for a single   exclusives key, then it generates an error and the compilation will fail.    The syntax of the exclusives attribute is:       exclusives = {&#8220;id&#8221;: &#8220;value&#8221;, ...}    For example, suppose that we had two java targets, jliba and jlibb. jliba uses   slf4j, which includes in its jar package an implementation of log4j. jlibb uses   log4j directly. But the version of log4j that&#8217;s packaged inside of slf4j is   different from the version used by jlibb.      java_library(name=&#8217;jliba&#8217;,        depedencies = [&#8216;slf4j-with-log4j-2.4&#8217;])     java_library(name=&#8217;jlibb&#8217;,        dependencies=[&#8216;log4j-1.9&#8217;])     java_binary(name=&#8217;javabin&#8217;, dependencies=[&#8216;:jliba&#8217;, &#8216;:jlibb&#8217;])    In this case, the binary target &#8216;javabin&#8217; depends on both slf4j with its   packaged log4j version 2.4, and on log4j-1.9.   Pants doesn&#8217;t know that the slf4j and log4j jar_dependencies contain   incompatible versions of the same library, and so it can&#8217;t detect the error.    With exclusives, the jar_library target for the joda libraries would declare   exclusives tags:      jar_library(name=&#8217;slf4j-with-log4j-2.4&#8217;, exclusives={&#8216;log4j&#8217;: &#8216;2.4&#8217;})     jar_library(name=&#8217;joda-2.1&#8217;, exclusives={&#8216;log4j&#8217;: &#8216;1.9&#8217;})    With the exclusives declared, pants can recognize that &#8216;javabin&#8217; has conflicting   dependencies, and can generate an appropriate error message.    Data about exclusives is provided to other tasks via data build products.   If the build data product &#8216;exclusives_groups&#8217; is required, then an   ExclusivesMapping object will be created.</p>
+<p>Computes transitive exclusive maps.    This computes transitive exclusive tags for a dependency graph rooted   with a set of build targets specified by a user. If this process produces   any collisions where a single target contains multiple tag values for a single   exclusives key, then it generates an error and the compilation will fail.    The syntax of the exclusives attribute is: ::       exclusives = {&#8220;id&#8221;: &#8220;value&#8221;, ...}    For example, suppose that we had two java targets, jliba and jlibb. jliba uses   slf4j, which includes in its jar package an implementation of log4j. jlibb uses   log4j directly. But the version of log4j that&#8217;s packaged inside of slf4j is   different from the version used by jlibb. ::       java_library(name=&#8217;jliba&#8217;,        depedencies = [&#8216;slf4j-with-log4j-2.4&#8217;])      java_library(name=&#8217;jlibb&#8217;,        dependencies=[&#8216;log4j-1.9&#8217;])      java_binary(name=&#8217;javabin&#8217;, dependencies=[&#8216;:jliba&#8217;, &#8216;:jlibb&#8217;])    In this case, the binary target &#8216;javabin&#8217; depends on both slf4j with its   packaged log4j version 2.4, and on log4j-1.9.   Pants doesn&#8217;t know that the slf4j and log4j jar_dependencies contain   incompatible versions of the same library, and so it can&#8217;t detect the error.    With exclusives, the jar_library target for the joda libraries would declare   exclusives tags: ::       jar_library(name=&#8217;slf4j-with-log4j-2.4&#8217;, exclusives={&#8216;log4j&#8217;: &#8216;2.4&#8217;})      jar_library(name=&#8217;joda-2.1&#8217;, exclusives={&#8216;log4j&#8217;: &#8216;1.9&#8217;})    With the exclusives declared, pants can recognize that &#8216;javabin&#8217; has conflicting   dependencies, and can generate an appropriate error message.    Data about exclusives is provided to other tasks via data build products.   If the build data product &#8216;exclusives_groups&#8217; is required, then an   ExclusivesMapping object will be created.</p>
 </li>
 </ul>
 </div>
@@ -680,6 +677,14 @@ goal.</p>
 <li><p class="first">Implemented by class <tt class="docutils literal"><span class="pre">ListTargets</span></tt></p>
 <p>Lists all BUILD targets in the system with no arguments, otherwise lists all   the BUILD targets that reside in the the BUILD files hosting the specified   targets.</p>
 </li>
+</ul>
+</div>
+<div class="section" id="markdown">
+<span id="gref-phase-markdown"></span><h2>markdown<a class="headerlink" href="#markdown" title="Permalink to this headline">¶</a></h2>
+<p>Generate html from markdown docs.</p>
+<p><strong>Installed tasks:</strong></p>
+<ul class="simple">
+<li>Implemented by class <tt class="docutils literal"><span class="pre">MarkdownToHtml</span></tt></li>
 </ul>
 </div>
 <div class="section" id="minimize">

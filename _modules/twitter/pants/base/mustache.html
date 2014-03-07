@@ -196,11 +196,6 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../../install.html#troubleshooting">Troubleshooting</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../migration.html">Migrating from older versions</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../../migration.html#migrate-targets-with-fake-sources">Migrate targets with fake sources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../migration.html#migrate-targets-used-with-dist-bundle-and-zip">Migrate targets used with dist, bundle and zip</a></li>
-</ul>
-</li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../build_dictionary.html">BUILD Dictionary</a><ul>
@@ -284,6 +279,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../../goals_reference.html#jar">jar</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../goals_reference.html#killserver">killserver</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../goals_reference.html#list">list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../goals_reference.html#markdown">markdown</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../goals_reference.html#minimize">minimize</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../goals_reference.html#ng-killall">ng-killall</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../goals_reference.html#path">path</a></li>
@@ -380,11 +376,12 @@ body a.icon-home:hover{
 
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">template_dir</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">package_name</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Create a renderer that finds templates by name in one of two ways.</span>
-<span class="sd">       - If template_dir is specified, finds template foo in the file foo.mustache in that dir.</span>
-<span class="sd">       - Otherwise, if package_name is specified, finds template foo embedded in that</span>
-<span class="sd">         package under templates/foo.mustache.</span>
-<span class="sd">       - Otherwise will not find templates by name, so can only be used with an existing</span>
-<span class="sd">         template string.</span>
+
+<span class="sd">    * If template_dir is specified, finds template foo in the file foo.mustache in that dir.</span>
+<span class="sd">    * Otherwise, if package_name is specified, finds template foo embedded in that</span>
+<span class="sd">      package under templates/foo.mustache.</span>
+<span class="sd">    * Otherwise will not find templates by name, so can only be used with an existing</span>
+<span class="sd">      template string.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_template_dir</span> <span class="o">=</span> <span class="n">template_dir</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_package_name</span> <span class="o">=</span> <span class="n">package_name</span>
@@ -407,17 +404,19 @@ body a.icon-home:hover{
 <div class="viewcode-block" id="MustacheRenderer.render_callable"><a class="viewcode-back" href="../../../../base.html#twitter.pants.base.mustache.MustacheRenderer.render_callable">[docs]</a>  <span class="k">def</span> <span class="nf">render_callable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inner_template_name</span><span class="p">,</span> <span class="n">arg_string</span><span class="p">,</span> <span class="n">outer_args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Handle a mustache callable.</span>
 
-<span class="sd">    In a mustache template, when foo is callable, {{#foo}}arg_string{{/foo}} is replaced with the</span>
-<span class="sd">    result of calling foo(arg_string). The callable must interpret arg_string.</span>
+<span class="sd">    In a mustache template, when foo is callable, ``{{#foo}}arg_string{{/foo}}`` is replaced</span>
+<span class="sd">    with the result of calling ``foo(arg_string)``. The callable must interpret ``arg_string``.</span>
 
 <span class="sd">    This method provides an implementation of such a callable that does the following:</span>
-<span class="sd">      A) Parses the arg_string as CGI args.</span>
-<span class="sd">      B) Adds them to the original args that the enclosing template was rendered with.</span>
-<span class="sd">      C) Renders some other template against those args.</span>
-<span class="sd">      D) Returns the resulting text.</span>
 
-<span class="sd">    Use by adding { &#39;foo&#39;: lambda x: self._renderer.render_callable(&#39;foo_template&#39;, x, args) }</span>
-<span class="sd">    to the args of the outer template, which can then contain {{#foo}}arg_string{{/foo}}.</span>
+<span class="sd">    #. Parses the arg_string as CGI args.</span>
+<span class="sd">    #. Adds them to the original args that the enclosing template was rendered with.</span>
+<span class="sd">    #. Renders some other template against those args.</span>
+<span class="sd">    #. Returns the resulting text.</span>
+
+<span class="sd">    Use by adding</span>
+<span class="sd">    ``{ &#39;foo&#39;: lambda x: self._renderer.render_callable(&#39;foo_template&#39;, x, args) }``</span>
+<span class="sd">    to the args of the outer template, which can then contain ``{{#foo}}arg_string{{/foo}}``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c"># First render the arg_string (mustache doesn&#39;t do this for you, and it may itself</span>
     <span class="c"># contain mustache constructs).</span>
