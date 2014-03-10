@@ -356,27 +356,26 @@ body a.icon-home:hover{
 
 
 <div class="viewcode-block" id="CheckExclusives"><a class="viewcode-back" href="../../../../tasks.html#twitter.pants.tasks.check_exclusives.CheckExclusives">[docs]</a><span class="k">class</span> <span class="nc">CheckExclusives</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;Computes transitive exclusive maps.</span>
+  <span class="sd">&quot;&quot;&quot;Task for computing transitive exclusive maps.</span>
 
 <span class="sd">  This computes transitive exclusive tags for a dependency graph rooted</span>
 <span class="sd">  with a set of build targets specified by a user. If this process produces</span>
 <span class="sd">  any collisions where a single target contains multiple tag values for a single</span>
 <span class="sd">  exclusives key, then it generates an error and the compilation will fail.</span>
 
-<span class="sd">  The syntax of the exclusives attribute is: ::</span>
-
-<span class="sd">     exclusives = {&quot;id&quot;: &quot;value&quot;, ...}</span>
+<span class="sd">  The syntax of the exclusives attribute is:</span>
+<span class="sd">      exclusives = {&quot;id&quot;: &quot;value&quot;, ...}</span>
 
 <span class="sd">  For example, suppose that we had two java targets, jliba and jlibb. jliba uses</span>
 <span class="sd">  slf4j, which includes in its jar package an implementation of log4j. jlibb uses</span>
 <span class="sd">  log4j directly. But the version of log4j that&#39;s packaged inside of slf4j is</span>
-<span class="sd">  different from the version used by jlibb. ::</span>
+<span class="sd">  different from the version used by jlibb.</span>
 
-<span class="sd">     java_library(name=&#39;jliba&#39;,</span>
+<span class="sd">    java_library(name=&#39;jliba&#39;,</span>
 <span class="sd">       depedencies = [&#39;slf4j-with-log4j-2.4&#39;])</span>
-<span class="sd">     java_library(name=&#39;jlibb&#39;,</span>
+<span class="sd">    java_library(name=&#39;jlibb&#39;,</span>
 <span class="sd">       dependencies=[&#39;log4j-1.9&#39;])</span>
-<span class="sd">     java_binary(name=&#39;javabin&#39;, dependencies=[&#39;:jliba&#39;, &#39;:jlibb&#39;])</span>
+<span class="sd">    java_binary(name=&#39;javabin&#39;, dependencies=[&#39;:jliba&#39;, &#39;:jlibb&#39;])</span>
 
 <span class="sd">  In this case, the binary target &#39;javabin&#39; depends on both slf4j with its</span>
 <span class="sd">  packaged log4j version 2.4, and on log4j-1.9.</span>
@@ -384,10 +383,10 @@ body a.icon-home:hover{
 <span class="sd">  incompatible versions of the same library, and so it can&#39;t detect the error.</span>
 
 <span class="sd">  With exclusives, the jar_library target for the joda libraries would declare</span>
-<span class="sd">  exclusives tags: ::</span>
+<span class="sd">  exclusives tags:</span>
 
-<span class="sd">     jar_library(name=&#39;slf4j-with-log4j-2.4&#39;, exclusives={&#39;log4j&#39;: &#39;2.4&#39;})</span>
-<span class="sd">     jar_library(name=&#39;joda-2.1&#39;, exclusives={&#39;log4j&#39;: &#39;1.9&#39;})</span>
+<span class="sd">    jar_library(name=&#39;slf4j-with-log4j-2.4&#39;, exclusives={&#39;log4j&#39;: &#39;2.4&#39;})</span>
+<span class="sd">    jar_library(name=&#39;joda-2.1&#39;, exclusives={&#39;log4j&#39;: &#39;1.9&#39;})</span>
 
 <span class="sd">  With the exclusives declared, pants can recognize that &#39;javabin&#39; has conflicting</span>
 <span class="sd">  dependencies, and can generate an appropriate error message.</span>

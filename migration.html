@@ -58,12 +58,20 @@
   // In a plain template, we'd put this in the footer block.
   // In the read-the-docs template, there is no footer. So use jQuery ready:
   $(document).ready(function() {
+    // Ping Google analytics
     var ga = document.createElement('script');
     ga.type = 'text/javascript'; ga.async = true;
     ga.src = ('https:' == document.location.protocol ?
               'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
     ga.setAttribute('async', 'true');
     $(document).append(ga);
+
+    // Show the travis-ci status graphic
+    $('.wy-breadcrumbs').append(
+      '<div style="float: right;">' +
+      '<a href="https://travis-ci.org/twitter/commons">' +
+      '<img src="https://travis-ci.org/twitter/commons.png?branch=master">' +
+      '</a></div>');
   });
 </script>
 <style type="text/css">
@@ -285,6 +293,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#jar">jar</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#killserver">killserver</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#list">list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#markdown">markdown</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#minimize">minimize</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#ng-killall">ng-killall</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#path">path</a></li>
@@ -379,10 +388,9 @@ In old pants, a jvm library target would accept a buildflags list and
 these flags would be added to the ant command line turning on certain
 behavior.  Amongst the controlled behaviors were packaging of a target
 into a deployable package.  3 varieties of package were supported:</p>
-<div class="highlight-python"><div class="highlight"><pre>* self contained jar
+<div class="highlight-python"><pre>* self contained jar
 * a bundle of files under a chroot
-* a zipped bundle
-</pre></div>
+* a zipped bundle</pre>
 </div>
 <p>In pants.new the same three packaging options remain, but they are now
 enabled via 2 new target types and 2 goals.</p>
@@ -418,9 +426,8 @@ basename is supplied this is used instead.  Once your project no longer
 uses old pants <cite>dist</cite> to create its deploy jars you can delete the
 buildflags argument to your deployjar libraries.</p>
 <p>To build the deployjar you execute the pants.new binary goal:</p>
-<div class="highlight-python"><div class="highlight"><pre>./pants goal binary src/java/com/twitter/osprey:main_deploy \
-  --binary-deployjar -v
-</pre></div>
+<div class="highlight-python"><pre>./pants goal binary src/java/com/twitter/osprey:main_deploy \
+  --binary-deployjar -v</pre>
 </div>
 <p>The jar will be deposited to <cite>dist/runner.jar</cite> in this case and in
 this will be logged to the console.</p>
@@ -432,7 +439,7 @@ that aren&#8217;t contained as resource files in your jar.  Common examples
 of auxiliary files include control scripts and configuration files. A
 bundle is the central concept here and is simply a directory to lay
 out your application files in.  For example:</p>
-<div class="highlight-python"><div class="highlight"><pre>dist/runner-bundle/
+<div class="highlight-python"><pre>dist/runner-bundle/
   config/
     common.conf
     runner.conf
@@ -444,8 +451,7 @@ out your application files in.  For example:</p>
   scripts/
     start.sh
     stop.sh
-  runner.jar
-</pre></div>
+  runner.jar</pre>
 </div>
 <p>To create a bundle like this in old pants you&#8217;d need to use buildflags
 that pointed to the directories containing the extra files to bundle
@@ -463,7 +469,7 @@ in along with your jar and its supporting libs:</p>
 </pre></div>
 </div>
 <p>Where there was a top-level layout in the project of:</p>
-<div class="highlight-python"><div class="highlight"><pre>osprey/
+<div class="highlight-python"><pre>osprey/
   common/
     config/
       common.conf
@@ -474,34 +480,30 @@ in along with your jar and its supporting libs:</p>
       runner.conf
     scripts/
       start.sh
-      stop.sh
-</pre></div>
+      stop.sh</pre>
 </div>
 <p>To create the same bundle in pants.new you need to add a jvm_app
 target that defines the bundle files and points to a jvm_binary to
 include.  The most natural spot for the target is in your pre-existing
 top-level project directory. Note that all files bundled must
 be under the top-level project directory. In <cite>osprey/BUILD</cite> you&#8217;d add:</p>
-<div class="highlight-python"><div class="highlight"><pre>jvm_app(name=&#39;runner-app&#39;,
-  basename=&#39;runner&#39;,
-  binary = pants(&#39;src/java/com/twitter/osprey:main_deploy&#39;),
+<div class="highlight-python"><pre>jvm_app(name='runner-app',
+  basename='runner',
+  binary = pants('src/java/com/twitter/osprey:main_deploy'),
   bundles = [
-    bundle().add(rglobs(&#39;data/*&#39;))
-    bundle(relative_to=&#39;common&#39;).add(rglobs(&#39;common/*&#39;)),
-    bundle(relative_to=&#39;runner&#39;).add(rglobs(&#39;runner/*&#39;)),
+    bundle().add(rglobs('data/*'))
+    bundle(relative_to='common').add(rglobs('common/*')),
+    bundle(relative_to='runner').add(rglobs('runner/*')),
   ]
-)
-</pre></div>
+)</pre>
 </div>
 <p>To build the bundle you execute the pants.new bundle goal:</p>
-<div class="highlight-python"><div class="highlight"><pre>./pants goal bundle osprey:runner-app -v
-</pre></div>
+<div class="highlight-python"><pre>./pants goal bundle osprey:runner-app -v</pre>
 </div>
 <p>The bundle will be created in <cite>dist/runner-bundle/</cite> in this case.  To
 create a zip or other archive of the bundle, just use the
 <cite>&#8211;bundle-archive</cite> flag and select from one of tar, tgz, tbz2 or zip:</p>
-<div class="highlight-python"><div class="highlight"><pre>./pants goal bundle osprey:runner-app -v --bundle-archive=tgz
-</pre></div>
+<div class="highlight-python"><pre>./pants goal bundle osprey:runner-app -v --bundle-archive=tgz</pre>
 </div>
 <p>The archive will be deposited to <cite>dist/runner.tar.gz</cite> in this case and in
 this will be logged to the console.</p>

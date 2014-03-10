@@ -370,11 +370,7 @@ body a.icon-home:hover{
 
 
 <div class="viewcode-block" id="RcFile"><a class="viewcode-back" href="../../../../base.html#twitter.pants.base.rcfile.RcFile">[docs]</a><span class="k">class</span> <span class="nc">RcFile</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;Handles rcfile-style configuration files.</span>
-
-<span class="sd">  Precedence is given to rcfiles that come last in the given sequence of paths.</span>
-<span class="sd">  The effect is as if each rcfile in paths overlays the next in a walk from left to right.</span>
-<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="sd">&quot;&quot;&quot;Encapsulates pants rcfile handling.&quot;&quot;&quot;</span>
 
   <span class="c"># TODO(John Sirois): localize handling of this flag value back into pants_exe.py once the new old</span>
   <span class="c"># split is healed.</span>
@@ -387,11 +383,15 @@ body a.icon-home:hover{
 
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paths</span><span class="p">,</span> <span class="n">default_prepend</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">process_default</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    :param paths: The rcfiles to apply default subcommand options from.</span>
-<span class="sd">    :param default_prepend: Whether to prepend (the default) or append if default options</span>
-<span class="sd">      are specified with the ``options`` key.</span>
-<span class="sd">    :param process_default: True to process options in the [DEFAULT] section and apply</span>
-<span class="sd">      regardless of goal.</span>
+<span class="sd">      Creates an RcFile object that gives precedence to rcfiles that come last in the given</span>
+<span class="sd">      sequence of paths.  The effect is as if each rcfile in paths overlays the next in a walk from</span>
+<span class="sd">      left to right.</span>
+
+<span class="sd">      :paths The rcfiles to apply default subcommand options from.</span>
+<span class="sd">      :default_prepend Whether to prepend (the default) or append if default options are specified</span>
+<span class="sd">                       with the &#39;options&#39; key.</span>
+<span class="sd">      :process_default True to process options in the [DEFAULT] section and apply regardless of</span>
+<span class="sd">                       goal.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">default_prepend</span> <span class="o">=</span> <span class="n">default_prepend</span>
@@ -405,18 +405,17 @@ body a.icon-home:hover{
     <span class="bp">self</span><span class="o">.</span><span class="n">paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">]</span>
 
 <div class="viewcode-block" id="RcFile.apply_defaults"><a class="viewcode-back" href="../../../../base.html#twitter.pants.base.rcfile.RcFile.apply_defaults">[docs]</a>  <span class="k">def</span> <span class="nf">apply_defaults</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">commands</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Augment arguments with defaults found for the given commands.</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">      Augments the given list of arguments with any default options found for the given commands.</span>
+<span class="sd">      The returned argments will be a new copy of the given args with possibly extra augmented</span>
+<span class="sd">      arguments.</span>
 
-<span class="sd">    The returned arguments will be a new copy of the given args with possibly extra augmented</span>
-<span class="sd">    arguments.</span>
-
-<span class="sd">    Default options are applied from the following keys under a section with the name of the</span>
-<span class="sd">    sub-command the default options apply to:</span>
-
-<span class="sd">    * `options` - These options are either prepended or appended to the command line args as</span>
-<span class="sd">      specified in the constructor with default_prepend.</span>
-<span class="sd">    * `prepend-options` - These options are prepended to the command line args.</span>
-<span class="sd">    * `append-options` - These options are appended to the command line args.</span>
+<span class="sd">      Default options are applied from the following keys under a section with the name of the</span>
+<span class="sd">      subcommand the default options apply to:</span>
+<span class="sd">      &#39;options&#39;: These options are either prepended or appended to the command line args as</span>
+<span class="sd">                 specified in the constructor with default_prepend.</span>
+<span class="sd">      &#39;prepend-options&#39;: These options are prepended to the command line args.</span>
+<span class="sd">      &#39;append-options&#39;: These options are appended to the command line args.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">args</span> <span class="o">=</span> <span class="n">args</span><span class="p">[:]</span>
