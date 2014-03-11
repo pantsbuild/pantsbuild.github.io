@@ -320,6 +320,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="targets.html">Targets Reference</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tasks.html">Tasks Reference</a></li>
 <li class="toctree-l2"><a class="reference internal" href="base.html">Base Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release.html">Release Process</a></li>
 <li class="toctree-l2"><a class="reference internal" href="docs.html">About the documentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="credits.html">Credits</a></li>
 </ul>
@@ -476,17 +477,16 @@ from source, Pants invokes <cite>ivy</cite> to fetch these jars. To reduce dange
 of version conflicts, we use the <a class="reference internal" href="3rdparty.html"><em>Third-Party Dependencies</em></a> idiom: we keep references
 to these &#8220;third-party&#8221; jars together in <tt class="docutils literal"><span class="pre">BUILD</span></tt> files under the
 <tt class="docutils literal"><span class="pre">3rdparty/jvm/</span></tt> directory. Thus, <tt class="docutils literal"><span class="pre">pingpong-lib</span></tt> has some dependencies like:</p>
-<div class="highlight-python"><pre>
-java_library(name = 'handler',
+<div class="highlight-python"><div class="highlight"><pre>java_library(name = &#39;handler&#39;,
   dependencies = [
-    pants('3rdparty:guava'),
-    pants('3rdparty:guice'),
-    pants('3rdparty/jvm/com/sun/jersey:jersey-client'),
-    pants('3rdparty/jvm/com/sun/jersey:jersey-core'),
-    pants('3rdparty/jvm/com/sun/jersey:jersey-guice'),
-    pants('3rdparty/jvm/com/sun/jersey:jersey-server'),
-    pants('3rdparty/jvm/com/sun/jersey:jersey-servlet'),
-</pre>
+    pants(&#39;3rdparty:guava&#39;),
+    pants(&#39;3rdparty:guice&#39;),
+    pants(&#39;3rdparty/jvm/com/sun/jersey:jersey-client&#39;),
+    pants(&#39;3rdparty/jvm/com/sun/jersey:jersey-core&#39;),
+    pants(&#39;3rdparty/jvm/com/sun/jersey:jersey-guice&#39;),
+    pants(&#39;3rdparty/jvm/com/sun/jersey:jersey-server&#39;),
+    pants(&#39;3rdparty/jvm/com/sun/jersey:jersey-servlet&#39;),
+</pre></div>
 </div>
 <p>The <tt class="docutils literal"><span class="pre">BUILD</span></tt> files in <tt class="docutils literal"><span class="pre">3rdparty/jvm/</span></tt>, e.g.,
 <tt class="docutils literal"><span class="pre">3rdparty/jvm/com/sun/jersey/BUILD</span></tt>, have targets like:</p>
@@ -512,10 +512,12 @@ frameworks use other flags)</p>
 <dt><strong>Packaging Binaries</strong></dt>
 <dd><p class="first">To create a jar containing just the code built by a JVM target, use the
 <cite>jar</cite> goal:</p>
-<div class="highlight-python"><pre>pants goal jar src/java/com/myorg/myproject</pre>
+<div class="highlight-python"><div class="highlight"><pre>pants goal jar src/java/com/myorg/myproject
+</pre></div>
 </div>
 <p>To create &#8220;bundle&#8221; (a runnable thing and its dependencies):</p>
-<div class="highlight-python"><pre>./pants goal bundle src/main/java/yourproject --bundle-archive=zip -v</pre>
+<div class="highlight-python"><div class="highlight"><pre>./pants goal bundle src/main/java/yourproject --bundle-archive=zip -v
+</pre></div>
 </div>
 <p class="last">If your bundle is JVM, it&#8217;s a zipfile which can run by means of an
 <tt class="docutils literal"><span class="pre">unzip</span></tt> and seting your <tt class="docutils literal"><span class="pre">CLASSPATH</span></tt> to <tt class="docutils literal"><span class="pre">$BASEDIR/my_service.jar</span></tt>
@@ -523,10 +525,12 @@ frameworks use other flags)</p>
 </dd>
 <dt><strong>Get Help</strong></dt>
 <dd><p class="first">Get the list of goals:</p>
-<div class="highlight-python"><pre>./pants goal goals</pre>
+<div class="highlight-python"><div class="highlight"><pre>./pants goal goals
+</pre></div>
 </div>
 <p>Get help for one goal:</p>
-<div class="last highlight-python"><pre>./pants goal help onegoal</pre>
+<div class="last highlight-python"><div class="highlight"><pre>./pants goal help onegoal
+</pre></div>
 </div>
 </dd>
 </dl>
@@ -545,7 +549,8 @@ for JVM startup and class loading.</p>
 <h2>Java7 vs Java6, Which Java<a class="headerlink" href="#java7-vs-java6-which-java" title="Permalink to this headline">¶</a></h2>
 <p>Pants uses the java on your <tt class="docutils literal"><span class="pre">PATH</span></tt> (not <tt class="docutils literal"><span class="pre">JAVA_HOME</span></tt>).
 To specify a specific java version for just one pants invocation:</p>
-<div class="highlight-python"><pre>PATH=/usr/lib/jvm/java-1.7.0-openjdk7/bin:${PATH} ./pants goal ...</pre>
+<div class="highlight-python"><div class="highlight"><pre>PATH=/usr/lib/jvm/java-1.7.0-openjdk7/bin:${PATH} ./pants goal ...
+</pre></div>
 </div>
 <p>If you sometimes need to compile some code in Java 6 and sometimes Java 7,
 you can use a command-line arg to specify Java version:</p>
@@ -557,7 +562,8 @@ it needs to rebuild. If you build with version 7, change some code, then build
 with version 6, java 6 will try to understand java 7-generated classfiles
 and fail. Thus, if you&#8217;ve been building with one Java version and are switching
 to another, you probably need to:</p>
-<div class="highlight-python"><pre>./pants goal clean-all</pre>
+<div class="highlight-python"><div class="highlight"><pre>./pants goal clean-all
+</pre></div>
 </div>
 <p>so that the next build starts from scratch.</p>
 </div>
@@ -578,14 +584,15 @@ the files you want (along with a couple of not-so-useful stub <tt class="docutil
 <p>A bundle is basically a directory tree containing <tt class="docutils literal"><span class="pre">.jar</span></tt>s. The
 <tt class="docutils literal"><span class="pre">.jar</span></tt> in the top-level directory has a manifest so you can run
 it with <tt class="docutils literal"><span class="pre">java</span> <span class="pre">-jar</span></tt>:</p>
-<div class="highlight-python"><pre>$ find .
+<div class="highlight-python"><div class="highlight"><pre>$ find .
 pingpong.jar
 libs/
 libs/org.scala-lang-scala-library-2.9.2.jar
 libs/org.sonatype.sisu.inject-cglib-2.2.1-v20090111.jar
 libs/pingpong.jar
 libs/src.java.com.twitter.common.examples.pingpong.pingpong-lib.jar
-libs/...</pre>
+libs/...
+</pre></div>
 </div>
 <p>If your <tt class="docutils literal"><span class="pre">jvm_app</span></tt> has a <tt class="docutils literal"><span class="pre">bundles</span></tt> parameter, this might specify
 directories of files to copy into the generated bundle. E.g., your
@@ -595,9 +602,10 @@ directories of files to copy into the generated bundle. E.g., your
 </div>
 <p>In this case, you&#8217;d expect files from this directory to show up in
 the bundle:</p>
-<div class="highlight-python"><pre>tools/config/
+<div class="highlight-python"><div class="highlight"><pre>tools/config/
 tools/config/launcher.scala
-tools/config/...</pre>
+tools/config/...
+</pre></div>
 </div>
 <p><strong>Deploying a Bundle</strong></p>
 <p>Instead of just creating a directory tree, you can pass

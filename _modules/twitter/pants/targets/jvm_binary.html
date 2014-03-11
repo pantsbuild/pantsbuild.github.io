@@ -319,6 +319,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../../targets.html">Targets Reference</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../tasks.html">Tasks Reference</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../base.html">Base Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../release.html">Release Process</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../docs.html">About the documentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../credits.html">Credits</a></li>
 </ul>
@@ -493,6 +494,8 @@ body a.icon-home:hover{
 
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">mapper</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">relative_to</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :param base: Base path of the &quot;source&quot; file paths. By default, path of the</span>
+<span class="sd">      BUILD file. Useful for assets that don&#39;t live in the source code repo.</span>
 <span class="sd">    :param mapper: Function that takes a path string and returns a path string. Takes a path in</span>
 <span class="sd">      the source tree, returns a path to use in the resulting bundle. By default, an identity</span>
 <span class="sd">      mapper.</span>
@@ -502,13 +505,15 @@ body a.icon-home:hover{
     <span class="k">if</span> <span class="n">mapper</span> <span class="ow">and</span> <span class="n">relative_to</span><span class="p">:</span>
       <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Must specify exactly one of &#39;mapper&#39; or &#39;relative_to&#39;&quot;</span><span class="p">)</span>
 
+    <span class="bp">self</span><span class="o">.</span><span class="n">_base</span> <span class="o">=</span> <span class="n">base</span> <span class="ow">or</span> <span class="n">ParseContext</span><span class="o">.</span><span class="n">path</span><span class="p">()</span>
+
     <span class="k">if</span> <span class="n">relative_to</span><span class="p">:</span>
-      <span class="n">base</span> <span class="o">=</span> <span class="n">base</span> <span class="ow">or</span> <span class="n">ParseContext</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="n">relative_to</span><span class="p">)</span>
+      <span class="n">base</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_base</span><span class="p">,</span> <span class="n">relative_to</span><span class="p">)</span>
       <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">base</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Could not find a directory to bundle relative to at </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">base</span><span class="p">)</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span> <span class="o">=</span> <span class="n">RelativeToMapper</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span> <span class="o">=</span> <span class="n">mapper</span> <span class="ow">or</span> <span class="n">RelativeToMapper</span><span class="p">(</span><span class="n">base</span> <span class="ow">or</span> <span class="n">ParseContext</span><span class="o">.</span><span class="n">path</span><span class="p">())</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span> <span class="o">=</span> <span class="n">mapper</span> <span class="ow">or</span> <span class="n">RelativeToMapper</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_base</span><span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">filemap</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -521,7 +526,14 @@ body a.icon-home:hover{
       <span class="n">paths</span> <span class="o">=</span> <span class="n">fileset</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fileset</span><span class="p">,</span> <span class="n">Fileset</span><span class="p">)</span> \
                         <span class="k">else</span> <span class="n">fileset</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">fileset</span><span class="p">,</span> <span class="s">&#39;__iter__&#39;</span><span class="p">)</span> \
                         <span class="k">else</span> <span class="p">[</span><span class="n">fileset</span><span class="p">]</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">filemap</span><span class="o">.</span><span class="n">update</span><span class="p">(((</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="p">(</span><span class="n">path</span><span class="p">))</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">))</span>
+      <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
+        <span class="n">abspath</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">abspath</span><span class="p">):</span>
+          <span class="n">abspath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_base</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">abspath</span><span class="p">):</span>
+          <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Given path: </span><span class="si">%s</span><span class="s"> with absolute path: </span><span class="si">%s</span><span class="s"> which does not exist&#39;</span>
+                           <span class="o">%</span> <span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">abspath</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filemap</span><span class="p">[</span><span class="n">abspath</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="p">(</span><span class="n">abspath</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">self</span>
 </div>
   <span class="k">def</span> <span class="nf">resolve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
