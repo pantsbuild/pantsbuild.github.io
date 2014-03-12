@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Installing &mdash; pants 0.1 documentation</title>
+  <title>Installing Pants &mdash; pants 0.1 documentation</title>
   
 
   
@@ -200,9 +200,10 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="setup_repo.html#restricting-publish-to-release-branch">Restricting Publish to &#8220;Release Branch&#8221;</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Installing</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#requirements">Requirements</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Installing Pants</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#system-wide-installation">System-wide Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#virtualenv-based-installation">Virtualenv-based Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pex-based-installation">PEX-based Installation</a></li>
 </ul>
 </li>
 </ul>
@@ -346,90 +347,51 @@ body a.icon-home:hover{
         <div class="rst-content">
           <ul class="wy-breadcrumbs">
   <li><a href="index.html">Docs</a> &raquo;</li>
-  <li><a href="">Installing</a></li>
+  <li><a href="">Installing Pants</a></li>
   
 </ul>
 <hr/>
 
           
-  <div class="section" id="installing">
-<h1>Installing<a class="headerlink" href="#installing" title="Permalink to this headline">¶</a></h1>
-<p><strong>As of January 2014, alas, Pants is not an install-able thing.</strong>
-You can use it in a repo in which some Pants expert has set it up;
-you can use it to build things <em>in</em> that repo, but nothing else.</p>
-<p>We hope to fix this situation soon, but we&#8217;re not there yet.
-If you&#8217;re reading this in open-source-land and want to try out Pants,
-<a class="reference external" href="https://github.com/twitter/commons">https://github.com/twitter/commons</a> uses it. If you&#8217;re reading this in
-an organization that already uses Pants, ask your neighbor where
-your source code is.</p>
-<div class="section" id="requirements">
-<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
-<p>Most of Pants was developed against CPython 2.6.
-Things mostly work with CPython 2.7 and recent efforts have been made to improve
-CPython 3.x and PyPy compatibility.  We&#8217;ve explicitly ignored anything prior to
-CPython 2.6 and generally discourage use against anything less than
-CPython 2.6.5 as there are known bugs that we&#8217;re unwilling to fix.  We&#8217;ve never
-even tried running against Jython or IronPython so if that&#8217;s your environment,
-you&#8217;re on your own.</p>
-<p>If none of this made any sense to you, run <cite>python -V</cite>.  If it says <cite>Python
-2.6.x</cite> or <cite>Python 2.7.x</cite> you&#8217;re probably fine.</p>
-</div>
-<div class="section" id="troubleshooting">
-<span id="tshoot"></span><h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="typeerror-unpack-http-url-takes-exactly-4-arguments-3-given">
-<h3><cite>TypeError: unpack_http_url() takes exactly 4 arguments (3 given)</cite><a class="headerlink" href="#typeerror-unpack-http-url-takes-exactly-4-arguments-3-given" title="Permalink to this headline">¶</a></h3>
-<p>If you see this error, it means that your installation is attempting to use a cached
-version of pip 1.0.2 instead of pip 1.1.</p>
-<p>Solution:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ rm -rf .python
-$ rm -f pants.pex
-$ ./pants
+  <div class="section" id="installing-pants">
+<h1>Installing Pants<a class="headerlink" href="#installing-pants" title="Permalink to this headline">¶</a></h1>
+<p>This page documents how to install pants. Three installation methods are
+described, each with different tradeoffs, allowing you can choose the
+right method for your particular needs.</p>
+<div class="section" id="system-wide-installation">
+<h2>System-wide Installation<a class="headerlink" href="#system-wide-installation" title="Permalink to this headline">¶</a></h2>
+<p>The simplest installation method is installing for all users on your system.</p>
+<div class="highlight-python"><div class="highlight"><pre>pip install twitter.pants
 </pre></div>
 </div>
+<p>This installs pants (and its dependencies) into your Python distribution
+site-packages, making it available to all users on your system. This
+installation method requires root access and may cause dependency conflicts
+with other pip-installed applications.</p>
 </div>
-<div class="section" id="typeerror-init-got-an-unexpected-keyword-argument-platforms">
-<h3><cite>TypeError: __init__() got an unexpected keyword argument &#8216;platforms&#8217;</cite><a class="headerlink" href="#typeerror-init-got-an-unexpected-keyword-argument-platforms" title="Permalink to this headline">¶</a></h3>
-<p>If you see this error, you&#8217;re running an old pants.pex against a new BUILD file.</p>
-<p>Solution:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ rm -f pants.pex
-$ ./pants
+<div class="section" id="virtualenv-based-installation">
+<h2>Virtualenv-based Installation<a class="headerlink" href="#virtualenv-based-installation" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="http://www.virtualenv.org/">Virtualenv</a> is a tool for creating isolated
+Python environments. This is the recommended way of installing pants locally
+as it does not modify the system Python libraries.</p>
+<div class="highlight-python"><div class="highlight"><pre>$ virtualenv /tmp/pants
+$ source /tmp/pants/bin/activate
+$ pip install twitter.pants \
+  --allow-external elementtree \
+  --allow-unverified elementtree
+$ pants
 </pre></div>
 </div>
+<p>To simplify a virtualenv-based installation, consider adding a wrapper script
+to your repo. See <a class="reference external" href="https://github.com/twitter/commons/blob/master/pants">https://github.com/twitter/commons/blob/master/pants</a> for an
+example.</p>
 </div>
-<div class="section" id="attributeerror-nonetype-object-has-no-attribute-rfind">
-<h3><cite>AttributeError: &#8216;NoneType&#8217; object has no attribute &#8216;rfind&#8217;</cite><a class="headerlink" href="#attributeerror-nonetype-object-has-no-attribute-rfind" title="Permalink to this headline">¶</a></h3>
-<p>If you see this error, you&#8217;re running an old pants.pex against a new BUILD file.</p>
-<p>Solution:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ rm -f pants.pex
-$ ./pants
-</pre></div>
-</div>
-</div>
-<div class="section" id="distributionnotfound-pytest-cov">
-<h3><cite>DistributionNotFound: pytest-cov</cite><a class="headerlink" href="#distributionnotfound-pytest-cov" title="Permalink to this headline">¶</a></h3>
-<p>If you encounter this error after building pants, it means that some dependent
-libraries like pytest-cov which are downloaded from Internal Twitter network
-has not been downloaded yet.  Make sure you are on VPN or Twitter Network so
-that your dependencies may be downloaded during the build.</p>
-</div>
-<div class="section" id="almost-any-problem">
-<h3>Almost any problem<a class="headerlink" href="#almost-any-problem" title="Permalink to this headline">¶</a></h3>
-<p>Almost any problem can be solved by fully clearing out all caches,
-rebuilding Pants,
-and killing all lingering nailgun (JVM build implementation) processes:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ build-support/python/clean.sh
-$ ./pants.bootstrap
-$ ./pants goal ng-killall --ng-killall-everywhere
-</pre></div>
-</div>
-<p>Did you change your <cite>PYTHONPATH</cite> recently? Pants is implemented in Python, so
-<cite>PYTHONPATH</cite> can cause spooky changes.</p>
-<p>Prefix your pants command with some verbosity-setting environment vars:</p>
-<div class="highlight-python"><div class="highlight"><pre>PEX_VERBOSE=1 PANTS_VERBOSE=1 PYTHON_VERBOSE=1 ./pants ...
-</pre></div>
-</div>
-<p>It won&#8217;t fix the problem, but it might clarify the problem.</p>
-</div>
+<div class="section" id="pex-based-installation">
+<h2>PEX-based Installation<a class="headerlink" href="#pex-based-installation" title="Permalink to this headline">¶</a></h2>
+<p>To support hermetic builds and not depend on a local pants installation
+(e.g.: CI machines may prohibit software installation), some sites fetch
+a pre-build <cite>pants.pex</cite> whose version is checked-into <cite>pants.ini</cite>. If your site
+uses such an installation, please ask around for details.</p>
 </div>
 </div>
 
