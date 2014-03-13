@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Invoking Pants Build &mdash; pants 0.1 documentation</title>
+  <title>Troubleshooting &mdash; pants 0.1 documentation</title>
   
 
   
@@ -46,8 +46,8 @@
 
   
     <link rel="top" title="pants 0.1 documentation" href="index.html"/>
-        <link rel="next" title="Troubleshooting" href="tshoot.html"/>
-        <link rel="prev" title="BUILD files" href="build_files.html"/>
+        <link rel="next" title="Third-Party Dependencies" href="3rdparty.html"/>
+        <link rel="prev" title="Invoking Pants Build" href="invoking.html"/>
  
 <script type="text/javascript">
   var _gaq = _gaq || [];
@@ -166,13 +166,13 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="build_files.html#id1">BUILD.* files</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Invoking Pants Build</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#rc-files">rc files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="invoking.html">Invoking Pants Build</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="invoking.html#rc-files">rc files</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="tshoot.html">Troubleshooting</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="tshoot.html#maximum-verbosity">Maximum Verbosity</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tshoot.html#scrub-the-environment">Scrub the Environment</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Troubleshooting</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#maximum-verbosity">Maximum Verbosity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#scrub-the-environment">Scrub the Environment</a></li>
 </ul>
 </li>
 </ul>
@@ -247,63 +247,36 @@ body a.icon-home:hover{
         <div class="rst-content">
           <ul class="wy-breadcrumbs">
   <li><a href="index.html">Docs</a> &raquo;</li>
-  <li><a href="">Invoking Pants Build</a></li>
+  <li><a href="">Troubleshooting</a></li>
   
 </ul>
 <hr/>
 
           
-  <div class="section" id="invoking-pants-build">
-<h1>Invoking Pants Build<a class="headerlink" href="#invoking-pants-build" title="Permalink to this headline">¶</a></h1>
-<p>This page discusses some advanced features of invoking the Pants build tool on the command
-line. We assume you already know the <a class="reference internal" href="first_tutorial.html"><em>basic command-line structure</em></a>,
-something like</p>
-<div class="highlight-python"><pre>./pants goal test bundle path/to/target path/to/another/target</pre>
+  <div class="section" id="troubleshooting">
+<h1>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline">¶</a></h1>
+<p>Sometimes Pants doesn&#8217;t do what you hoped. Sometimes it&#8217;s a problem in your
+code, but Pants&#8217; error handling is not so useful. (Please report these when
+you see them. We want Pants&#8217; error messages to be useful.) Sometimes Pants
+just plain doesn&#8217;t work. (Please report these, too.) The following workarounds
+can get you up and running again.</p>
+<div class="section" id="maximum-verbosity">
+<span id="verbosity"></span><h2>Maximum Verbosity<a class="headerlink" href="#maximum-verbosity" title="Permalink to this headline">¶</a></h2>
+<p>To run a Pants command so that it outputs much much more information to stdout,
+you can set some environment variables and pass the <tt class="docutils literal"><span class="pre">-ldebug</span></tt> flag (along
+with the parameters you meant to pass):</p>
+<div class="highlight-python"><pre>PEX_VERBOSE=1 PANTS_VERBOSE=1 PYTHON_VERBOSE=1 ./pants -ldebug ...</pre>
 </div>
-<p>For a full description of specifying target addresses, see <strong>TODO</strong></p>
-<div class="section" id="rc-files">
-<h2>rc files<a class="headerlink" href="#rc-files" title="Permalink to this headline">¶</a></h2>
-<p>If there&#8217;s a command line flag that you always (or nearly always) use,
-you might set up a configuration file to ease this. A typical Pants
-installation looks for machine-specific settings in <tt class="docutils literal"><span class="pre">/etc/pantsrc</span></tt> and
-personal settings in <tt class="docutils literal"><span class="pre">~/.pants.new.rc</span></tt>, with personal settings overriding
-machine-specific settings.</p>
-<p>For example, suppose that every time you invoke Pants to compile Java code, you
-pass flags <tt class="docutils literal"><span class="pre">--compile-javac-args=-source</span> <span class="pre">--compile-javac-args=7</span>
-<span class="pre">--compile-javac-args=-target</span> <span class="pre">--compile-javac-args=7</span></tt>.
-Instead of passing them on the command line each time, you could set up a
-<tt class="docutils literal"><span class="pre">~/.pants.new.rc</span></tt> file:</p>
-<div class="highlight-python"><pre>[javac]
-options:
-  --compile-javac-args=-source --compile-javac-args=7
-  --compile-javac-args=-target --compile-javac-args=7</pre>
+<p>This can be especially useful if you&#8217;re trying to figure out what Pants
+was &#8220;looking at&#8221; when it crashed.</p>
 </div>
-<p>With this configuration, Pants will have these flags on by
-default.</p>
-<p><tt class="docutils literal"><span class="pre">--compile-javac-*</span></tt> flags go in the <tt class="docutils literal"><span class="pre">[javac]</span></tt> section;
-generally, <tt class="docutils literal"><span class="pre">--compile</span></tt>-<em>foo</em>-* flags go in the <tt class="docutils literal"><span class="pre">[foo]</span></tt> section.
-<tt class="docutils literal"><span class="pre">--test-junit-*</span></tt> flags go in the <tt class="docutils literal"><span class="pre">[junit]</span></tt> section;
-generally, <tt class="docutils literal"><span class="pre">--test</span></tt>-<em>bar</em>-* flags go in the <tt class="docutils literal"><span class="pre">[bar]</span></tt> section.
-<tt class="docutils literal"><span class="pre">--idea-*</span></tt> flags go in the <tt class="docutils literal"><span class="pre">[idea]</span></tt> section.</p>
-<p>If you know the Pants internals well enough to know the name of a
-<tt class="docutils literal"><span class="pre">Task</span></tt> class, you can use that class&#8217; name as a category to set
-command-line options affecting it:</p>
-<div class="highlight-python"><pre>[twitter.pants.tasks.nailgun_task.NailgunTask]
-# Don't spawn compilation daemons on this shared build server
-options: --no-ng-daemons</pre>
+<div class="section" id="scrub-the-environment">
+<span id="washpants"></span><h2>Scrub the Environment<a class="headerlink" href="#scrub-the-environment" title="Permalink to this headline">¶</a></h2>
+<p>If you suspect that Pants has cached some corrupt data somewhere, but don&#8217;t
+want to track down exactly what, you can reset your state:</p>
+<div class="highlight-python"><pre>$ build-support/python/clean.sh # clean cached files
+$ ./pants goal ng-killall --ng-killall-everywhere # stop background procs</pre>
 </div>
-<p>Although <tt class="docutils literal"><span class="pre">/etc/pantsrc</span></tt> and <tt class="docutils literal"><span class="pre">~/.pants.new.rc</span></tt> are the typical places for
-this configuration, you can check <a class="reference internal" href="setup_repo.html#setup-pants-ini"><em>pants.ini</em></a>
-to find out what your source tree uses.</p>
-<div class="highlight-python"><pre># excerpt from pants.ini
-[DEFAULT]
-# Look for these rcfiles - they need not exist on the system
-rcfiles: ['/etc/pantsrc', '~/.pants.new.rc']</pre>
-</div>
-<p>In this list, later files override earlier ones.</p>
-<p>These files are formatted as
-<a class="reference external" href="http://docs.python.org/install/index.html#inst-config-syntax">Python config files</a>,
-parsed by <a class="reference external" href="http://docs.python.org/library/configparser.html">ConfigParser</a>.</p>
 </div>
 </div>
 
@@ -312,10 +285,10 @@ parsed by <a class="reference external" href="http://docs.python.org/library/con
   
     <div class="rst-footer-buttons">
       
-        <a href="tshoot.html" class="btn btn-neutral float-right" title="Troubleshooting"/>Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="3rdparty.html" class="btn btn-neutral float-right" title="Third-Party Dependencies"/>Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="build_files.html" class="btn btn-neutral" title="BUILD files"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="invoking.html" class="btn btn-neutral" title="Invoking Pants Build"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
