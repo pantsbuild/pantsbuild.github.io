@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Installing Pants &mdash; pants 0.1 documentation</title>
+  <title>Using Pants with IntelliJ IDEA &mdash; pants 0.1 documentation</title>
   
 
   
@@ -46,8 +46,8 @@
 
   
     <link rel="top" title="pants 0.1 documentation" href="index.html"/>
-        <link rel="next" title="BUILD Dictionary" href="build_dictionary.html"/>
-        <link rel="prev" title="Set up Your Source Tree for Pants" href="setup_repo.html"/>
+        <link rel="next" title="Set up Your Source Tree for Pants" href="setup_repo.html"/>
+        <link rel="prev" title="Publishing Artifacts" href="publish.html"/>
  
 <script type="text/javascript">
   var _gaq = _gaq || [];
@@ -193,11 +193,18 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="publish.html#how-to">How To</a></li>
 <li class="toctree-l2"><a class="reference internal" href="publish.html#restricting-to-release-branch">Restricting to &#8220;Release Branch&#8221;</a></li>
 <li class="toctree-l2"><a class="reference internal" href="publish.html#troubleshooting">Troubleshooting</a></li>
-<li class="toctree-l2"><a class="reference internal" href="publish.html#want-to-publish-something-publish-many-things">Want to Publish Something? Publish Many Things</a></li>
 </ul>
 </li>
 </ul>
 <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">Using Pants with IntelliJ IDEA</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#generating-idea-project">Generating IDEA Project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#editing-build-files">Editing BUILD Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pants-build-plugin-for-intellij">Pants Build Plugin for IntelliJ</a></li>
+</ul>
+</li>
+</ul>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="setup_repo.html">Set up Your Source Tree for Pants</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="setup_repo.html#configuring-with-pants-ini">Configuring with <tt class="docutils literal"><span class="pre">pants.ini</span></tt></a></li>
 <li class="toctree-l2"><a class="reference internal" href="setup_repo.html#configure-code-layout-with-source-root">Configure Code Layout with <cite>source_root</cite></a></li>
@@ -206,10 +213,10 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="setup_repo.html#restricting-publish-to-release-branch">Restricting Publish to &#8220;Release Branch&#8221;</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Installing Pants</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#system-wide-installation">System-wide Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#virtualenv-based-installation">Virtualenv-based Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#pex-based-installation">PEX-based Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installing Pants</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="install.html#system-wide-installation">System-wide Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#virtualenv-based-installation">Virtualenv-based Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#pex-based-installation">PEX-based Installation</a></li>
 </ul>
 </li>
 </ul>
@@ -353,49 +360,59 @@ body a.icon-home:hover{
         <div class="rst-content">
           <ul class="wy-breadcrumbs">
   <li><a href="index.html">Docs</a> &raquo;</li>
-  <li><a href="">Installing Pants</a></li>
+  <li><a href="">Using Pants with IntelliJ IDEA</a></li>
   
 </ul>
 <hr/>
 
           
-  <div class="section" id="installing-pants">
-<h1>Installing Pants<a class="headerlink" href="#installing-pants" title="Permalink to this headline">¶</a></h1>
-<p>This page documents how to install pants. Three installation methods are
-described, each with different tradeoffs, allowing you can choose the
-right method for your particular needs.</p>
-<div class="section" id="system-wide-installation">
-<h2>System-wide Installation<a class="headerlink" href="#system-wide-installation" title="Permalink to this headline">¶</a></h2>
-<p>The simplest installation method is installing for all users on your system.</p>
-<div class="highlight-python"><pre>pip install twitter.pants</pre>
+  <div class="section" id="using-pants-with-intellij-idea">
+<h1>Using Pants with IntelliJ IDEA<a class="headerlink" href="#using-pants-with-intellij-idea" title="Permalink to this headline">¶</a></h1>
+<p>This page documents how to use Pants with
+<a class="reference external" href="http://www.jetbrains.com/idea/">IntelliJ IDEA</a>.
+(To use IntelliJ to work on Pants <em>itself</em>, see <a class="reference internal" href="intellij.html"><em>Pants Development with IntelliJ IDEA</em></a>.)</p>
+<div class="section" id="generating-idea-project">
+<h2>Generating IDEA Project<a class="headerlink" href="#generating-idea-project" title="Permalink to this headline">¶</a></h2>
+<p>Use <tt class="docutils literal"><span class="pre">goal</span> <span class="pre">idea</span></tt> to generate an IDEA project.</p>
 </div>
-<p>This installs pants (and its dependencies) into your Python distribution
-site-packages, making it available to all users on your system. This
-installation method requires root access and may cause dependency conflicts
-with other pip-installed applications.</p>
+<div class="section" id="editing-build-files">
+<h2>Editing BUILD Files<a class="headerlink" href="#editing-build-files" title="Permalink to this headline">¶</a></h2>
+<p>To edit <tt class="docutils literal"><span class="pre">BUILD</span></tt> files in IntelliJ IDEA, set them up for Python; <tt class="docutils literal"><span class="pre">BUILD</span></tt>
+files are valid Python, so you&#8217;ll get syntax highlighting, etc.</p>
+<p>If you have the IntelliJ Ultimate Edition, install/enable the Python plugin.
+Associate <tt class="docutils literal"><span class="pre">BUILD</span></tt> and <tt class="docutils literal"><span class="pre">BUILD.*</span></tt> with the &#8220;Python script&#8221; file type.
+You can make this association in one of the following ways:</p>
+<ul>
+<li><p class="first">IntelliJ IDEA -&gt; Preferences -&gt; File Types -&gt; Python script -&gt;
+Add (at the Registered Patterns pane)</p>
+</li>
+<li><p class="first">Add the following to the extensionMap in
+<tt class="docutils literal"><span class="pre">~/Library/Preferences/IntelliJIdea10/options/filetypes.xml</span></tt>:</p>
+<div class="highlight-python"><pre>&lt;mapping pattern="BUILD" type="Python" /&gt;
+&lt;mapping pattern="BUILD.*" type="Python" /&gt;</pre>
 </div>
-<div class="section" id="virtualenv-based-installation">
-<h2>Virtualenv-based Installation<a class="headerlink" href="#virtualenv-based-installation" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference external" href="http://www.virtualenv.org/">Virtualenv</a> is a tool for creating isolated
-Python environments. This is the recommended way of installing pants locally
-as it does not modify the system Python libraries.</p>
-<div class="highlight-python"><pre>$ virtualenv /tmp/pants
-$ source /tmp/pants/bin/activate
-$ pip install twitter.pants \
-  --allow-external elementtree \
-  --allow-unverified elementtree
-$ pants</pre>
+</li>
+</ul>
+<p>If you have the IntelliJ Community Edition, associate those extensions with
+the &#8220;Text files&#8221; file type, in one of the following ways:</p>
+<ul>
+<li><p class="first">IntelliJ IDEA -&gt; Preferences -&gt; File Types -&gt; Text files -&gt; Add
+(at the Registered Patterns pane)</p>
+</li>
+<li><p class="first">Add the following to the extensionMap in
+<tt class="docutils literal"><span class="pre">~/Library/Preferences/IntelliJIdea10CE/options/filetypes.xml</span></tt>:</p>
+<div class="highlight-python"><pre>&lt;mapping pattern="BUILD" type="PLAIN_TEXT" /&gt;
+&lt;mapping pattern="BUILD.*" type="PLAIN_TEXT" /&gt;</pre>
 </div>
-<p>To simplify a virtualenv-based installation, consider adding a wrapper script
-to your repo. See <a class="reference external" href="https://github.com/twitter/commons/blob/master/pants">https://github.com/twitter/commons/blob/master/pants</a> for an
-example.</p>
+</li>
+</ul>
+<p>This won&#8217;t give you much in the way of syntax highlighting, but it will at
+least allow you to edit the files in IntelliJ.</p>
 </div>
-<div class="section" id="pex-based-installation">
-<h2>PEX-based Installation<a class="headerlink" href="#pex-based-installation" title="Permalink to this headline">¶</a></h2>
-<p>To support hermetic builds and not depend on a local pants installation
-(e.g.: CI machines may prohibit software installation), some sites fetch
-a pre-build <cite>pants.pex</cite> whose version is checked-into <cite>pants.ini</cite>. If your site
-uses such an installation, please ask around for details.</p>
+<div class="section" id="pants-build-plugin-for-intellij">
+<h2>Pants Build Plugin for IntelliJ<a class="headerlink" href="#pants-build-plugin-for-intellij" title="Permalink to this headline">¶</a></h2>
+<p>For an installation walkthrough and quick demo, see
+<a class="reference external" href="http://www.youtube.com/watch?v=mIr9BAi-1s4">http://www.youtube.com/watch?v=mIr9BAi-1s4</a></p>
 </div>
 </div>
 
@@ -404,10 +421,10 @@ uses such an installation, please ask around for details.</p>
   
     <div class="rst-footer-buttons">
       
-        <a href="build_dictionary.html" class="btn btn-neutral float-right" title="BUILD Dictionary"/>Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="setup_repo.html" class="btn btn-neutral float-right" title="Set up Your Source Tree for Pants"/>Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="setup_repo.html" class="btn btn-neutral" title="Set up Your Source Tree for Pants"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="publish.html" class="btn btn-neutral" title="Publishing Artifacts"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
