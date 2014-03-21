@@ -227,6 +227,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#egg">egg</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#exclude">exclude</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#fancy-pants">fancy_pants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#get-buildroot">get_buildroot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#globs">globs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#goal">goal</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jar">jar</a></li>
@@ -296,7 +297,6 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#jar">jar</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#killserver">killserver</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#list">list</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#markdown">markdown</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#minimize">minimize</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#ng-killall">ng-killall</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#path">path</a></li>
@@ -315,6 +315,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#sort">sort</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#targets">targets</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#test">test</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#common">Common</a></li>
 </ul>
 </li>
 </ul>
@@ -413,16 +414,17 @@ such as <tt class="docutils literal"><span class="pre">3rdparty/jvm/com/fasterxm
 dependency to the appropriate Java target[s] in your <tt class="docutils literal"><span class="pre">BUILD</span></tt> file
 and add <tt class="docutils literal"><span class="pre">import</span></tt> statements in your Java code.</p>
 <p>For example, your <tt class="docutils literal"><span class="pre">BUILD</span></tt> file might have</p>
-<div class="highlight-python"><div class="highlight"><pre>java_library(name = &#39;handler&#39;,
+<div class="highlight-python"><pre>
+java_library(name = 'handler',
   dependencies = [
-    pants(&#39;3rdparty:guava&#39;),
-    pants(&#39;3rdparty:guice&#39;),
-    pants(&#39;3rdparty/jvm/com/sun/jersey:jersey-client&#39;),
-    pants(&#39;3rdparty/jvm/com/sun/jersey:jersey-core&#39;),
-    pants(&#39;3rdparty/jvm/com/sun/jersey:jersey-guice&#39;),
-    pants(&#39;3rdparty/jvm/com/sun/jersey:jersey-server&#39;),
-    pants(&#39;3rdparty/jvm/com/sun/jersey:jersey-servlet&#39;),
-</pre></div>
+    pants('3rdparty:guava'),
+    pants('3rdparty:guice'),
+    pants('3rdparty/jvm/com/sun/jersey:jersey-client'),
+    pants('3rdparty/jvm/com/sun/jersey:jersey-core'),
+    pants('3rdparty/jvm/com/sun/jersey:jersey-guice'),
+    pants('3rdparty/jvm/com/sun/jersey:jersey-server'),
+    pants('3rdparty/jvm/com/sun/jersey:jersey-servlet'),
+</pre>
 </div>
 <p>And your Java code might have:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">com.sun.jersey.guice.spi.container.servlet.GuiceContainer</span><span class="p">;</span>
@@ -435,8 +437,7 @@ and add <tt class="docutils literal"><span class="pre">import</span></tt> statem
 different versions of some package, you can dump your dependency &#8220;tree&#8221;
 with versions with an Ivy resolve report. To generate a report for
 a target such as the <tt class="docutils literal"><span class="pre">pingpong</span></tt> example:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ ./pants goal resolve src/java/com/twitter/common/examples/pingpong --ivy-open
-</pre></div>
+<div class="highlight-python"><pre>$ ./pants goal resolve src/java/com/twitter/common/examples/pingpong --ivy-open</pre>
 </div>
 <p>Ivy&#8217;s report shows which things depend on which versions. You can see which
 package is pulling in the package-version you didn&#8217;t expect. (It might not

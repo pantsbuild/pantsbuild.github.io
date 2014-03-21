@@ -226,6 +226,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#egg">egg</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#exclude">exclude</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#fancy-pants">fancy_pants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#get-buildroot">get_buildroot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#globs">globs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#goal">goal</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jar">jar</a></li>
@@ -295,7 +296,6 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#jar">jar</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#killserver">killserver</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#list">list</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#markdown">markdown</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#minimize">minimize</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#ng-killall">ng-killall</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#path">path</a></li>
@@ -314,6 +314,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#sort">sort</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#targets">targets</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#test">test</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#common">Common</a></li>
 </ul>
 </li>
 </ul>
@@ -364,8 +365,7 @@ body a.icon-home:hover{
 <p>This page discusses some advanced features of invoking the Pants build tool on the command
 line. We assume you already know the <a class="reference internal" href="first_tutorial.html"><em>basic command-line structure</em></a>,
 something like</p>
-<div class="highlight-python"><div class="highlight"><pre>./pants goal test bundle path/to/target path/to/another/target
-</pre></div>
+<div class="highlight-python"><pre>./pants goal test bundle path/to/target path/to/another/target</pre>
 </div>
 <p>For a full description of specifying target addresses, see <strong>TODO</strong></p>
 <div class="section" id="rc-files">
@@ -380,11 +380,10 @@ pass flags <tt class="docutils literal"><span class="pre">--compile-javac-args=-
 <span class="pre">--compile-javac-args=-target</span> <span class="pre">--compile-javac-args=7</span></tt>.
 Instead of passing them on the command line each time, you could set up a
 <tt class="docutils literal"><span class="pre">~/.pants.new.rc</span></tt> file:</p>
-<div class="highlight-python"><div class="highlight"><pre>[javac]
+<div class="highlight-python"><pre>[javac]
 options:
   --compile-javac-args=-source --compile-javac-args=7
-  --compile-javac-args=-target --compile-javac-args=7
-</pre></div>
+  --compile-javac-args=-target --compile-javac-args=7</pre>
 </div>
 <p>With this configuration, Pants will have these flags on by
 default.</p>
@@ -396,19 +395,17 @@ generally, <tt class="docutils literal"><span class="pre">--test</span></tt>-<em
 <p>If you know the Pants internals well enough to know the name of a
 <tt class="docutils literal"><span class="pre">Task</span></tt> class, you can use that class&#8217; name as a category to set
 command-line options affecting it:</p>
-<div class="highlight-python"><div class="highlight"><pre>[twitter.pants.tasks.nailgun_task.NailgunTask]
-# Don&#39;t spawn compilation daemons on this shared build server
-options: --no-ng-daemons
-</pre></div>
+<div class="highlight-python"><pre>[twitter.pants.tasks.nailgun_task.NailgunTask]
+# Don't spawn compilation daemons on this shared build server
+options: --no-ng-daemons</pre>
 </div>
 <p>Although <tt class="docutils literal"><span class="pre">/etc/pantsrc</span></tt> and <tt class="docutils literal"><span class="pre">~/.pants.new.rc</span></tt> are the typical places for
 this configuration, you can check <a class="reference internal" href="setup_repo.html#setup-pants-ini"><em>pants.ini</em></a>
 to find out what your source tree uses.</p>
-<div class="highlight-python"><div class="highlight"><pre># excerpt from pants.ini
+<div class="highlight-python"><pre># excerpt from pants.ini
 [DEFAULT]
 # Look for these rcfiles - they need not exist on the system
-rcfiles: [&#39;/etc/pantsrc&#39;, &#39;~/.pants.new.rc&#39;]
-</pre></div>
+rcfiles: ['/etc/pantsrc', '~/.pants.new.rc']</pre>
 </div>
 <p>In this list, later files override earlier ones.</p>
 <p>These files are formatted as

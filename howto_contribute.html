@@ -227,6 +227,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#egg">egg</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#exclude">exclude</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#fancy-pants">fancy_pants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#get-buildroot">get_buildroot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#globs">globs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#goal">goal</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jar">jar</a></li>
@@ -296,7 +297,6 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#jar">jar</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#killserver">killserver</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#list">list</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#markdown">markdown</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#minimize">minimize</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#ng-killall">ng-killall</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#path">path</a></li>
@@ -315,6 +315,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#sort">sort</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#targets">targets</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#test">test</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#common">Common</a></li>
 </ul>
 </li>
 </ul>
@@ -402,14 +403,12 @@ a spike you can file a github issue and assign it to yourself.</p>
 <div class="section" id="getting-pants-source-code">
 <h3>Getting Pants Source Code<a class="headerlink" href="#getting-pants-source-code" title="Permalink to this headline">¶</a></h3>
 <p>After deciding on the change you&#8217;d like to make we&#8217;ll need to get the code.</p>
-<div class="highlight-python"><div class="highlight"><pre>git clone https://github.com/twitter/commons
-</pre></div>
+<div class="highlight-python"><pre>git clone https://github.com/twitter/commons</pre>
 </div>
 <p>After getting the code, you may want to familiarize yourself with the
 <a class="reference internal" href="internals.html"><em>Pants Internals</em></a> or <a class="reference internal" href="howto_develop.html"><em>Pants Developers Guide</em></a>. We&#8217;ll create a new branch off master
 and make our changes.</p>
-<div class="highlight-python"><div class="highlight"><pre>git checkout -b $FEATURE_BRANCH
-</pre></div>
+<div class="highlight-python"><pre>git checkout -b $FEATURE_BRANCH</pre>
 </div>
 </div>
 <div class="section" id="run-the-ci-tests">
@@ -418,8 +417,7 @@ and make our changes.</p>
 relevant tests. If you&#8217;re not sure what those are you can always run the
 same test set-up that&#8217;s run on <a class="reference external" href="https://travis-ci.org/twitter/commons/">Travis CI</a>.</p>
 <p>To run the full jvm and python suite including a pants self-rebuild.</p>
-<div class="highlight-python"><div class="highlight"><pre>./build-support/bin/ci.sh
-</pre></div>
+<div class="highlight-python"><pre>./build-support/bin/ci.sh</pre>
 </div>
 <p>You can also skip certain steps including pants bootstrapping. Just use the
 <tt class="docutils literal"><span class="pre">-h</span></tt> argument to get command line help on the options available.</p>
@@ -442,8 +440,7 @@ and ask for your account to be added to the group.</p>
 The first time this runs it will bootstrap and you will be asked to log in.
 Subsequent runs use your cached login credentials.</p>
 <p>Post your change for review:</p>
-<div class="highlight-python"><div class="highlight"><pre>./rbt post -o -g
-</pre></div>
+<div class="highlight-python"><pre>./rbt post -o -g</pre>
 </div>
 <p>This will create a new review, but not yet publish it.</p>
 <p>At the provided URL, there&#8217;s a web form. To get your change reviewed,
@@ -464,8 +461,7 @@ send you mail (but sometimes its &#8220;spoof&#8221; fails).</p>
 <p>If those reviews inspire you to change some code, great. Change some code,
 commit locally. To update the code review with the new diff where
 &lt;RB_ID&gt; is a review number like 123:</p>
-<div class="highlight-python"><div class="highlight"><pre>./rbt post -o -r &lt;RB_ID&gt;
-</pre></div>
+<div class="highlight-python"><pre>./rbt post -o -r &lt;RB_ID&gt;</pre>
 </div>
 <p>Look over the fields in the web form; perhaps some could use updating.
 Press the web form&#8217;s Publish button.</p>
@@ -476,26 +472,23 @@ Press the web form&#8217;s Publish button.</p>
 <p>At this point you&#8217;ve made a change, had it reviewed and are ready to
 complete things by getting your change in master. (If you&#8217;re not a committer,
 please ask one do do this section for you.)</p>
-<div class="highlight-python"><div class="highlight"><pre>cd /path/to/pants/repo
+<div class="highlight-python"><pre>cd /path/to/pants/repo
 ./build-support/bin/ci.sh
 git checkout master
 git pull
 git merge --squash $FEATURE_BRANCH
-git commit -a
-</pre></div>
+git commit -a</pre>
 </div>
 <p>Here, fix up the commit message: replace <tt class="docutils literal"><span class="pre">git</span></tt>&#8216;s default message
 (&#8220;Squashed commit of the following... &lt;long list&gt;&#8221;) with a summary.
 Finally,</p>
-<div class="highlight-python"><div class="highlight"><pre>git push origin master
-</pre></div>
+<div class="highlight-python"><pre>git push origin master</pre>
 </div>
 <p>The very last step is closing the review. The change is now complete. Huzzah!</p>
 <p><strong>If you&#8217;re a committer committing someone else&#8217;s review,</strong> a handy way to
 patch a local branch with a diff from rbcommons where
 &lt;RB_ID&gt; is a review number like 123:</p>
-<div class="highlight-python"><div class="highlight"><pre>./rbt patch -c &lt;RB_ID&gt;
-</pre></div>
+<div class="highlight-python"><pre>./rbt patch -c &lt;RB_ID&gt;</pre>
 </div>
 </div>
 </div>
