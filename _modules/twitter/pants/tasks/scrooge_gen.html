@@ -172,6 +172,7 @@ body a.icon-home:hover{
 <li class="toctree-l1"><a class="reference internal" href="../../../../tshoot.html">Troubleshooting</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../tshoot.html#maximum-verbosity">Maximum Verbosity</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../tshoot.html#scrub-the-environment">Scrub the Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../tshoot.html#nailgun-5-seconds">Nailgun 5 seconds</a></li>
 </ul>
 </li>
 </ul>
@@ -294,6 +295,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../../goals_reference.html#jar">jar</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../goals_reference.html#killserver">killserver</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../goals_reference.html#list">list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../goals_reference.html#markdown">markdown</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../goals_reference.html#minimize">minimize</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../goals_reference.html#ng-killall">ng-killall</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../goals_reference.html#path">path</a></li>
@@ -490,9 +492,7 @@ body a.icon-home:hover{
 
   <span class="k">def</span> <span class="nf">_tempname</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="c"># don&#39;t assume the user&#39;s cwd is buildroot</span>
-    <span class="n">buildroot</span> <span class="o">=</span> <span class="n">get_buildroot</span><span class="p">()</span>
-    <span class="n">fallback</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_buildroot</span><span class="p">(),</span> <span class="s">&#39;.pants.d&#39;</span><span class="p">)</span>
-    <span class="n">pants_workdir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">getdefault</span><span class="p">(</span><span class="s">&#39;pants_workdir&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">fallback</span><span class="p">)</span>
+    <span class="n">pants_workdir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">getdefault</span><span class="p">(</span><span class="s">&#39;pants_workdir&#39;</span><span class="p">)</span>
     <span class="n">tmp_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pants_workdir</span><span class="p">,</span> <span class="s">&#39;tmp&#39;</span><span class="p">)</span>
     <span class="n">safe_mkdir</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">)</span>
     <span class="n">fd</span><span class="p">,</span> <span class="n">path</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkstemp</span><span class="p">(</span><span class="nb">dir</span><span class="o">=</span><span class="n">tmp_dir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">)</span>
@@ -501,8 +501,8 @@ body a.icon-home:hover{
 
   <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
     <span class="n">gentargets_by_dependee</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">dependents</span><span class="p">(</span>
-      <span class="n">on_predicate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">is_gentarget</span><span class="p">,</span>
-      <span class="n">from_predicate</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_gentarget</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+        <span class="n">on_predicate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">is_gentarget</span><span class="p">,</span>
+        <span class="n">from_predicate</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_gentarget</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
 
     <span class="n">dependees_by_gentarget</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">dependee</span><span class="p">,</span> <span class="n">tgts</span> <span class="ow">in</span> <span class="n">gentargets_by_dependee</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -514,10 +514,10 @@ body a.icon-home:hover{
 
     <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">gentargets</span><span class="p">:</span>
       <span class="n">partial_cmd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">PartialCmd</span><span class="p">(</span>
-        <span class="n">compiler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">compiler_for_name</span><span class="p">[</span><span class="n">target</span><span class="o">.</span><span class="n">compiler</span><span class="p">],</span>
-        <span class="n">language</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">language</span><span class="p">,</span>
-        <span class="n">rpc_style</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">rpc_style</span><span class="p">,</span>
-        <span class="n">namespace_map</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">namespace_map</span><span class="o">.</span><span class="n">items</span><span class="p">())</span> <span class="k">if</span> <span class="n">target</span><span class="o">.</span><span class="n">namespace_map</span> <span class="k">else</span> <span class="p">())</span>
+          <span class="n">compiler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">compiler_for_name</span><span class="p">[</span><span class="n">target</span><span class="o">.</span><span class="n">compiler</span><span class="p">],</span>
+          <span class="n">language</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">language</span><span class="p">,</span>
+          <span class="n">rpc_style</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">rpc_style</span><span class="p">,</span>
+          <span class="n">namespace_map</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">namespace_map</span><span class="o">.</span><span class="n">items</span><span class="p">())</span> <span class="k">if</span> <span class="n">target</span><span class="o">.</span><span class="n">namespace_map</span> <span class="k">else</span> <span class="p">()))</span>
       <span class="n">partial_cmds</span><span class="p">[</span><span class="n">partial_cmd</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">partial_cmd</span><span class="p">,</span> <span class="n">tgts</span> <span class="ow">in</span> <span class="n">partial_cmds</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>

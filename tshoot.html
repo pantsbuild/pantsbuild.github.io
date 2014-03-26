@@ -173,6 +173,7 @@ body a.icon-home:hover{
 <li class="toctree-l1 current"><a class="current reference internal" href="">Troubleshooting</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#maximum-verbosity">Maximum Verbosity</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#scrub-the-environment">Scrub the Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#nailgun-5-seconds">Nailgun 5 seconds</a></li>
 </ul>
 </li>
 </ul>
@@ -226,7 +227,6 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#egg">egg</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#exclude">exclude</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#fancy-pants">fancy_pants</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#get-buildroot">get_buildroot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#globs">globs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#goal">goal</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jar">jar</a></li>
@@ -296,6 +296,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#jar">jar</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#killserver">killserver</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#list">list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#markdown">markdown</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#minimize">minimize</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#ng-killall">ng-killall</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#path">path</a></li>
@@ -314,7 +315,6 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#sort">sort</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#targets">targets</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#test">test</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#common">Common</a></li>
 </ul>
 </li>
 </ul>
@@ -381,9 +381,37 @@ was &#8220;looking at&#8221; when it crashed.</p>
 <span id="washpants"></span><h2>Scrub the Environment<a class="headerlink" href="#scrub-the-environment" title="Permalink to this headline">¶</a></h2>
 <p>If you suspect that Pants has cached some corrupt data somewhere, but don&#8217;t
 want to track down exactly what, you can reset your state:</p>
-<div class="highlight-python"><pre>$ build-support/python/clean.sh # clean cached files
-$ ./pants goal ng-killall --ng-killall-everywhere # stop background procs</pre>
+<ul>
+<li><p class="first"><strong>Clean many cached files:</strong> <tt class="docutils literal"><span class="pre">./build-support/python/clean.sh</span></tt></p>
+</li>
+<li><p class="first"><strong>Clean more cached files:</strong> If your source tree lives under source control,
+use your source control tool to clean up more files.
+For example with <tt class="docutils literal"><span class="pre">git</span></tt>, you might do something like:</p>
+<div class="highlight-python"><pre>$ git status  # look for untracked files
+$ git add path/to/file1 path/to/file2  # preserve untracked files you don't want deleted
+$ git clean -fdx  # delete all untracked files</pre>
 </div>
+</li>
+<li><p class="first"><strong>Stop background processes:</strong>
+<tt class="docutils literal"><span class="pre">./pants</span> <span class="pre">goal</span> <span class="pre">ng-killall</span> <span class="pre">--ng-killall-everywhere</span></tt></p>
+</li>
+</ul>
+</div>
+<div class="section" id="nailgun-5-seconds">
+<h2>Nailgun 5 seconds<a class="headerlink" href="#nailgun-5-seconds" title="Permalink to this headline">¶</a></h2>
+<p>If Pants fails with a stack trace that ends with something like</p>
+<div class="highlight-python"><pre>File "twitter/pants/tasks/nailgun_task.py", line 255, in _spawn_nailgun_server
+File "twitter/pants/tasks/nailgun_task.py", line 226, in _await_nailgun_server
+twitter.pants.java.nailgun_client.NailgunError: Failed to read ng output after 5 seconds</pre>
+</div>
+<p>Pants uses a program called nailgun to run some JVM jobs. Pants runs
+nailgun as a server in the background and then sends requests to it. If
+nailgun runs into problems, it might not respond.</p>
+<p>To debug this, look in <tt class="docutils literal"><span class="pre">./pants.d/ng/*/*</span></tt>: these files should be named
+<tt class="docutils literal"><span class="pre">stdout</span></tt> and <tt class="docutils literal"><span class="pre">stderr</span></tt>.</p>
+<p>One typical cause behind this symptom: if you removed your machine&#8217;s Ivy cache,
+Pants may try to use symbolic links to files that have gone away.
+To recover from this, <a class="reference internal" href="#washpants"><em>Scrub the Environment</em></a>.</p>
 </div>
 </div>
 
