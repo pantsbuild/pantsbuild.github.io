@@ -34,6 +34,7 @@ goal.
   * :ref:`gref_phase_resources` - None
   * :ref:`gref_phase_doc` - Create documentation.
   * :ref:`gref_phase_markdown` - Generate html from markdown docs.
+  * :ref:`gref_phase_publish` - Publish one or more artifacts.
   * :ref:`gref_phase_jar` - Create one or more jars.
   * :ref:`gref_phase_check_published_deps` - Find references to outdated artifacts published from this BUILD tree.
   * :ref:`gref_phase_test` - Test compiled code.
@@ -362,12 +363,12 @@ Generate html from markdown docs.
 
 
 
-.. _gref_phase_jar:
+.. _gref_phase_publish:
 
-jar
+publish
 -----------------------------------------------------------------------------
 
-Create one or more jars.
+Publish one or more artifacts.
 
 **Installed tasks:**
 
@@ -377,8 +378,81 @@ Create one or more jars.
 * Implemented by class ``ScaladocJarShim``
 
 
-* Implemented by class ``JarCreateGoal``
+* Implemented by class ``JarCreate``
 
+  Jars jvm libraries and optionally their sources and their docs.
+
+* Implemented by class ``JarPublish``
+
+  Publish jars to a maven repository.
+
+  At a high-level, pants uses `Apache Ivy <http://ant.apache.org/ivy/>`_ to
+  publish artifacts to Maven-style repositories. Pants performs prerequisite
+  tasks like compiling, creating jars, and generating ``pom.xml`` files then
+  invokes Ivy to actually publish the artifacts, so publishing is largely
+  configured in ``ivysettings.xml``. ``BUILD`` and ``pants.ini`` files
+  primarily provide linkage between publishable targets and the
+  Ivy ``resolvers`` used to publish them.
+
+  The following target types are publishable: :ref:`bdict_java_library`,
+  :ref:`bdict_scala_library`, :ref:`bdict_java_thrift_library`,
+  :ref:`bdict_annotation_processor`.
+  Targets to publish and their dependencies must be publishable target
+  types and specify the ``provides`` argument. One exception is
+  :ref:`bdict_jar`\s - pants will generate a pom file that
+  depends on the already-published jar.
+
+  Example usage: ::
+
+     # By default pants will perform a dry-run.
+     ./pants goal clean-all publish src/java/com/twitter/mybird
+
+     # Actually publish.
+     ./pants goal clean-all publish src/java/com/twitter/mybird --no-publish-dryrun
+
+  Please see ``./pants goal publish -h`` for a detailed description of all
+  publishing options.
+
+  Publishing can be configured in ``pants.ini`` as follows.
+
+  ``jar-publish`` section:
+
+  * ``repos`` - Required dictionary of settings for repos that may be pushed to.
+  * ``ivy_jvmargs`` - Optional list of JVM command-line args when invoking Ivy.
+  * ``restrict_push_branches`` - Optional list of branches to restrict publishing to.
+
+  Example pants.ini jar-publish repos dictionary: ::
+
+     repos = {
+       # repository target name is paired with this key
+       'myrepo': {
+         # ivysettings.xml resolver to use for publishing
+         'resolver': 'maven.twttr.com',
+         # ivy configurations to publish
+         'confs': ['default', 'sources', 'docs'],
+         # address of a Credentials target to use when publishing
+         'auth': 'address/of/credentials/BUILD:target',
+         # help message if unable to initialize the Credentials target.
+         'help': 'Please check your credentials and try again.',
+       },
+     }
+
+  Additionally the ``ivy`` section ``ivy_settings`` property specifies which
+  Ivy settings file to use when publishing is required.
+
+
+.. _gref_phase_jar:
+
+jar
+-----------------------------------------------------------------------------
+
+Create one or more jars.
+
+**Installed tasks:**
+
+* Implemented by class ``JarCreate``
+
+  Jars jvm libraries and optionally their sources and their docs.
 
 
 .. _gref_phase_check_published_deps:
