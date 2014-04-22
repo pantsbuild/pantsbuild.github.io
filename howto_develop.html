@@ -383,9 +383,8 @@ wanted instructions for using Pants to develop other programs, please see
 <a class="reference internal" href="first_tutorial.html"><em>First Tutorial</em></a>.)</p>
 <div class="section" id="running-from-sources">
 <h2>Running from sources<a class="headerlink" href="#running-from-sources" title="Permalink to this headline">¶</a></h2>
-<p>As pants is implemented in python it can be run directly from sources.
-Use the <tt class="docutils literal"><span class="pre">pants.bootstrap</span></tt> script.</p>
-<div class="highlight-python"><pre>$ PANTS_DEV=1 ./pants.bootstrap goal goals
+<p>As pants is implemented in python it can be run directly from sources.</p>
+<div class="highlight-python"><pre>$ PANTS_DEV=1 ./pants goal goals
 *** running pants in dev mode from ./src/python/pants/bin/pants_exe.py ***
 &lt;remainder of output omitted for brevity&gt;</pre>
 </div>
@@ -394,38 +393,35 @@ By defining <tt class="docutils literal"><span class="pre">PANTS_DEV</span></tt>
 </div>
 <div class="section" id="building-a-pants-pex">
 <h2>Building a Pants PEX<a class="headerlink" href="#building-a-pants-pex" title="Permalink to this headline">¶</a></h2>
-<p>While you can build a Pants PEX in the usual Python way, <tt class="docutils literal"><span class="pre">pants.bootstrap</span></tt>
-is a nice wrapper. If you call it without the <tt class="docutils literal"><span class="pre">PANTS_DEV=1</span></tt>
-environment described above, it</p>
+<p>While you can build a Pants PEX in the usual Python way, the <tt class="docutils literal"><span class="pre">./pants</span></tt>
+wrapper provides some extra conveniences. If you call it without the
+<tt class="docutils literal"><span class="pre">PANTS_DEV=1</span></tt> environment described above, it</p>
 <blockquote>
 <div><ul class="simple">
 <li>Checks the source tree&#8217;s top directory for a <tt class="docutils literal"><span class="pre">pants.pex</span></tt> and runs it
-if it exists. Otherwise <tt class="docutils literal"><span class="pre">pants.bootstrap</span></tt>...</li>
+if it exists. Otherwise <tt class="docutils literal"><span class="pre">./pants</span></tt>...</li>
 <li>Builds a new <tt class="docutils literal"><span class="pre">pants.pex</span></tt>, moves it to the source tree&#8217;s top
 directory, and runs that.</li>
 </ul>
 </div></blockquote>
 <p>It looks something like:</p>
 <div class="highlight-python"><pre>$ rm pants.pex
-$ ./pants.bootstrap goal my-new-feature
+$ ./pants goal my-new-feature
 Build operating on targets: OrderedSet([PythonBinary(src/python/pants/BUILD:pants)])
 Building PythonBinary PythonBinary(src/python/pants/BUILD:pants):
 Wrote /Users/travis/src/science/dist/pants.pex
 AMAZING NEW FEATURE PRINTS HERE
 $ ls pants.pex # gets moved here, though originally "Wrote" to ./dist/
 pants.pex
-$ ./pants.bootstrap goal my-new-feature
+$ ./pants goal my-new-feature
 AMAZING NEW FEATURE PRINTS HERE</pre>
 </div>
-<p>Using <tt class="docutils literal"><span class="pre">./pants.bootstrap</span></tt> to launch Pants thus
+<p>Using <tt class="docutils literal"><span class="pre">./pants</span></tt> to launch Pants thus
 gives a handy workflow: generate <tt class="docutils literal"><span class="pre">pants.pex</span></tt>. Go back and forth
 between trying the generated <tt class="docutils literal"><span class="pre">pants.pex</span></tt> and fixing source code
 as inspired by its misbehaviors. When the fixed source code is in a
 consistent state, remove <tt class="docutils literal"><span class="pre">pants.pex</span></tt> so that it will get replaced
-on the next <tt class="docutils literal"><span class="pre">pants.bootstrap</span></tt> run.</p>
-<p>(The <tt class="docutils literal"><span class="pre">./pants</span></tt> launcher, like <tt class="docutils literal"><span class="pre">./pants.bootstrap</span></tt>, checks for a
-<tt class="docutils literal"><span class="pre">pants.pex</span></tt> in the source tree&#8217;s top directory and uses that <tt class="docutils literal"><span class="pre">pants.pex</span></tt>
-if found.)</p>
+on the next <tt class="docutils literal"><span class="pre">./pants</span></tt> run.</p>
 </div>
 <div class="section" id="testing">
 <h2>Testing<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h2>
@@ -438,7 +434,7 @@ To make sure a change passes <em>all</em> of Pants&#8217; tests, use the
 <em>Do not</em> use <tt class="docutils literal"><span class="pre">PANTS_DEV=1</span></tt> when running tests at this time
 as that modifies <tt class="docutils literal"><span class="pre">sys.path</span></tt> in such a way as resources will
 not be discovered correctly.</p>
-<div class="highlight-python"><pre>./pants.bootstrap tests/python/pants_test:all</pre>
+<div class="highlight-python"><pre>./pants tests/python/pants_test:all</pre>
 </div>
 <p>To try all the tests in a few configurations, you can run the same script
 that our Travis CI does. This can take a while, but it&#8217;s a good idea to
