@@ -1,6 +1,5 @@
 
 
-
 <!DOCTYPE html>
 <!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
@@ -21,20 +20,6 @@
 
   
   
-
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:'',
-        VERSION:'0.1',
-        COLLAPSE_INDEX:false,
-        FILE_SUFFIX:'.html',
-        HAS_SOURCE:  true
-      };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-
     
 
   
@@ -42,7 +27,6 @@
   
   
     <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-    <script type="text/javascript" src="_static/js/theme.js"></script>
   
 
   
@@ -98,26 +82,29 @@ body a.icon-home:hover{
 </style>
 
 
-  <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav">
+<body class="wy-body-for-nav" role="document">
 
   <div class="wy-grid-for-nav">
 
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-nav-search">
-        <a href="index.html" class="icon icon-home"> pants</a>
-        <form class="wy-form" action="search.html" method="get">
-  <input type="text" name="q" placeholder="Search docs" />
-  <input type="hidden" name="check_keywords" value="yes" />
-  <input type="hidden" name="area" value="default" />
-</form>
+        <a href="index.html" class="fa fa-home"> pants</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
       </div>
 
-      <div class="wy-menu wy-menu-vertical" data-spy="affix">
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
         
         
             <ul>
@@ -360,23 +347,32 @@ body a.icon-home:hover{
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top">
-        <i data-toggle="wy-nav-top" class="icon icon-reorder"></i>
-        <a href="/">pants</a>
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">pants</a>
       </nav>
 
 
       
       <div class="wy-nav-content">
         <div class="rst-content">
-          <ul class="wy-breadcrumbs">
-  <li><a href="index.html">Docs</a> &raquo;</li>
-  <li><a href="">Task Developer&#8217;s Guide</a></li>
-  
-</ul>
-<hr/>
-
-          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="dev.html">Pants Developer Center</a> &raquo;</li>
+      
+    <li>Task Developer&#8217;s Guide</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/dev_tasks.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
   <div class="section" id="task-developer-s-guide">
 <h1>Task Developer&#8217;s Guide<a class="headerlink" href="#task-developer-s-guide" title="Permalink to this headline">¶</a></h1>
 <p>This page documents how to develop pants tasks, enabling you to teach pants
@@ -430,30 +426,29 @@ pagerank, then returns the report lines.</p>
 <p>When processing dependencies we populate the maps by walking a filtered
 targets graph. It&#8217;s quite common for tasks to only know how to handle
 specific target types.</p>
-<div class="highlight-python"><pre>    self._calc_deps(targets, dependencies_by_target, dependees_by_target)
+<div class="highlight-python"><div class="highlight"><pre>    self._calc_deps(targets, dependencies_by_target, dependees_by_target)
     self._pagerank(dependees_by_target, dependencies_by_target, pagerank_by_target)
     return self._report(pagerank_by_target)
 
   def _calc_deps(self, targets, dependencies_by_target, dependees_by_target):
-    for target in filter(lambda x: hasattr(x, "dependencies"), targets):
+    for target in filter(lambda x: hasattr(x, &quot;dependencies&quot;), targets):
       if not dependencies_by_target.has_key(target):
         for dependency in target.dependencies:
           for resolved in dependency.resolve():
             if is_concrete(resolved):
               dependencies_by_target[target].add(resolved)
-
-</pre>
+</pre></div>
 </div>
 <p>Now let&#8217;s calculate pagerank.</p>
-<div class="highlight-python"><pre>        for resolved in dependency.resolve():
+<div class="highlight-python"><div class="highlight"><pre>        for resolved in dependency.resolve():
           if is_concrete(resolved):
             dependees_by_target[resolved].add(target)
 
   def _pagerank(self, dependees_by_target, dependencies_by_target, pagerank_by_target):
-    """Calculate PageRank."""
+    &quot;&quot;&quot;Calculate PageRank.&quot;&quot;&quot;
     d = 0.85
     for x in range(0, 100):
-</pre>
+</pre></div>
 </div>
 <p>And finally return the report lines.</p>
 <div class="highlight-python"><div class="highlight"><pre>        <span class="n">contributions</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span>
@@ -465,7 +460,7 @@ specific target types.</p>
 target dependencies. As expected, foundational jars and targets
 are identified. Let&#8217;s say we wanted to restrict this report to
 internal or external-only targets. Well... that&#8217;s your homework :)</p>
-<div class="highlight-python"><pre>$ ./pants goal pagerank src/java/com/twitter/common/:: | head
+<div class="highlight-python"><div class="highlight"><pre>$ ./pants goal pagerank src/java/com/twitter/common/:: | head
 8.283371 - com.google.code.findbugs-jsr305-1.3.9
 7.433371 - javax.inject-javax.inject-1
 7.433371 - com.google.guava-guava-14.0.1
@@ -475,7 +470,8 @@ internal or external-only targets. Well... that&#8217;s your homework :)</p>
 2.205346 - javax.servlet-servlet-api-2.5
 2.042915 - org.hamcrest-hamcrest-core-1.2
 1.898855 - org.slf4j-slf4j-jdk14-1.6.1
-1.898855 - org.slf4j-slf4j-api-1.6.1</pre>
+1.898855 - org.slf4j-slf4j-api-1.6.1
+</pre></div>
 </div>
 <p>As you can see, generating reports is quite simple. We have the opportunity
 to configure the task, and implement a simple interface that processes the
@@ -517,11 +513,12 @@ these targets are reachable by one or more <tt class="docutils literal"><span cl
 the command-line; <em>concrete</em> meaning all targets resolve to themselves,
 with any intermediate bags of <tt class="docutils literal"><span class="pre">dependencies</span></tt> removed.</p>
 <p>Let&#8217;s explore how to collect all targets of a particular type.</p>
-<div class="highlight-python"><pre>def execute(self, targets):
+<div class="highlight-python"><div class="highlight"><pre>def execute(self, targets):
   interesting_targets = set()
   for target in targets:
     target.walk(lambda t: interesting_targets.add(t),
-                lambda t: isinstance(t, FooLibrary)</pre>
+                lambda t: isinstance(t, FooLibrary)
+</pre></div>
 </div>
 <p>First we need to iterate over <tt class="docutils literal"><span class="pre">targets</span></tt>, which are the active concrete targets.
 Then we <tt class="docutils literal"><span class="pre">walk</span></tt> each concrete target, providing as the first parameter
@@ -582,21 +579,22 @@ for scala code. Let&#8217;s examine a simplified task that uses this tool. This 
 condensed from the Scalastyle task provided by pants; please see its sources for a real-world
 example, including exemplary configuration and error handling (which your task will have too,
 right :)</p>
-<div class="highlight-python"><pre>class Scalastyle(NailgunTask):
+<div class="highlight-python"><div class="highlight"><pre>class Scalastyle(NailgunTask):
   def __init__(self, context, workdir):
     super(Scalastyle, self).__init__(context, workdir)
-    self._scalastyle_config = self.context.config.get_required('scalastyle, 'config')
-    self._scalastyle_bootstrap_key = 'scalastyle'
-    self.register_jvm_tool(self._scalastyle_bootstrap_key, [':scalastyle'])
+    self._scalastyle_config = self.context.config.get_required(&#39;scalastyle, &#39;config&#39;)
+    self._scalastyle_bootstrap_key = &#39;scalastyle&#39;
+    self.register_jvm_tool(self._scalastyle_bootstrap_key, [&#39;:scalastyle&#39;])
 
   def execute(self, targets):
     srcs = get_scala_sources(targets)
     cp = self._jvm_tool_bootstrapper.get_jvm_tool_classpath(self._scalastyle_bootstrap_key)
-    result = self.runjava(main='org.scalastyle.Main',
+    result = self.runjava(main=&#39;org.scalastyle.Main&#39;,
                           classpath=cp,
-                          args=['-c', self._scalastyle_config] + srcs)
+                          args=[&#39;-c&#39;, self._scalastyle_config] + srcs)
     if result != 0:
-      raise TaskError('java %s ... exited non-zero (%i)' % ('org.scalastyle.Main', result))</pre>
+      raise TaskError(&#39;java %s ... exited non-zero (%i)&#39; % (&#39;org.scalastyle.Main&#39;, result))
+</pre></div>
 </div>
 <p>Notice how we subclass <tt class="docutils literal"><span class="pre">NailgunTask</span></tt>. This takes advantage of
 <a class="reference external" href="http://www.martiansoftware.com/nailgun/">Nailgun</a> to speed up any tool with
@@ -618,25 +616,28 @@ we really do need to use the tool.</p>
 </div>
 
 
+          </div>
           <footer>
   
-    <div class="rst-footer-buttons">
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="intellij.html" class="btn btn-neutral float-right" title="Pants Development with IntelliJ IDEA"/>Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="intellij.html" class="btn btn-neutral float-right" title="Pants Development with IntelliJ IDEA"/>Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="howto_develop.html" class="btn btn-neutral" title="Pants Developers Guide"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="howto_develop.html" class="btn btn-neutral" title="Pants Developers Guide"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
 
   <hr/>
 
-  <p>
-      &copy; Copyright 2014, Pants project contributors.
-  </p>
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, Pants project contributors.
+    </p>
+  </div>
 
-  <a href="https://www.github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="http://readthedocs.org">Read the Docs</a>
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
 </footer>
         </div>
       </div>
@@ -645,6 +646,38 @@ we really do need to use the tool.</p>
 
   </div>
   
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
 
 </body>
 </html>
