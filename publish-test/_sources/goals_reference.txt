@@ -1,0 +1,844 @@
+***************
+Goals Reference
+***************
+
+This page documents ``goals``, actions that can be taken on build targets.
+A goal identifies some high-level goal that you wish to accomplish, such as
+compiling your code.
+
+A goal depends on other goals that must happen first; for example, Pants must
+compile code before it can run tests.
+
+Each goal is implemented by one or more Tasks. For example, the
+``JavaCompile`` task compiles java code, and its installed in the ``compile``
+goal.
+
+
+**Goals and Tasks summary**
+
+  * :ref:`gref_phase_goals` - List all documented goals.
+  * :ref:`gref_phase_targets` - List all target types.
+  * :ref:`gref_phase_invalidate` - Invalidate all targets.
+  * :ref:`gref_phase_ng-killall` - Kill running nailgun servers.
+  * :ref:`gref_phase_clean-all` - Clean all build output.
+  * :ref:`gref_phase_clean-all-async` - Clean all build output in a background process.
+  * :ref:`gref_phase_server` - Run the pants reporting server.
+  * :ref:`gref_phase_killserver` - Kill the reporting server.
+  * :ref:`gref_phase_bootstrap` - Bootstrap tools needed for building.
+  * :ref:`gref_phase_gen` - Generate code.
+  * :ref:`gref_phase_check-exclusives` - Check for exclusivity violations.
+  * :ref:`gref_phase_resolve` - Resolve dependencies and produce dependency reports.
+  * :ref:`gref_phase_checkstyle` - Run checkstyle against java source code.
+  * :ref:`gref_phase_compile` - Compile source code.
+  * :ref:`gref_phase_resources` - None
+  * :ref:`gref_phase_doc` - Create documentation.
+  * :ref:`gref_phase_markdown` - Generate html from markdown docs.
+  * :ref:`gref_phase_publish` - Publish artifacts.
+  * :ref:`gref_phase_jar` - Create one or more jars.
+  * :ref:`gref_phase_check_published_deps` - Find references to outdated artifacts.
+  * :ref:`gref_phase_test` - Test compiled code.
+  * :ref:`gref_phase_bench` - None
+  * :ref:`gref_phase_binary` - Create a jvm binary jar.
+  * :ref:`gref_phase_bundle` - Create an application bundle from binary targets.
+  * :ref:`gref_phase_detect-duplicates` - Detect duplicate classes and resources on the classpath.
+  * :ref:`gref_phase_run` - Run a (currently JVM only) binary target.
+  * :ref:`gref_phase_run-dirty` - Run a (currently JVM only) binary target, skipping compilation.
+  * :ref:`gref_phase_repl` - Run a (currently Scala only) REPL.
+  * :ref:`gref_phase_repl-dirty` - Run a (currently Scala only) REPL, skipping compilation.
+  * :ref:`gref_phase_filedeps` - Print out the source and BUILD files the target depends on.
+  * :ref:`gref_phase_pathdeps` - Print out all paths containing BUILD files the target depends on.
+  * :ref:`gref_phase_list` - List available BUILD targets.
+  * :ref:`gref_phase_buildlint` - None
+  * :ref:`gref_phase_builddict` - None
+  * :ref:`gref_phase_idea` - Create an IntelliJ IDEA project from the given targets.
+  * :ref:`gref_phase_eclipse` - Create an Eclipse project from the given targets.
+  * :ref:`gref_phase_provides` - Print the symbols provided by the given targets.
+  * :ref:`gref_phase_setup` - Setup the target's build environment.
+  * :ref:`gref_phase_path` - Find a dependency path from one target to another.
+  * :ref:`gref_phase_paths` - Find all dependency paths from one target to another.
+  * :ref:`gref_phase_dependees` - Print the target's dependees.
+  * :ref:`gref_phase_depmap` - Depict the target's dependencies.
+  * :ref:`gref_phase_dependencies` - Print the target's dependencies.
+  * :ref:`gref_phase_filemap` - Outputs a mapping from source file to owning target.
+  * :ref:`gref_phase_minimize` - Print the minimal cover of the given targets.
+  * :ref:`gref_phase_filter` - Filter the input targets based on various criteria.
+  * :ref:`gref_phase_sort` - Topologically sort the targets.
+  * :ref:`gref_phase_roots` - Print the workspace's source roots and associated target types.
+
+
+.. _gref_phase_goals:
+
+goals
+-----------------------------------------------------------------------------
+
+List all documented goals.
+
+**Installed tasks:**
+
+* Implemented by class ``ListGoals``
+
+
+
+.. _gref_phase_targets:
+
+targets
+-----------------------------------------------------------------------------
+
+List all target types.
+
+**Installed tasks:**
+
+* Implemented by class ``TargetsHelp``
+
+  Provides online help for installed targets.
+
+  This task provides online help modes for installed targets. Without args,
+  all installed targets are listed with their one-line description.
+  An optional flag allows users to specify a target they want detailed
+  help about.
+
+
+.. _gref_phase_invalidate:
+
+invalidate
+-----------------------------------------------------------------------------
+
+Invalidate all targets.
+
+**Installed tasks:**
+
+* Implemented by class ``Invalidator``
+
+
+
+.. _gref_phase_ng-killall:
+
+ng-killall
+-----------------------------------------------------------------------------
+
+Kill running nailgun servers.
+
+**Installed tasks:**
+
+* Implemented by class ``NailgunKillall``
+
+
+
+.. _gref_phase_clean-all:
+
+clean-all
+-----------------------------------------------------------------------------
+
+Clean all build output.
+
+**Installed tasks:**
+
+* Implemented by class ``Cleaner``
+
+
+
+.. _gref_phase_clean-all-async:
+
+clean-all-async
+-----------------------------------------------------------------------------
+
+Clean all build output in a background process.
+
+**Installed tasks:**
+
+* Implemented by class ``AsyncCleaner``
+
+
+
+.. _gref_phase_server:
+
+server
+-----------------------------------------------------------------------------
+
+Run the pants reporting server.
+
+**Installed tasks:**
+
+* Implemented by class ``RunServer``
+
+
+
+.. _gref_phase_killserver:
+
+killserver
+-----------------------------------------------------------------------------
+
+Kill the reporting server.
+
+**Installed tasks:**
+
+* Implemented by class ``KillServer``
+
+
+
+.. _gref_phase_bootstrap:
+
+bootstrap
+-----------------------------------------------------------------------------
+
+Bootstrap tools needed for building.
+
+**Installed tasks:**
+
+* Implemented by class ``BootstrapJvmTools``
+
+
+
+.. _gref_phase_gen:
+
+gen
+-----------------------------------------------------------------------------
+
+Generate code.
+
+**Installed tasks:**
+
+* Implemented by class ``ApacheThriftGen``
+
+
+* Implemented by class ``ScroogeGen``
+
+
+* Implemented by class ``ProtobufGen``
+
+
+* Implemented by class ``AntlrGen``
+
+
+
+.. _gref_phase_check-exclusives:
+
+check-exclusives
+-----------------------------------------------------------------------------
+
+Check for exclusivity violations.
+
+**Installed tasks:**
+
+* Implemented by class ``CheckExclusives``
+
+  Computes transitive exclusive maps.
+
+  This computes transitive exclusive tags for a dependency graph rooted
+  with a set of build targets specified by a user. If this process produces
+  any collisions where a single target contains multiple tag values for a single
+  exclusives key, then it generates an error and the compilation will fail.
+
+  The syntax of the exclusives attribute is: ::
+
+     exclusives = {"id": "value", ...}
+
+  For example, suppose that we had two java targets, jliba and jlibb. jliba uses
+  slf4j, which includes in its jar package an implementation of log4j. jlibb uses
+  log4j directly. But the version of log4j that's packaged inside of slf4j is
+  different from the version used by jlibb. ::
+
+     java_library(name='jliba',
+       depedencies = ['slf4j-with-log4j-2.4'])
+     java_library(name='jlibb',
+       dependencies=['log4j-1.9'])
+     java_binary(name='javabin', dependencies=[':jliba', ':jlibb'])
+
+  In this case, the binary target 'javabin' depends on both slf4j with its
+  packaged log4j version 2.4, and on log4j-1.9.
+  Pants doesn't know that the slf4j and log4j jar_dependencies contain
+  incompatible versions of the same library, and so it can't detect the error.
+
+  With exclusives, the jar_library target for the joda libraries would declare
+  exclusives tags: ::
+
+     jar_library(name='slf4j-with-log4j-2.4', exclusives={'log4j': '2.4'})
+     jar_library(name='joda-2.1', exclusives={'log4j': '1.9'})
+
+  With the exclusives declared, pants can recognize that 'javabin' has conflicting
+  dependencies, and can generate an appropriate error message.
+
+  Data about exclusives is provided to other tasks via data build products.
+  If the build data product 'exclusives_groups' is required, then an
+  ExclusivesMapping object will be created.
+
+
+.. _gref_phase_resolve:
+
+resolve
+-----------------------------------------------------------------------------
+
+Resolve dependencies and produce dependency reports.
+
+**Installed tasks:**
+
+* Implemented by class ``IvyResolve``
+
+
+
+.. _gref_phase_checkstyle:
+
+checkstyle
+-----------------------------------------------------------------------------
+
+Run checkstyle against java source code.
+
+**Installed tasks:**
+
+* Implemented by class ``Checkstyle``
+
+
+
+.. _gref_phase_compile:
+
+compile
+-----------------------------------------------------------------------------
+
+Compile source code.
+
+**Installed tasks:**
+
+* Implemented by class ``ScalaCompile``
+
+
+* Implemented by class ``AptCompile``
+
+
+* Implemented by class ``JavaCompile``
+
+
+
+.. _gref_phase_resources:
+
+resources
+-----------------------------------------------------------------------------
+
+
+**Installed tasks:**
+
+* Implemented by class ``PrepareResources``
+
+
+
+.. _gref_phase_doc:
+
+doc
+-----------------------------------------------------------------------------
+
+Create documentation.
+
+**Installed tasks:**
+
+* Implemented by class ``JavadocGen``
+
+
+* Implemented by class ``ScaladocGen``
+
+
+
+.. _gref_phase_markdown:
+
+markdown
+-----------------------------------------------------------------------------
+
+Generate html from markdown docs.
+
+**Installed tasks:**
+
+* Implemented by class ``MarkdownToHtml``
+
+
+
+.. _gref_phase_publish:
+
+publish
+-----------------------------------------------------------------------------
+
+Publish artifacts.
+
+**Installed tasks:**
+
+* Implemented by class ``JavadocJarShim``
+
+
+* Implemented by class ``ScaladocJarShim``
+
+
+* Implemented by class ``JarCreate``
+
+  Jars jvm libraries and optionally their sources and their docs.
+
+* Implemented by class ``JarPublish``
+
+  Publish jars to a maven repository.
+
+  At a high-level, pants uses `Apache Ivy <http://ant.apache.org/ivy/>`_ to
+  publish artifacts to Maven-style repositories. Pants performs prerequisite
+  tasks like compiling, creating jars, and generating ``pom.xml`` files then
+  invokes Ivy to actually publish the artifacts, so publishing is largely
+  configured in ``ivysettings.xml``. ``BUILD`` and ``pants.ini`` files
+  primarily provide linkage between publishable targets and the
+  Ivy ``resolvers`` used to publish them.
+
+  The following target types are publishable: :ref:`bdict_java_library`,
+  :ref:`bdict_scala_library`, :ref:`bdict_java_thrift_library`,
+  :ref:`bdict_annotation_processor`.
+  Targets to publish and their dependencies must be publishable target
+  types and specify the ``provides`` argument. One exception is
+  :ref:`bdict_jar`\s - pants will generate a pom file that
+  depends on the already-published jar.
+
+  Example usage: ::
+
+     # By default pants will perform a dry-run.
+     ./pants goal clean-all publish src/java/com/twitter/mybird
+
+     # Actually publish.
+     ./pants goal clean-all publish src/java/com/twitter/mybird --no-publish-dryrun
+
+  Please see ``./pants goal publish -h`` for a detailed description of all
+  publishing options.
+
+  Publishing can be configured in ``pants.ini`` as follows.
+
+  ``jar-publish`` section:
+
+  * ``repos`` - Required dictionary of settings for repos that may be pushed to.
+  * ``ivy_jvmargs`` - Optional list of JVM command-line args when invoking Ivy.
+  * ``restrict_push_branches`` - Optional list of branches to restrict publishing to.
+
+  Example pants.ini jar-publish repos dictionary: ::
+
+     repos = {
+       # repository target name is paired with this key
+       'myrepo': {
+         # ivysettings.xml resolver to use for publishing
+         'resolver': 'maven.twttr.com',
+         # ivy configurations to publish
+         'confs': ['default', 'sources', 'docs'],
+         # address of a Credentials target to use when publishing
+         'auth': 'address/of/credentials/BUILD:target',
+         # help message if unable to initialize the Credentials target.
+         'help': 'Please check your credentials and try again.',
+       },
+     }
+
+  Additionally the ``ivy`` section ``ivy_settings`` property specifies which
+  Ivy settings file to use when publishing is required.
+
+
+.. _gref_phase_jar:
+
+jar
+-----------------------------------------------------------------------------
+
+Create one or more jars.
+
+**Installed tasks:**
+
+* Implemented by class ``JarCreate``
+
+  Jars jvm libraries and optionally their sources and their docs.
+
+
+.. _gref_phase_check_published_deps:
+
+check_published_deps
+-----------------------------------------------------------------------------
+
+Find references to outdated artifacts.
+
+**Installed tasks:**
+
+* Implemented by class ``CheckPublishedDeps``
+
+
+
+.. _gref_phase_test:
+
+test
+-----------------------------------------------------------------------------
+
+Test compiled code.
+
+**Installed tasks:**
+
+* Implemented by class ``JUnitRun``
+
+
+* Implemented by class ``SpecsRun``
+
+
+
+.. _gref_phase_bench:
+
+bench
+-----------------------------------------------------------------------------
+
+
+**Installed tasks:**
+
+* Implemented by class ``BenchmarkRun``
+
+
+
+.. _gref_phase_binary:
+
+binary
+-----------------------------------------------------------------------------
+
+Create a jvm binary jar.
+
+**Installed tasks:**
+
+* Implemented by class ``BinaryCreate``
+
+  Creates a runnable monolithic binary deploy jar.
+
+* Implemented by class ``DuplicateDetector``
+
+  Detect classes and resources with the same qualified name on the classpath.
+
+
+.. _gref_phase_bundle:
+
+bundle
+-----------------------------------------------------------------------------
+
+Create an application bundle from binary targets.
+
+**Installed tasks:**
+
+* Implemented by class ``BundleCreate``
+
+
+
+.. _gref_phase_detect-duplicates:
+
+detect-duplicates
+-----------------------------------------------------------------------------
+
+Detect duplicate classes and resources on the classpath.
+
+**Installed tasks:**
+
+* Implemented by class ``DuplicateDetector``
+
+  Detect classes and resources with the same qualified name on the classpath.
+
+
+.. _gref_phase_run:
+
+run
+-----------------------------------------------------------------------------
+
+Run a (currently JVM only) binary target.
+
+**Installed tasks:**
+
+* Implemented by class ``JvmRun``
+
+
+
+.. _gref_phase_run-dirty:
+
+run-dirty
+-----------------------------------------------------------------------------
+
+Run a (currently JVM only) binary target, skipping compilation.
+
+**Installed tasks:**
+
+* Implemented by class ``JvmRun``
+
+
+
+.. _gref_phase_repl:
+
+repl
+-----------------------------------------------------------------------------
+
+Run a (currently Scala only) REPL.
+
+**Installed tasks:**
+
+* Implemented by class ``ScalaRepl``
+
+
+
+.. _gref_phase_repl-dirty:
+
+repl-dirty
+-----------------------------------------------------------------------------
+
+Run a (currently Scala only) REPL, skipping compilation.
+
+**Installed tasks:**
+
+* Implemented by class ``ScalaRepl``
+
+
+
+.. _gref_phase_filedeps:
+
+filedeps
+-----------------------------------------------------------------------------
+
+Print out the source and BUILD files the target depends on.
+
+**Installed tasks:**
+
+* Implemented by class ``FileDeps``
+
+
+
+.. _gref_phase_pathdeps:
+
+pathdeps
+-----------------------------------------------------------------------------
+
+Print out all paths containing BUILD files the target depends on.
+
+**Installed tasks:**
+
+* Implemented by class ``PathDeps``
+
+
+
+.. _gref_phase_list:
+
+list
+-----------------------------------------------------------------------------
+
+List available BUILD targets.
+
+**Installed tasks:**
+
+* Implemented by class ``ListTargets``
+
+  Lists all targets matching the target specs.
+
+  If no targets are specified, lists all targets in the workspace.
+
+
+.. _gref_phase_buildlint:
+
+buildlint
+-----------------------------------------------------------------------------
+
+
+**Installed tasks:**
+
+* Implemented by class ``BuildLint``
+
+
+
+.. _gref_phase_builddict:
+
+builddict
+-----------------------------------------------------------------------------
+
+
+**Installed tasks:**
+
+* Implemented by class ``BuildBuildDictionary``
+
+  Generate documentation for the Sphinx site.
+
+
+.. _gref_phase_idea:
+
+idea
+-----------------------------------------------------------------------------
+
+Create an IntelliJ IDEA project from the given targets.
+
+**Installed tasks:**
+
+* Implemented by class ``IdeaGen``
+
+
+
+.. _gref_phase_eclipse:
+
+eclipse
+-----------------------------------------------------------------------------
+
+Create an Eclipse project from the given targets.
+
+**Installed tasks:**
+
+* Implemented by class ``EclipseGen``
+
+
+
+.. _gref_phase_provides:
+
+provides
+-----------------------------------------------------------------------------
+
+Print the symbols provided by the given targets.
+
+**Installed tasks:**
+
+* Implemented by class ``Provides``
+
+
+
+.. _gref_phase_setup:
+
+setup
+-----------------------------------------------------------------------------
+
+Setup the target's build environment.
+
+**Installed tasks:**
+
+* Implemented by class ``SetupPythonEnvironment``
+
+  Establishes the python intepreter(s) for downstream Python tasks e.g. Resolve, Run, PytestRun.
+
+    Populates the product namespace (for typename = 'python'):
+      'intepreters': ordered list of PythonInterpreter objects
+
+
+.. _gref_phase_path:
+
+path
+-----------------------------------------------------------------------------
+
+Find a dependency path from one target to another.
+
+**Installed tasks:**
+
+* Implemented by class ``Path``
+
+
+
+.. _gref_phase_paths:
+
+paths
+-----------------------------------------------------------------------------
+
+Find all dependency paths from one target to another.
+
+**Installed tasks:**
+
+* Implemented by class ``Paths``
+
+
+
+.. _gref_phase_dependees:
+
+dependees
+-----------------------------------------------------------------------------
+
+Print the target's dependees.
+
+**Installed tasks:**
+
+* Implemented by class ``ReverseDepmap``
+
+  Outputs all targets whose dependencies include at least one of the input targets.
+
+
+.. _gref_phase_depmap:
+
+depmap
+-----------------------------------------------------------------------------
+
+Depict the target's dependencies.
+
+**Installed tasks:**
+
+* Implemented by class ``Depmap``
+
+  Generates either a textual dependency tree or a graphviz digraph dot file for the dependency
+  set of a target.
+
+
+.. _gref_phase_dependencies:
+
+dependencies
+-----------------------------------------------------------------------------
+
+Print the target's dependencies.
+
+**Installed tasks:**
+
+* Implemented by class ``Dependencies``
+
+  Generates a textual list (using the target format) for the dependency set of a target.
+
+
+.. _gref_phase_filemap:
+
+filemap
+-----------------------------------------------------------------------------
+
+Outputs a mapping from source file to owning target.
+
+**Installed tasks:**
+
+* Implemented by class ``Filemap``
+
+  Outputs a mapping from source file to the target that owns the source file.
+
+
+.. _gref_phase_minimize:
+
+minimize
+-----------------------------------------------------------------------------
+
+Print the minimal cover of the given targets.
+
+**Installed tasks:**
+
+* Implemented by class ``MinimalCover``
+
+  Outputs a minimal covering set of targets.
+
+  For a given set of input targets, the output targets transitive dependency set will include all
+  the input targets without gaps.
+
+
+.. _gref_phase_filter:
+
+filter
+-----------------------------------------------------------------------------
+
+Filter the input targets based on various criteria.
+
+**Installed tasks:**
+
+* Implemented by class ``Filter``
+
+  Filters targets based on various criteria.
+
+
+.. _gref_phase_sort:
+
+sort
+-----------------------------------------------------------------------------
+
+Topologically sort the targets.
+
+**Installed tasks:**
+
+* Implemented by class ``SortTargets``
+
+
+
+.. _gref_phase_roots:
+
+roots
+-----------------------------------------------------------------------------
+
+Print the workspace's source roots and associated target types.
+
+**Installed tasks:**
+
+* Implemented by class ``ListRoots``
+
+  List the registered source roots of the repo.
+
