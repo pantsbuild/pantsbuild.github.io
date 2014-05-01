@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pants.targets.python_tests &mdash; pants 0.1 documentation</title>
+  <title>pants.tasks.clean &mdash; pants 0.1 documentation</title>
   
 
   
@@ -367,83 +367,68 @@ body a.icon-home:hover{
         <div class="rst-content">
           <ul class="wy-breadcrumbs">
   <li><a href="../../../index.html">Docs</a> &raquo;</li>
-  <li><a href="">pants.targets.python_tests</a></li>
+  <li><a href="">pants.tasks.clean</a></li>
   
 </ul>
 <hr/>
 
           
-  <h1>Source code for pants.targets.python_tests</h1><div class="highlight"><pre>
+  <h1>Source code for pants.tasks.clean</h1><div class="highlight"><pre>
 <span class="c"># Copyright 2014 Pants project contributors (see CONTRIBUTORS.md).</span>
 <span class="c"># Licensed under the Apache License, Version 2.0 (see LICENSE).</span>
 
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="p">(</span><span class="n">nested_scopes</span><span class="p">,</span> <span class="n">generators</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">with_statement</span><span class="p">,</span>
                         <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">twitter.common.collections</span> <span class="kn">import</span> <span class="n">maybe_list</span>
-<span class="kn">from</span> <span class="nn">twitter.common.quantity</span> <span class="kn">import</span> <span class="n">Amount</span><span class="p">,</span> <span class="n">Time</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
 
-<span class="kn">from</span> <span class="nn">pants.base.build_manual</span> <span class="kn">import</span> <span class="n">manual</span>
-<span class="kn">from</span> <span class="nn">pants.targets.python_target</span> <span class="kn">import</span> <span class="n">PythonTarget</span>
+<span class="kn">import</span> <span class="nn">daemon</span>
+<span class="kn">from</span> <span class="nn">twitter.common.dirutil</span> <span class="kn">import</span> <span class="n">safe_rmtree</span>
+
+<span class="kn">from</span> <span class="nn">pants.base.build_environment</span> <span class="kn">import</span> <span class="n">get_buildroot</span>
+<span class="kn">from</span> <span class="nn">pants.base.config</span> <span class="kn">import</span> <span class="n">Config</span>
+<span class="kn">from</span> <span class="nn">pants.tasks.task_error</span> <span class="kn">import</span> <span class="n">TaskError</span>
+<span class="kn">from</span> <span class="nn">pants.tasks.console_task</span> <span class="kn">import</span> <span class="n">ConsoleTask</span>
 
 
-<span class="nd">@manual.builddict</span><span class="p">(</span><span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;python&quot;</span><span class="p">])</span>
-<div class="viewcode-block" id="PythonTests"><a class="viewcode-back" href="../../../targets.html#pants.targets.python_tests.PythonTests">[docs]</a><span class="k">class</span> <span class="nc">PythonTests</span><span class="p">(</span><span class="n">PythonTarget</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;Tests a Python library.&quot;&quot;&quot;</span>
+<span class="k">def</span> <span class="nf">_cautious_rmtree</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
+  <span class="n">real_buildroot</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">get_buildroot</span><span class="p">()))</span>
+  <span class="n">real_root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">root</span><span class="p">))</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="n">real_root</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">real_buildroot</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="n">TaskError</span><span class="p">(</span><span class="s">&#39;DANGER: Attempting to delete </span><span class="si">%s</span><span class="s">, which is not under the build root!&#39;</span><span class="p">)</span>
+  <span class="n">safe_rmtree</span><span class="p">(</span><span class="n">real_root</span><span class="p">)</span>
 
-  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-               <span class="n">name</span><span class="p">,</span>
-               <span class="n">sources</span><span class="p">,</span>
-               <span class="n">resources</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-               <span class="n">dependencies</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-               <span class="n">timeout</span><span class="o">=</span><span class="n">Amount</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">Time</span><span class="o">.</span><span class="n">MINUTES</span><span class="p">),</span>
-               <span class="n">coverage</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-               <span class="n">soft_dependencies</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
-               <span class="n">entry_point</span><span class="o">=</span><span class="s">&#39;pytest&#39;</span><span class="p">,</span>
-               <span class="n">exclusives</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    :param name: See PythonLibrary target</span>
-<span class="sd">    :param sources: A list of filenames representing the source code</span>
-<span class="sd">      this library is compiled from.</span>
-<span class="sd">    :type sources: list of strings</span>
-<span class="sd">    :param resources: See PythonLibrary target</span>
-<span class="sd">    :param dependencies: List of :class:`pants.base.target.Target` instances</span>
-<span class="sd">      this target depends on.</span>
-<span class="sd">    :type dependencies: list of targets</span>
-<span class="sd">    :param timeout: Amount of time before this test should be considered timed-out.</span>
-<span class="sd">    :param coverage: the module(s) whose coverage should be generated, e.g.</span>
-<span class="sd">      &#39;twitter.common.log&#39; or [&#39;twitter.common.log&#39;, &#39;twitter.common.http&#39;]</span>
-<span class="sd">    :param soft_dependencies: Whether or not we should ignore dependency resolution</span>
-<span class="sd">      errors for this test.</span>
-<span class="sd">    :param entry_point: The entry point to use to run the tests.</span>
-<span class="sd">    :param dict exclusives: An optional dict of exclusives tags. See CheckExclusives for details.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_timeout</span> <span class="o">=</span> <span class="n">timeout</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_soft_dependencies</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">soft_dependencies</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_coverage</span> <span class="o">=</span> <span class="n">maybe_list</span><span class="p">(</span><span class="n">coverage</span><span class="p">)</span> <span class="k">if</span> <span class="n">coverage</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="p">[]</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_entry_point</span> <span class="o">=</span> <span class="n">entry_point</span>
-    <span class="nb">super</span><span class="p">(</span><span class="n">PythonTests</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">sources</span><span class="p">,</span> <span class="n">resources</span><span class="p">,</span> <span class="n">dependencies</span><span class="p">,</span> <span class="n">exclusives</span><span class="o">=</span><span class="n">exclusives</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">add_labels</span><span class="p">(</span><span class="s">&#39;python&#39;</span><span class="p">,</span> <span class="s">&#39;tests&#39;</span><span class="p">)</span>
 
-  <span class="nd">@property</span>
-  <span class="k">def</span> <span class="nf">timeout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timeout</span>
+<span class="k">def</span> <span class="nf">_async_cautious_rmtree</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
+  <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
+    <span class="n">new_path</span> <span class="o">=</span> <span class="n">root</span> <span class="o">+</span> <span class="s">&#39;.deletable.</span><span class="si">%f</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">new_path</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">daemon</span><span class="o">.</span><span class="n">DaemonContext</span><span class="p">():</span>
+      <span class="n">_cautious_rmtree</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span>
 
-  <span class="nd">@property</span>
-  <span class="k">def</span> <span class="nf">coverage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coverage</span>
 
-  <span class="nd">@property</span>
-  <span class="k">def</span> <span class="nf">entry_point</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_entry_point</span>
+<div class="viewcode-block" id="Invalidator"><a class="viewcode-back" href="../../../tasks.html#pants.tasks.clean.Invalidator">[docs]</a><span class="k">class</span> <span class="nc">Invalidator</span><span class="p">(</span><span class="n">ConsoleTask</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Invalidate the entire build.&quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
+    <span class="n">build_invalidator_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get_option</span><span class="p">(</span><span class="n">Config</span><span class="o">.</span><span class="n">DEFAULT_PANTS_WORKDIR</span><span class="p">),</span> <span class="s">&#39;build_invalidator&#39;</span><span class="p">)</span>
+    <span class="n">_cautious_rmtree</span><span class="p">(</span><span class="n">build_invalidator_dir</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="PythonTestSuite"><a class="viewcode-back" href="../../../targets.html#pants.targets.python_tests.PythonTestSuite">[docs]</a><span class="k">class</span> <span class="nc">PythonTestSuite</span><span class="p">(</span><span class="n">PythonTarget</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;Tests one or more python test targets.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Cleaner"><a class="viewcode-back" href="../../../tasks.html#pants.tasks.clean.Cleaner">[docs]</a><span class="k">class</span> <span class="nc">Cleaner</span><span class="p">(</span><span class="n">ConsoleTask</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Clean all current build products.&quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
+    <span class="n">_cautious_rmtree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">getdefault</span><span class="p">(</span><span class="s">&#39;pants_workdir&#39;</span><span class="p">))</span>
 
-  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">dependencies</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-    <span class="nb">super</span><span class="p">(</span><span class="n">PythonTestSuite</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">(),</span> <span class="p">(),</span> <span class="n">dependencies</span><span class="p">)</span></div>
-</pre></div>
+
+<span class="c"># TODO(benjy): Do we need this? It&#39;s never been that useful, because building while</span>
+<span class="c"># cleaning the renamed workdir taxes the filesystem.</span></div>
+<div class="viewcode-block" id="AsyncCleaner"><a class="viewcode-back" href="../../../tasks.html#pants.tasks.clean.AsyncCleaner">[docs]</a><span class="k">class</span> <span class="nc">AsyncCleaner</span><span class="p">(</span><span class="n">ConsoleTask</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Clean all current build products in a background process.&quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
+    <span class="n">_async_cautious_rmtree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">getdefault</span><span class="p">(</span><span class="s">&#39;pants_workdir&#39;</span><span class="p">))</span>
+</pre></div></div>
 
           <footer>
   

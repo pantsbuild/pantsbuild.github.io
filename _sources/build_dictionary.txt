@@ -9,32 +9,31 @@ commands and values available. Many of these define ``BUILD``
 targets; some are handy utilities.
 
 **All The Things** |
-`exclude`_ |
-`page`_ |
-`repo`_ |
 `egg`_ |
 `pants`_ |
 `resources`_ |
+`page`_ |
+`exclude`_ |
+`repo`_ |
 `jar`_ |
 `dependencies`_ |
 `python_antlr_library`_ |
 `python_thrift_library`_ |
 `artifact`_ |
-`goal`_ |
-`phase`_ |
 `python_binary`_ |
 `python_library`_ |
-`python_tests`_ |
 `python_requirement`_ |
-`junit_tests`_ |
+`python_tests`_ |
+`goal`_ |
+`phase`_ |
 `benchmark`_ |
-`java_library`_ |
 `jvm_binary`_ |
-`scala_library`_ |
-`scalac_plugin`_ |
-`java_antlr_library`_ |
 `bundle`_ |
-`java_agent`_ |
+`java_antlr_library`_ |
+`java_library`_ |
+`java_thrift_library`_ |
+`scala_library`_ |
+`annotation_processor`_ |
 `Amount`_ |
 `__file__`_ |
 `globs`_ |
@@ -43,39 +42,40 @@ targets; some are handy utilities.
 `maven_layout`_ |
 `rglobs`_ |
 `ROOT_DIR`_ |
-`annotation_processor`_ |
-`java_protobuf_library`_ |
-`java_thrift_library`_ |
 `scala_tests`_ |
 `Time`_ |
 `wiki`_ |
+`java_agent`_ |
+`java_protobuf_library`_ |
 `credentials`_ |
+`python_test_suite`_ |
+`scalac_plugin`_ |
+`junit_tests`_ |
 `jvm_app`_ |
 `setup_py`_ |
 `scala_specs`_ |
 `source_root`_ |
-`python_test_suite`_ |
 
 **JVM** |
-`exclude`_ |
-`repo`_ |
 `pants`_ |
 `resources`_ |
+`exclude`_ |
+`repo`_ |
 `jar`_ |
 `dependencies`_ |
 `artifact`_ |
-`junit_tests`_ |
 `benchmark`_ |
-`java_library`_ |
 `jvm_binary`_ |
-`scala_library`_ |
-`scalac_plugin`_ |
-`java_antlr_library`_ |
 `bundle`_ |
-`java_agent`_ |
-`annotation_processor`_ |
-`java_protobuf_library`_ |
+`java_antlr_library`_ |
+`java_library`_ |
 `java_thrift_library`_ |
+`scala_library`_ |
+`annotation_processor`_ |
+`java_agent`_ |
+`java_protobuf_library`_ |
+`scalac_plugin`_ |
+`junit_tests`_ |
 `jvm_app`_ |
 `scala_specs`_ |
 
@@ -87,79 +87,10 @@ targets; some are handy utilities.
 `python_thrift_library`_ |
 `python_binary`_ |
 `python_library`_ |
-`python_tests`_ |
 `python_requirement`_ |
+`python_tests`_ |
 `setup_py`_ |
 
-
-.. _bdict_exclude:
-
-exclude
--------------------------------------------------------------------------------
-
-.. py:function:: exclude(org, name=None)
-
- Represents a dependency exclude pattern to filter transitive dependencies against.
-
-
- :param string org: Organization of the artifact to filter,
-   known as groupId in Maven parlance.
- :param string name: Name of the artifact to filter in the org, or filter
-   everything if unspecified.
-
-
-.. _bdict_page:
-
-page
--------------------------------------------------------------------------------
-
-.. py:function:: page(name, source, dependencies=None, resources=None, exclusives=None)
-
- Describes a single documentation page.
-
-
- :param string name: The name of this target, which combined with this
-   build file defines the target :class:`pants.base.address.Address`.
- :param source: Source of the page in markdown format.
- :param dependencies: List of :class:`pants.base.target.Target` instances
-   this target depends on.
- :type dependencies: list of targets
- :param resources: An optional list of Resources objects.
-
-**Methods:**
-
- .. py:method:: register_wiki(wiki, **kwargs)
-
-  Adds this page to the given wiki for publishing.  Wiki-specific configuration is passed as
-  kwargs.
-
- .. py:method:: with_description(description)
-
-  Set a human-readable description of this target.
-  
-  :param description: Descriptive string
-
-.. _bdict_repo:
-
-repo
--------------------------------------------------------------------------------
-
-.. py:function:: repo(name, url, push_db, exclusives=None)
-
- An artifact repository, such as a maven repo.
-
-
- :param string name: Name of the repository.
- :param string url: Optional URL of the repository.
- :param string push_db: Path of the push history file.
-
-**Methods:**
-
- .. py:method:: with_description(description)
-
-  Set a human-readable description of this target.
-  
-  :param description: Descriptive string
 
 .. _bdict_egg:
 
@@ -223,6 +154,75 @@ resources
    build file defines the target :class:`pants.base.address.Address`.
  :param sources: A list of filenames representing the resources
    this library provides.
+
+**Methods:**
+
+ .. py:method:: with_description(description)
+
+  Set a human-readable description of this target.
+  
+  :param description: Descriptive string
+
+.. _bdict_page:
+
+page
+-------------------------------------------------------------------------------
+
+.. py:function:: page(name, source, dependencies=None, resources=None, exclusives=None)
+
+ Describes a single documentation page.
+
+
+ :param string name: The name of this target, which combined with this
+   build file defines the target :class:`pants.base.address.Address`.
+ :param source: Source of the page in markdown format.
+ :param dependencies: List of :class:`pants.base.target.Target` instances
+   this target depends on.
+ :type dependencies: list of targets
+ :param resources: An optional list of Resources objects.
+
+**Methods:**
+
+ .. py:method:: register_wiki(wiki, **kwargs)
+
+  Adds this page to the given wiki for publishing.  Wiki-specific configuration is passed as
+  kwargs.
+
+ .. py:method:: with_description(description)
+
+  Set a human-readable description of this target.
+  
+  :param description: Descriptive string
+
+.. _bdict_exclude:
+
+exclude
+-------------------------------------------------------------------------------
+
+.. py:function:: exclude(org, name=None)
+
+ Represents a dependency exclude pattern to filter transitive dependencies against.
+
+
+ :param string org: Organization of the artifact to filter,
+   known as groupId in Maven parlance.
+ :param string name: Name of the artifact to filter in the org, or filter
+   everything if unspecified.
+
+
+.. _bdict_repo:
+
+repo
+-------------------------------------------------------------------------------
+
+.. py:function:: repo(name, url, push_db, exclusives=None)
+
+ An artifact repository, such as a maven repo.
+
+
+ :param string name: Name of the repository.
+ :param string url: Optional URL of the repository.
+ :param string push_db: Path of the push history file.
 
 **Methods:**
 
@@ -401,33 +401,6 @@ artifact
  :param string description: Description of this artifact.
 
 
-.. _bdict_goal:
-
-goal
--------------------------------------------------------------------------------
-
-.. py:function:: goal(name, action, group=None, dependencies=None, serialize=True)
-
-
-
- :param name: the name of the goal.
- :param action: the goal action object to invoke this goal.
- :param dependencies: the names of other goals which must be achieved before invoking this goal.
- :param serialize: a flag indicating whether or not the action to achieve this goal requires
-   the global lock. If true, the action will block until it can acquire the lock.
-
-
-.. _bdict_phase:
-
-phase
--------------------------------------------------------------------------------
-
-.. py:function:: phase(name)
-
-
-
-
-
 .. _bdict_python_binary:
 
 python_binary
@@ -508,6 +481,25 @@ python_library
   
   :param description: Descriptive string
 
+.. _bdict_python_requirement:
+
+python_requirement
+-------------------------------------------------------------------------------
+
+.. py:function:: python_requirement(requirement, name=None, repository=None, version_filter=None, use_2to3=False, compatibility=None, exclusives=None)
+
+ Pants wrapper around pkg_resources.Requirement
+
+
+
+**Methods:**
+
+ .. py:method:: with_description(description)
+
+  Set a human-readable description of this target.
+  
+  :param description: Descriptive string
+
 .. _bdict_python_tests:
 
 python_tests
@@ -542,59 +534,32 @@ python_tests
   
   :param description: Descriptive string
 
-.. _bdict_python_requirement:
+.. _bdict_goal:
 
-python_requirement
+goal
 -------------------------------------------------------------------------------
 
-.. py:function:: python_requirement(requirement, name=None, repository=None, version_filter=None, use_2to3=False, compatibility=None, exclusives=None)
-
- Pants wrapper around pkg_resources.Requirement
+.. py:function:: goal(name, action, group=None, dependencies=None, serialize=True)
 
 
 
-**Methods:**
+ :param name: the name of the goal.
+ :param action: the goal action object to invoke this goal.
+ :param dependencies: the names of other goals which must be achieved before invoking this goal.
+ :param serialize: a flag indicating whether or not the action to achieve this goal requires
+   the global lock. If true, the action will block until it can acquire the lock.
 
- .. py:method:: with_description(description)
 
-  Set a human-readable description of this target.
-  
-  :param description: Descriptive string
+.. _bdict_phase:
 
-.. _bdict_junit_tests:
-
-junit_tests
+phase
 -------------------------------------------------------------------------------
 
-.. py:function:: junit_tests(name, sources=None, dependencies=None, excludes=None, resources=None, exclusives=None)
-
- Tests JVM sources with JUnit.
+.. py:function:: phase(name)
 
 
- :param string name: The name of this target, which combined with this
-   build file defines the target :class:`pants.base.address.Address`.
- :param sources: A list of filenames representing the source code
-   this library is compiled from.
- :type sources: list of strings
- :param Artifact provides:
-   The :class:`pants.targets.artifact.Artifact`
-   to publish that represents this target outside the repo.
- :param dependencies: List of :class:`pants.base.target.Target` instances
-   this target depends on.
- :type dependencies: list of targets
- :param excludes: List of :class:`pants.targets.exclude.Exclude` instances
-   to filter this target's transitive dependencies against.
- :param resources: An optional list of ``resources`` targets containing text
-   file resources to place in this module's jar.
- :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
 
-**Methods:**
 
- .. py:method:: with_description(description)
-
-  Set a human-readable description of this target.
-  
-  :param description: Descriptive string
 
 .. _bdict_benchmark:
 
@@ -624,48 +589,6 @@ benchmark
    to filter this target's transitive dependencies against.
  :param resources: An optional list of ``resources`` targets containing text
    file resources to place in this module's jar.
- :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
-
-**Methods:**
-
- .. py:method:: with_description(description)
-
-  Set a human-readable description of this target.
-  
-  :param description: Descriptive string
-
-.. _bdict_java_library:
-
-java_library
--------------------------------------------------------------------------------
-
-.. py:function:: java_library(name, sources=None, provides=None, dependencies=None, excludes=None, resources=None, exclusives=None)
-
- A collection of Java code.
- 
- Normally has conceptually-related sources; invoking the ``compile`` goal
- on this target compiles Java and generates classes. Invoking the ``jar``
- goal on this target creates a ``.jar``; but that's an unusual thing to do.
- Instead, a ``jvm_binary`` might depend on this library; that binary is a
- more sensible thing to bundle.
-
-
- :param string name: The name of this target, which combined with this
-   build file defines the target :class:`pants.base.address.Address`.
- :param sources: A list of filenames representing the source code
-   this library is compiled from.
- :type sources: list of strings
- :param Artifact provides:
-   The :class:`pants.targets.artifact.Artifact`
-   to publish that represents this target outside the repo.
- :param dependencies: List of :class:`pants.base.target.Target` instances
-   this target depends on.
- :type dependencies: list of targets
- :param excludes: List of :class:`pants.targets.exclude.Exclude` instances
-   to filter this target's transitive dependencies against.
- :param resources: An optional list of file paths (DEPRECATED) or
-   ``resources`` targets (which in turn point to file paths). The paths
-   indicate text file resources to place in this module's jar.
  :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
 
 **Methods:**
@@ -725,6 +648,167 @@ jvm_binary
   
   :param description: Descriptive string
 
+.. _bdict_bundle:
+
+bundle
+-------------------------------------------------------------------------------
+
+.. py:function:: bundle(base=None, mapper=None, relative_to=None)
+
+ A set of files to include in an application bundle.
+ 
+ Looking for Java-style resources accessible via the ``Class.getResource`` API?
+ Those are :ref:`bdict_resources`\ .
+ 
+ Files added to the bundle will be included when bundling an application target.
+ By default relative paths are preserved. For example, to include ``config``
+ and ``scripts`` directories: ::
+ 
+   bundles=[
+     bundle().add(rglobs('config/*', 'scripts/*')),
+   ]
+ 
+ To include files relative to some path component use the ``relative_to`` parameter.
+ The following places the contents of ``common/config`` in a  ``config`` directory
+ in the bundle. ::
+ 
+   bundles=[
+     bundle(relative_to='common').add(globs('common/config/*'))
+   ]
+
+
+ :param base: Base path of the "source" file paths. By default, path of the
+   BUILD file. Useful for assets that don't live in the source code repo.
+ :param mapper: Function that takes a path string and returns a path string. Takes a path in
+   the source tree, returns a path to use in the resulting bundle. By default, an identity
+   mapper.
+ :param string relative_to: Set up a simple mapping from source path to bundle path.
+   E.g., ``relative_to='common'`` removes that prefix from all files in the application bundle.
+
+**Methods:**
+
+ .. py:method:: add(*filesets)
+
+  Add files to the bundle, where ``filesets`` is a filename, ``globs``, or ``rglobs``.
+  Note this is a variable length param and may be specified any number of times.
+
+.. _bdict_java_antlr_library:
+
+java_antlr_library
+-------------------------------------------------------------------------------
+
+.. py:function:: java_antlr_library(name, sources, provides=None, dependencies=None, excludes=None, compiler=u'antlr3', package=None)
+
+ Generates a stub Java library from Antlr grammar files.
+
+
+ :param string name: The name of this target, which combined with this
+   build file defines the target :class:`pants.base.address.Address`.
+ :param sources: A list of filenames representing the source code
+   this library is compiled from.
+ :type sources: list of strings
+ :param Artifact provides:
+   The :class:`pants.targets.artifact.Artifact`
+   to publish that represents this target outside the repo.
+ :param dependencies: List of :class:`pants.base.target.Target` instances
+   this target depends on.
+ :type dependencies: list of targets
+ :param excludes: List of :class:`pants.targets.exclude.Exclude` instances
+   to filter this target's transitive dependencies against.
+ :param compiler: The name of the compiler used to compile the ANTLR files.
+     Currently only supports 'antlr3' and 'antlr4'
+ :param package: A string which specifies the package to be used on the dependent sources.
+     If unset, the package will be based on the path to the sources. Note that if the sources
+     Are spread among different files, this must be set as the package cannot be inferred.
+
+**Methods:**
+
+ .. py:method:: with_description(description)
+
+  Set a human-readable description of this target.
+  
+  :param description: Descriptive string
+
+.. _bdict_java_library:
+
+java_library
+-------------------------------------------------------------------------------
+
+.. py:function:: java_library(name, sources=None, provides=None, dependencies=None, excludes=None, resources=None, exclusives=None)
+
+ A collection of Java code.
+ 
+ Normally has conceptually-related sources; invoking the ``compile`` goal
+ on this target compiles Java and generates classes. Invoking the ``jar``
+ goal on this target creates a ``.jar``; but that's an unusual thing to do.
+ Instead, a ``jvm_binary`` might depend on this library; that binary is a
+ more sensible thing to bundle.
+
+
+ :param string name: The name of this target, which combined with this
+   build file defines the target :class:`pants.base.address.Address`.
+ :param sources: A list of filenames representing the source code
+   this library is compiled from.
+ :type sources: list of strings
+ :param Artifact provides:
+   The :class:`pants.targets.artifact.Artifact`
+   to publish that represents this target outside the repo.
+ :param dependencies: List of :class:`pants.base.target.Target` instances
+   this target depends on.
+ :type dependencies: list of targets
+ :param excludes: List of :class:`pants.targets.exclude.Exclude` instances
+   to filter this target's transitive dependencies against.
+ :param resources: An optional list of file paths (DEPRECATED) or
+   ``resources`` targets (which in turn point to file paths). The paths
+   indicate text file resources to place in this module's jar.
+ :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
+
+**Methods:**
+
+ .. py:method:: with_description(description)
+
+  Set a human-readable description of this target.
+  
+  :param description: Descriptive string
+
+.. _bdict_java_thrift_library:
+
+java_thrift_library
+-------------------------------------------------------------------------------
+
+.. py:function:: java_thrift_library(name, sources, provides=None, dependencies=None, excludes=None, compiler=None, language=None, rpc_style=None, namespace_map=None, exclusives=None)
+
+ Generates a stub Java or Scala library from thrift IDL files.
+
+
+ :param string name: The name of this target, which combined with this
+   build file defines the target :class:`pants.base.address.Address`.
+ :param sources: A list of filenames representing the source code
+   this library is compiled from.
+ :type sources: list of strings
+ :param Artifact provides:
+   The :class:`pants.targets.artifact.Artifact`
+   to publish that represents this target outside the repo.
+ :param dependencies: List of :class:`pants.base.target.Target` instances
+   this target depends on.
+ :type dependencies: list of targets
+ :param excludes: List of :class:`pants.targets.exclude.Exclude` instances
+   to filter this target's transitive dependencies against.
+ :param compiler: The compiler used to compile the thrift files; default is 'thrift'
+   (The apache thrift compiler).
+ :param language: The language used to generate the output files; defaults to 'java'.
+ :param rpc_style: An optional rpc style to generate service stubs with.
+ :param namespace_map: An optional dictionary of namespaces to remap {old: new}
+ :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
+
+**Methods:**
+
+ .. py:method:: with_description(description)
+
+  Set a human-readable description of this target.
+  
+  :param description: Descriptive string
+
 .. _bdict_scala_library:
 
 scala_library
@@ -770,55 +854,14 @@ scala_library
   
   :param description: Descriptive string
 
-.. _bdict_scalac_plugin:
+.. _bdict_annotation_processor:
 
-scalac_plugin
+annotation_processor
 -------------------------------------------------------------------------------
 
-.. py:function:: scalac_plugin(name, classname, plugin=None, sources=None, java_sources=None, provides=None, dependencies=None, excludes=None, resources=None, exclusives=None)
+.. py:function:: annotation_processor(name, sources, provides=None, dependencies=None, excludes=None, resources=None, processors=None, exclusives=None)
 
- Defines a target that produces a scalac_plugin.
-
-
- :param name: The name of this module target, addressable via pants via the portion of the
-   spec following the colon - required.
- :param classname: The fully qualified plugin class name - required.
- :param plugin: The name of the plugin which defaults to name if not supplied.
- :param sources: A list of filenames representing the source code
-   this library is compiled from.
- :type sources: list of strings
- :param java_sources:
-   :class:`pants.targets.java_library.JavaLibrary` or list of
-   JavaLibrary targets this library has a circular dependency on.
-   Prefer using dependencies to express non-circular dependencies.
- :param Artifact provides:
-   The :class:`pants.targets.artifact.Artifact`
-   to publish that represents this target outside the repo.
- :param dependencies: List of :class:`pants.base.target.Target` instances
-   this target depends on.
- :type dependencies: list of targets
- :param excludes: List of :class:`pants.targets.exclude.Exclude` instances
-   to filter this target's transitive dependencies against
- :param resources: An optional list of paths (DEPRECATED) or ``resources``
-   targets containing resources that belong on this library's classpath.
- :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
-
-**Methods:**
-
- .. py:method:: with_description(description)
-
-  Set a human-readable description of this target.
-  
-  :param description: Descriptive string
-
-.. _bdict_java_antlr_library:
-
-java_antlr_library
--------------------------------------------------------------------------------
-
-.. py:function:: java_antlr_library(name, sources, provides=None, dependencies=None, excludes=None, compiler=u'antlr3')
-
- Generates a stub Java library from Antlr grammar files.
+ Produces a Java library containing one or more annotation processors.
 
 
  :param string name: The name of this target, which combined with this
@@ -829,81 +872,6 @@ java_antlr_library
  :param Artifact provides:
    The :class:`pants.targets.artifact.Artifact`
    to publish that represents this target outside the repo.
- :param dependencies: List of :class:`pants.base.target.Target` instances
-   this target depends on.
- :type dependencies: list of targets
- :param excludes: List of :class:`pants.targets.exclude.Exclude` instances
-   to filter this target's transitive dependencies against.
- :param compiler: The name of the compiler used to compile the ANTLR files.
-     Currently only supports 'antlr3' and 'antlr4'
-
-**Methods:**
-
- .. py:method:: with_description(description)
-
-  Set a human-readable description of this target.
-  
-  :param description: Descriptive string
-
-.. _bdict_bundle:
-
-bundle
--------------------------------------------------------------------------------
-
-.. py:function:: bundle(base=None, mapper=None, relative_to=None)
-
- A set of files to include in an application bundle.
- 
- Looking for Java-style resources accessible via the ``Class.getResource`` API?
- Those are :ref:`bdict_resources`\ .
- 
- Files added to the bundle will be included when bundling an application target.
- By default relative paths are preserved. For example, to include ``config``
- and ``scripts`` directories: ::
- 
-   bundles=[
-     bundle().add(rglobs('config/*', 'scripts/*')),
-   ]
- 
- To include files relative to some path component use the ``relative_to`` parameter.
- The following places the contents of ``common/config`` in a  ``config`` directory
- in the bundle. ::
- 
-   bundles=[
-     bundle(relative_to='common').add(globs('common/config/*'))
-   ]
-
-
- :param base: Base path of the "source" file paths. By default, path of the
-   BUILD file. Useful for assets that don't live in the source code repo.
- :param mapper: Function that takes a path string and returns a path string. Takes a path in
-   the source tree, returns a path to use in the resulting bundle. By default, an identity
-   mapper.
- :param string relative_to: Set up a simple mapping from source path to bundle path.
-   E.g., ``relative_to='common'`` removes that prefix from all files in the application bundle.
-
-**Methods:**
-
- .. py:method:: add(*filesets)
-
-  Add files to the bundle, where ``filesets`` is a filename, ``globs``, or ``rglobs``.
-  Note this is a variable length param and may be specified any number of times.
-
-.. _bdict_java_agent:
-
-java_agent
--------------------------------------------------------------------------------
-
-.. py:function:: java_agent(name, sources=None, dependencies=None, excludes=None, resources=None, exclusives=None, premain=None, agent_class=None, can_redefine=False, can_retransform=False, can_set_native_method_prefix=False)
-
- Defines a java agent entrypoint.
-
-
- :param string name: The name of this target, which combined with this
-   build file defines the target :class:`pants.base.address.Address`.
- :param sources: A list of filenames representing the source code
-   this library is compiled from.
- :type sources: list of strings
  :param dependencies: List of :class:`pants.base.target.Target` instances
    this target depends on.
  :type dependencies: list of targets
@@ -912,18 +880,9 @@ java_agent
  :param resources: An optional list of file paths (DEPRECATED) or
    ``resources`` targets (which in turn point to file paths). The paths
    indicate text file resources to place in this module's jar.
+ :param processors: A list of the fully qualified class names of the
+   annotation processors this library exports.
  :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
- :param string premain: When an agent is specified at JVM launch time this attribute specifies
-   the agent class. Exactly one of ``premain`` or ``agent_class`` must be specified.
- :param string agent_class: If an implementation supports a mechanism to start agents sometime
-   after the VM has started then this attribute specifies the agent class. Exactly one of
-   ``premain`` or ``agent_class`` must be specified.
- :param bool can_redefine: `True` if the ability to redefine classes is needed by this agent;
-   `False` by default.
- :param bool can_retransform: `True` if the ability to retransform classes is needed by this
-   agent; `False` by default.
- :param bool can_set_native_method_prefix: `True` if the ability to set he native method prefix
-   is needed by this agent; `False` by default.
 
 **Methods:**
 
@@ -1047,116 +1006,6 @@ ROOT_DIR
 
 
 
-.. _bdict_annotation_processor:
-
-annotation_processor
--------------------------------------------------------------------------------
-
-.. py:function:: annotation_processor(name, sources, provides=None, dependencies=None, excludes=None, resources=None, processors=None, exclusives=None)
-
- Produces a Java library containing one or more annotation processors.
-
-
- :param string name: The name of this target, which combined with this
-   build file defines the target :class:`pants.base.address.Address`.
- :param sources: A list of filenames representing the source code
-   this library is compiled from.
- :type sources: list of strings
- :param Artifact provides:
-   The :class:`pants.targets.artifact.Artifact`
-   to publish that represents this target outside the repo.
- :param dependencies: List of :class:`pants.base.target.Target` instances
-   this target depends on.
- :type dependencies: list of targets
- :param excludes: List of :class:`pants.targets.exclude.Exclude` instances
-   to filter this target's transitive dependencies against.
- :param resources: An optional list of file paths (DEPRECATED) or
-   ``resources`` targets (which in turn point to file paths). The paths
-   indicate text file resources to place in this module's jar.
- :param processors: A list of the fully qualified class names of the
-   annotation processors this library exports.
- :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
-
-**Methods:**
-
- .. py:method:: with_description(description)
-
-  Set a human-readable description of this target.
-  
-  :param description: Descriptive string
-
-.. _bdict_java_protobuf_library:
-
-java_protobuf_library
--------------------------------------------------------------------------------
-
-.. py:function:: java_protobuf_library(name, sources, provides=None, dependencies=None, excludes=None, buildflags=None, exclusives=None)
-
- Generates a stub Java library from protobuf IDL files.
-
-
- :param string name: The name of this target, which combined with this
-   build file defines the target :class:`pants.base.address.Address`.
- :param sources: A list of filenames representing the source code
-   this library is compiled from.
- :type sources: list of strings
- :param Artifact provides:
-   The :class:`pants.targets.artifact.Artifact`
-   to publish that represents this target outside the repo.
- :param dependencies: List of :class:`pants.base.target.Target` instances
-   this target depends on.
- :type dependencies: list of targets
- :param excludes: List of :class:`pants.targets.exclude.Exclude` instances
-   to filter this target's transitive dependencies against.
- :param buildflags: Unused, and will be removed in a future release.
- :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
-
-**Methods:**
-
- .. py:method:: with_description(description)
-
-  Set a human-readable description of this target.
-  
-  :param description: Descriptive string
-
-.. _bdict_java_thrift_library:
-
-java_thrift_library
--------------------------------------------------------------------------------
-
-.. py:function:: java_thrift_library(name, sources, provides=None, dependencies=None, excludes=None, compiler=None, language=None, rpc_style=None, namespace_map=None, exclusives=None)
-
- Generates a stub Java or Scala library from thrift IDL files.
-
-
- :param string name: The name of this target, which combined with this
-   build file defines the target :class:`pants.base.address.Address`.
- :param sources: A list of filenames representing the source code
-   this library is compiled from.
- :type sources: list of strings
- :param Artifact provides:
-   The :class:`pants.targets.artifact.Artifact`
-   to publish that represents this target outside the repo.
- :param dependencies: List of :class:`pants.base.target.Target` instances
-   this target depends on.
- :type dependencies: list of targets
- :param excludes: List of :class:`pants.targets.exclude.Exclude` instances
-   to filter this target's transitive dependencies against.
- :param compiler: The compiler used to compile the thrift files; default is 'thrift'
-   (The apache thrift compiler).
- :param language: The language used to generate the output files; defaults to 'java'.
- :param rpc_style: An optional rpc style to generate service stubs with.
- :param namespace_map: An optional dictionary of namespaces to remap {old: new}
- :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
-
-**Methods:**
-
- .. py:method:: with_description(description)
-
-  Set a human-readable description of this target.
-  
-  :param description: Descriptive string
-
 .. _bdict_scala_tests:
 
 scala_tests
@@ -1203,6 +1052,84 @@ wiki
   
   :param description: Descriptive string
 
+.. _bdict_java_agent:
+
+java_agent
+-------------------------------------------------------------------------------
+
+.. py:function:: java_agent(name, sources=None, dependencies=None, excludes=None, resources=None, exclusives=None, premain=None, agent_class=None, can_redefine=False, can_retransform=False, can_set_native_method_prefix=False)
+
+ Defines a java agent entrypoint.
+
+
+ :param string name: The name of this target, which combined with this
+   build file defines the target :class:`pants.base.address.Address`.
+ :param sources: A list of filenames representing the source code
+   this library is compiled from.
+ :type sources: list of strings
+ :param dependencies: List of :class:`pants.base.target.Target` instances
+   this target depends on.
+ :type dependencies: list of targets
+ :param excludes: List of :class:`pants.targets.exclude.Exclude` instances
+   to filter this target's transitive dependencies against.
+ :param resources: An optional list of file paths (DEPRECATED) or
+   ``resources`` targets (which in turn point to file paths). The paths
+   indicate text file resources to place in this module's jar.
+ :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
+ :param string premain: When an agent is specified at JVM launch time this attribute specifies
+   the agent class. Exactly one of ``premain`` or ``agent_class`` must be specified.
+ :param string agent_class: If an implementation supports a mechanism to start agents sometime
+   after the VM has started then this attribute specifies the agent class. Exactly one of
+   ``premain`` or ``agent_class`` must be specified.
+ :param bool can_redefine: `True` if the ability to redefine classes is needed by this agent;
+   `False` by default.
+ :param bool can_retransform: `True` if the ability to retransform classes is needed by this
+   agent; `False` by default.
+ :param bool can_set_native_method_prefix: `True` if the ability to set he native method prefix
+   is needed by this agent; `False` by default.
+
+**Methods:**
+
+ .. py:method:: with_description(description)
+
+  Set a human-readable description of this target.
+  
+  :param description: Descriptive string
+
+.. _bdict_java_protobuf_library:
+
+java_protobuf_library
+-------------------------------------------------------------------------------
+
+.. py:function:: java_protobuf_library(name, sources, provides=None, dependencies=None, excludes=None, buildflags=None, exclusives=None)
+
+ Generates a stub Java library from protobuf IDL files.
+
+
+ :param string name: The name of this target, which combined with this
+   build file defines the target :class:`pants.base.address.Address`.
+ :param sources: A list of filenames representing the source code
+   this library is compiled from.
+ :type sources: list of strings
+ :param Artifact provides:
+   The :class:`pants.targets.artifact.Artifact`
+   to publish that represents this target outside the repo.
+ :param dependencies: List of :class:`pants.base.target.Target` instances
+   this target depends on.
+ :type dependencies: list of targets
+ :param excludes: List of :class:`pants.targets.exclude.Exclude` instances
+   to filter this target's transitive dependencies against.
+ :param buildflags: Unused, and will be removed in a future release.
+ :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
+
+**Methods:**
+
+ .. py:method:: with_description(description)
+
+  Set a human-readable description of this target.
+  
+  :param description: Descriptive string
+
 .. _bdict_credentials:
 
 credentials
@@ -1221,6 +1148,101 @@ credentials
  :type username: string or callable
  :param password: Either a constant password value or else a callable that can fetch one.
  :type password: string or callable
+
+**Methods:**
+
+ .. py:method:: with_description(description)
+
+  Set a human-readable description of this target.
+  
+  :param description: Descriptive string
+
+.. _bdict_python_test_suite:
+
+python_test_suite
+-------------------------------------------------------------------------------
+
+.. py:function:: python_test_suite(name, dependencies=None)
+
+ Tests one or more python test targets.
+
+
+
+**Methods:**
+
+ .. py:method:: with_description(description)
+
+  Set a human-readable description of this target.
+  
+  :param description: Descriptive string
+
+.. _bdict_scalac_plugin:
+
+scalac_plugin
+-------------------------------------------------------------------------------
+
+.. py:function:: scalac_plugin(name, classname, plugin=None, sources=None, java_sources=None, provides=None, dependencies=None, excludes=None, resources=None, exclusives=None)
+
+ Defines a target that produces a scalac_plugin.
+
+
+ :param name: The name of this module target, addressable via pants via the portion of the
+   spec following the colon - required.
+ :param classname: The fully qualified plugin class name - required.
+ :param plugin: The name of the plugin which defaults to name if not supplied.
+ :param sources: A list of filenames representing the source code
+   this library is compiled from.
+ :type sources: list of strings
+ :param java_sources:
+   :class:`pants.targets.java_library.JavaLibrary` or list of
+   JavaLibrary targets this library has a circular dependency on.
+   Prefer using dependencies to express non-circular dependencies.
+ :param Artifact provides:
+   The :class:`pants.targets.artifact.Artifact`
+   to publish that represents this target outside the repo.
+ :param dependencies: List of :class:`pants.base.target.Target` instances
+   this target depends on.
+ :type dependencies: list of targets
+ :param excludes: List of :class:`pants.targets.exclude.Exclude` instances
+   to filter this target's transitive dependencies against
+ :param resources: An optional list of paths (DEPRECATED) or ``resources``
+   targets containing resources that belong on this library's classpath.
+ :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
+
+**Methods:**
+
+ .. py:method:: with_description(description)
+
+  Set a human-readable description of this target.
+  
+  :param description: Descriptive string
+
+.. _bdict_junit_tests:
+
+junit_tests
+-------------------------------------------------------------------------------
+
+.. py:function:: junit_tests(name, sources=None, dependencies=None, excludes=None, resources=None, exclusives=None)
+
+ Tests JVM sources with JUnit.
+
+
+ :param string name: The name of this target, which combined with this
+   build file defines the target :class:`pants.base.address.Address`.
+ :param sources: A list of filenames representing the source code
+   this library is compiled from.
+ :type sources: list of strings
+ :param Artifact provides:
+   The :class:`pants.targets.artifact.Artifact`
+   to publish that represents this target outside the repo.
+ :param dependencies: List of :class:`pants.base.target.Target` instances
+   this target depends on.
+ :type dependencies: list of targets
+ :param excludes: List of :class:`pants.targets.exclude.Exclude` instances
+   to filter this target's transitive dependencies against.
+ :param resources: An optional list of ``resources`` targets containing text
+   file resources to place in this module's jar.
+ :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
 
 **Methods:**
 
@@ -1356,25 +1378,6 @@ source_root
 
 
 
-
-.. _bdict_python_test_suite:
-
-python_test_suite
--------------------------------------------------------------------------------
-
-.. py:function:: python_test_suite(name, dependencies=None)
-
- Tests one or more python test targets.
-
-
-
-**Methods:**
-
- .. py:method:: with_description(description)
-
-  Set a human-readable description of this target.
-  
-  :param description: Descriptive string
 
 
 

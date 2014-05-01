@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pants.targets.python_tests &mdash; pants 0.1 documentation</title>
+  <title>pants.tasks.nailgun_task &mdash; pants 0.1 documentation</title>
   
 
   
@@ -367,82 +367,127 @@ body a.icon-home:hover{
         <div class="rst-content">
           <ul class="wy-breadcrumbs">
   <li><a href="../../../index.html">Docs</a> &raquo;</li>
-  <li><a href="">pants.targets.python_tests</a></li>
+  <li><a href="">pants.tasks.nailgun_task</a></li>
   
 </ul>
 <hr/>
 
           
-  <h1>Source code for pants.targets.python_tests</h1><div class="highlight"><pre>
+  <h1>Source code for pants.tasks.nailgun_task</h1><div class="highlight"><pre>
 <span class="c"># Copyright 2014 Pants project contributors (see CONTRIBUTORS.md).</span>
 <span class="c"># Licensed under the Apache License, Version 2.0 (see LICENSE).</span>
 
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="p">(</span><span class="n">nested_scopes</span><span class="p">,</span> <span class="n">generators</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">with_statement</span><span class="p">,</span>
                         <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">twitter.common.collections</span> <span class="kn">import</span> <span class="n">maybe_list</span>
-<span class="kn">from</span> <span class="nn">twitter.common.quantity</span> <span class="kn">import</span> <span class="n">Amount</span><span class="p">,</span> <span class="n">Time</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
 
-<span class="kn">from</span> <span class="nn">pants.base.build_manual</span> <span class="kn">import</span> <span class="n">manual</span>
-<span class="kn">from</span> <span class="nn">pants.targets.python_target</span> <span class="kn">import</span> <span class="n">PythonTarget</span>
+<span class="kn">from</span> <span class="nn">pants.java</span> <span class="kn">import</span> <span class="n">util</span>
+<span class="kn">from</span> <span class="nn">pants.java.distribution</span> <span class="kn">import</span> <span class="n">Distribution</span>
+<span class="kn">from</span> <span class="nn">pants.java.executor</span> <span class="kn">import</span> <span class="n">SubprocessExecutor</span>
+<span class="kn">from</span> <span class="nn">pants.java.nailgun_executor</span> <span class="kn">import</span> <span class="n">NailgunExecutor</span>
+<span class="kn">from</span> <span class="nn">pants.tasks</span> <span class="kn">import</span> <span class="n">Task</span><span class="p">,</span> <span class="n">TaskError</span>
+<span class="kn">from</span> <span class="nn">pants.tasks.console_task</span> <span class="kn">import</span> <span class="n">ConsoleTask</span>
 
 
-<span class="nd">@manual.builddict</span><span class="p">(</span><span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;python&quot;</span><span class="p">])</span>
-<div class="viewcode-block" id="PythonTests"><a class="viewcode-back" href="../../../targets.html#pants.targets.python_tests.PythonTests">[docs]</a><span class="k">class</span> <span class="nc">PythonTests</span><span class="p">(</span><span class="n">PythonTarget</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;Tests a Python library.&quot;&quot;&quot;</span>
+<span class="k">class</span> <span class="nc">NailgunTask</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
 
-  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-               <span class="n">name</span><span class="p">,</span>
-               <span class="n">sources</span><span class="p">,</span>
-               <span class="n">resources</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-               <span class="n">dependencies</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-               <span class="n">timeout</span><span class="o">=</span><span class="n">Amount</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">Time</span><span class="o">.</span><span class="n">MINUTES</span><span class="p">),</span>
-               <span class="n">coverage</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-               <span class="n">soft_dependencies</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
-               <span class="n">entry_point</span><span class="o">=</span><span class="s">&#39;pytest&#39;</span><span class="p">,</span>
-               <span class="n">exclusives</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    :param name: See PythonLibrary target</span>
-<span class="sd">    :param sources: A list of filenames representing the source code</span>
-<span class="sd">      this library is compiled from.</span>
-<span class="sd">    :type sources: list of strings</span>
-<span class="sd">    :param resources: See PythonLibrary target</span>
-<span class="sd">    :param dependencies: List of :class:`pants.base.target.Target` instances</span>
-<span class="sd">      this target depends on.</span>
-<span class="sd">    :type dependencies: list of targets</span>
-<span class="sd">    :param timeout: Amount of time before this test should be considered timed-out.</span>
-<span class="sd">    :param coverage: the module(s) whose coverage should be generated, e.g.</span>
-<span class="sd">      &#39;twitter.common.log&#39; or [&#39;twitter.common.log&#39;, &#39;twitter.common.http&#39;]</span>
-<span class="sd">    :param soft_dependencies: Whether or not we should ignore dependency resolution</span>
-<span class="sd">      errors for this test.</span>
-<span class="sd">    :param entry_point: The entry point to use to run the tests.</span>
-<span class="sd">    :param dict exclusives: An optional dict of exclusives tags. See CheckExclusives for details.</span>
+  <span class="n">_DAEMON_OPTION_PRESENT</span> <span class="o">=</span> <span class="bp">False</span>
+
+  <span class="nd">@staticmethod</span>
+  <span class="k">def</span> <span class="nf">killall</span><span class="p">(</span><span class="n">logger</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">everywhere</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Kills all nailgun servers launched by pants in the current repo.</span>
+
+<span class="sd">    Returns ``True`` if all nailguns were successfully killed, ``False`` otherwise.</span>
+
+<span class="sd">    :param logger: a callable that accepts a message string describing the killed nailgun process</span>
+<span class="sd">    :param bool everywhere: ``True`` to kill all nailguns servers launched by pants on this machine</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_timeout</span> <span class="o">=</span> <span class="n">timeout</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_soft_dependencies</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">soft_dependencies</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_coverage</span> <span class="o">=</span> <span class="n">maybe_list</span><span class="p">(</span><span class="n">coverage</span><span class="p">)</span> <span class="k">if</span> <span class="n">coverage</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="p">[]</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_entry_point</span> <span class="o">=</span> <span class="n">entry_point</span>
-    <span class="nb">super</span><span class="p">(</span><span class="n">PythonTests</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">sources</span><span class="p">,</span> <span class="n">resources</span><span class="p">,</span> <span class="n">dependencies</span><span class="p">,</span> <span class="n">exclusives</span><span class="o">=</span><span class="n">exclusives</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">add_labels</span><span class="p">(</span><span class="s">&#39;python&#39;</span><span class="p">,</span> <span class="s">&#39;tests&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">NailgunExecutor</span><span class="o">.</span><span class="n">killall</span><span class="p">:</span>
+      <span class="k">return</span> <span class="bp">False</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">NailgunExecutor</span><span class="o">.</span><span class="n">killall</span><span class="p">(</span><span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span> <span class="n">everywhere</span><span class="o">=</span><span class="n">everywhere</span><span class="p">)</span>
+
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span> <span class="nf">setup_parser</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">option_group</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">mkflag</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">NailgunTask</span><span class="o">.</span><span class="n">_DAEMON_OPTION_PRESENT</span><span class="p">:</span>
+      <span class="n">option_group</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s">&quot;--ng-daemons&quot;</span><span class="p">,</span> <span class="s">&quot;--no-ng-daemons&quot;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&quot;nailgun_daemon&quot;</span><span class="p">,</span>
+                                     <span class="n">default</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&quot;callback&quot;</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="n">mkflag</span><span class="o">.</span><span class="n">set_bool</span><span class="p">,</span>
+                                     <span class="n">help</span><span class="o">=</span><span class="s">&quot;[</span><span class="si">%d</span><span class="s">efault] Use nailgun daemons to execute java tasks.&quot;</span><span class="p">)</span>
+      <span class="n">NailgunTask</span><span class="o">.</span><span class="n">_DAEMON_OPTION_PRESENT</span> <span class="o">=</span> <span class="bp">True</span>
+
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">workdir</span><span class="p">,</span> <span class="n">minimum_version</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">maximum_version</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">jdk</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">NailgunTask</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">workdir</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_executor_workdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">getdefault</span><span class="p">(</span><span class="s">&#39;pants_workdir&#39;</span><span class="p">),</span> <span class="s">&#39;ng&#39;</span><span class="p">,</span>
+                                          <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_nailgun_bootstrap_key</span> <span class="o">=</span> <span class="s">&#39;nailgun&#39;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">register_jvm_tool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nailgun_bootstrap_key</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;:nailgun-server&#39;</span><span class="p">])</span>
+
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_dist</span> <span class="o">=</span> <span class="n">Distribution</span><span class="o">.</span><span class="n">cached</span><span class="p">(</span><span class="n">minimum_version</span><span class="o">=</span><span class="n">minimum_version</span><span class="p">,</span>
+                                       <span class="n">maximum_version</span><span class="o">=</span><span class="n">maximum_version</span><span class="p">,</span> <span class="n">jdk</span><span class="o">=</span><span class="n">jdk</span><span class="p">)</span>
+      <span class="c"># TODO(John Sirois): Use a context timer when AWESOME-1265 gets merged.</span>
+      <span class="n">context</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Located java distribution in </span><span class="si">%.3f</span><span class="s">s&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">))</span>
+    <span class="k">except</span> <span class="n">Distribution</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="n">TaskError</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">create_java_executor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Create java executor that uses this task&#39;s ng daemon, if allowed.</span>
+
+<span class="sd">    Call only in execute() or later. TODO: Enforce this.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">nailgun_daemon</span><span class="p">:</span>
+      <span class="n">classpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">pathsep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tool_classpath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nailgun_bootstrap_key</span><span class="p">))</span>
+      <span class="n">client</span> <span class="o">=</span> <span class="n">NailgunExecutor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_executor_workdir</span><span class="p">,</span> <span class="n">classpath</span><span class="p">,</span> <span class="n">distribution</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_dist</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">client</span> <span class="o">=</span> <span class="n">SubprocessExecutor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dist</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">client</span>
 
   <span class="nd">@property</span>
-  <span class="k">def</span> <span class="nf">timeout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timeout</span>
+  <span class="k">def</span> <span class="nf">jvm_args</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Default jvm args the nailgun will be launched with.</span>
 
-  <span class="nd">@property</span>
-  <span class="k">def</span> <span class="nf">coverage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coverage</span>
+<span class="sd">    By default no special jvm args are used.  If a value for ``jvm_args`` is specified in pants.ini</span>
+<span class="sd">    globally in the ``DEFAULT`` section or in the ``nailgun`` section, then that list will be used.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">getlist</span><span class="p">(</span><span class="s">&#39;nailgun&#39;</span><span class="p">,</span> <span class="s">&#39;jvm_args&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[])</span>
 
-  <span class="nd">@property</span>
-  <span class="k">def</span> <span class="nf">entry_point</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_entry_point</span>
+  <span class="k">def</span> <span class="nf">runjava</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">classpath</span><span class="p">,</span> <span class="n">main</span><span class="p">,</span> <span class="n">jvm_options</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">workunit_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+              <span class="n">workunit_labels</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Runs the java main using the given classpath and args.</span>
 
-</div>
-<div class="viewcode-block" id="PythonTestSuite"><a class="viewcode-back" href="../../../targets.html#pants.targets.python_tests.PythonTestSuite">[docs]</a><span class="k">class</span> <span class="nc">PythonTestSuite</span><span class="p">(</span><span class="n">PythonTarget</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;Tests one or more python test targets.&quot;&quot;&quot;</span>
+<span class="sd">    If --no-ng-daemons is specified then the java main is run in a freshly spawned subprocess,</span>
+<span class="sd">    otherwise a persistent nailgun server dedicated to this Task subclass is used to speed up</span>
+<span class="sd">    amortized run times.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">executor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_java_executor</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">util</span><span class="o">.</span><span class="n">execute_java</span><span class="p">(</span><span class="n">classpath</span><span class="o">=</span><span class="n">classpath</span><span class="p">,</span>
+                               <span class="n">main</span><span class="o">=</span><span class="n">main</span><span class="p">,</span>
+                               <span class="n">jvm_options</span><span class="o">=</span><span class="n">jvm_options</span><span class="p">,</span>
+                               <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span>
+                               <span class="n">executor</span><span class="o">=</span><span class="n">executor</span><span class="p">,</span>
+                               <span class="n">workunit_factory</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">new_workunit</span><span class="p">,</span>
+                               <span class="n">workunit_name</span><span class="o">=</span><span class="n">workunit_name</span><span class="p">,</span>
+                               <span class="n">workunit_labels</span><span class="o">=</span><span class="n">workunit_labels</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">executor</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="n">TaskError</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
 
-  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">dependencies</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-    <span class="nb">super</span><span class="p">(</span><span class="n">PythonTestSuite</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">(),</span> <span class="p">(),</span> <span class="n">dependencies</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="NailgunKillall"><a class="viewcode-back" href="../../../tasks.html#pants.tasks.nailgun_task.NailgunKillall">[docs]</a><span class="k">class</span> <span class="nc">NailgunKillall</span><span class="p">(</span><span class="n">ConsoleTask</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;A task to manually kill nailguns.&quot;&quot;&quot;</span>
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span> <span class="nf">setup_parser</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">option_group</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">mkflag</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">NailgunKillall</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">setup_parser</span><span class="p">(</span><span class="n">option_group</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">mkflag</span><span class="p">)</span>
+    <span class="n">option_group</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="n">mkflag</span><span class="p">(</span><span class="s">&quot;everywhere&quot;</span><span class="p">),</span> <span class="n">dest</span><span class="o">=</span><span class="s">&quot;ng_killall_everywhere&quot;</span><span class="p">,</span>
+                            <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&quot;store_true&quot;</span><span class="p">,</span>
+                            <span class="n">help</span><span class="o">=</span><span class="s">&quot;[</span><span class="si">%d</span><span class="s">efault] Kill all nailguns servers launched by pants for &quot;</span>
+                                 <span class="s">&quot;all workspaces on the system.&quot;</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
+    <span class="n">NailgunTask</span><span class="o">.</span><span class="n">killall</span><span class="p">(</span><span class="n">everywhere</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">ng_killall_everywhere</span><span class="p">)</span></div>
 </pre></div>
 
           <footer>
