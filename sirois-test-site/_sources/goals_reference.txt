@@ -18,6 +18,7 @@ goal.
 
   * :ref:`gref_phase_goals` - List all documented goals.
   * :ref:`gref_phase_targets` - List all target types.
+  * :ref:`gref_phase_builddict` - None
   * :ref:`gref_phase_invalidate` - Invalidate all targets.
   * :ref:`gref_phase_ng-killall` - Kill running nailgun servers.
   * :ref:`gref_phase_clean-all` - Clean all build output.
@@ -25,6 +26,7 @@ goal.
   * :ref:`gref_phase_server` - Run the pants reporting server.
   * :ref:`gref_phase_killserver` - Kill the reporting server.
   * :ref:`gref_phase_bootstrap` - Bootstrap tools needed for building.
+  * :ref:`gref_phase_setup` - Setup the target's build environment.
   * :ref:`gref_phase_gen` - Generate code.
   * :ref:`gref_phase_check-exclusives` - Check for exclusivity violations.
   * :ref:`gref_phase_resolve` - Resolve dependencies and produce dependency reports.
@@ -35,12 +37,13 @@ goal.
   * :ref:`gref_phase_markdown` - Generate html from markdown docs.
   * :ref:`gref_phase_publish` - Publish artifacts.
   * :ref:`gref_phase_jar` - Create one or more jars.
-  * :ref:`gref_phase_check_published_deps` - Find references to outdated artifacts.
-  * :ref:`gref_phase_test` - Test compiled code.
-  * :ref:`gref_phase_bench` - None
   * :ref:`gref_phase_binary` - Create a jvm binary jar.
   * :ref:`gref_phase_bundle` - Create an application bundle from binary targets.
+  * :ref:`gref_phase_check_published_deps` - Find references to outdated artifacts.
   * :ref:`gref_phase_detect-duplicates` - Detect duplicate classes and resources on the classpath.
+  * :ref:`gref_phase_buildlint` - None
+  * :ref:`gref_phase_test` - Test compiled code.
+  * :ref:`gref_phase_bench` - None
   * :ref:`gref_phase_run` - Run a (currently JVM only) binary target.
   * :ref:`gref_phase_run-dirty` - Run a (currently JVM only) binary target, skipping compilation.
   * :ref:`gref_phase_repl` - Run a (currently Scala only) REPL.
@@ -48,12 +51,9 @@ goal.
   * :ref:`gref_phase_filedeps` - Print out the source and BUILD files the target depends on.
   * :ref:`gref_phase_pathdeps` - Print out all paths containing BUILD files the target depends on.
   * :ref:`gref_phase_list` - List available BUILD targets.
-  * :ref:`gref_phase_buildlint` - None
-  * :ref:`gref_phase_builddict` - None
   * :ref:`gref_phase_idea` - Create an IntelliJ IDEA project from the given targets.
   * :ref:`gref_phase_eclipse` - Create an Eclipse project from the given targets.
   * :ref:`gref_phase_provides` - Print the symbols provided by the given targets.
-  * :ref:`gref_phase_setup` - Setup the target's build environment.
   * :ref:`gref_phase_path` - Find a dependency path from one target to another.
   * :ref:`gref_phase_paths` - Find all dependency paths from one target to another.
   * :ref:`gref_phase_dependees` - Print the target's dependees.
@@ -98,6 +98,19 @@ List all target types.
   help about.
 
 
+.. _gref_phase_builddict:
+
+builddict
+-----------------------------------------------------------------------------
+
+
+**Installed tasks:**
+
+* Implemented by class ``BuildBuildDictionary``
+
+  Generate documentation for the Sphinx site.
+
+
 .. _gref_phase_invalidate:
 
 invalidate
@@ -109,6 +122,7 @@ Invalidate all targets.
 
 * Implemented by class ``Invalidator``
 
+  Invalidate the entire build.
 
 
 .. _gref_phase_ng-killall:
@@ -122,6 +136,7 @@ Kill running nailgun servers.
 
 * Implemented by class ``NailgunKillall``
 
+  A task to manually kill nailguns.
 
 
 .. _gref_phase_clean-all:
@@ -135,6 +150,7 @@ Clean all build output.
 
 * Implemented by class ``Cleaner``
 
+  Clean all current build products.
 
 
 .. _gref_phase_clean-all-async:
@@ -148,6 +164,7 @@ Clean all build output in a background process.
 
 * Implemented by class ``AsyncCleaner``
 
+  Clean all current build products in a background process.
 
 
 .. _gref_phase_server:
@@ -161,6 +178,7 @@ Run the pants reporting server.
 
 * Implemented by class ``RunServer``
 
+  Runs the reporting server.
 
 
 .. _gref_phase_killserver:
@@ -174,6 +192,7 @@ Kill the reporting server.
 
 * Implemented by class ``KillServer``
 
+  Kills the reporting server.
 
 
 .. _gref_phase_bootstrap:
@@ -187,6 +206,23 @@ Bootstrap tools needed for building.
 
 * Implemented by class ``BootstrapJvmTools``
 
+
+
+.. _gref_phase_setup:
+
+setup
+-----------------------------------------------------------------------------
+
+Setup the target's build environment.
+
+**Installed tasks:**
+
+* Implemented by class ``SetupPythonEnvironment``
+
+  Establishes the python intepreter(s) for downstream Python tasks e.g. Resolve, Run, PytestRun.
+
+    Populates the product namespace (for typename = 'python'):
+      'intepreters': ordered list of PythonInterpreter objects
 
 
 .. _gref_phase_gen:
@@ -298,13 +334,13 @@ Compile source code.
 
 **Installed tasks:**
 
-* Implemented by class ``ScalaCompile``
-
-
 * Implemented by class ``AptCompile``
 
 
 * Implemented by class ``JavaCompile``
+
+
+* Implemented by class ``ScalaCompile``
 
 
 
@@ -441,47 +477,6 @@ Create one or more jars.
   Jars jvm libraries and optionally their sources and their docs.
 
 
-.. _gref_phase_check_published_deps:
-
-check_published_deps
------------------------------------------------------------------------------
-
-Find references to outdated artifacts.
-
-**Installed tasks:**
-
-* Implemented by class ``CheckPublishedDeps``
-
-
-
-.. _gref_phase_test:
-
-test
------------------------------------------------------------------------------
-
-Test compiled code.
-
-**Installed tasks:**
-
-* Implemented by class ``JUnitRun``
-
-
-* Implemented by class ``SpecsRun``
-
-
-
-.. _gref_phase_bench:
-
-bench
------------------------------------------------------------------------------
-
-
-**Installed tasks:**
-
-* Implemented by class ``BenchmarkRun``
-
-
-
 .. _gref_phase_binary:
 
 binary
@@ -513,6 +508,19 @@ Create an application bundle from binary targets.
 
 
 
+.. _gref_phase_check_published_deps:
+
+check_published_deps
+-----------------------------------------------------------------------------
+
+Find references to outdated artifacts.
+
+**Installed tasks:**
+
+* Implemented by class ``CheckPublishedDeps``
+
+
+
 .. _gref_phase_detect-duplicates:
 
 detect-duplicates
@@ -525,6 +533,46 @@ Detect duplicate classes and resources on the classpath.
 * Implemented by class ``DuplicateDetector``
 
   Detect classes and resources with the same qualified name on the classpath.
+
+
+.. _gref_phase_buildlint:
+
+buildlint
+-----------------------------------------------------------------------------
+
+
+**Installed tasks:**
+
+* Implemented by class ``BuildLint``
+
+
+
+.. _gref_phase_test:
+
+test
+-----------------------------------------------------------------------------
+
+Test compiled code.
+
+**Installed tasks:**
+
+* Implemented by class ``JUnitRun``
+
+
+* Implemented by class ``SpecsRun``
+
+
+
+.. _gref_phase_bench:
+
+bench
+-----------------------------------------------------------------------------
+
+
+**Installed tasks:**
+
+* Implemented by class ``BenchmarkRun``
+
 
 
 .. _gref_phase_run:
@@ -621,31 +669,6 @@ List available BUILD targets.
   If no targets are specified, lists all targets in the workspace.
 
 
-.. _gref_phase_buildlint:
-
-buildlint
------------------------------------------------------------------------------
-
-
-**Installed tasks:**
-
-* Implemented by class ``BuildLint``
-
-
-
-.. _gref_phase_builddict:
-
-builddict
------------------------------------------------------------------------------
-
-
-**Installed tasks:**
-
-* Implemented by class ``BuildBuildDictionary``
-
-  Generate documentation for the Sphinx site.
-
-
 .. _gref_phase_idea:
 
 idea
@@ -683,23 +706,6 @@ Print the symbols provided by the given targets.
 
 * Implemented by class ``Provides``
 
-
-
-.. _gref_phase_setup:
-
-setup
------------------------------------------------------------------------------
-
-Setup the target's build environment.
-
-**Installed tasks:**
-
-* Implemented by class ``SetupPythonEnvironment``
-
-  Establishes the python intepreter(s) for downstream Python tasks e.g. Resolve, Run, PytestRun.
-
-    Populates the product namespace (for typename = 'python'):
-      'intepreters': ordered list of PythonInterpreter objects
 
 
 .. _gref_phase_path:
