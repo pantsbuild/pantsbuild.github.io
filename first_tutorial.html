@@ -328,7 +328,7 @@ body a.icon-home:hover{
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pants_ini_reference.html">pants.ini Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="pants_ini_reference.html#default-section">DEFAULT section</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pants_ini_reference.html#idea-section">idea section</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pants_ini_reference.html#configref-section-idea">idea section</a></li>
 </ul>
 </li>
 </ul>
@@ -447,7 +447,7 @@ on another target containing the &#8220;library&#8221; code to test; to build th
 Pants also must build the library code.</p>
 <p class="last">You can specify more than one target on a command line. Pants will carry out
 its goals on all specified targets. E.g., you might use this to generate an Eclipse
-project based on Pingpong&#8217;s source and tests.</p>
+project based on Hello World&#8217;s source and tests.</p>
 </dd>
 </dl>
 <div class="section" id="output">
@@ -458,7 +458,7 @@ project based on Pingpong&#8217;s source and tests.</p>
 <dt><tt class="docutils literal"><span class="pre">dist/</span></tt></dt>
 <dd>By default, build outputs go in the <tt class="docutils literal"><span class="pre">dist/</span></tt> directory. So far, you&#8217;ve
 just run the <tt class="docutils literal"><span class="pre">test</span></tt> goal, which doesn&#8217;t output a file. But if you&#8217;d
-instead invoked, for example, the <tt class="docutils literal"><span class="pre">bundle</span></tt> goal on a <tt class="docutils literal"><span class="pre">jvm_binary</span></tt>
+instead invoked, for example, the <tt class="docutils literal"><span class="pre">bundle</span></tt> goal on a <tt class="docutils literal"><span class="pre">jvm_app</span></tt>
 target, Pants would have populated this directory with many JVM <tt class="docutils literal"><span class="pre">.jar</span></tt>
 files.</dd>
 <dt><tt class="docutils literal"><span class="pre">.pants.d/</span></tt></dt>
@@ -521,13 +521,16 @@ To get this, instead of just invoking <tt class="docutils literal"><span class="
 <p>We told pants what target to build, but where are these defined? Scattered
 around the source tree are <tt class="docutils literal"><span class="pre">BUILD</span></tt> files. These <tt class="docutils literal"><span class="pre">BUILD</span></tt> files define
 targets. For example, this code snippet of
-<tt class="docutils literal"><span class="pre">java/com/pants/examples/hello/main/BUILD</span></tt> defines the binary
-program we compiled and ran.  This target is named <tt class="docutils literal"><span class="pre">main</span></tt> and
-is of type <tt class="docutils literal"><span class="pre">jvm_binary</span></tt>:</p>
+<tt class="docutils literal"><span class="pre">java/com/pants/examples/hello/main/BUILD</span></tt> defines two targets:
+the app we ran and the binary that contains its code.
+These targets are named <tt class="docutils literal"><span class="pre">main</span></tt> (of type <tt class="docutils literal"><span class="pre">jvm_app</span></tt>)
+and and <tt class="docutils literal"><span class="pre">main-bin</span></tt> (of type <tt class="docutils literal"><span class="pre">jvm_binary</span></tt>):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">jvm_app</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;main&#39;</span><span class="p">,</span>
   <span class="n">binary</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;:main-bin&#39;</span><span class="p">),</span>
   <span class="n">bundles</span><span class="o">=</span><span class="n">bundle</span><span class="p">(</span><span class="n">relative_to</span><span class="o">=</span><span class="s">&#39;config&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">globs</span><span class="p">(</span><span class="s">&#39;config/*&#39;</span><span class="p">))</span>
 <span class="p">)</span>
+
+<span class="c"># The binary, the &quot;runnable&quot; part:</span>
 
 <span class="n">jvm_binary</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&#39;main-bin&#39;</span><span class="p">,</span>
   <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
@@ -539,12 +542,12 @@ is of type <tt class="docutils literal"><span class="pre">jvm_binary</span></tt>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>That <tt class="docutils literal"><span class="pre">dependencies</span></tt> is interesting. This build target depends on
-another build target; the <tt class="docutils literal"><span class="pre">dependencies</span></tt> lists depended-upon targets.
-To build a runnable Java binary, we need to first compile its dependencies.</p>
-<p>The <tt class="docutils literal"><span class="pre">main</span></tt> binary has one dependency,
-<tt class="docutils literal"><span class="pre">pants('src/java/com/pants/examples/hello/greet')</span></tt>.
-That src/.../greet is the <em>address</em> of another target. Addresses look,
+<p>That <tt class="docutils literal"><span class="pre">dependencies</span></tt> is interesting. The <tt class="docutils literal"><span class="pre">main-bin</span></tt> build target depends on
+other build targets; its <tt class="docutils literal"><span class="pre">dependencies</span></tt> lists those.
+To build a runnable Java binary, we need to first compile its dependencies.
+The <tt class="docutils literal"><span class="pre">main-bin</span></tt> binary has two dependencies,
+<tt class="docutils literal"><span class="pre">pants('src/java/com/pants/examples/hello/greet')</span></tt>
+is the <em>address</em> of another target. Addresses look,
 roughly, like <tt class="docutils literal"><span class="pre">path/to/BUILD:targetname</span></tt>.
 We can see this build target in the <tt class="docutils literal"><span class="pre">.../hello/greet/BUILD</span></tt> file:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">java_library</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&#39;greet&#39;</span><span class="p">,</span>

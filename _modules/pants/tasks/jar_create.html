@@ -327,7 +327,7 @@ body a.icon-home:hover{
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../pants_ini_reference.html">pants.ini Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../pants_ini_reference.html#default-section">DEFAULT section</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../pants_ini_reference.html#idea-section">idea section</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../pants_ini_reference.html#configref-section-idea">idea section</a></li>
 </ul>
 </li>
 </ul>
@@ -391,27 +391,18 @@ body a.icon-home:hover{
 <span class="kn">from</span> <span class="nn">pants.base.build_environment</span> <span class="kn">import</span> <span class="n">get_buildroot</span>
 <span class="kn">from</span> <span class="nn">pants.fs.fs</span> <span class="kn">import</span> <span class="n">safe_filename</span>
 <span class="kn">from</span> <span class="nn">pants.java.jar</span> <span class="kn">import</span> <span class="n">Manifest</span><span class="p">,</span> <span class="n">open_jar</span>
-<span class="kn">from</span> <span class="nn">pants.targets.jvm_binary</span> <span class="kn">import</span> <span class="n">JvmBinary</span>
 <span class="kn">from</span> <span class="nn">pants.targets.scala_library</span> <span class="kn">import</span> <span class="n">ScalaLibrary</span>
 <span class="kn">from</span> <span class="nn">pants.tasks</span> <span class="kn">import</span> <span class="n">Task</span><span class="p">,</span> <span class="n">TaskError</span>
 <span class="kn">from</span> <span class="nn">pants.tasks.javadoc_gen</span> <span class="kn">import</span> <span class="n">javadoc</span>
 <span class="kn">from</span> <span class="nn">pants.tasks.scaladoc_gen</span> <span class="kn">import</span> <span class="n">scaladoc</span>
 
 
-
-<span class="n">DEFAULT_CONFS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;default&#39;</span><span class="p">]</span>
-
-
-<span class="k">def</span> <span class="nf">is_binary</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
-  <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">JvmBinary</span><span class="p">)</span>
-
-
 <span class="k">def</span> <span class="nf">is_java_library</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
-  <span class="k">return</span> <span class="n">target</span><span class="o">.</span><span class="n">has_sources</span><span class="p">(</span><span class="s">&#39;.java&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_binary</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">target</span><span class="o">.</span><span class="n">has_sources</span><span class="p">(</span><span class="s">&#39;.java&#39;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">is_scala_library</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
-  <span class="k">return</span> <span class="n">target</span><span class="o">.</span><span class="n">has_sources</span><span class="p">(</span><span class="s">&#39;.scala&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_binary</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">target</span><span class="o">.</span><span class="n">has_sources</span><span class="p">(</span><span class="s">&#39;.scala&#39;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">is_jvm_library</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
@@ -466,7 +457,6 @@ body a.icon-home:hover{
     <span class="n">products</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">products</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">transitive</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">jar_create_transitive</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">confs</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">getlist</span><span class="p">(</span><span class="s">&#39;jar-create&#39;</span><span class="p">,</span> <span class="s">&#39;confs&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">DEFAULT_CONFS</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">compression</span> <span class="o">=</span> <span class="n">ZIP_DEFLATED</span> <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">jar_create_compressed</span> <span class="k">else</span> <span class="n">ZIP_STORED</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">jar_classes</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">jar_create_classes</span> <span class="ow">or</span> <span class="n">products</span><span class="o">.</span><span class="n">isrequired</span><span class="p">(</span><span class="s">&#39;jars&#39;</span><span class="p">)</span>

@@ -328,7 +328,7 @@ body a.icon-home:hover{
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pants_ini_reference.html">pants.ini Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="pants_ini_reference.html#default-section">DEFAULT section</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pants_ini_reference.html#idea-section">idea section</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pants_ini_reference.html#configref-section-idea">idea section</a></li>
 </ul>
 </li>
 </ul>
@@ -394,11 +394,11 @@ all files necessary to run the application. The <tt class="docutils literal"><sp
 used to create these deployable bundles from either <tt class="docutils literal"><span class="pre">jvm_binary</span></tt>
 or <tt class="docutils literal"><span class="pre">jvm_app</span></tt> targets.</p>
 <p>Bundling a <tt class="docutils literal"><span class="pre">jvm_binary</span></tt> target is appropriate when your application
-is entirely jar-based; that is, its entirely class files and resources
-packaged inside the jars themselves. If you application requires
+is entirely jar-based; that is, it&#8217;s entirely class files and resources
+packaged inside the jars themselves. If your application requires
 &#8220;extra stuff&#8221; (e.g.: start scripts, config files) use a <tt class="docutils literal"><span class="pre">jvm_app</span></tt>
-which allows you to include files in the bundle directory that are
-supplemental to the binary jar and its dependencies.
+which allows you to include files in the bundle directory that
+supplement the binary jar and its dependencies.
 You can learn <a class="reference internal" href="#jvm-bundles"><em>more about bundles</em></a>.</p>
 </div></blockquote>
 <p><strong>Runnable Binary</strong></p>
@@ -412,7 +412,7 @@ all you need to run the binary. Use <tt class="docutils literal"><span class="pr
 compile its code; <tt class="docutils literal"><span class="pre">./pants</span> <span class="pre">goal</span> <span class="pre">run</span></tt> to run it &#8220;in place&#8221;.</div></blockquote>
 <p><strong>Importable Code</strong></p>
 <blockquote>
-<div><p><tt class="docutils literal"><span class="pre">java_library</span></tt> BUILD targets make Java source code <tt class="docutils literal"><span class="pre">import</span></tt>able. The
+<div><p><tt class="docutils literal"><span class="pre">java_library</span></tt> BUILD targets make Java source code <tt class="docutils literal"><span class="pre">import</span></tt>-able. The
 rule of thumb is that each directory of <tt class="docutils literal"><span class="pre">.java</span></tt> files has a <tt class="docutils literal"><span class="pre">BUILD</span></tt> file
 with a <tt class="docutils literal"><span class="pre">java_library</span></tt> target. A JVM target that has a <tt class="docutils literal"><span class="pre">java_library</span></tt> in
 its <tt class="docutils literal"><span class="pre">dependencies</span></tt> can import its code. <tt class="docutils literal"><span class="pre">scala_library</span></tt> targets are
@@ -422,7 +422,7 @@ reference to published code; these <tt class="docutils literal"><span class="pre
 <a class="reference internal" href="3rdparty.html"><em>directory called 3rdparty</em></a>.</p>
 <p>Pants can <tt class="docutils literal"><span class="pre">publish</span></tt> a JVM library so code in other repos can use it;
 if the <tt class="docutils literal"><span class="pre">*_library</span></tt> target has a <tt class="docutils literal"><span class="pre">provides</span></tt> parameter, that specifies
-the repo/address at which to publish.</p>
+the repo/address at which to <a class="reference internal" href="publish.html"><em>publish</em></a>.</p>
 <p>An <tt class="docutils literal"><span class="pre">annotation_processor</span></tt> BUILD target defines a Java library
 one containing one or more annotation processors.</p>
 </div></blockquote>
@@ -443,31 +443,84 @@ Java code from protobuffer source.</div></blockquote>
 </div>
 <div class="section" id="build-for-a-simple-binary">
 <h2>BUILD for a Simple Binary<a class="headerlink" href="#build-for-a-simple-binary" title="Permalink to this headline">¶</a></h2>
-<p>The <a class="reference external" href="https://github.com/pantsbuild/pants/tree/master/src/java/com/pants/examples/pingpong">Twitter Commons Java pingpong sample</a>
+<p>The <a class="reference external" href="https://github.com/pantsbuild/pants/tree/master/src/java/com/pants/examples/hello">Pants Build Java hello world sample</a>
 code shows the BUILD file for a simple Java binary (in the <tt class="docutils literal"><span class="pre">main/</span></tt> directory):</p>
-<p>This small program has just one library, a <cite>java_library</cite>.
-The rule of thumb is that
+<div class="highlight-python"><div class="highlight"><pre><span class="n">jvm_binary</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&#39;main-bin&#39;</span><span class="p">,</span>
+  <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;src/java/com/pants/examples/hello/greet&#39;</span><span class="p">),</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;3rdparty:log4j&#39;</span><span class="p">),</span>
+  <span class="p">],</span>
+  <span class="n">source</span> <span class="o">=</span> <span class="s">&#39;HelloMain.java&#39;</span><span class="p">,</span>
+  <span class="n">main</span> <span class="o">=</span> <span class="s">&#39;com.pants.examples.hello.main.HelloMain&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>This small program has just two dependencies. One is a library, a
+<tt class="docutils literal"><span class="pre">java_library</span></tt>, a compiled set of source code from this workspace.
+The other is a &#8220;third party&#8221; dependency, a pre-compiled artifact
+whose source lives somewhere outside the workspace.</p>
+<div class="section" id="depending-on-a-library">
+<h3>Depending on a Library<a class="headerlink" href="#depending-on-a-library" title="Permalink to this headline">¶</a></h3>
+<p>The rule of thumb is that
 each directory of <tt class="docutils literal"><span class="pre">.java</span></tt> or <tt class="docutils literal"><span class="pre">.scala</span></tt> files has a library target. If you
 find
 yourself thinking &#8220;we should move some of this code to another directory,&#8221;
 you probably also want to set up a <tt class="docutils literal"><span class="pre">BUILD`</span> <span class="pre">file</span> <span class="pre">with</span> <span class="pre">a</span> <span class="pre">``java_library</span></tt>
-(or <tt class="docutils literal"><span class="pre">scala_library</span></tt>) target.</p>
-<p>This library depends on other build targets and jars; if your code imports
-something, that implies a <tt class="docutils literal"><span class="pre">BUILD</span></tt> dependency.
-Some of the depended-upon targets come from the same repository; for example
-<tt class="docutils literal"><span class="pre">.../common/application</span></tt>. If we peeked at that <tt class="docutils literal"><span class="pre">BUILD</span></tt> target, we&#8217;d see it
-was another <tt class="docutils literal"><span class="pre">java_library</span></tt>.
-Some of these dependencies are <tt class="docutils literal"><span class="pre">jar</span></tt>s built elsewhere.</p>
+(or <tt class="docutils literal"><span class="pre">scala_library</span></tt>) target. Here we see the library target which
+<tt class="docutils literal"><span class="pre">main-bin</span></tt> depends on. This library target lives in <tt class="docutils literal"><span class="pre">hello/greet/BUILD</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">java_library</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&#39;greet&#39;</span><span class="p">,</span>
+  <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[],</span> <span class="c"># A more realistic example would depend on other libs,</span>
+                     <span class="c"># but this &quot;hello world&quot; is pretty simple.</span>
+  <span class="n">sources</span> <span class="o">=</span> <span class="n">globs</span><span class="p">(</span><span class="s">&#39;*.java&#39;</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>This library could depend on other build targets and artifacts;
+if your code imports
+something, that implies a <tt class="docutils literal"><span class="pre">BUILD</span></tt> dependency.</p>
+</div>
 <div class="section" id="depending-on-a-jar">
 <h3>Depending on a Jar<a class="headerlink" href="#depending-on-a-jar" title="Permalink to this headline">¶</a></h3>
-<p>The <cite>pingpong-lib</cite> example depends on some jars. Instead of compiling
+<p>The <cite>main-bin</cite> example depends a jar, <tt class="docutils literal"><span class="pre">log4j</span></tt>. Instead of compiling
 from source, Pants invokes <cite>ivy</cite> to fetch these jars. To reduce danger
 of version conflicts, we use the <a class="reference internal" href="3rdparty.html"><em>Third-Party Dependencies</em></a> idiom: we keep references
 to these &#8220;third-party&#8221; jars together in <tt class="docutils literal"><span class="pre">BUILD</span></tt> files under the
-<tt class="docutils literal"><span class="pre">3rdparty/jvm/</span></tt> directory. Thus, <tt class="docutils literal"><span class="pre">pingpong-lib</span></tt> has some dependencies like:</p>
-<p>The <tt class="docutils literal"><span class="pre">BUILD</span></tt> files in <tt class="docutils literal"><span class="pre">3rdparty/jvm/</span></tt>, e.g.,
-<tt class="docutils literal"><span class="pre">3rdparty/jvm/com/sun/jersey/BUILD</span></tt>, have targets like:</p>
+<tt class="docutils literal"><span class="pre">3rdparty/</span></tt> directory. Thus, <tt class="docutils literal"><span class="pre">main</span></tt> has dependencies:</p>
+<div class="highlight-python"><div class="highlight"><pre>  <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;src/java/com/pants/examples/hello/greet&#39;</span><span class="p">),</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;3rdparty:log4j&#39;</span><span class="p">),</span>
+  <span class="p">],</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">BUILD</span></tt> files in <tt class="docutils literal"><span class="pre">3rdparty/</span></tt> have targets like:</p>
+<div class="highlight-python"><div class="highlight"><pre>dependencies(name=&#39;log4j&#39;,
+    dependencies=[
+       jar(org=&#39;log4j&#39;, name=&#39;log4j&#39;, rev=&#39;1.2.15&#39;).with_sources()
+         .exclude(org=&#39;jline&#39;, name=&#39;jline&#39;)
+         .exclude(org=&#39;javax.jms&#39;, name=&#39;jms&#39;)
+         .exclude(org=&#39;com.sun.jdmk&#39;, name=&#39;jmxtools&#39;)
+         .exclude(org=&#39;com.sun.jmx&#39;, name=&#39;jmxri&#39;))
+    ])
+</pre></div>
+</div>
 <p>Those <a class="reference internal" href="build_dictionary.html#bdict-jar"><em>jar() things</em></a> are references to public jars.</p>
+</div>
+<div class="section" id="a-test-target">
+<h3>A Test Target<a class="headerlink" href="#a-test-target" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference external" href="https://github.com/pantsbuild/pants/tree/master/tests/java/com/pants/examples/hello">Pants Java Hello World example tests</a>
+are normal JUnit tests. To run them with Pants, we
+need a target for them:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">junit_tests</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;greet&#39;</span><span class="p">,</span>
+  <span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="n">globs</span><span class="p">(</span><span class="s">&#39;*.java&#39;</span><span class="p">)],</span>
+  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;3rdparty:junit&#39;</span><span class="p">),</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;src/java/com/pants/examples/hello/greet&#39;</span><span class="p">),</span>
+  <span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>As with other targets, this one depends on code that it imports. Thus, a typical
+test target depends on the library that it tests.</p>
 </div>
 </div>
 <div class="section" id="the-usual-commands-jvm">
@@ -477,36 +530,42 @@ to these &#8220;third-party&#8221; jars together in <tt class="docutils literal"
 <dd><p class="first">Use the <tt class="docutils literal"><span class="pre">test</span></tt> goal with the targets you&#8217;re interested in. If they are
 test targets, Pants runs the tests. If they aren&#8217;t test targets, Pants will
 still compile them since it knows it must compile before it can test.</p>
-<p><tt class="docutils literal"><span class="pre">pants</span> <span class="pre">goal</span> <span class="pre">test</span> <span class="pre">src/java/com/myorg/myproject</span> <span class="pre">tests/java/com/myorg/myproject</span></tt></p>
-<p><strong>Run just those two troublesome tests:</strong> (assuming they&#8217;re JUnit tests; other
+<p><tt class="docutils literal"><span class="pre">./pants</span> <span class="pre">goal</span> <span class="pre">test</span> <span class="pre">src/java/com/pants/examples/hello/::</span> <span class="pre">tests/java/com/pants/examples/hello/::</span></tt></p>
+<p><strong>Run just that one troublesome test class:</strong> (assuming a JUnit test; other
 frameworks use other flags)</p>
-<p class="last"><tt class="docutils literal"><span class="pre">pants</span> <span class="pre">goal</span> <span class="pre">test</span> <span class="pre">tests/java/com/myorg/myproject</span> <span class="pre">--test-junit-test=com.myorg.myproject.HarshTest</span> <span class="pre">--test-junit-test=com.myorg.myproject.HarsherTest</span></tt></p>
+<p class="last"><tt class="docutils literal"><span class="pre">./pants</span> <span class="pre">goal</span> <span class="pre">test</span> <span class="pre">tests/java/com/pants/examples/hello/::</span> <span class="pre">--test-junit-test=com.pants.examples.hello.greet.GreetingTest</span></tt></p>
 </dd>
 <dt><strong>Packaging Binaries</strong></dt>
 <dd><p class="first">To create a jar containing just the code built by a JVM target, use the
 <cite>jar</cite> goal:</p>
-<div class="highlight-python"><div class="highlight"><pre>pants goal jar src/java/com/myorg/myproject
+<div class="highlight-python"><div class="highlight"><pre>./pants goal jar src/java/com/pants/examples/hello/greet
 </pre></div>
 </div>
-<p>To create &#8220;bundle&#8221; (a runnable thing and its dependencies):</p>
-<div class="highlight-python"><div class="highlight"><pre>./pants goal bundle src/main/java/yourproject --bundle-archive=zip -v
+<p>To create <a class="reference internal" href="#jvm-bundles"><em>bundle</em></a> (a runnable thing and its
+dependencies, perhaps including helper files):</p>
+<div class="highlight-python"><div class="highlight"><pre>./pants goal bundle src/java/com/pants/examples/hello/main --bundle-archive=zip
 </pre></div>
 </div>
 <p class="last">If your bundle is JVM, it&#8217;s a zipfile which can run by means of an
 <tt class="docutils literal"><span class="pre">unzip</span></tt> and seting your <tt class="docutils literal"><span class="pre">CLASSPATH</span></tt> to <tt class="docutils literal"><span class="pre">$BASEDIR/my_service.jar</span></tt>
 (where <tt class="docutils literal"><span class="pre">$BASEDIR</span> <span class="pre">is</span></tt> the directory you&#8217;ve just unzipped).</p>
 </dd>
-<dt><strong>Get Help</strong></dt>
-<dd><p class="first">Get the list of goals:</p>
+</dl>
+<p><strong>Get Help</strong></p>
+<blockquote>
+<div><p>Get basic help:</p>
+<div class="highlight-python"><div class="highlight"><pre>./pants goal help
+</pre></div>
+</div>
+<p>Get a list of goals:</p>
 <div class="highlight-python"><div class="highlight"><pre>./pants goal goals
 </pre></div>
 </div>
 <p>Get help for one goal:</p>
-<div class="last highlight-python"><div class="highlight"><pre>./pants goal help onegoal
+<div class="highlight-python"><div class="highlight"><pre>./pants goal help onegoal
 </pre></div>
 </div>
-</dd>
-</dl>
+</div></blockquote>
 </div>
 <div class="section" id="toolchain">
 <h2>Toolchain<a class="headerlink" href="#toolchain" title="Permalink to this headline">¶</a></h2>
@@ -545,44 +604,70 @@ to another, you probably need to:</p>
 <p>You can enjoy your web service on your development machine&#8217;s <tt class="docutils literal"><span class="pre">localhost</span></tt>,
 but to let other people enjoy it, you probably want to copy it to a server
 machine. With Pants, the easiest way to do this is to create a <em>bundle</em>: a
-directory tree of <tt class="docutils literal"><span class="pre">.jar</span></tt> and helper files. If your <tt class="docutils literal"><span class="pre">jvm_app</span></tt> has
-a <tt class="docutils literal"><span class="pre">bundles</span></tt> parameter, it can specify trees of files to include in the tree.</p>
-<p>If you want to set up a tree of static files but don&#8217;t need it to be runnable,
+directory tree of <tt class="docutils literal"><span class="pre">.jar</span></tt> and helper files.</p>
+<p>Our &#8220;hello world&#8221; sample application needs a configuration file to run
+correctly. (You can try to run without the configuration file, but the
+program crashes immediately.) We define a <tt class="docutils literal"><span class="pre">jvm_app</span></tt> that represents
+a runnable binary and &#8220;bundles&#8221; of extra files:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">jvm_app</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;main&#39;</span><span class="p">,</span>
+  <span class="n">binary</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;:main-bin&#39;</span><span class="p">),</span>
+  <span class="n">bundles</span><span class="o">=</span><span class="n">bundle</span><span class="p">(</span><span class="n">relative_to</span><span class="o">=</span><span class="s">&#39;config&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">globs</span><span class="p">(</span><span class="s">&#39;config/*&#39;</span><span class="p">))</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Here, we keep the extra files in a subdirectory, <tt class="docutils literal"><span class="pre">config/</span></tt> so that
+they don&#8217;t clutter up this directory. (In this simple example, there&#8217;s
+just one file, so there isn&#8217;t actually much clutter.) By using the
+<a class="reference internal" href="build_dictionary.html#bdict-bundle"><em>bundle</em></a>&#8216;s <tt class="docutils literal"><span class="pre">relative_to</span></tt> parameter, we &#8220;strip off&#8221; that
+subdirectory; in the generated bundle, these extra files will be in
+the top directory.</p>
+<p>(If you want to set up a tree of static files but don&#8217;t need it to be runnable,
 you can define a <tt class="docutils literal"><span class="pre">jvm_app</span></tt> target with bundles (and/or resources) but whose
 <tt class="docutils literal"><span class="pre">jvm_binary</span></tt> has no source or main; the resulting bundle will have
-the files you want (along with a couple of not-so-useful stub <tt class="docutils literal"><span class="pre">.jar</span></tt> files).</p>
+the files you want (along with a couple of not-so-useful stub <tt class="docutils literal"><span class="pre">.jar</span></tt> files).)</p>
 <p><strong>Generating a Bundle</strong></p>
-<p>Invoke <tt class="docutils literal"><span class="pre">./pants</span> <span class="pre">goal</span> <span class="pre">bundle</span></tt> on a JVM app or JVM binary target.</p>
+<p>Invoke <tt class="docutils literal"><span class="pre">./pants</span> <span class="pre">goal</span> <span class="pre">bundle</span></tt> on a JVM app or JVM binary target:</p>
+<div class="highlight-python"><div class="highlight"><pre>./pants goal bundle src/java/com/pants/examples/hello/main:main
+</pre></div>
+</div>
 <p><strong>Contents of a Bundle</strong></p>
-<p>A bundle is basically a directory tree containing <tt class="docutils literal"><span class="pre">.jar</span></tt>s. The
-<tt class="docutils literal"><span class="pre">.jar</span></tt> in the top-level directory has a manifest so you can run
-it with <tt class="docutils literal"><span class="pre">java</span> <span class="pre">-jar</span></tt>:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ find .
-pingpong.jar
-libs/
-libs/org.scala-lang-scala-library-2.9.2.jar
-libs/org.sonatype.sisu.inject-cglib-2.2.1-v20090111.jar
-libs/pingpong.jar
-libs/src.java.com.twitter.common.examples.pingpong.pingpong-lib.jar
-libs/...
+<p>The generated bundle is basically a directory tree containing <tt class="docutils literal"><span class="pre">.jar</span></tt>s and
+extra files. The <tt class="docutils literal"><span class="pre">.jar</span></tt> in the top-level directory has a manifest
+so you can run it with <tt class="docutils literal"><span class="pre">java</span> <span class="pre">-jar</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ cd dist/main-bundle/
+$ java -jar main-bin.jar
+16:52:11 INFO : Hello, world!
 </pre></div>
 </div>
-<p>If your <tt class="docutils literal"><span class="pre">jvm_app</span></tt> has a <tt class="docutils literal"><span class="pre">bundles</span></tt> parameter, this might specify
-directories of files to copy into the generated bundle. E.g., your
-<tt class="docutils literal"><span class="pre">jvm_app`</span></tt> might have a <tt class="docutils literal"><span class="pre">bundles</span></tt> like</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">bundles</span> <span class="o">=</span> <span class="p">[</span> <span class="n">bundle</span><span class="p">()</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">rglobs</span><span class="p">(</span><span class="s">&#39;tools/config/*&#39;</span><span class="p">)),</span> <span class="p">]</span>
+<p>The &#8220;bundle&#8221; is basically a tree of files:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ cd dist/main-bundle/
+$ find .
+.
+./libs
+./libs/javax.activation-activation-1.1.jar
+./libs/javax.mail-mail-1.4.jar
+./libs/log4j-log4j-1.2.15.jar
+./log4j.properties
+./main-bin.jar
+$ jar -tf main-bin.jar
+com/
+com/pants/
+com/pants/examples/
+com/pants/examples/hello/
+com/pants/examples/hello/greet/
+com/pants/examples/hello/greet/Greeting.class
+com/pants/examples/hello/main/
+com/pants/examples/hello/main/HelloMain.class
+META-INF/
+META-INF/MANIFEST.MF
 </pre></div>
 </div>
-<p>In this case, you&#8217;d expect files from this directory to show up in
-the bundle:</p>
-<div class="highlight-python"><div class="highlight"><pre>tools/config/
-tools/config/launcher.scala
-tools/config/...
-</pre></div>
-</div>
+<p>That <tt class="docutils literal"><span class="pre">log4j.properties</span></tt> file came from the <tt class="docutils literal"><span class="pre">bundles=</span></tt> parameter.
+The <tt class="docutils literal"><span class="pre">libs/</span></tt> directory contains 3rdparty jars.
+The jar in the top directory contains code compiled for this target.</p>
 <p><strong>Deploying a Bundle</strong></p>
 <p>Instead of just creating a directory tree, you can pass
-<tt class="docutils literal"><span class="pre">--bundle-archive</span></tt> to <tt class="docutils literal"><span class="pre">.pants</span> <span class="pre">goal</span> <span class="pre">bundle</span></tt> to generate
+<tt class="docutils literal"><span class="pre">--bundle-archive</span></tt> to <tt class="docutils literal"><span class="pre">./pants</span> <span class="pre">goal</span> <span class="pre">bundle</span></tt> to generate
 an archive file (a zipped tarfile or some other format) instead.
 You can copy the archive somewhere, then unpack it on
 the destination machine. If there are some &#8220;standard jars&#8221; that are

@@ -327,7 +327,7 @@ body a.icon-home:hover{
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../pants_ini_reference.html">pants.ini Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../pants_ini_reference.html#default-section">DEFAULT section</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../pants_ini_reference.html#idea-section">idea section</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../pants_ini_reference.html#configref-section-idea">idea section</a></li>
 </ul>
 </li>
 </ul>
@@ -382,120 +382,40 @@ body a.icon-home:hover{
                         <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">)</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">zipfile</span>
-<span class="kn">from</span> <span class="nn">zipfile</span> <span class="kn">import</span> <span class="n">ZIP_DEFLATED</span><span class="p">,</span> <span class="n">ZIP_STORED</span>
 
-<span class="kn">from</span> <span class="nn">twitter.common.contextutil</span> <span class="kn">import</span> <span class="n">temporary_dir</span>
 <span class="kn">from</span> <span class="nn">twitter.common.dirutil</span> <span class="kn">import</span> <span class="n">safe_mkdir</span>
 
-<span class="kn">from</span> <span class="nn">pants.base.build_environment</span> <span class="kn">import</span> <span class="n">get_buildroot</span><span class="p">,</span> <span class="n">get_version</span>
-<span class="kn">from</span> <span class="nn">pants.fs.archive</span> <span class="kn">import</span> <span class="n">ZIP</span>
-<span class="kn">from</span> <span class="nn">pants.java.jar</span> <span class="kn">import</span> <span class="n">Manifest</span><span class="p">,</span> <span class="n">open_jar</span>
-<span class="kn">from</span> <span class="nn">pants.tasks</span> <span class="kn">import</span> <span class="n">TaskError</span>
+<span class="kn">from</span> <span class="nn">pants.base.build_environment</span> <span class="kn">import</span> <span class="n">get_buildroot</span>
+<span class="kn">from</span> <span class="nn">pants.java.jar</span> <span class="kn">import</span> <span class="n">Manifest</span>
 <span class="kn">from</span> <span class="nn">pants.tasks.jvm_binary_task</span> <span class="kn">import</span> <span class="n">JvmBinaryTask</span>
 
 
 <div class="viewcode-block" id="BinaryCreate"><a class="viewcode-back" href="../../../tasks.html#pants.tasks.binary_create.BinaryCreate">[docs]</a><span class="k">class</span> <span class="nc">BinaryCreate</span><span class="p">(</span><span class="n">JvmBinaryTask</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Creates a runnable monolithic binary deploy jar.&quot;&quot;&quot;</span>
 
-  <span class="nd">@classmethod</span>
-  <span class="k">def</span> <span class="nf">setup_parser</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">option_group</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">mkflag</span><span class="p">):</span>
-    <span class="n">JvmBinaryTask</span><span class="o">.</span><span class="n">setup_parser</span><span class="p">(</span><span class="n">option_group</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">mkflag</span><span class="p">)</span>
-    <span class="n">option_group</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="n">mkflag</span><span class="p">(</span><span class="s">&quot;compressed&quot;</span><span class="p">),</span> <span class="n">mkflag</span><span class="p">(</span><span class="s">&quot;compressed&quot;</span><span class="p">,</span> <span class="n">negate</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
-                            <span class="n">dest</span><span class="o">=</span><span class="s">&quot;binary_create_compressed&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-                            <span class="n">action</span><span class="o">=</span><span class="s">&quot;callback&quot;</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="n">mkflag</span><span class="o">.</span><span class="n">set_bool</span><span class="p">,</span>
-                            <span class="n">help</span><span class="o">=</span><span class="s">&quot;[</span><span class="si">%d</span><span class="s">efault] Create a compressed binary jar.&quot;</span><span class="p">)</span>
-
-    <span class="n">option_group</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="n">mkflag</span><span class="p">(</span><span class="s">&quot;zip64&quot;</span><span class="p">),</span> <span class="n">mkflag</span><span class="p">(</span><span class="s">&quot;zip64&quot;</span><span class="p">,</span> <span class="n">negate</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
-                            <span class="n">dest</span><span class="o">=</span><span class="s">&quot;binary_create_zip64&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
-                            <span class="n">action</span><span class="o">=</span><span class="s">&quot;callback&quot;</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="n">mkflag</span><span class="o">.</span><span class="n">set_bool</span><span class="p">,</span>
-                            <span class="n">help</span><span class="o">=</span><span class="s">&quot;[</span><span class="si">%d</span><span class="s">efault] Create the binary jar with zip64 extensions.&quot;</span><span class="p">)</span>
-
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">workdir</span><span class="p">):</span>
     <span class="nb">super</span><span class="p">(</span><span class="n">BinaryCreate</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">workdir</span><span class="p">)</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">outdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span>
-      <span class="n">context</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">jvm_binary_create_outdir</span> <span class="ow">or</span>
-      <span class="n">context</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;binary-create&#39;</span><span class="p">,</span> <span class="s">&#39;outdir&#39;</span><span class="p">,</span>
-                         <span class="n">default</span><span class="o">=</span><span class="n">context</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">getdefault</span><span class="p">(</span><span class="s">&#39;pants_distdir&#39;</span><span class="p">))</span>
-    <span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">compression</span> <span class="o">=</span> <span class="n">ZIP_DEFLATED</span> <span class="k">if</span> <span class="n">context</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">binary_create_compressed</span> <span class="k">else</span> <span class="n">ZIP_STORED</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">zip64</span> <span class="o">=</span> <span class="p">(</span>
-      <span class="n">context</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">binary_create_zip64</span>
-      <span class="ow">or</span> <span class="n">context</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">getbool</span><span class="p">(</span><span class="s">&#39;binary-create&#39;</span><span class="p">,</span> <span class="s">&#39;zip64&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-    <span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">deployjar</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">jvm_binary_create_deployjar</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_outdir</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">getdefault</span><span class="p">(</span><span class="s">&#39;pants_distdir&#39;</span><span class="p">)</span>
 
-    <span class="n">context</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">require</span><span class="p">(</span><span class="s">&#39;jars&#39;</span><span class="p">,</span> <span class="n">predicate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">is_binary</span><span class="p">)</span>
-    <span class="n">context</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">require_data</span><span class="p">(</span><span class="s">&#39;classes_by_target&#39;</span><span class="p">)</span>
-    <span class="n">context</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">require_data</span><span class="p">(</span><span class="s">&#39;resources_by_target&#39;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">deployjar</span><span class="p">:</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">require_jar_dependencies</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">require</span><span class="p">(</span><span class="s">&#39;jars&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">require_jar_dependencies</span><span class="p">()</span>
 
   <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">binary</span> <span class="ow">in</span> <span class="nb">filter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">is_binary</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">create_binary</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
 
   <span class="k">def</span> <span class="nf">create_binary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
-    <span class="kn">import</span> <span class="nn">platform</span>
-    <span class="n">safe_mkdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outdir</span><span class="p">)</span>
-
-    <span class="n">jarmap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;jars&#39;</span><span class="p">)</span>
+    <span class="n">safe_mkdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_outdir</span><span class="p">)</span>
 
     <span class="n">binary_jarname</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">.jar&#39;</span> <span class="o">%</span> <span class="n">binary</span><span class="o">.</span><span class="n">basename</span>
-    <span class="n">binaryjarpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outdir</span><span class="p">,</span> <span class="n">binary_jarname</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;creating </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">binaryjarpath</span><span class="p">,</span> <span class="n">get_buildroot</span><span class="p">()))</span>
+    <span class="n">binary_jarpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_outdir</span><span class="p">,</span> <span class="n">binary_jarname</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;creating </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">binary_jarpath</span><span class="p">,</span> <span class="n">get_buildroot</span><span class="p">()))</span>
 
-    <span class="k">with</span> <span class="n">open_jar</span><span class="p">(</span><span class="n">binaryjarpath</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">compression</span><span class="p">,</span> <span class="n">allowZip64</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">zip64</span><span class="p">)</span> <span class="k">as</span> <span class="n">jar</span><span class="p">:</span>
-      <span class="k">def</span> <span class="nf">add_jars</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
-        <span class="n">generated</span> <span class="o">=</span> <span class="n">jarmap</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">generated</span><span class="p">:</span>
-          <span class="k">for</span> <span class="n">basedir</span><span class="p">,</span> <span class="n">jars</span> <span class="ow">in</span> <span class="n">generated</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">for</span> <span class="n">internaljar</span> <span class="ow">in</span> <span class="n">jars</span><span class="p">:</span>
-              <span class="bp">self</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">basedir</span><span class="p">,</span> <span class="n">internaljar</span><span class="p">),</span> <span class="n">jar</span><span class="p">)</span>
-
-      <span class="n">binary</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">add_jars</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">is_internal</span><span class="p">)</span>
-
-      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">deployjar</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">basedir</span><span class="p">,</span> <span class="n">externaljar</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_jar_dependencies</span><span class="p">(</span><span class="n">binary</span><span class="p">):</span>
-          <span class="bp">self</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">basedir</span><span class="p">,</span> <span class="n">externaljar</span><span class="p">),</span> <span class="n">jar</span><span class="p">)</span>
-
-      <span class="k">def</span> <span class="nf">write_binary_data</span><span class="p">(</span><span class="n">product_type</span><span class="p">):</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">product_type</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">data</span><span class="p">:</span>
-          <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">rel_paths</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">rel_paths</span><span class="p">():</span>
-            <span class="k">for</span> <span class="n">rel_path</span> <span class="ow">in</span> <span class="n">rel_paths</span><span class="p">:</span>
-              <span class="n">jar</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">rel_path</span><span class="p">),</span> <span class="n">arcname</span><span class="o">=</span><span class="n">rel_path</span><span class="p">)</span>
-
-      <span class="n">write_binary_data</span><span class="p">(</span><span class="s">&#39;classes_by_target&#39;</span><span class="p">)</span>
-      <span class="n">write_binary_data</span><span class="p">(</span><span class="s">&#39;resources_by_target&#39;</span><span class="p">)</span>
-
-      <span class="n">manifest</span> <span class="o">=</span> <span class="n">Manifest</span><span class="p">()</span>
-      <span class="n">manifest</span><span class="o">.</span><span class="n">addentry</span><span class="p">(</span><span class="n">Manifest</span><span class="o">.</span><span class="n">MANIFEST_VERSION</span><span class="p">,</span> <span class="s">&#39;1.0&#39;</span><span class="p">)</span>
-      <span class="n">manifest</span><span class="o">.</span><span class="n">addentry</span><span class="p">(</span>
-        <span class="n">Manifest</span><span class="o">.</span><span class="n">CREATED_BY</span><span class="p">,</span>
-        <span class="s">&#39;python </span><span class="si">%s</span><span class="s"> pants </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">platform</span><span class="o">.</span><span class="n">python_version</span><span class="p">(),</span> <span class="n">get_version</span><span class="p">())</span>
-      <span class="p">)</span>
-      <span class="n">main</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">main</span> <span class="ow">or</span> <span class="s">&#39;*** java -jar not supported, please use -cp and pick a main ***&#39;</span>
-      <span class="n">manifest</span><span class="o">.</span><span class="n">addentry</span><span class="p">(</span><span class="n">Manifest</span><span class="o">.</span><span class="n">MAIN_CLASS</span><span class="p">,</span>  <span class="n">main</span><span class="p">)</span>
-      <span class="n">jar</span><span class="o">.</span><span class="n">writestr</span><span class="p">(</span><span class="n">Manifest</span><span class="o">.</span><span class="n">PATH</span><span class="p">,</span> <span class="n">manifest</span><span class="o">.</span><span class="n">contents</span><span class="p">())</span>
-
-      <span class="n">jarmap</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">outdir</span><span class="p">,</span> <span class="p">[</span><span class="n">binary_jarname</span><span class="p">])</span>
-
-  <span class="k">def</span> <span class="nf">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jarpath</span><span class="p">,</span> <span class="n">jarfile</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;  dumping </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">jarpath</span><span class="p">)</span>
-
-    <span class="k">with</span> <span class="n">temporary_dir</span><span class="p">()</span> <span class="k">as</span> <span class="n">tmpdir</span><span class="p">:</span>
-      <span class="k">try</span><span class="p">:</span>
-        <span class="n">ZIP</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">jarpath</span><span class="p">,</span> <span class="n">tmpdir</span><span class="p">)</span>
-      <span class="k">except</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">BadZipfile</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">TaskError</span><span class="p">(</span><span class="s">&#39;Bad JAR file, maybe empty: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">jarpath</span><span class="p">)</span>
-      <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
-          <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
-          <span class="n">relpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">tmpdir</span><span class="p">)</span>
-          <span class="k">if</span> <span class="n">Manifest</span><span class="o">.</span><span class="n">PATH</span> <span class="o">!=</span> <span class="n">relpath</span><span class="p">:</span>
-            <span class="n">jarfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">relpath</span><span class="p">)</span></div>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">deployjar</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">binary_jarpath</span><span class="p">)</span> <span class="k">as</span> <span class="n">jar</span><span class="p">:</span>
+      <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">new_workunit</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;add-manifest&#39;</span><span class="p">):</span>
+        <span class="n">manifest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_main_manifest</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
+        <span class="n">jar</span><span class="o">.</span><span class="n">writestr</span><span class="p">(</span><span class="n">Manifest</span><span class="o">.</span><span class="n">PATH</span><span class="p">,</span> <span class="n">manifest</span><span class="o">.</span><span class="n">contents</span><span class="p">())</span></div>
 </pre></div>
 
           <footer>
