@@ -159,6 +159,7 @@ body a.icon-home:hover{
 <li class="toctree-l1"><a class="reference internal" href="build_files.html">BUILD files</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="build_files.html#debugging-a-build-file">Debugging a BUILD File</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_files.html#default-target">Default Target</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_files.html#the-1-1-1-rule">The 1:1:1 Rule</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_files.html#avoid-rglobs">Avoid rglobs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_files.html#define-separate-targets-for-interface-and-implementation">Define Separate Targets for Interface and Implementation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_files.html#depend-on-api-in-library-targets-implementation-in-binary-targets">Depend on API in Library Targets, Implementation in Binary Targets</a></li>
@@ -2484,6 +2485,33 @@ help about.</p>
 Implemented by class <tt class="docutils literal"><span class="pre">JUnitRun</span></tt></p>
 <ul>
 <li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--test-junit-coverage-patterns</span></tt>
+<tt class="docutils literal"><span class="pre">string</span></tt></div>
+<div class="line">By default all non-test code depended on by the selected tests is measured for coverage during the test run.  By specifying coverage patterns you can select which classes and packages should be counted.  Values should be class name prefixes in dotted form with ? and * wildcard support. If preceded with a - the pattern is excluded. For example, to include all code in com.twitter.raven except claws and the eye you would use: &#8211;test-junit-coverage-patterns=com.twitter.raven.* &#8211;test-junit-coverage-patterns=-com.twitter.raven.claw &#8211;test-junit-coverage-patterns=-com.twitter.raven.EyeThis option can be specified multiple times.</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--test-junit-coverage-console/--no-test-junit-coverage-console</span></tt>
+(Default: <tt class="docutils literal"><span class="pre">True</span></tt>)</div>
+<div class="line">Outputs a simple coverage report to the console.</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--test-junit-coverage-xml/--no-test-junit-coverage-xml</span></tt></div>
+<div class="line">[%%default] Produces an xml coverage report.</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--test-junit-coverage-html/--no-test-junit-coverage-html</span></tt></div>
+<div class="line">[%%default] Produces an html coverage report.</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--test-junit-coverage-html-open/--no-test-junit-coverage-html-open</span></tt></div>
+<div class="line">Tries to open the generated html coverage report, implies &#8211;test-junit-coverage-html.</div>
+</div>
+</li>
+<li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--test-junit-skip/--no-test-junit-skip</span></tt></div>
 <div class="line">Skip running tests</div>
 </div>
@@ -2545,38 +2573,6 @@ Implemented by class <tt class="docutils literal"><span class="pre">JUnitRun</sp
 </div>
 </li>
 <li><div class="first line-block">
-<div class="line"><tt class="docutils literal"><span class="pre">--test-junit-coverage/--no-test-junit-coverage</span></tt></div>
-<div class="line">Collects code coverage data</div>
-</div>
-</li>
-<li><div class="first line-block">
-<div class="line"><tt class="docutils literal"><span class="pre">--test-junit-coverage-patterns</span></tt>
-<tt class="docutils literal"><span class="pre">string</span></tt></div>
-<div class="line">By default all non-test code depended on by the selected tests is measured for coverage during the test run.  By specifying coverage patterns you can select which classes and packages should be counted.  Values should be class name prefixes in dotted form with ? and * wildcard support. If preceded with a - the pattern is excluded. For example, to include all code in com.twitter.raven except claws and the eye you would use: &#8211;test-junit-coverage-patterns=com.twitter.raven.* &#8211;test-junit-coverage-patterns=-com.twitter.raven.claw &#8211;test-junit-coverage-patterns=-com.twitter.raven.EyeThis option can be specified multiple times.</div>
-</div>
-</li>
-<li><div class="first line-block">
-<div class="line"><tt class="docutils literal"><span class="pre">--test-junit-coverage-console/--no-test-junit-coverage-console</span></tt>
-(Default: <tt class="docutils literal"><span class="pre">True</span></tt>)</div>
-<div class="line">Outputs a simple coverage report to the console.</div>
-</div>
-</li>
-<li><div class="first line-block">
-<div class="line"><tt class="docutils literal"><span class="pre">--test-junit-coverage-xml/--no-test-junit-coverage-xml</span></tt></div>
-<div class="line">[%%default] Produces an xml coverage report.</div>
-</div>
-</li>
-<li><div class="first line-block">
-<div class="line"><tt class="docutils literal"><span class="pre">--test-junit-coverage-html/--no-test-junit-coverage-html</span></tt></div>
-<div class="line">[%%default] Produces an html coverage report.</div>
-</div>
-</li>
-<li><div class="first line-block">
-<div class="line"><tt class="docutils literal"><span class="pre">--test-junit-coverage-html-open/--no-test-junit-coverage-html-open</span></tt></div>
-<div class="line">Tries to open the generated html coverage report, implies &#8211;test-junit-coverage-html.</div>
-</div>
-</li>
-<li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--test-junit-suppress-output/--no-test-junit-suppress-output</span></tt>
 (Default: <tt class="docutils literal"><span class="pre">True</span></tt>)</div>
 <div class="line">Redirects test output to files.  Implied by &#8211;test-junit-xmlreport</div>
@@ -2586,6 +2582,18 @@ Implemented by class <tt class="docutils literal"><span class="pre">JUnitRun</sp
 <div class="line"><tt class="docutils literal"><span class="pre">--test-junit-arg</span></tt>
 <tt class="docutils literal"><span class="pre">string</span></tt></div>
 <div class="line">An arbitrary argument to pass directly to the test runner. This option can be specified multiple times.</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--test-junit-coverage/--no-test-junit-coverage</span></tt></div>
+<div class="line">Collects code coverage data</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--test-junit-coverage-processor</span></tt>
+<tt class="docutils literal"><span class="pre">string</span></tt>
+(Default: <tt class="docutils literal"><span class="pre">emma</span></tt>)</div>
+<div class="line">Which coverage subsystem to use</div>
 </div>
 </li>
 </ul>
@@ -2660,8 +2668,6 @@ Set the logging level [debug, info, warn].</p>
 Squelches all console output apart from errors.</p>
 <p><tt class="docutils literal"><span class="pre">--no-colors</span></tt>
 Do not colorize log messages.</p>
-<p><tt class="docutils literal"><span class="pre">-n/--dry-run</span></tt>
-Print the commands that would be run, without actually running them.</p>
 <p><tt class="docutils literal"><span class="pre">--read-from-artifact-cache/--no-read-from-artifact-cache</span></tt>
 Read build artifacts from cache, if available.</p>
 <p><tt class="docutils literal"><span class="pre">--write-to-artifact-cache/--no-write-to-artifact-cache</span></tt>

@@ -159,6 +159,7 @@ body a.icon-home:hover{
 <li class="toctree-l1 current"><a class="current reference internal" href="">BUILD files</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#debugging-a-build-file">Debugging a BUILD File</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#default-target">Default Target</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-1-1-1-rule">The 1:1:1 Rule</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#avoid-rglobs">Avoid rglobs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#define-separate-targets-for-interface-and-implementation">Define Separate Targets for Interface and Implementation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#depend-on-api-in-library-targets-implementation-in-binary-targets">Depend on API in Library Targets, Implementation in Binary Targets</a></li>
@@ -479,6 +480,41 @@ src/java/com/twitter/tugboat/  # trailing slashes are ignored - useful for comma
 <p>By providing a target with the default name, you simplify interacting with your target from the
 command-line. This gives users a better experience using your library.
 In BUILD files, dependencies are less verbose, which improves readability.</p>
+</div>
+<div class="section" id="the-1-1-1-rule">
+<h2>The 1:1:1 Rule<a class="headerlink" href="#the-1-1-1-rule" title="Permalink to this headline">¶</a></h2>
+<p>Your code&#8217;s organization, including <tt class="docutils literal"><span class="pre">BUILD</span></tt> target configuration, makes
+building easier or harder. Some folks summarize elegant code layout choice
+with the <strong>1:1:1</strong> rule of thumb:</p>
+<ul class="simple">
+<li><strong>1 Folder</strong></li>
+<li><strong>1 Package</strong></li>
+<li><strong>1 BUILD Target</strong></li>
+</ul>
+<p>If there&#8217;s a set of code that usually goes together, it makes sense for it to
+be in one folder using one package namespace.
+The folder should have a <tt class="docutils literal"><span class="pre">BUILD</span></tt> file with one target to build that set of
+code.</p>
+<p>If there&#8217;s a subset of code that <em>doesn&#8217;t</em> usually go together with the rest
+of the code in some directory/target, it makes sense to move that code out
+into another folder and its own package namespace.
+The new folder should have its own <tt class="docutils literal"><span class="pre">BUILD</span></tt> file containing a target to build
+that code.</p>
+<p>Code belongs at the &#8220;leaves&#8221; of your directory tree. E.g., if
+<tt class="docutils literal"><span class="pre">.../foo/Foo.java</span></tt> exists, you don&#8217;t want to create <tt class="docutils literal"><span class="pre">.../foo/bar/Bar.java</span></tt>
+in a subdirectory. (Or if you do, then you want to move the other foo
+code to <tt class="docutils literal"><span class="pre">../foo/justfoonotbar/Foo.java</span></tt> or somesuch.) This keeps all the code
+for a package in 1 Folder, 1 BUILD target.</p>
+<p><strong>1:1:1</strong>  is a &#8220;rule of thumb&#8221;, not a law.
+If your code breaks this rule, it will still build.
+<strong>1:1:1</strong> tends to make your code easier to work with.</p>
+<p>If you&#8217;re new to Pants, you might feel overwhelmed by all these <tt class="docutils literal"><span class="pre">BUILD</span></tt>
+files; you might think it&#8217;s simpler to have fewer of them: maybe just one
+<tt class="docutils literal"><span class="pre">BUILD</span></tt> file in the &#8220;top folder&#8221; for a project that builds code from
+several directories. But this &#8220;target coarseness&#8221; can waste your time:
+you have a huge target that depends on everything that your source depends on.
+If you divide your code into smaller, coherent targets, each of those targets
+has only a subset of those dependencies.</p>
 </div>
 <div class="section" id="avoid-rglobs">
 <span id="usage-avoid-rglobs"></span><h2>Avoid rglobs<a class="headerlink" href="#avoid-rglobs" title="Permalink to this headline">¶</a></h2>
