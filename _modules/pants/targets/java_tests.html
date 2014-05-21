@@ -197,14 +197,14 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#authenticating-to-the-artifact-repository">Authenticating to the Artifact Repository</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#troubleshooting">Troubleshooting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#want-to-publish-something-publish-many-things">Want to Publish Something? Publish Many Things</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../publish.html#test-with-a-fake-local-publish">Test with a Fake Local &#8220;Publish&#8221;</a></li>
 </ul>
 </li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../with_intellij.html">Using Pants with IntelliJ IDEA</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#editing-build-files">Editing BUILD Files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#pants-build-plugin-for-intellij">Pants Build Plugin for IntelliJ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
 </ul>
 </li>
 </ul>
@@ -257,6 +257,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-binary">python_binary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-library">python_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-requirement">python_requirement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-requirement-library">python_requirement_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-test-suite">python_test_suite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-tests">python_tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-thrift-library">python_thrift_library</a></li>
@@ -384,20 +385,13 @@ body a.icon-home:hover{
 
 <span class="kn">from</span> <span class="nn">pants.base.build_manual</span> <span class="kn">import</span> <span class="n">manual</span>
 <span class="kn">from</span> <span class="nn">pants.targets.jvm_target</span> <span class="kn">import</span> <span class="n">JvmTarget</span>
-<span class="kn">from</span> <span class="nn">pants.targets.resources</span> <span class="kn">import</span> <span class="n">WithResources</span>
 
 
 <span class="nd">@manual.builddict</span><span class="p">(</span><span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;jvm&#39;</span><span class="p">])</span>
-<div class="viewcode-block" id="JavaTests"><a class="viewcode-back" href="../../../targets.html#pants.targets.java_tests.JavaTests">[docs]</a><span class="k">class</span> <span class="nc">JavaTests</span><span class="p">(</span><span class="n">JvmTarget</span><span class="p">,</span> <span class="n">WithResources</span><span class="p">):</span>
+<div class="viewcode-block" id="JavaTests"><a class="viewcode-back" href="../../../targets.html#pants.targets.java_tests.JavaTests">[docs]</a><span class="k">class</span> <span class="nc">JavaTests</span><span class="p">(</span><span class="n">JvmTarget</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Tests JVM sources with JUnit.&quot;&quot;&quot;</span>
 
-  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-               <span class="n">name</span><span class="p">,</span>
-               <span class="n">sources</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-               <span class="n">dependencies</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-               <span class="n">excludes</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-               <span class="n">resources</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-               <span class="n">exclusives</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">   :param string name: The name of this target, which combined with this</span>
 <span class="sd">     build file defines the target :class:`pants.base.address.Address`.</span>
@@ -416,9 +410,9 @@ body a.icon-home:hover{
 <span class="sd">     file resources to place in this module&#39;s jar.</span>
 <span class="sd">   :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.</span>
 <span class="sd">   &quot;&quot;&quot;</span>
-    <span class="nb">super</span><span class="p">(</span><span class="n">JavaTests</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">sources</span><span class="p">,</span> <span class="n">dependencies</span><span class="p">,</span> <span class="n">excludes</span><span class="p">,</span> <span class="n">exclusives</span><span class="o">=</span><span class="n">exclusives</span><span class="p">)</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">JavaTests</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">resources</span> <span class="o">=</span> <span class="n">resources</span>
+    <span class="c"># self.resources = resources</span>
 
     <span class="c"># TODO(John Sirois): These could be scala, clojure, etc.  &#39;jvm&#39; and &#39;tests&#39; are the only truly</span>
     <span class="c"># applicable labels - fixup the &#39;java&#39; misnomer.</span>

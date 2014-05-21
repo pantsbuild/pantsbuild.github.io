@@ -197,14 +197,14 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#authenticating-to-the-artifact-repository">Authenticating to the Artifact Repository</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#troubleshooting">Troubleshooting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#want-to-publish-something-publish-many-things">Want to Publish Something? Publish Many Things</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../publish.html#test-with-a-fake-local-publish">Test with a Fake Local &#8220;Publish&#8221;</a></li>
 </ul>
 </li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../with_intellij.html">Using Pants with IntelliJ IDEA</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#editing-build-files">Editing BUILD Files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#pants-build-plugin-for-intellij">Pants Build Plugin for IntelliJ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
 </ul>
 </li>
 </ul>
@@ -257,6 +257,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-binary">python_binary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-library">python_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-requirement">python_requirement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-requirement-library">python_requirement_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-test-suite">python_test_suite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-tests">python_tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-thrift-library">python_thrift_library</a></li>
@@ -389,7 +390,8 @@ body a.icon-home:hover{
 <span class="kn">from</span> <span class="nn">twitter.common.python.pex_info</span> <span class="kn">import</span> <span class="n">PexInfo</span>
 
 <span class="kn">from</span> <span class="nn">pants.base.build_manual</span> <span class="kn">import</span> <span class="n">manual</span>
-<span class="kn">from</span> <span class="nn">pants.base.target</span> <span class="kn">import</span> <span class="n">Target</span><span class="p">,</span> <span class="n">TargetDefinitionException</span>
+<span class="kn">from</span> <span class="nn">pants.base.target</span> <span class="kn">import</span> <span class="n">Target</span>
+<span class="kn">from</span> <span class="nn">pants.base.exceptions</span> <span class="kn">import</span> <span class="n">TargetDefinitionException</span>
 <span class="kn">from</span> <span class="nn">pants.targets.python_target</span> <span class="kn">import</span> <span class="n">PythonTarget</span>
 
 
@@ -406,9 +408,7 @@ body a.icon-home:hover{
   <span class="c"># TODO(wickman) Consider splitting pex options out into a separate PexInfo builder that can be</span>
   <span class="c"># attached to the binary target.  Ideally the PythonBinary target is agnostic about pex mechanics</span>
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-               <span class="n">name</span><span class="p">,</span>
                <span class="n">source</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-               <span class="n">dependencies</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                <span class="n">entry_point</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                <span class="n">inherit_path</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>        <span class="c"># pex option</span>
                <span class="n">zip_safe</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>             <span class="c"># pex option</span>
@@ -418,8 +418,7 @@ body a.icon-home:hover{
                <span class="n">ignore_errors</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>       <span class="c"># pex option</span>
                <span class="n">allow_pypi</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>          <span class="c"># pex option</span>
                <span class="n">platforms</span><span class="o">=</span><span class="p">(),</span>
-               <span class="n">compatibility</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-               <span class="n">exclusives</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+               <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :param name: target name</span>
 <span class="sd">    :param source: the python source file that becomes this binary&#39;s __main__.</span>
@@ -442,21 +441,12 @@ body a.icon-home:hover{
 <span class="sd">    :param dict exclusives: An optional dict of exclusives tags. See CheckExclusives for details.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c"># TODO(John Sirois): Fixup TargetDefinitionException - it has awkward Target base-class</span>
-    <span class="c"># initialization requirements right now requiring this Target.__init__.</span>
-    <span class="n">Target</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">exclusives</span><span class="o">=</span><span class="n">exclusives</span><span class="p">)</span>
+    <span class="n">sources</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">source</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="p">[</span><span class="n">source</span><span class="p">]</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">PythonBinary</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">sources</span><span class="o">=</span><span class="n">sources</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">source</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">entry_point</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
       <span class="k">raise</span> <span class="n">TargetDefinitionException</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
           <span class="s">&#39;A python binary target must specify either source or entry_point.&#39;</span><span class="p">)</span>
-
-    <span class="n">PythonTarget</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-        <span class="n">name</span><span class="p">,</span>
-        <span class="p">[]</span> <span class="k">if</span> <span class="n">source</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="p">[</span><span class="n">source</span><span class="p">],</span>
-        <span class="n">compatibility</span><span class="o">=</span><span class="n">compatibility</span><span class="p">,</span>
-        <span class="n">dependencies</span><span class="o">=</span><span class="n">dependencies</span><span class="p">,</span>
-        <span class="n">exclusives</span><span class="o">=</span><span class="n">exclusives</span><span class="p">,</span>
-    <span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">platforms</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">platforms</span><span class="p">,</span> <span class="n">Compatibility</span><span class="o">.</span><span class="n">string</span><span class="p">):</span>
       <span class="k">raise</span> <span class="n">TargetDefinitionException</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;platforms must be a list, tuple or string.&#39;</span><span class="p">)</span>
@@ -472,7 +462,8 @@ body a.icon-home:hover{
 
     <span class="k">if</span> <span class="n">source</span> <span class="ow">and</span> <span class="n">entry_point</span><span class="p">:</span>
       <span class="n">entry_point_module</span> <span class="o">=</span> <span class="n">entry_point</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-      <span class="n">source_entry_point</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_translate_to_entry_point</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sources</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+      <span class="n">entry_source</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sources_relative_to_source_root</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+      <span class="n">source_entry_point</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_translate_to_entry_point</span><span class="p">(</span><span class="n">entry_source</span><span class="p">)</span>
       <span class="k">if</span> <span class="n">entry_point_module</span> <span class="o">!=</span> <span class="n">source_entry_point</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">TargetDefinitionException</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
             <span class="s">&#39;Specified both source and entry_point but they do not agree: </span><span class="si">%s</span><span class="s"> vs </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span>
@@ -500,9 +491,10 @@ body a.icon-home:hover{
   <span class="k">def</span> <span class="nf">entry_point</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_entry_point</span><span class="p">:</span>
       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_entry_point</span>
-    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">sources</span><span class="p">:</span>
-      <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sources</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
-      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_translate_to_entry_point</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sources</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">payload</span><span class="o">.</span><span class="n">sources</span><span class="p">:</span>
+      <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">payload</span><span class="o">.</span><span class="n">sources</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+      <span class="n">entry_source</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sources_relative_to_source_root</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_translate_to_entry_point</span><span class="p">(</span><span class="n">entry_source</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
       <span class="k">return</span> <span class="bp">None</span>
 

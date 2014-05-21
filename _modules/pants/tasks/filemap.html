@@ -197,14 +197,14 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#authenticating-to-the-artifact-repository">Authenticating to the Artifact Repository</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#troubleshooting">Troubleshooting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#want-to-publish-something-publish-many-things">Want to Publish Something? Publish Many Things</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../publish.html#test-with-a-fake-local-publish">Test with a Fake Local &#8220;Publish&#8221;</a></li>
 </ul>
 </li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../with_intellij.html">Using Pants with IntelliJ IDEA</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#editing-build-files">Editing BUILD Files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#pants-build-plugin-for-intellij">Pants Build Plugin for IntelliJ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
 </ul>
 </li>
 </ul>
@@ -257,6 +257,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-binary">python_binary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-library">python_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-requirement">python_requirement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-requirement-library">python_requirement_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-test-suite">python_test_suite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-tests">python_tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-thrift-library">python_thrift_library</a></li>
@@ -398,20 +399,25 @@ body a.icon-home:hover{
     <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_targets</span><span class="p">():</span>
       <span class="k">if</span> <span class="n">target</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
         <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="s">&#39;sources&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">target</span><span class="o">.</span><span class="n">sources</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-          <span class="k">for</span> <span class="n">sourcefile</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">sources</span><span class="p">:</span>
-            <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">target_base</span><span class="p">,</span> <span class="n">sourcefile</span><span class="p">)</span>
-            <span class="k">yield</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">target</span><span class="o">.</span><span class="n">address</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">payload</span><span class="p">,</span> <span class="s">&#39;sources&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">target</span><span class="o">.</span><span class="n">payload</span><span class="o">.</span><span class="n">sources</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+          <span class="k">for</span> <span class="n">sourcefile</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">payload</span><span class="o">.</span><span class="n">sources</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">payload</span><span class="o">.</span><span class="n">sources_rel_path</span><span class="p">,</span>
+                                                 <span class="n">sourcefile</span><span class="p">))</span>
+            <span class="k">yield</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">target</span><span class="o">.</span><span class="n">address</span><span class="o">.</span><span class="n">build_file_spec</span><span class="p">)</span>
 
   <span class="k">def</span> <span class="nf">_find_targets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">target_roots</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
       <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">target_roots</span><span class="p">:</span>
         <span class="k">yield</span> <span class="n">target</span>
     <span class="k">else</span><span class="p">:</span>
-      <span class="k">for</span> <span class="n">buildfile</span> <span class="ow">in</span> <span class="n">BuildFile</span><span class="o">.</span><span class="n">scan_buildfiles</span><span class="p">(</span><span class="n">get_buildroot</span><span class="p">()):</span>
-        <span class="n">target_addresses</span> <span class="o">=</span> <span class="n">Target</span><span class="o">.</span><span class="n">get_all_addresses</span><span class="p">(</span><span class="n">buildfile</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">target_address</span> <span class="ow">in</span> <span class="n">target_addresses</span><span class="p">:</span>
-          <span class="k">yield</span> <span class="n">Target</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">target_address</span><span class="p">)</span></div>
+      <span class="n">build_file_parser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">build_file_parser</span>
+      <span class="n">build_graph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">build_graph</span>
+      <span class="k">for</span> <span class="n">build_file</span> <span class="ow">in</span> <span class="n">BuildFile</span><span class="o">.</span><span class="n">scan_buildfiles</span><span class="p">(</span><span class="n">get_buildroot</span><span class="p">()):</span>
+        <span class="n">build_file_parser</span><span class="o">.</span><span class="n">parse_build_file</span><span class="p">(</span><span class="n">build_file</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">address</span> <span class="ow">in</span> <span class="n">build_file_parser</span><span class="o">.</span><span class="n">addresses_by_build_file</span><span class="p">[</span><span class="n">build_file</span><span class="p">]:</span>
+          <span class="n">build_file_parser</span><span class="o">.</span><span class="n">inject_spec_closure_into_build_graph</span><span class="p">(</span><span class="n">address</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">build_graph</span><span class="p">)</span>
+      <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">build_graph</span><span class="o">.</span><span class="n">_target_by_address</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="k">yield</span> <span class="n">target</span></div>
 </pre></div>
 
           <footer>

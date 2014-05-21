@@ -40,6 +40,7 @@ targets; some are handy utilities.
 `python_binary`_ |
 `python_library`_ |
 `python_requirement`_ |
+`python_requirement_library`_ |
 `python_test_suite`_ |
 `python_tests`_ |
 `python_thrift_library`_ |
@@ -120,7 +121,7 @@ Amount
 annotation_processor
 -------------------------------------------------------------------------------
 
-.. py:function:: annotation_processor(name, sources, provides=None, dependencies=None, excludes=None, resources=None, processors=None, exclusives=None)
+.. py:function:: annotation_processor(processors=None, *args, **kwargs)
 
  Produces a Java library containing one or more annotation processors.
 
@@ -177,7 +178,7 @@ artifact
 benchmark
 -------------------------------------------------------------------------------
 
-.. py:function:: benchmark(name, sources=None, java_sources=None, dependencies=None, excludes=None, resources=None, exclusives=None)
+.. py:function:: benchmark(address=None, sources=None, sources_rel_path=None, provides=None, excludes=None, resources=None, configurations=None, **kwargs)
 
  A caliper benchmark.
  
@@ -189,18 +190,14 @@ benchmark
  :param sources: A list of filenames representing the source code
    this library is compiled from.
  :type sources: list of strings
- :param java_sources:
-   :class:`pants.targets.java_library.JavaLibrary` or list of
-   JavaLibrary targets this library has a circular dependency on.
-   Prefer using dependencies to express non-circular dependencies.
  :param dependencies: List of :class:`pants.base.target.Target` instances
    this target depends on.
  :type dependencies: list of targets
- :param excludes: List of :class:`pants.targets.exclude.Exclude` instances
+ :param excludes: One or more :class:`pants.targets.exclude.Exclude` instances
    to filter this target's transitive dependencies against.
- :param resources: An optional list of ``resources`` targets containing text
-   file resources to place in this module's jar.
- :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
+ :param configurations: One or more ivy configurations to resolve for this target.
+   This parameter is not intended for general use.
+ :type configurations: tuple of strings
 
 **Methods:**
 
@@ -215,7 +212,7 @@ benchmark
 bundle
 -------------------------------------------------------------------------------
 
-.. py:function:: bundle(base=None, mapper=None, relative_to=None)
+.. py:function:: bundle(rel_path=None, mapper=None, relative_to=None)
 
  A set of files to include in an application bundle.
  
@@ -239,7 +236,7 @@ bundle
    ]
 
 
- :param base: Base path of the "source" file paths. By default, path of the
+ :param rel_path: Base path of the "source" file paths. By default, path of the
    BUILD file. Useful for assets that don't live in the source code repo.
  :param mapper: Function that takes a path string and returns a path string. Takes a path in
    the source tree, returns a path to use in the resulting bundle. By default, an identity
@@ -286,20 +283,17 @@ credentials
 dependencies
 -------------------------------------------------------------------------------
 
-.. py:function:: dependencies(name, dependencies, overrides=None, exclusives=None)
+.. py:function:: dependencies(*args, **kwargs)
 
  A set of dependencies that may be depended upon,
  as if depending upon the set of dependencies directly.
 
 
- :param string name: The name of this target, which combined with this
+ :param name: The name of this target, which combined with this
    build file defines the target :class:`pants.base.address.Address`.
- :param dependencies: List of :class:`pants.base.target.Target` instances
-   this target depends on.
- :param overrides: List of strings, each of which will be recursively resolved to
-   any targets that provide artifacts. Those artifacts will override corresponding
-   direct/transitive dependencies in the dependencies list.
- :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
+ :param dependencies: List of target specs.
+ :param exclusives: An optional map of exclusives tags. See CheckExclusives
+   for details.
 
 **Methods:**
 
@@ -538,7 +532,7 @@ java_antlr_library
 java_library
 -------------------------------------------------------------------------------
 
-.. py:function:: java_library(name, sources=None, provides=None, dependencies=None, excludes=None, resources=None, exclusives=None)
+.. py:function:: java_library(*args, **kwargs)
 
  A collection of Java code.
  
@@ -580,7 +574,7 @@ java_library
 java_protobuf_library
 -------------------------------------------------------------------------------
 
-.. py:function:: java_protobuf_library(name, sources, provides=None, dependencies=None, excludes=None, buildflags=None, exclusives=None)
+.. py:function:: java_protobuf_library(buildflags=None, **kwargs)
 
  Generates a stub Java library from protobuf IDL files.
 
@@ -625,7 +619,7 @@ java_tests
 java_thrift_library
 -------------------------------------------------------------------------------
 
-.. py:function:: java_thrift_library(name, sources, provides=None, dependencies=None, excludes=None, compiler=None, language=None, rpc_style=None, namespace_map=None, exclusives=None)
+.. py:function:: java_thrift_library(compiler=None, language=None, rpc_style=None, namespace_map=None, **kwargs)
 
  Generates a stub Java or Scala library from thrift IDL files.
 
@@ -663,7 +657,7 @@ java_thrift_library
 junit_tests
 -------------------------------------------------------------------------------
 
-.. py:function:: junit_tests(name, sources=None, dependencies=None, excludes=None, resources=None, exclusives=None)
+.. py:function:: junit_tests(**kwargs)
 
  Tests JVM sources with JUnit.
 
@@ -698,7 +692,7 @@ junit_tests
 jvm_app
 -------------------------------------------------------------------------------
 
-.. py:function:: jvm_app(name, binary, bundles, basename=None)
+.. py:function:: jvm_app(name=None, bundles=None, basename=None, **kwargs)
 
  A JVM-based application consisting of a binary plus "extra files".
  
@@ -710,8 +704,6 @@ jvm_app
 
  :param string name: The name of this target, which combined with this
    build file defines the target :class:`pants.base.address.Address`.
- :param binary: The :class:`pants.targets.jvm_binary.JvmBinary`,
-   or a :class:`pants.targets.pants_target.Pants` pointer to one.
  :param bundles: One or more :class:`pants.targets.jvm_binary.Bundle`'s
    describing "extra files" that should be included with this app
    (e.g.: config files, startup scripts).
@@ -732,7 +724,7 @@ jvm_app
 jvm_binary
 -------------------------------------------------------------------------------
 
-.. py:function:: jvm_binary(name, main=None, basename=None, source=None, resources=None, dependencies=None, excludes=None, deploy_excludes=None, configurations=None, exclusives=None)
+.. py:function:: jvm_binary(name=None, main=None, basename=None, source=None, deploy_excludes=None, **kwargs)
 
  Produces a JVM binary optionally identifying a launcher main class.
  
@@ -781,7 +773,7 @@ jvm_binary
 maven_layout
 -------------------------------------------------------------------------------
 
-.. py:function:: maven_layout(basedir=None)
+.. py:function:: maven_layout(basedir=u'', rel_path=None)
 
 
 
@@ -801,7 +793,7 @@ maven_layout
 page
 -------------------------------------------------------------------------------
 
-.. py:function:: page(name, source, dependencies=None, resources=None, exclusives=None)
+.. py:function:: page(resources=None, **kwargs)
 
  Describes a single documentation page.
 
@@ -832,23 +824,11 @@ page
 pants
 -------------------------------------------------------------------------------
 
-.. py:function:: pants(spec, exclusives=None)
-
- A pointer to a pants target.
- 
- Useful, for example, in a target's dependencies list. One target can depend
- on several others; Each pants() target refers to one of those.
 
 
- :param string spec: target address. E.g., `src/java/com/twitter/common/util/BUILD\:util`
+ In old Pants versions, a reference to a Pants targets. (In new Pants versions, just use strings.)
 
-**Methods:**
 
- .. py:method:: with_description(description)
-
-  Set a human-readable description of this target.
-  
-  :param description: Descriptive string
 
 .. _bdict_phase:
 
@@ -866,7 +846,7 @@ phase
 python_antlr_library
 -------------------------------------------------------------------------------
 
-.. py:function:: python_antlr_library(name, module, antlr_version=u'3.1.3', sources=None, resources=None, dependencies=None, exclusives=None)
+.. py:function:: python_antlr_library(module=None, antlr_version=u'3.1.3', *args, **kwargs)
 
  Generates a stub Python library from Antlr grammar files.
 
@@ -898,7 +878,7 @@ python_antlr_library
 python_binary
 -------------------------------------------------------------------------------
 
-.. py:function:: python_binary(name, source=None, dependencies=None, entry_point=None, inherit_path=False, zip_safe=True, always_write_cache=False, repositories=None, indices=None, ignore_errors=False, allow_pypi=False, platforms=(), compatibility=None, exclusives=None)
+.. py:function:: python_binary(source=None, entry_point=None, inherit_path=False, zip_safe=True, always_write_cache=False, repositories=None, indices=None, ignore_errors=False, allow_pypi=False, platforms=(), **kwargs)
 
  Produces a Python binary.
  
@@ -941,29 +921,29 @@ python_binary
 python_library
 -------------------------------------------------------------------------------
 
-.. py:function:: python_library(name, sources=(), resources=(), dependencies=(), provides=None, compatibility=None, exclusives=None)
+.. py:function:: python_library(address=None, sources=None, resources=None, resource_targets=None, provides=None, compatibility=None, **kwargs)
 
  Produces a Python library.
-
-
+ 
  :param name: Name of library
- :param sources: A list of filenames representing the source code
-   this library is compiled from.
- :type sources: list of strings
- :param resources: non-Python resources, e.g. templates, keys, other data (it is
-   recommended that your application uses the pkgutil package to access these
-   resources in a .zip-module friendly way.)
- :param dependencies: List of :class:`pants.base.target.Target` instances
-   this target depends on.
- :type dependencies: list of targets
+ :param sources: A list of filenames representing the source code this
+    library is compiled from.
+ :param resources: non-Python resources, e.g. templates, keys, other data
+    (it is
+    recommended that your application uses the pkgutil package to access these
+    resources in a .zip-module friendly way.)
+ :param dependencies: List of target specs.
  :param provides:
-   The :ref:`setup_py <bdict_setup_py>` (implemented by
-   :class:`pants.targets.artifact.PythonArtifact`)
-   to publish that represents this target outside the repo.
+   The :ref:`setup_py <bdict_setup_py>` to publish that represents this
+   target outside the repo.
  :param compatibility: either a string or list of strings that represents
-   interpreter compatibility for this target, using the Requirement-style format,
-   e.g. ``'CPython>=3', or just ['>=2.7','<3']`` for requirements agnostic to interpreter class.
- :param dict exclusives: An optional dict of exclusives tags. See CheckExclusives for details.
+   interpreter compatibility for this target, using the Requirement-style
+   format, e.g. ``'CPython>=3', or just ['>=2.7','<3']`` for requirements
+   agnostic to interpreter class.
+ :param exclusives: An optional dict of exclusives tags. See CheckExclusives
+   for details.
+
+
 
 **Methods:**
 
@@ -984,6 +964,17 @@ python_requirement
 
 
 
+
+.. _bdict_python_requirement_library:
+
+python_requirement_library
+-------------------------------------------------------------------------------
+
+.. py:function:: python_requirement_library(requirements=None, *args, **kwargs)
+
+
+
+
 **Methods:**
 
  .. py:method:: with_description(description)
@@ -997,7 +988,7 @@ python_requirement
 python_test_suite
 -------------------------------------------------------------------------------
 
-.. py:function:: python_test_suite(name, dependencies=None)
+.. py:function:: python_test_suite(address=None, sources=None, resources=None, resource_targets=None, provides=None, compatibility=None, **kwargs)
 
  Tests one or more python test targets.
 
@@ -1016,7 +1007,7 @@ python_test_suite
 python_tests
 -------------------------------------------------------------------------------
 
-.. py:function:: python_tests(name, sources, resources=None, dependencies=None, timeout=Amount(2, mins), coverage=None, soft_dependencies=False, entry_point=u'pytest', exclusives=None)
+.. py:function:: python_tests(timeout=Amount(2, mins), coverage=None, soft_dependencies=False, entry_point=u'pytest', **kwargs)
 
  Tests a Python library.
 
@@ -1050,7 +1041,7 @@ python_tests
 python_thrift_library
 -------------------------------------------------------------------------------
 
-.. py:function:: python_thrift_library(name, sources=None, resources=None, dependencies=None, provides=None, exclusives=None)
+.. py:function:: python_thrift_library(**kwargs)
 
  Generates a stub Python library from thrift IDL files.
 
@@ -1079,7 +1070,7 @@ python_thrift_library
 repo
 -------------------------------------------------------------------------------
 
-.. py:function:: repo(name, url, push_db, exclusives=None)
+.. py:function:: repo(url=None, push_db=None, **kwargs)
 
  An artifact repository, such as a maven repo.
 
@@ -1101,7 +1092,7 @@ repo
 resources
 -------------------------------------------------------------------------------
 
-.. py:function:: resources(name, sources, exclusives=None)
+.. py:function:: resources(address=None, sources=None, **kwargs)
 
  A set of files accessible as resources from the JVM classpath.
  
@@ -1159,7 +1150,7 @@ ROOT_DIR
 scala_library
 -------------------------------------------------------------------------------
 
-.. py:function:: scala_library(name, sources=None, java_sources=None, provides=None, dependencies=None, excludes=None, resources=None, exclusives=None)
+.. py:function:: scala_library(java_sources=None, **kwargs)
 
  A collection of Scala code.
  
@@ -1204,7 +1195,7 @@ scala_library
 scala_specs
 -------------------------------------------------------------------------------
 
-.. py:function:: scala_specs(name, sources=None, java_sources=None, dependencies=None, excludes=None, resources=None, exclusives=None)
+.. py:function:: scala_specs(**kwargs)
 
  Tests a Scala library.
 
@@ -1253,7 +1244,7 @@ scala_tests
 scalac_plugin
 -------------------------------------------------------------------------------
 
-.. py:function:: scalac_plugin(name, classname, plugin=None, sources=None, java_sources=None, provides=None, dependencies=None, excludes=None, resources=None, exclusives=None)
+.. py:function:: scalac_plugin(classname=None, plugin=None, *args, **kwargs)
 
  Defines a target that produces a scalac_plugin.
 
@@ -1328,6 +1319,7 @@ setup_py
 source_root
 -------------------------------------------------------------------------------
 
+.. py:function:: source_root(rel_path)
 
  Allows registration of a source root for a set of targets.
  

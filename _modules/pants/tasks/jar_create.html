@@ -197,14 +197,14 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#authenticating-to-the-artifact-repository">Authenticating to the Artifact Repository</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#troubleshooting">Troubleshooting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#want-to-publish-something-publish-many-things">Want to Publish Something? Publish Many Things</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../publish.html#test-with-a-fake-local-publish">Test with a Fake Local &#8220;Publish&#8221;</a></li>
 </ul>
 </li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../with_intellij.html">Using Pants with IntelliJ IDEA</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#editing-build-files">Editing BUILD Files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#pants-build-plugin-for-intellij">Pants Build Plugin for IntelliJ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
 </ul>
 </li>
 </ul>
@@ -257,6 +257,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-binary">python_binary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-library">python_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-requirement">python_requirement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-requirement-library">python_requirement_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-test-suite">python_test_suite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-tests">python_tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-thrift-library">python_thrift_library</a></li>
@@ -390,10 +391,11 @@ body a.icon-home:hover{
 <span class="kn">from</span> <span class="nn">twitter.common.dirutil</span> <span class="kn">import</span> <span class="n">safe_mkdir</span>
 
 <span class="kn">from</span> <span class="nn">pants.base.build_environment</span> <span class="kn">import</span> <span class="n">get_buildroot</span>
+<span class="kn">from</span> <span class="nn">pants.base.exceptions</span> <span class="kn">import</span> <span class="n">TaskError</span>
 <span class="kn">from</span> <span class="nn">pants.fs.fs</span> <span class="kn">import</span> <span class="n">safe_filename</span>
 <span class="kn">from</span> <span class="nn">pants.java.jar</span> <span class="kn">import</span> <span class="n">Manifest</span><span class="p">,</span> <span class="n">open_jar</span>
 <span class="kn">from</span> <span class="nn">pants.targets.scala_library</span> <span class="kn">import</span> <span class="n">ScalaLibrary</span>
-<span class="kn">from</span> <span class="nn">pants.tasks</span> <span class="kn">import</span> <span class="n">Task</span><span class="p">,</span> <span class="n">TaskError</span>
+<span class="kn">from</span> <span class="nn">pants.tasks.task</span> <span class="kn">import</span> <span class="n">Task</span>
 <span class="kn">from</span> <span class="nn">pants.tasks.javadoc_gen</span> <span class="kn">import</span> <span class="n">javadoc</span>
 <span class="kn">from</span> <span class="nn">pants.tasks.scaladoc_gen</span> <span class="kn">import</span> <span class="n">scaladoc</span>
 
@@ -417,6 +419,12 @@ body a.icon-home:hover{
   <span class="c"># artifacts will often be used outside pants and those uses may manipulate (expand) the jar</span>
   <span class="c"># filenames blindly.</span>
   <span class="k">return</span> <span class="n">safe_filename</span><span class="p">(</span><span class="n">id_</span><span class="p">,</span> <span class="n">extension</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_abs_and_relative_sources</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
+  <span class="n">abs_source_root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_buildroot</span><span class="p">(),</span> <span class="n">target</span><span class="o">.</span><span class="n">target_base</span><span class="p">)</span>
+  <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">sources_relative_to_source_root</span><span class="p">():</span>
+    <span class="k">yield</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">abs_source_root</span><span class="p">,</span> <span class="n">source</span><span class="p">),</span> <span class="n">source</span>
 
 
 <div class="viewcode-block" id="JarCreate"><a class="viewcode-back" href="../../../tasks.html#pants.tasks.jar_create.JarCreate">[docs]</a><span class="k">class</span> <span class="nc">JarCreate</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
@@ -554,20 +562,19 @@ body a.icon-home:hover{
       <span class="n">add_genjar</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">jar_name</span><span class="p">)</span>
       <span class="n">jar_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workdir</span><span class="p">,</span> <span class="n">jar_name</span><span class="p">)</span>
       <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_jar</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">jar_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">jar</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">sources</span><span class="p">:</span>
-          <span class="n">jar</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_buildroot</span><span class="p">(),</span> <span class="n">target</span><span class="o">.</span><span class="n">target_base</span><span class="p">,</span> <span class="n">source</span><span class="p">),</span> <span class="n">source</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">abs_source</span><span class="p">,</span> <span class="n">rel_source</span> <span class="ow">in</span> <span class="n">_abs_and_relative_sources</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
+          <span class="n">jar</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">abs_source</span><span class="p">,</span> <span class="n">rel_source</span><span class="p">)</span>
 
         <span class="c"># TODO(Tejal Desai): pantsbuild/pants/65 Remove java_sources attribute for ScalaLibrary</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">ScalaLibrary</span><span class="p">):</span>
-          <span class="k">for</span> <span class="n">java_source</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">java_sources</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">java_source</span><span class="o">.</span><span class="n">sources</span><span class="p">:</span>
-              <span class="n">jar</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_buildroot</span><span class="p">(),</span> <span class="n">java_source</span><span class="o">.</span><span class="n">target_base</span><span class="p">,</span> <span class="n">source</span><span class="p">),</span>
-                        <span class="n">source</span><span class="p">)</span>
+          <span class="k">for</span> <span class="n">java_source_target</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">java_sources</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">abs_source</span><span class="p">,</span> <span class="n">rel_source</span> <span class="ow">in</span> <span class="n">_abs_and_relative_sources</span><span class="p">(</span><span class="n">java_source_target</span><span class="p">):</span>
+              <span class="n">jar</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">abs_source</span><span class="p">,</span> <span class="n">rel_source</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">target</span><span class="o">.</span><span class="n">has_resources</span><span class="p">:</span>
-          <span class="k">for</span> <span class="n">resources</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">resources</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">resource</span> <span class="ow">in</span> <span class="n">resources</span><span class="o">.</span><span class="n">sources</span><span class="p">:</span>
-              <span class="n">jar</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_buildroot</span><span class="p">(),</span> <span class="n">resources</span><span class="o">.</span><span class="n">target_base</span><span class="p">,</span> <span class="n">resource</span><span class="p">),</span> <span class="n">resource</span><span class="p">)</span>
+          <span class="k">for</span> <span class="n">resource_target</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">resources</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">abs_source</span><span class="p">,</span> <span class="n">rel_source</span> <span class="ow">in</span> <span class="n">_abs_and_relative_sources</span><span class="p">(</span><span class="n">resource_target</span><span class="p">):</span>
+              <span class="n">jar</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">abs_source</span><span class="p">,</span> <span class="n">rel_source</span><span class="p">)</span>
 
   <span class="k">def</span> <span class="nf">javadocjar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">java_targets</span><span class="p">,</span> <span class="n">genmap</span><span class="p">,</span> <span class="n">add_genjar</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">java_targets</span><span class="p">:</span>

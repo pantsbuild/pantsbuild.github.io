@@ -197,14 +197,14 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#authenticating-to-the-artifact-repository">Authenticating to the Artifact Repository</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#troubleshooting">Troubleshooting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#want-to-publish-something-publish-many-things">Want to Publish Something? Publish Many Things</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../publish.html#test-with-a-fake-local-publish">Test with a Fake Local &#8220;Publish&#8221;</a></li>
 </ul>
 </li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../with_intellij.html">Using Pants with IntelliJ IDEA</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#editing-build-files">Editing BUILD Files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#pants-build-plugin-for-intellij">Pants Build Plugin for IntelliJ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
 </ul>
 </li>
 </ul>
@@ -257,6 +257,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-binary">python_binary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-library">python_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-requirement">python_requirement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-requirement-library">python_requirement_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-test-suite">python_test_suite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-tests">python_tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-thrift-library">python_thrift_library</a></li>
@@ -384,16 +385,15 @@ body a.icon-home:hover{
 
 <span class="kn">from</span> <span class="nn">twitter.common.collections</span> <span class="kn">import</span> <span class="n">maybe_list</span>
 
+<span class="kn">from</span> <span class="nn">pants.base.address</span> <span class="kn">import</span> <span class="n">SyntheticAddress</span>
 <span class="kn">from</span> <span class="nn">pants.base.build_manual</span> <span class="kn">import</span> <span class="n">manual</span>
-<span class="kn">from</span> <span class="nn">pants.base.target</span> <span class="kn">import</span> <span class="n">Target</span><span class="p">,</span> <span class="n">TargetDefinitionException</span>
-<span class="kn">from</span> <span class="nn">pants.targets</span> <span class="kn">import</span> <span class="n">util</span>
+<span class="kn">from</span> <span class="nn">pants.base.target</span> <span class="kn">import</span> <span class="n">Target</span>
+<span class="kn">from</span> <span class="nn">pants.base.exceptions</span> <span class="kn">import</span> <span class="n">TargetDefinitionException</span>
 <span class="kn">from</span> <span class="nn">pants.targets.exportable_jvm_library</span> <span class="kn">import</span> <span class="n">ExportableJvmLibrary</span>
-<span class="kn">from</span> <span class="nn">pants.targets.java_library</span> <span class="kn">import</span> <span class="n">JavaLibrary</span>
-<span class="kn">from</span> <span class="nn">pants.targets.resources</span> <span class="kn">import</span> <span class="n">WithResources</span>
 
 
 <span class="nd">@manual.builddict</span><span class="p">(</span><span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;scala&#39;</span><span class="p">])</span>
-<div class="viewcode-block" id="ScalaLibrary"><a class="viewcode-back" href="../../../targets.html#pants.targets.scala_library.ScalaLibrary">[docs]</a><span class="k">class</span> <span class="nc">ScalaLibrary</span><span class="p">(</span><span class="n">ExportableJvmLibrary</span><span class="p">,</span> <span class="n">WithResources</span><span class="p">):</span>
+<div class="viewcode-block" id="ScalaLibrary"><a class="viewcode-back" href="../../../targets.html#pants.targets.scala_library.ScalaLibrary">[docs]</a><span class="k">class</span> <span class="nc">ScalaLibrary</span><span class="p">(</span><span class="n">ExportableJvmLibrary</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;A collection of Scala code.</span>
 
 <span class="sd">  Normally has conceptually-related sources; invoking the ``compile`` goal</span>
@@ -403,15 +403,7 @@ body a.icon-home:hover{
 <span class="sd">  more sensible thing to bundle.</span>
 <span class="sd">  &quot;&quot;&quot;</span>
 
-  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-               <span class="n">name</span><span class="p">,</span>
-               <span class="n">sources</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-               <span class="n">java_sources</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-               <span class="n">provides</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-               <span class="n">dependencies</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-               <span class="n">excludes</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-               <span class="n">resources</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-               <span class="n">exclusives</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">java_sources</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :param string name: The name of this target, which combined with this</span>
 <span class="sd">      build file defines the target :class:`pants.base.address.Address`.</span>
@@ -434,58 +426,28 @@ body a.icon-home:hover{
 <span class="sd">      targets containing resources that belong on this library&#39;s classpath.</span>
 <span class="sd">    :param exclusives: An optional list of exclusives tags.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="nb">super</span><span class="p">(</span><span class="n">ScalaLibrary</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
-        <span class="n">name</span><span class="p">,</span>
-        <span class="n">sources</span><span class="p">,</span>
-        <span class="n">provides</span><span class="p">,</span>
-        <span class="n">dependencies</span><span class="p">,</span>
-        <span class="n">excludes</span><span class="p">,</span>
-        <span class="n">exclusives</span><span class="o">=</span><span class="n">exclusives</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="p">(</span><span class="n">sources</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">resources</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">):</span>
-      <span class="k">raise</span> <span class="n">TargetDefinitionException</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;Must specify sources and/or resources.&#39;</span><span class="p">)</span>
-
-    <span class="bp">self</span><span class="o">.</span><span class="n">resources</span> <span class="o">=</span> <span class="n">resources</span>
-
-    <span class="bp">self</span><span class="o">.</span><span class="n">_java_sources</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_raw_java_sources</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">java_sources</span><span class="p">)</span>
-
+    <span class="bp">self</span><span class="o">.</span><span class="n">_java_sources_specs</span> <span class="o">=</span> <span class="n">java_sources</span> <span class="ow">or</span> <span class="p">[]</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">ScalaLibrary</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">add_labels</span><span class="p">(</span><span class="s">&#39;scala&#39;</span><span class="p">)</span>
 
-    <span class="c"># Defer resolves until done parsing the current BUILD file, certain source_root arrangements</span>
-    <span class="c"># might allow java and scala sources to co-mingle and so have targets in the same BUILD.</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_post_construct</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_link_java_cycles</span><span class="p">)</span>
+  <span class="nd">@property</span>
+  <span class="k">def</span> <span class="nf">traversable_specs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="nb">super</span><span class="p">(</span><span class="n">ScalaLibrary</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">traversable_specs</span><span class="p">:</span>
+      <span class="k">yield</span> <span class="n">spec</span>
+    <span class="k">for</span> <span class="n">java_source_spec</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_java_sources_specs</span><span class="p">:</span>
+      <span class="k">yield</span> <span class="n">java_source_spec</span>
+
+  <span class="k">def</span> <span class="nf">get_jar_dependencies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">jar</span> <span class="ow">in</span> <span class="nb">super</span><span class="p">(</span><span class="n">ScalaLibrary</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get_jar_dependencies</span><span class="p">():</span>
+      <span class="k">yield</span> <span class="n">jar</span>
+    <span class="k">for</span> <span class="n">java_source_target</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">java_sources</span><span class="p">:</span>
+      <span class="k">for</span> <span class="n">jar</span> <span class="ow">in</span> <span class="n">java_source_target</span><span class="o">.</span><span class="n">jar_dependencies</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">jar</span>
 
   <span class="nd">@property</span>
   <span class="k">def</span> <span class="nf">java_sources</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_java_sources</span>
-
-  <span class="k">def</span> <span class="nf">resolve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="c"># TODO(John Sirois): Clean this up when BUILD parse refactoring is tackled.</span>
-    <span class="n">unused_resolved_java_sources</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">java_sources</span>
-
-    <span class="k">for</span> <span class="n">resolved</span> <span class="ow">in</span> <span class="nb">super</span><span class="p">(</span><span class="n">ScalaLibrary</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">():</span>
-      <span class="k">yield</span> <span class="n">resolved</span>
-
-  <span class="k">def</span> <span class="nf">_link_java_cycles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw_java_sources</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">_java_sources</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">Target</span><span class="o">.</span><span class="n">resolve_all</span><span class="p">(</span><span class="n">maybe_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_raw_java_sources</span><span class="p">,</span> <span class="n">Target</span><span class="p">),</span>
-                                                   <span class="n">JavaLibrary</span><span class="p">))</span>
-
-      <span class="bp">self</span><span class="o">.</span><span class="n">_raw_java_sources</span> <span class="o">=</span> <span class="bp">None</span>
-
-      <span class="c"># TODO(John Sirois): reconsider doing this auto-linking.</span>
-      <span class="c"># We have circular java/scala dep, add an inbound dependency edge from java to scala in this</span>
-      <span class="c"># case to force scala compilation to precede java - since scalac supports generating java</span>
-      <span class="c"># stubs for these cycles and javac does not this is both necessary and always correct.</span>
-      <span class="k">for</span> <span class="n">java_target</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_java_sources</span><span class="p">:</span>
-        <span class="c"># If this scala library provides an artifact, Fail if the java target also.</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">provides</span> <span class="ow">and</span> <span class="n">java_target</span><span class="o">.</span><span class="n">provides</span><span class="p">:</span>
-          <span class="k">raise</span> <span class="n">TargetDefinitionException</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                                          <span class="s">&quot;Associated Java Target </span><span class="si">%s</span><span class="s"> also provides an artifact&quot;</span>
-                                          <span class="o">%</span> <span class="n">java_target</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">update_dependencies</span><span class="p">(</span><span class="n">dep</span> <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">java_target</span><span class="o">.</span><span class="n">dependencies</span> <span class="k">if</span> <span class="n">dep</span> <span class="o">!=</span> <span class="bp">self</span><span class="p">)</span>
-        <span class="n">java_target</span><span class="o">.</span><span class="n">update_dependencies</span><span class="p">([</span><span class="bp">self</span><span class="p">])</span></div>
+    <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_java_sources_specs</span><span class="p">:</span>
+      <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_graph</span><span class="o">.</span><span class="n">get_target_from_spec</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span></div>
 </pre></div>
 
           <footer>

@@ -197,14 +197,14 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#authenticating-to-the-artifact-repository">Authenticating to the Artifact Repository</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#troubleshooting">Troubleshooting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#want-to-publish-something-publish-many-things">Want to Publish Something? Publish Many Things</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../publish.html#test-with-a-fake-local-publish">Test with a Fake Local &#8220;Publish&#8221;</a></li>
 </ul>
 </li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../with_intellij.html">Using Pants with IntelliJ IDEA</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#editing-build-files">Editing BUILD Files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#pants-build-plugin-for-intellij">Pants Build Plugin for IntelliJ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
 </ul>
 </li>
 </ul>
@@ -257,6 +257,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-binary">python_binary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-library">python_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-requirement">python_requirement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-requirement-library">python_requirement_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-test-suite">python_test_suite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-tests">python_tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-thrift-library">python_thrift_library</a></li>
@@ -382,26 +383,28 @@ body a.icon-home:hover{
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="p">(</span><span class="n">nested_scopes</span><span class="p">,</span> <span class="n">generators</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">with_statement</span><span class="p">,</span>
                         <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">)</span>
 
-<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">twitter.common.lang</span> <span class="kn">import</span> <span class="n">Compatibility</span>
 
-<span class="kn">from</span> <span class="nn">twitter.common.collections</span> <span class="kn">import</span> <span class="n">maybe_list</span>
-
-<span class="kn">from</span> <span class="nn">pants.targets.exclude</span> <span class="kn">import</span> <span class="n">Exclude</span>
-<span class="kn">from</span> <span class="nn">pants.targets.internal</span> <span class="kn">import</span> <span class="n">InternalTarget</span>
+<span class="kn">from</span> <span class="nn">pants.base.address</span> <span class="kn">import</span> <span class="n">SyntheticAddress</span>
+<span class="kn">from</span> <span class="nn">pants.base.payload</span> <span class="kn">import</span> <span class="n">JvmTargetPayload</span>
+<span class="kn">from</span> <span class="nn">pants.base.target</span> <span class="kn">import</span> <span class="n">Target</span>
+<span class="kn">from</span> <span class="nn">pants.targets.jar_library</span> <span class="kn">import</span> <span class="n">JarLibrary</span>
 <span class="kn">from</span> <span class="nn">pants.targets.jarable</span> <span class="kn">import</span> <span class="n">Jarable</span>
-<span class="kn">from</span> <span class="nn">pants.targets.with_sources</span> <span class="kn">import</span> <span class="n">TargetWithSources</span>
+<span class="kn">from</span> <span class="nn">pants.targets.resources</span> <span class="kn">import</span> <span class="n">Resources</span>
 
 
-<div class="viewcode-block" id="JvmTarget"><a class="viewcode-back" href="../../../targets.html#pants.targets.jvm_target.JvmTarget">[docs]</a><span class="k">class</span> <span class="nc">JvmTarget</span><span class="p">(</span><span class="n">InternalTarget</span><span class="p">,</span> <span class="n">TargetWithSources</span><span class="p">,</span> <span class="n">Jarable</span><span class="p">):</span>
+<div class="viewcode-block" id="JvmTarget"><a class="viewcode-back" href="../../../targets.html#pants.targets.jvm_target.JvmTarget">[docs]</a><span class="k">class</span> <span class="nc">JvmTarget</span><span class="p">(</span><span class="n">Target</span><span class="p">,</span> <span class="n">Jarable</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;A base class for all java module targets that provides path and dependency translation.&quot;&quot;&quot;</span>
 
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-               <span class="n">name</span><span class="p">,</span>
-               <span class="n">sources</span><span class="p">,</span>
-               <span class="n">dependencies</span><span class="p">,</span>
+               <span class="n">address</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+               <span class="n">sources</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+               <span class="n">sources_rel_path</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+               <span class="n">provides</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                <span class="n">excludes</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+               <span class="n">resources</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                <span class="n">configurations</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-               <span class="n">exclusives</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+               <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :param string name: The name of this target, which combined with this</span>
 <span class="sd">      build file defines the target :class:`pants.base.address.Address`.</span>
@@ -417,18 +420,68 @@ body a.icon-home:hover{
 <span class="sd">      This parameter is not intended for general use.</span>
 <span class="sd">    :type configurations: tuple of strings</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">InternalTarget</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">dependencies</span><span class="p">,</span> <span class="n">exclusives</span><span class="o">=</span><span class="n">exclusives</span><span class="p">)</span>
-    <span class="n">TargetWithSources</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">sources</span><span class="p">)</span>
 
+    <span class="n">sources_rel_path</span> <span class="o">=</span> <span class="n">sources_rel_path</span> <span class="ow">or</span> <span class="n">address</span><span class="o">.</span><span class="n">spec_path</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">JvmTargetPayload</span><span class="p">(</span><span class="n">sources</span><span class="o">=</span><span class="n">sources</span><span class="p">,</span>
+                               <span class="n">sources_rel_path</span><span class="o">=</span><span class="n">sources_rel_path</span><span class="p">,</span>
+                               <span class="n">provides</span><span class="o">=</span><span class="n">provides</span><span class="p">,</span>
+                               <span class="n">excludes</span><span class="o">=</span><span class="n">excludes</span><span class="p">,</span>
+                               <span class="n">configurations</span><span class="o">=</span><span class="n">configurations</span><span class="p">)</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">JvmTarget</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">address</span><span class="o">=</span><span class="n">address</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_resource_specs</span> <span class="o">=</span> <span class="n">resources</span> <span class="ow">or</span> <span class="p">[]</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">add_labels</span><span class="p">(</span><span class="s">&#39;jvm&#39;</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sources</span><span class="p">:</span>
-      <span class="n">rel_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_base</span><span class="p">,</span> <span class="n">source</span><span class="p">)</span>
-      <span class="n">TargetWithSources</span><span class="o">.</span><span class="n">register_source</span><span class="p">(</span><span class="n">rel_path</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">excludes</span> <span class="o">=</span> <span class="n">maybe_list</span><span class="p">(</span><span class="n">excludes</span> <span class="ow">or</span> <span class="p">[],</span> <span class="n">Exclude</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">configurations</span> <span class="o">=</span> <span class="n">maybe_list</span><span class="p">(</span><span class="n">configurations</span> <span class="ow">or</span> <span class="p">[])</span>
 
-  <span class="k">def</span> <span class="nf">_provides</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">None</span></div>
+  <span class="n">_jar_dependencies</span> <span class="o">=</span> <span class="bp">None</span>
+  <span class="nd">@property</span>
+  <span class="k">def</span> <span class="nf">jar_dependencies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jar_dependencies</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_jar_dependencies</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_jar_dependencies</span><span class="p">())</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jar_dependencies</span>
+
+  <span class="k">def</span> <span class="nf">mark_extra_invalidation_hash_dirty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_jar_dependencies</span> <span class="o">=</span> <span class="bp">None</span>
+
+  <span class="k">def</span> <span class="nf">get_jar_dependencies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">jar_deps</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">collect_jar_deps</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
+      <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">JarLibrary</span><span class="p">):</span>
+        <span class="n">jar_deps</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">payload</span><span class="o">.</span><span class="n">jars</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">work</span><span class="o">=</span><span class="n">collect_jar_deps</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">jar_deps</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span> <span class="nf">has_resources</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resources</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span> <span class="nf">traversable_dependency_specs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="nb">super</span><span class="p">(</span><span class="n">JvmTarget</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">traversable_specs</span><span class="p">:</span>
+      <span class="k">yield</span> <span class="n">spec</span>
+    <span class="k">for</span> <span class="n">resource_spec</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resource_specs</span><span class="p">:</span>
+      <span class="k">yield</span> <span class="n">resource_spec</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span> <span class="nf">traversable_specs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">payload</span><span class="o">.</span><span class="n">provides</span><span class="p">:</span>
+      <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">payload</span><span class="o">.</span><span class="n">provides</span><span class="o">.</span><span class="n">repo</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span> <span class="nf">provides</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">payload</span><span class="o">.</span><span class="n">provides</span><span class="p">:</span>
+      <span class="k">return</span> <span class="bp">None</span>
+
+    <span class="c"># TODO(pl): This is an awful hack</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">payload</span><span class="o">.</span><span class="n">provides</span><span class="o">.</span><span class="n">repo</span><span class="p">,</span> <span class="n">Compatibility</span><span class="o">.</span><span class="n">string</span><span class="p">):</span>
+      <span class="n">address</span> <span class="o">=</span> <span class="n">SyntheticAddress</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">payload</span><span class="o">.</span><span class="n">provides</span><span class="o">.</span><span class="n">repo</span><span class="p">,</span> <span class="n">relative_to</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="o">.</span><span class="n">spec_path</span><span class="p">)</span>
+      <span class="n">repo_target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_graph</span><span class="o">.</span><span class="n">get_target</span><span class="p">(</span><span class="n">address</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">payload</span><span class="o">.</span><span class="n">provides</span><span class="o">.</span><span class="n">repo</span> <span class="o">=</span> <span class="n">repo_target</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">payload</span><span class="o">.</span><span class="n">provides</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span> <span class="nf">resources</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_build_graph</span><span class="o">.</span><span class="n">get_target_from_spec</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span> <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resource_specs</span><span class="p">]</span></div>
 </pre></div>
 
           <footer>

@@ -197,14 +197,14 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#authenticating-to-the-artifact-repository">Authenticating to the Artifact Repository</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#troubleshooting">Troubleshooting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#want-to-publish-something-publish-many-things">Want to Publish Something? Publish Many Things</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../publish.html#test-with-a-fake-local-publish">Test with a Fake Local &#8220;Publish&#8221;</a></li>
 </ul>
 </li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../with_intellij.html">Using Pants with IntelliJ IDEA</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#editing-build-files">Editing BUILD Files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#pants-build-plugin-for-intellij">Pants Build Plugin for IntelliJ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
 </ul>
 </li>
 </ul>
@@ -257,6 +257,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-binary">python_binary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-library">python_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-requirement">python_requirement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-requirement-library">python_requirement_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-test-suite">python_test_suite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-tests">python_tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-thrift-library">python_thrift_library</a></li>
@@ -383,13 +384,12 @@ body a.icon-home:hover{
                         <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">pants.base.build_manual</span> <span class="kn">import</span> <span class="n">manual</span>
-<span class="kn">from</span> <span class="nn">pants.targets</span> <span class="kn">import</span> <span class="n">util</span>
-<span class="kn">from</span> <span class="nn">pants.targets.internal</span> <span class="kn">import</span> <span class="n">InternalTarget</span>
-<span class="kn">from</span> <span class="nn">pants.targets.with_sources</span> <span class="kn">import</span> <span class="n">TargetWithSources</span>
+<span class="kn">from</span> <span class="nn">pants.base.payload</span> <span class="kn">import</span> <span class="n">ResourcesPayload</span>
+<span class="kn">from</span> <span class="nn">pants.base.target</span> <span class="kn">import</span> <span class="n">Target</span>
 
 
 <span class="nd">@manual.builddict</span><span class="p">(</span><span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;jvm&#39;</span><span class="p">])</span>
-<div class="viewcode-block" id="Resources"><a class="viewcode-back" href="../../../targets.html#pants.targets.resources.Resources">[docs]</a><span class="k">class</span> <span class="nc">Resources</span><span class="p">(</span><span class="n">InternalTarget</span><span class="p">,</span> <span class="n">TargetWithSources</span><span class="p">):</span>
+<div class="viewcode-block" id="Resources"><a class="viewcode-back" href="../../../targets.html#pants.targets.resources.Resources">[docs]</a><span class="k">class</span> <span class="nc">Resources</span><span class="p">(</span><span class="n">Target</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;A set of files accessible as resources from the JVM classpath.</span>
 
 <span class="sd">  Looking for loose files in your application bundle? Those are :ref:`bdict_bundle`\ s.</span>
@@ -398,52 +398,22 @@ body a.icon-home:hover{
 <span class="sd">  and friends API. In the ``jar`` goal, the resource files are placed in the resulting `.jar`.</span>
 <span class="sd">  &quot;&quot;&quot;</span>
 
-  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">sources</span><span class="p">,</span> <span class="n">exclusives</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">address</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">sources</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :param string name: The name of this target, which combined with this</span>
 <span class="sd">      build file defines the target :class:`pants.base.address.Address`.</span>
 <span class="sd">    :param sources: A list of filenames representing the resources</span>
 <span class="sd">      this library provides.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># TODO(John Sirois): XXX Review why this is an InternalTarget</span>
-    <span class="n">InternalTarget</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">dependencies</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">exclusives</span><span class="o">=</span><span class="n">exclusives</span><span class="p">)</span>
-    <span class="n">TargetWithSources</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">sources</span><span class="o">=</span><span class="n">sources</span><span class="p">,</span> <span class="n">exclusives</span><span class="o">=</span><span class="n">exclusives</span><span class="p">)</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">ResourcesPayload</span><span class="p">(</span><span class="n">sources_rel_path</span><span class="o">=</span><span class="n">address</span><span class="o">.</span><span class="n">spec_path</span><span class="p">,</span> <span class="n">sources</span><span class="o">=</span><span class="n">sources</span><span class="p">)</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">Resources</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">address</span><span class="o">=</span><span class="n">address</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Resources.has_sources"><a class="viewcode-back" href="../../../targets.html#pants.targets.resources.Resources.has_sources">[docs]</a>  <span class="k">def</span> <span class="nf">has_sources</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;``Resources`` never own sources of any particular native type, like for example</span>
 <span class="sd">    ``JavaLibrary``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c"># TODO(John Sirois): track down the reason for this hack and kill or explain better.</span>
-    <span class="k">return</span> <span class="n">extension</span> <span class="ow">is</span> <span class="bp">None</span>
-
-</div></div>
-<div class="viewcode-block" id="WithResources"><a class="viewcode-back" href="../../../targets.html#pants.targets.resources.WithResources">[docs]</a><span class="k">class</span> <span class="nc">WithResources</span><span class="p">(</span><span class="n">InternalTarget</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;A mixin for internal targets that have resources.&quot;&quot;&quot;</span>
-
-  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="nb">super</span><span class="p">(</span><span class="n">WithResources</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_resources</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_raw_resources</span> <span class="o">=</span> <span class="bp">None</span>
-
-  <span class="nd">@property</span>
-  <span class="k">def</span> <span class="nf">resources</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw_resources</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">_resources</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resolve_all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_raw_resources</span><span class="p">,</span> <span class="n">Resources</span><span class="p">))</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">update_dependencies</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_resources</span><span class="p">)</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">_raw_resources</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resources</span>
-
-  <span class="nd">@resources.setter</span>
-  <span class="k">def</span> <span class="nf">resources</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resources</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_resources</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_raw_resources</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">resources</span><span class="p">)</span>
-
-  <span class="k">def</span> <span class="nf">resolve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="c"># TODO(John Sirois): Clean this up when BUILD parse refactoring is tackled.</span>
-    <span class="n">unused_resolved_resources</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resources</span>
-
-    <span class="k">for</span> <span class="n">resolved</span> <span class="ow">in</span> <span class="nb">super</span><span class="p">(</span><span class="n">WithResources</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">():</span>
-      <span class="k">yield</span> <span class="n">resolved</span></div>
+    <span class="k">return</span> <span class="n">extension</span> <span class="ow">is</span> <span class="bp">None</span></div></div>
 </pre></div>
 
           <footer>

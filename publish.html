@@ -198,14 +198,14 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="#authenticating-to-the-artifact-repository">Authenticating to the Artifact Repository</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#want-to-publish-something-publish-many-things">Want to Publish Something? Publish Many Things</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#test-with-a-fake-local-publish">Test with a Fake Local &#8220;Publish&#8221;</a></li>
 </ul>
 </li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="with_intellij.html">Using Pants with IntelliJ IDEA</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
-<li class="toctree-l2"><a class="reference internal" href="with_intellij.html#editing-build-files">Editing BUILD Files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="with_intellij.html#pants-build-plugin-for-intellij">Pants Build Plugin for IntelliJ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
 </ul>
 </li>
 </ul>
@@ -258,6 +258,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-binary">python_binary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-library">python_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-requirement">python_requirement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-requirement-library">python_requirement_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-test-suite">python_test_suite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-tests">python_tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-thrift-library">python_thrift_library</a></li>
@@ -481,9 +482,7 @@ the current version number.)</p>
 publishing is only allowed on the <tt class="docutils literal"><span class="pre">master</span></tt> branch.) If so, be on that branch
 with no changes.</li>
 <li>Consider trying a local publish first. This lets you test the to-be-published
-artifact. E.g., to test with Maven configured to use <tt class="docutils literal"><span class="pre">~/.m2/repository</span></tt>
-as a local repo, you could publish to that repo with
-<tt class="docutils literal"><span class="pre">./pants</span> <span class="pre">goal</span> <span class="pre">publish</span> <span class="pre">--no-publish-dryrun</span> <span class="pre">--publish-local=~/.m2/repository</span></tt></li>
+artifact. See <a class="reference internal" href="#publish-local-test"><em>Test with a Fake Local &#8220;Publish&#8221;</em></a>.</li>
 <li>Start the publish: <tt class="docutils literal"><span class="pre">./pants</span> <span class="pre">goal</span> <span class="pre">publish</span> <span class="pre">--no-publish-dryrun</span> <span class="pre">[target]</span></tt>
 Don&#8217;t wander off; Pants will ask for confirmation as it goes
 (making sure you aren&#8217;t publishing artifact[s] you didn&#8217;t mean to).</li>
@@ -641,9 +640,13 @@ and starting over.</p>
 </div>
 <div class="section" id="does-not-provide-an-artifact">
 <span id="publish-no-provides"></span><h3>Does not provide an artifact<a class="headerlink" href="#does-not-provide-an-artifact" title="Permalink to this headline">¶</a></h3>
-<p>Pants gets the coordinates at which to publish a target from the target&#8217;s
-<tt class="docutils literal"><span class="pre">provides</span></tt> parameter. Thus, if you try to publish a target with no
-<tt class="docutils literal"><span class="pre">provides</span></tt>, Pants doesn&#8217;t know what to do. It stops:</p>
+<p>A published artifact lives at a set of coordinates. For Pants to publish an
+artifact, it needs to know the artifact&#8217;s coordinates.
+Pants gets the coordinates from the target&#8217;s
+<tt class="docutils literal"><span class="pre">provides</span></tt> parameter. Thus, if you try to publish a target
+that depends on a target
+that has no <tt class="docutils literal"><span class="pre">provides</span></tt>,
+Pants doesn&#8217;t know what to do. It stops:</p>
 <div class="highlight-python"><div class="highlight"><pre>FAILURE: The following errors must be resolved to publish.
   Cannot publish src/java/com/twitter/common/base/BUILD:base due to:
     src/java/com/twitter/common/quantity/BUILD:quantity - Does not provide an artifact.
@@ -654,6 +657,18 @@ and starting over.</p>
 If any of those dependencies have changed since their last publish, Pants
 tries to publish them before publishing the target you specify. Thus, you
 might need to add a <tt class="docutils literal"><span class="pre">provides</span></tt> to one or more of these.</p>
+</div>
+<div class="section" id="silently-does-not-publish">
+<h3>Silently does not publish<a class="headerlink" href="#silently-does-not-publish" title="Permalink to this headline">¶</a></h3>
+<p>A published artifact lives at a set of coordinates. For Pants to publish an
+artifact, it needs to know the artifact&#8217;s coordinates.
+Pants gets the coordinates from the target&#8217;s
+<tt class="docutils literal"><span class="pre">provides</span></tt> parameter. Thus, if you try to publish a target
+that has no <tt class="docutils literal"><span class="pre">provides</span></tt>,
+Pants doesn&#8217;t try. If the target depends on <em>other</em>
+targets that <em>do</em> provide artifacts, Pants might publish those.
+This is a case of <a class="reference internal" href="first_tutorial.html#tut-goal-target-mismatch"><em>goal-target mismatch</em></a>.
+To fix this, set <tt class="docutils literal"><span class="pre">provides</span></tt> correctly.</p>
 </div>
 </div>
 <div class="section" id="want-to-publish-something-publish-many-things">
@@ -684,6 +699,26 @@ to find out that <tt class="docutils literal"><span class="pre">other-high-level
 <tt class="docutils literal"><span class="pre">util</span></tt>.
 If Pants publishes <tt class="docutils literal"><span class="pre">util</span></tt>, it does <em>not</em> automatically try to publish
 <tt class="docutils literal"><span class="pre">high-level</span></tt> or <tt class="docutils literal"><span class="pre">other-high-level</span></tt>.</p>
+</div>
+<div class="section" id="test-with-a-fake-local-publish">
+<span id="publish-local-test"></span><h2>Test with a Fake Local &#8220;Publish&#8221;<a class="headerlink" href="#test-with-a-fake-local-publish" title="Permalink to this headline">¶</a></h2>
+<p>The whole reason you publish an artifact so that other codebases can use it.
+Before you really publish, you might want to fake-publish an artifact:
+generate it and put it someplace a place in your development machine;
+then use that artifact from another codebase.</p>
+<p>For example, your other codebase might use
+Maven to build, perhaps with Maven configured to use <tt class="docutils literal"><span class="pre">~/.m2/repository</span></tt>
+as a local repo.
+You can make pants publish to that local repo with</p>
+<div class="highlight-python"><div class="highlight"><pre>./pants goal publish --no-publish-dryrun --publish-local=~/.m2/repository
+</pre></div>
+</div>
+<p>In the other codebase, change the dependencies to pull in the new artifact.</p>
+<p>If your other codebase <em>also</em> uses Pants build, you can depend on the
+locally-published artifact. If the artifact is a jar, then in the
+3rdparty
+<a class="reference internal" href="build_dictionary.html#bdict-jar"><em>jar target</em></a>,
+set <tt class="docutils literal"><span class="pre">mutable=True</span></tt> and change the version number.</p>
 </div>
 </div>
 

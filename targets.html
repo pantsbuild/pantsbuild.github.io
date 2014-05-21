@@ -199,14 +199,14 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="publish.html#authenticating-to-the-artifact-repository">Authenticating to the Artifact Repository</a></li>
 <li class="toctree-l2"><a class="reference internal" href="publish.html#troubleshooting">Troubleshooting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="publish.html#want-to-publish-something-publish-many-things">Want to Publish Something? Publish Many Things</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publish.html#test-with-a-fake-local-publish">Test with a Fake Local &#8220;Publish&#8221;</a></li>
 </ul>
 </li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="with_intellij.html">Using Pants with IntelliJ IDEA</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
-<li class="toctree-l2"><a class="reference internal" href="with_intellij.html#editing-build-files">Editing BUILD Files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="with_intellij.html#pants-build-plugin-for-intellij">Pants Build Plugin for IntelliJ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
 </ul>
 </li>
 </ul>
@@ -259,6 +259,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-binary">python_binary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-library">python_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-requirement">python_requirement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-requirement-library">python_requirement_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-test-suite">python_test_suite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-tests">python_tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-thrift-library">python_thrift_library</a></li>
@@ -384,7 +385,7 @@ body a.icon-home:hover{
 <span id="annotation-processor-module"></span><h2><a class="reference internal" href="build_dictionary.html#annotation_processor" title="annotation_processor"><tt class="xref py py-mod docutils literal"><span class="pre">annotation_processor</span></tt></a> Module<a class="headerlink" href="#module-pants.targets.annotation_processor" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pants.targets.annotation_processor.AnnotationProcessor">
-<em class="property">class </em><tt class="descclassname">pants.targets.annotation_processor.</tt><tt class="descname">AnnotationProcessor</tt><big>(</big><em>name</em>, <em>sources</em>, <em>provides=None</em>, <em>dependencies=None</em>, <em>excludes=None</em>, <em>resources=None</em>, <em>processors=None</em>, <em>exclusives=None</em><big>)</big><a class="reference internal" href="_modules/pants/targets/annotation_processor.html#AnnotationProcessor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.annotation_processor.AnnotationProcessor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pants.targets.annotation_processor.</tt><tt class="descname">AnnotationProcessor</tt><big>(</big><em>processors=None</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/pants/targets/annotation_processor.html#AnnotationProcessor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.annotation_processor.AnnotationProcessor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Produces a Java library containing one or more annotation processors.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -447,7 +448,7 @@ this artifact is published to.</li>
 <span id="benchmark-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">benchmark</span></tt> Module<a class="headerlink" href="#module-pants.targets.benchmark" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pants.targets.benchmark.Benchmark">
-<em class="property">class </em><tt class="descclassname">pants.targets.benchmark.</tt><tt class="descname">Benchmark</tt><big>(</big><em>name</em>, <em>sources=None</em>, <em>java_sources=None</em>, <em>dependencies=None</em>, <em>excludes=None</em>, <em>resources=None</em>, <em>exclusives=None</em><big>)</big><a class="reference internal" href="_modules/pants/targets/benchmark.html#Benchmark"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.benchmark.Benchmark" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pants.targets.benchmark.</tt><tt class="descname">Benchmark</tt><big>(</big><em>address=None</em>, <em>sources=None</em>, <em>sources_rel_path=None</em>, <em>provides=None</em>, <em>excludes=None</em>, <em>resources=None</em>, <em>configurations=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/pants/targets/benchmark.html#Benchmark"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.benchmark.Benchmark" title="Permalink to this definition">¶</a></dt>
 <dd><p>A caliper benchmark.</p>
 <p>Run it with the <tt class="docutils literal"><span class="pre">bench</span></tt> goal.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -459,16 +460,12 @@ this artifact is published to.</li>
 build file defines the target <a class="reference internal" href="base.html#pants.base.address.Address" title="pants.base.address.Address"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.address.Address</span></tt></a>.</li>
 <li><strong>sources</strong> (<em>list of strings</em>) &#8211; A list of filenames representing the source code
 this library is compiled from.</li>
-<li><strong>java_sources</strong> &#8211; <a class="reference internal" href="#pants.targets.java_library.JavaLibrary" title="pants.targets.java_library.JavaLibrary"><tt class="xref py py-class docutils literal"><span class="pre">pants.targets.java_library.JavaLibrary</span></tt></a> or list of
-JavaLibrary targets this library has a circular dependency on.
-Prefer using dependencies to express non-circular dependencies.</li>
 <li><strong>dependencies</strong> (<em>list of targets</em>) &#8211; List of <a class="reference internal" href="base.html#pants.base.target.Target" title="pants.base.target.Target"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.target.Target</span></tt></a> instances
 this target depends on.</li>
-<li><strong>excludes</strong> &#8211; List of <a class="reference internal" href="#pants.targets.exclude.Exclude" title="pants.targets.exclude.Exclude"><tt class="xref py py-class docutils literal"><span class="pre">pants.targets.exclude.Exclude</span></tt></a> instances
+<li><strong>excludes</strong> &#8211; One or more <a class="reference internal" href="#pants.targets.exclude.Exclude" title="pants.targets.exclude.Exclude"><tt class="xref py py-class docutils literal"><span class="pre">pants.targets.exclude.Exclude</span></tt></a> instances
 to filter this target&#8217;s transitive dependencies against.</li>
-<li><strong>resources</strong> &#8211; An optional list of <tt class="docutils literal"><span class="pre">resources</span></tt> targets containing text
-file resources to place in this module&#8217;s jar.</li>
-<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See CheckExclusives for details.</li>
+<li><strong>configurations</strong> (<em>tuple of strings</em>) &#8211; One or more ivy configurations to resolve for this target.
+This parameter is not intended for general use.</li>
 </ul>
 </td>
 </tr>
@@ -513,11 +510,36 @@ or more of these.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-pants.targets.dependencies">
+<span id="dependencies-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">dependencies</span></tt> Module<a class="headerlink" href="#module-pants.targets.dependencies" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pants.targets.dependencies.Dependencies">
+<em class="property">class </em><tt class="descclassname">pants.targets.dependencies.</tt><tt class="descname">Dependencies</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/pants/targets/dependencies.html#Dependencies"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.dependencies.Dependencies" title="Permalink to this definition">¶</a></dt>
+<dd><p>A set of dependencies that may be depended upon,
+as if depending upon the set of dependencies directly.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> &#8211; The name of this target, which combined with this
+build file defines the target <a class="reference internal" href="base.html#pants.base.address.Address" title="pants.base.address.Address"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.address.Address</span></tt></a>.</li>
+<li><strong>dependencies</strong> &#8211; List of target specs.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See CheckExclusives
+for details.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
 <div class="section" id="module-pants.targets.doc">
 <span id="doc-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">doc</span></tt> Module<a class="headerlink" href="#module-pants.targets.doc" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pants.targets.doc.Page">
-<em class="property">class </em><tt class="descclassname">pants.targets.doc.</tt><tt class="descname">Page</tt><big>(</big><em>name</em>, <em>source</em>, <em>dependencies=None</em>, <em>resources=None</em>, <em>exclusives=None</em><big>)</big><a class="reference internal" href="_modules/pants/targets/doc.html#Page"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.doc.Page" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pants.targets.doc.</tt><tt class="descname">Page</tt><big>(</big><em>resources=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/pants/targets/doc.html#Page"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.doc.Page" title="Permalink to this definition">¶</a></dt>
 <dd><p>Describes a single documentation page.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -606,7 +628,7 @@ everything if unspecified.</li>
 <span id="exportable-jvm-library-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">exportable_jvm_library</span></tt> Module<a class="headerlink" href="#module-pants.targets.exportable_jvm_library" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pants.targets.exportable_jvm_library.ExportableJvmLibrary">
-<em class="property">class </em><tt class="descclassname">pants.targets.exportable_jvm_library.</tt><tt class="descname">ExportableJvmLibrary</tt><big>(</big><em>name</em>, <em>sources</em>, <em>provides=None</em>, <em>dependencies=None</em>, <em>excludes=None</em>, <em>exclusives=None</em><big>)</big><a class="reference internal" href="_modules/pants/targets/exportable_jvm_library.html#ExportableJvmLibrary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.exportable_jvm_library.ExportableJvmLibrary" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pants.targets.exportable_jvm_library.</tt><tt class="descname">ExportableJvmLibrary</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/pants/targets/exportable_jvm_library.html#ExportableJvmLibrary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.exportable_jvm_library.ExportableJvmLibrary" title="Permalink to this definition">¶</a></dt>
 <dd><p>A baseclass for java targets that support being exported to an artifact repository.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -628,70 +650,6 @@ to filter this target&#8217;s transitive dependencies against.</li>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
-</div>
-<div class="section" id="module-pants.targets.external_dependency">
-<span id="external-dependency-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">external_dependency</span></tt> Module<a class="headerlink" href="#module-pants.targets.external_dependency" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="module-pants.targets.internal">
-<span id="internal-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">internal</span></tt> Module<a class="headerlink" href="#module-pants.targets.internal" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="pants.targets.internal.InternalTarget">
-<em class="property">class </em><tt class="descclassname">pants.targets.internal.</tt><tt class="descname">InternalTarget</tt><big>(</big><em>name</em>, <em>dependencies</em>, <em>exclusives=None</em><big>)</big><a class="reference internal" href="_modules/pants/targets/internal.html#InternalTarget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.internal.InternalTarget" title="Permalink to this definition">¶</a></dt>
-<dd><p>A baseclass for targets that support an optional dependency set.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> (<em>string</em>) &#8211; The name of this module target, addressable via pants via the
-portion of the spec following the colon.</li>
-<li><strong>dependencies</strong> (<em>list of targets</em>) &#8211; List of <a class="reference internal" href="base.html#pants.base.target.Target" title="pants.base.target.Target"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.target.Target</span></tt></a> instances
-this target depends on.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="exception">
-<dt id="pants.targets.internal.InternalTarget.CycleException">
-<em class="property">exception </em><tt class="descname">CycleException</tt><big>(</big><em>cycle</em><big>)</big><a class="reference internal" href="_modules/pants/targets/internal.html#InternalTarget.CycleException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.internal.InternalTarget.CycleException" title="Permalink to this definition">¶</a></dt>
-<dd><p>Thrown when a circular dependency is detected.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pants.targets.internal.InternalTarget.coalesce">
-<tt class="descclassname">InternalTarget.</tt><tt class="descname">coalesce</tt><big>(</big><em>discriminator</em><big>)</big><a class="reference internal" href="_modules/pants/targets/internal.html#InternalTarget.coalesce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.internal.InternalTarget.coalesce" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a list of targets this target depends on sorted from most dependent to least and
-grouped where possible by target type as categorized by the given discriminator.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="pants.targets.internal.InternalTarget.coalesce_targets">
-<em class="property">classmethod </em><tt class="descclassname">InternalTarget.</tt><tt class="descname">coalesce_targets</tt><big>(</big><em>internal_targets</em>, <em>discriminator</em><big>)</big><a class="reference internal" href="_modules/pants/targets/internal.html#InternalTarget.coalesce_targets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.internal.InternalTarget.coalesce_targets" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a list of targets internal_targets depend on sorted from most dependent to least and
-grouped where possible by target type as categorized by the given discriminator.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pants.targets.internal.InternalTarget.sort">
-<tt class="descclassname">InternalTarget.</tt><tt class="descname">sort</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pants/targets/internal.html#InternalTarget.sort"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.internal.InternalTarget.sort" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a list of targets this target depends on sorted from most dependent to least.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="pants.targets.internal.InternalTarget.sort_targets">
-<em class="property">classmethod </em><tt class="descclassname">InternalTarget.</tt><tt class="descname">sort_targets</tt><big>(</big><em>internal_targets</em><big>)</big><a class="reference internal" href="_modules/pants/targets/internal.html#InternalTarget.sort_targets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.internal.InternalTarget.sort_targets" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the targets that internal_targets depend on sorted from most dependent to least.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pants.targets.internal.InternalTarget.valid_dependency">
-<tt class="descclassname">InternalTarget.</tt><tt class="descname">valid_dependency</tt><big>(</big><em>dep</em><big>)</big><a class="reference internal" href="_modules/pants/targets/internal.html#InternalTarget.valid_dependency"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.internal.InternalTarget.valid_dependency" title="Permalink to this definition">¶</a></dt>
-<dd><p>Subclasses can over-ride to reject invalid dependencies.</p>
-</dd></dl>
-
 </dd></dl>
 
 </div>
@@ -807,7 +765,7 @@ that can use source jars (as of 2013, just eclipse and idea goals).</p>
 <span id="jar-library-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">jar_library</span></tt> Module<a class="headerlink" href="#module-pants.targets.jar_library" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pants.targets.jar_library.JarLibrary">
-<em class="property">class </em><tt class="descclassname">pants.targets.jar_library.</tt><tt class="descname">JarLibrary</tt><big>(</big><em>name</em>, <em>dependencies</em>, <em>overrides=None</em>, <em>exclusives=None</em><big>)</big><a class="reference internal" href="_modules/pants/targets/jar_library.html#JarLibrary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.jar_library.JarLibrary" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pants.targets.jar_library.</tt><tt class="descname">JarLibrary</tt><big>(</big><em>jars=None</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/pants/targets/jar_library.html#JarLibrary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.jar_library.JarLibrary" title="Permalink to this definition">¶</a></dt>
 <dd><p>A set of dependencies that may be depended upon,
 as if depending upon the set of dependencies directly.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -817,7 +775,7 @@ as if depending upon the set of dependencies directly.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
 build file defines the target <a class="reference internal" href="base.html#pants.base.address.Address" title="pants.base.address.Address"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.address.Address</span></tt></a>.</li>
-<li><strong>dependencies</strong> &#8211; List of <a class="reference internal" href="base.html#pants.base.target.Target" title="pants.base.target.Target"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.target.Target</span></tt></a> instances
+<li><strong>jars</strong> &#8211; List of <a class="reference internal" href="base.html#pants.base.target.Target" title="pants.base.target.Target"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.target.Target</span></tt></a> instances
 this target depends on.</li>
 <li><strong>overrides</strong> &#8211; List of strings, each of which will be recursively resolved to
 any targets that provide artifacts. Those artifacts will override corresponding
@@ -974,7 +932,7 @@ Are spread among different files, this must be set as the package cannot be infe
 <span id="java-library-module"></span><h2><a class="reference internal" href="build_dictionary.html#java_library" title="java_library"><tt class="xref py py-mod docutils literal"><span class="pre">java_library</span></tt></a> Module<a class="headerlink" href="#module-pants.targets.java_library" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pants.targets.java_library.JavaLibrary">
-<em class="property">class </em><tt class="descclassname">pants.targets.java_library.</tt><tt class="descname">JavaLibrary</tt><big>(</big><em>name</em>, <em>sources=None</em>, <em>provides=None</em>, <em>dependencies=None</em>, <em>excludes=None</em>, <em>resources=None</em>, <em>exclusives=None</em><big>)</big><a class="reference internal" href="_modules/pants/targets/java_library.html#JavaLibrary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.java_library.JavaLibrary" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pants.targets.java_library.</tt><tt class="descname">JavaLibrary</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/pants/targets/java_library.html#JavaLibrary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.java_library.JavaLibrary" title="Permalink to this definition">¶</a></dt>
 <dd><p>A collection of Java code.</p>
 <p>Normally has conceptually-related sources; invoking the <tt class="docutils literal"><span class="pre">compile</span></tt> goal
 on this target compiles Java and generates classes. Invoking the <tt class="docutils literal"><span class="pre">jar</span></tt>
@@ -1012,7 +970,7 @@ indicate text file resources to place in this module&#8217;s jar.</li>
 <span id="java-protobuf-library-module"></span><h2><a class="reference internal" href="build_dictionary.html#java_protobuf_library" title="java_protobuf_library"><tt class="xref py py-mod docutils literal"><span class="pre">java_protobuf_library</span></tt></a> Module<a class="headerlink" href="#module-pants.targets.java_protobuf_library" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pants.targets.java_protobuf_library.JavaProtobufLibrary">
-<em class="property">class </em><tt class="descclassname">pants.targets.java_protobuf_library.</tt><tt class="descname">JavaProtobufLibrary</tt><big>(</big><em>name</em>, <em>sources</em>, <em>provides=None</em>, <em>dependencies=None</em>, <em>excludes=None</em>, <em>buildflags=None</em>, <em>exclusives=None</em><big>)</big><a class="reference internal" href="_modules/pants/targets/java_protobuf_library.html#JavaProtobufLibrary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.java_protobuf_library.JavaProtobufLibrary" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pants.targets.java_protobuf_library.</tt><tt class="descname">JavaProtobufLibrary</tt><big>(</big><em>buildflags=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/pants/targets/java_protobuf_library.html#JavaProtobufLibrary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.java_protobuf_library.JavaProtobufLibrary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates a stub Java library from protobuf IDL files.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1043,7 +1001,7 @@ to filter this target&#8217;s transitive dependencies against.</li>
 <span id="java-tests-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">java_tests</span></tt> Module<a class="headerlink" href="#module-pants.targets.java_tests" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pants.targets.java_tests.JavaTests">
-<em class="property">class </em><tt class="descclassname">pants.targets.java_tests.</tt><tt class="descname">JavaTests</tt><big>(</big><em>name</em>, <em>sources=None</em>, <em>dependencies=None</em>, <em>excludes=None</em>, <em>resources=None</em>, <em>exclusives=None</em><big>)</big><a class="reference internal" href="_modules/pants/targets/java_tests.html#JavaTests"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.java_tests.JavaTests" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pants.targets.java_tests.</tt><tt class="descname">JavaTests</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/pants/targets/java_tests.html#JavaTests"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.java_tests.JavaTests" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tests JVM sources with JUnit.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1075,7 +1033,7 @@ file resources to place in this module&#8217;s jar.</li>
 <span id="java-thrift-library-module"></span><h2><a class="reference internal" href="build_dictionary.html#java_thrift_library" title="java_thrift_library"><tt class="xref py py-mod docutils literal"><span class="pre">java_thrift_library</span></tt></a> Module<a class="headerlink" href="#module-pants.targets.java_thrift_library" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pants.targets.java_thrift_library.JavaThriftLibrary">
-<em class="property">class </em><tt class="descclassname">pants.targets.java_thrift_library.</tt><tt class="descname">JavaThriftLibrary</tt><big>(</big><em>name</em>, <em>sources</em>, <em>provides=None</em>, <em>dependencies=None</em>, <em>excludes=None</em>, <em>compiler=None</em>, <em>language=None</em>, <em>rpc_style=None</em>, <em>namespace_map=None</em>, <em>exclusives=None</em><big>)</big><a class="reference internal" href="_modules/pants/targets/java_thrift_library.html#JavaThriftLibrary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.java_thrift_library.JavaThriftLibrary" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pants.targets.java_thrift_library.</tt><tt class="descname">JavaThriftLibrary</tt><big>(</big><em>compiler=None</em>, <em>language=None</em>, <em>rpc_style=None</em>, <em>namespace_map=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/pants/targets/java_thrift_library.html#JavaThriftLibrary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.java_thrift_library.JavaThriftLibrary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates a stub Java or Scala library from thrift IDL files.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1110,7 +1068,7 @@ to filter this target&#8217;s transitive dependencies against.</li>
 <span id="jvm-binary-module"></span><h2><a class="reference internal" href="build_dictionary.html#jvm_binary" title="jvm_binary"><tt class="xref py py-mod docutils literal"><span class="pre">jvm_binary</span></tt></a> Module<a class="headerlink" href="#module-pants.targets.jvm_binary" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pants.targets.jvm_binary.Bundle">
-<em class="property">class </em><tt class="descclassname">pants.targets.jvm_binary.</tt><tt class="descname">Bundle</tt><big>(</big><em>base=None</em>, <em>mapper=None</em>, <em>relative_to=None</em><big>)</big><a class="reference internal" href="_modules/pants/targets/jvm_binary.html#Bundle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.jvm_binary.Bundle" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pants.targets.jvm_binary.</tt><tt class="descname">Bundle</tt><big>(</big><em>rel_path=None</em>, <em>mapper=None</em>, <em>relative_to=None</em><big>)</big><a class="reference internal" href="_modules/pants/targets/jvm_binary.html#Bundle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.jvm_binary.Bundle" title="Permalink to this definition">¶</a></dt>
 <dd><p>A set of files to include in an application bundle.</p>
 <p>Looking for Java-style resources accessible via the <tt class="docutils literal"><span class="pre">Class.getResource</span></tt> API?
 Those are <a class="reference internal" href="build_dictionary.html#bdict-resources"><em>resources</em></a>.</p>
@@ -1135,7 +1093,7 @@ in the bundle.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>base</strong> &#8211; Base path of the &#8220;source&#8221; file paths. By default, path of the
+<li><strong>rel_path</strong> &#8211; Base path of the &#8220;source&#8221; file paths. By default, path of the
 BUILD file. Useful for assets that don&#8217;t live in the source code repo.</li>
 <li><strong>mapper</strong> &#8211; Function that takes a path string and returns a path string. Takes a path in
 the source tree, returns a path to use in the resulting bundle. By default, an identity
@@ -1158,7 +1116,7 @@ Note this is a variable length param and may be specified any number of times.</
 
 <dl class="class">
 <dt id="pants.targets.jvm_binary.JvmApp">
-<em class="property">class </em><tt class="descclassname">pants.targets.jvm_binary.</tt><tt class="descname">JvmApp</tt><big>(</big><em>name</em>, <em>binary</em>, <em>bundles</em>, <em>basename=None</em><big>)</big><a class="reference internal" href="_modules/pants/targets/jvm_binary.html#JvmApp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.jvm_binary.JvmApp" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pants.targets.jvm_binary.</tt><tt class="descname">JvmApp</tt><big>(</big><em>name=None</em>, <em>bundles=None</em>, <em>basename=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/pants/targets/jvm_binary.html#JvmApp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.jvm_binary.JvmApp" title="Permalink to this definition">¶</a></dt>
 <dd><p>A JVM-based application consisting of a binary plus &#8220;extra files&#8221;.</p>
 <p>Invoking the <tt class="docutils literal"><span class="pre">bundle</span></tt> goal on one of these targets creates a
 self-contained artifact suitable for deployment on some other machine.
@@ -1171,8 +1129,6 @@ extra files like config files, startup scripts, etc.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
 build file defines the target <a class="reference internal" href="base.html#pants.base.address.Address" title="pants.base.address.Address"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.address.Address</span></tt></a>.</li>
-<li><strong>binary</strong> &#8211; The <a class="reference internal" href="#pants.targets.jvm_binary.JvmBinary" title="pants.targets.jvm_binary.JvmBinary"><tt class="xref py py-class docutils literal"><span class="pre">pants.targets.jvm_binary.JvmBinary</span></tt></a>,
-or a <a class="reference internal" href="#pants.targets.pants_target.Pants" title="pants.targets.pants_target.Pants"><tt class="xref py py-class docutils literal"><span class="pre">pants.targets.pants_target.Pants</span></tt></a> pointer to one.</li>
 <li><strong>bundles</strong> &#8211; One or more <a class="reference internal" href="#pants.targets.jvm_binary.Bundle" title="pants.targets.jvm_binary.Bundle"><tt class="xref py py-class docutils literal"><span class="pre">pants.targets.jvm_binary.Bundle</span></tt></a>&#8216;s
 describing &#8220;extra files&#8221; that should be included with this app
 (e.g.: config files, startup scripts).</li>
@@ -1188,7 +1144,7 @@ artifact. In most cases this parameter is not necessary.</li>
 
 <dl class="class">
 <dt id="pants.targets.jvm_binary.JvmBinary">
-<em class="property">class </em><tt class="descclassname">pants.targets.jvm_binary.</tt><tt class="descname">JvmBinary</tt><big>(</big><em>name</em>, <em>main=None</em>, <em>basename=None</em>, <em>source=None</em>, <em>resources=None</em>, <em>dependencies=None</em>, <em>excludes=None</em>, <em>deploy_excludes=None</em>, <em>configurations=None</em>, <em>exclusives=None</em><big>)</big><a class="reference internal" href="_modules/pants/targets/jvm_binary.html#JvmBinary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.jvm_binary.JvmBinary" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pants.targets.jvm_binary.</tt><tt class="descname">JvmBinary</tt><big>(</big><em>name=None</em>, <em>main=None</em>, <em>basename=None</em>, <em>source=None</em>, <em>deploy_excludes=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/pants/targets/jvm_binary.html#JvmBinary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.jvm_binary.JvmBinary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Produces a JVM binary optionally identifying a launcher main class.</p>
 <p>Below are a summary of how key goals affect targets of this type:</p>
 <ul class="simple">
@@ -1243,7 +1199,7 @@ This parameter is not intended for general use.</li>
 <span id="jvm-target-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">jvm_target</span></tt> Module<a class="headerlink" href="#module-pants.targets.jvm_target" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pants.targets.jvm_target.JvmTarget">
-<em class="property">class </em><tt class="descclassname">pants.targets.jvm_target.</tt><tt class="descname">JvmTarget</tt><big>(</big><em>name</em>, <em>sources</em>, <em>dependencies</em>, <em>excludes=None</em>, <em>configurations=None</em>, <em>exclusives=None</em><big>)</big><a class="reference internal" href="_modules/pants/targets/jvm_target.html#JvmTarget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.jvm_target.JvmTarget" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pants.targets.jvm_target.</tt><tt class="descname">JvmTarget</tt><big>(</big><em>address=None</em>, <em>sources=None</em>, <em>sources_rel_path=None</em>, <em>provides=None</em>, <em>excludes=None</em>, <em>resources=None</em>, <em>configurations=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/pants/targets/jvm_target.html#JvmTarget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.jvm_target.JvmTarget" title="Permalink to this definition">¶</a></dt>
 <dd><p>A base class for all java module targets that provides path and dependency translation.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1268,37 +1224,11 @@ This parameter is not intended for general use.</li>
 </dd></dl>
 
 </div>
-<div class="section" id="module-pants.targets.pants_target">
-<span id="pants-target-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">pants_target</span></tt> Module<a class="headerlink" href="#module-pants.targets.pants_target" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="pants.targets.pants_target.Pants">
-<em class="property">class </em><tt class="descclassname">pants.targets.pants_target.</tt><tt class="descname">Pants</tt><big>(</big><em>spec</em>, <em>exclusives=None</em><big>)</big><a class="reference internal" href="_modules/pants/targets/pants_target.html#Pants"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.pants_target.Pants" title="Permalink to this definition">¶</a></dt>
-<dd><p>A pointer to a pants target.</p>
-<p>Useful, for example, in a target&#8217;s dependencies list. One target can depend
-on several others; Each pants() target refers to one of those.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>spec</strong> (<em>string</em>) &#8211; target address. E.g., <cite>src/java/com/twitter/common/util/BUILD:util</cite></td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="pants.targets.pants_target.Pants.get">
-<tt class="descname">get</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pants/targets/pants_target.html#Pants.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.pants_target.Pants.get" title="Permalink to this definition">¶</a></dt>
-<dd><p>De-reference this pants pointer to a single target.</p>
-<p>If the pointer aliases more than one target a LookupError is raised.</p>
-</dd></dl>
-
-</dd></dl>
-
-</div>
 <div class="section" id="module-pants.targets.python_antlr_library">
 <span id="python-antlr-library-module"></span><h2><a class="reference internal" href="build_dictionary.html#python_antlr_library" title="python_antlr_library"><tt class="xref py py-mod docutils literal"><span class="pre">python_antlr_library</span></tt></a> Module<a class="headerlink" href="#module-pants.targets.python_antlr_library" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pants.targets.python_antlr_library.PythonAntlrLibrary">
-<em class="property">class </em><tt class="descclassname">pants.targets.python_antlr_library.</tt><tt class="descname">PythonAntlrLibrary</tt><big>(</big><em>name</em>, <em>module</em>, <em>antlr_version=u'3.1.3'</em>, <em>sources=None</em>, <em>resources=None</em>, <em>dependencies=None</em>, <em>exclusives=None</em><big>)</big><a class="reference internal" href="_modules/pants/targets/python_antlr_library.html#PythonAntlrLibrary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.python_antlr_library.PythonAntlrLibrary" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pants.targets.python_antlr_library.</tt><tt class="descname">PythonAntlrLibrary</tt><big>(</big><em>module=None</em>, <em>antlr_version=u'3.1.3'</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/pants/targets/python_antlr_library.html#PythonAntlrLibrary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.python_antlr_library.PythonAntlrLibrary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates a stub Python library from Antlr grammar files.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1358,7 +1288,7 @@ with_binaries({&#8216;my-command&#8217;: pants(...)})</p>
 <span id="python-binary-module"></span><h2><a class="reference internal" href="build_dictionary.html#python_binary" title="python_binary"><tt class="xref py py-mod docutils literal"><span class="pre">python_binary</span></tt></a> Module<a class="headerlink" href="#module-pants.targets.python_binary" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pants.targets.python_binary.PythonBinary">
-<em class="property">class </em><tt class="descclassname">pants.targets.python_binary.</tt><tt class="descname">PythonBinary</tt><big>(</big><em>name</em>, <em>source=None</em>, <em>dependencies=None</em>, <em>entry_point=None</em>, <em>inherit_path=False</em>, <em>zip_safe=True</em>, <em>always_write_cache=False</em>, <em>repositories=None</em>, <em>indices=None</em>, <em>ignore_errors=False</em>, <em>allow_pypi=False</em>, <em>platforms=()</em>, <em>compatibility=None</em>, <em>exclusives=None</em><big>)</big><a class="reference internal" href="_modules/pants/targets/python_binary.html#PythonBinary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.python_binary.PythonBinary" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pants.targets.python_binary.</tt><tt class="descname">PythonBinary</tt><big>(</big><em>source=None</em>, <em>entry_point=None</em>, <em>inherit_path=False</em>, <em>zip_safe=True</em>, <em>always_write_cache=False</em>, <em>repositories=None</em>, <em>indices=None</em>, <em>ignore_errors=False</em>, <em>allow_pypi=False</em>, <em>platforms=()</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/pants/targets/python_binary.html#PythonBinary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.python_binary.PythonBinary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Produces a Python binary.</p>
 <p>Python binaries are pex files, self-contained executable shell
 scripts that contain a complete Python environment capable of
@@ -1424,7 +1354,7 @@ could depend on it by name <tt class="docutils literal"><span class="pre">foo</s
 <span id="python-library-module"></span><h2><a class="reference internal" href="build_dictionary.html#python_library" title="python_library"><tt class="xref py py-mod docutils literal"><span class="pre">python_library</span></tt></a> Module<a class="headerlink" href="#module-pants.targets.python_library" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pants.targets.python_library.PythonLibrary">
-<em class="property">class </em><tt class="descclassname">pants.targets.python_library.</tt><tt class="descname">PythonLibrary</tt><big>(</big><em>name</em>, <em>sources=()</em>, <em>resources=()</em>, <em>dependencies=()</em>, <em>provides=None</em>, <em>compatibility=None</em>, <em>exclusives=None</em><big>)</big><a class="reference internal" href="_modules/pants/targets/python_library.html#PythonLibrary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.python_library.PythonLibrary" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pants.targets.python_library.</tt><tt class="descname">PythonLibrary</tt><big>(</big><em>address=None</em>, <em>sources=None</em>, <em>resources=None</em>, <em>resource_targets=None</em>, <em>provides=None</em>, <em>compatibility=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/pants/targets/python_library.html#PythonLibrary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.python_library.PythonLibrary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Produces a Python library.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1432,20 +1362,21 @@ could depend on it by name <tt class="docutils literal"><span class="pre">foo</s
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>name</strong> &#8211; Name of library</li>
-<li><strong>sources</strong> (<em>list of strings</em>) &#8211; A list of filenames representing the source code
-this library is compiled from.</li>
-<li><strong>resources</strong> &#8211; non-Python resources, e.g. templates, keys, other data (it is
+<li><strong>sources</strong> &#8211; A list of filenames representing the source code this
+library is compiled from.</li>
+<li><strong>resources</strong> &#8211; non-Python resources, e.g. templates, keys, other data
+(it is
 recommended that your application uses the pkgutil package to access these
 resources in a .zip-module friendly way.)</li>
-<li><strong>dependencies</strong> (<em>list of targets</em>) &#8211; List of <a class="reference internal" href="base.html#pants.base.target.Target" title="pants.base.target.Target"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.target.Target</span></tt></a> instances
-this target depends on.</li>
-<li><strong>provides</strong> &#8211; The <a class="reference internal" href="build_dictionary.html#bdict-setup-py"><em>setup_py</em></a> (implemented by
-<tt class="xref py py-class docutils literal"><span class="pre">pants.targets.artifact.PythonArtifact</span></tt>)
-to publish that represents this target outside the repo.</li>
+<li><strong>dependencies</strong> &#8211; List of target specs.</li>
+<li><strong>provides</strong> &#8211; The <a class="reference internal" href="build_dictionary.html#bdict-setup-py"><em>setup_py</em></a> to publish that represents this
+target outside the repo.</li>
 <li><strong>compatibility</strong> &#8211; either a string or list of strings that represents
-interpreter compatibility for this target, using the Requirement-style format,
-e.g. <tt class="docutils literal"><span class="pre">'CPython&gt;=3',</span> <span class="pre">or</span> <span class="pre">just</span> <span class="pre">['&gt;=2.7','&lt;3']</span></tt> for requirements agnostic to interpreter class.</li>
-<li><strong>exclusives</strong> (<em>dict</em>) &#8211; An optional dict of exclusives tags. See CheckExclusives for details.</li>
+interpreter compatibility for this target, using the Requirement-style
+format, e.g. <tt class="docutils literal"><span class="pre">'CPython&gt;=3',</span> <span class="pre">or</span> <span class="pre">just</span> <span class="pre">['&gt;=2.7','&lt;3']</span></tt> for requirements
+agnostic to interpreter class.</li>
+<li><strong>exclusives</strong> &#8211; An optional dict of exclusives tags. See CheckExclusives
+for details.</li>
 </ul>
 </td>
 </tr>
@@ -1463,11 +1394,14 @@ e.g. <tt class="docutils literal"><span class="pre">'CPython&gt;=3',</span> <spa
 </dd></dl>
 
 </div>
+<div class="section" id="module-pants.targets.python_requirement_library">
+<span id="python-requirement-library-module"></span><h2><a class="reference internal" href="build_dictionary.html#python_requirement_library" title="python_requirement_library"><tt class="xref py py-mod docutils literal"><span class="pre">python_requirement_library</span></tt></a> Module<a class="headerlink" href="#module-pants.targets.python_requirement_library" title="Permalink to this headline">¶</a></h2>
+</div>
 <div class="section" id="module-pants.targets.python_requirements">
 <span id="python-requirements-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">python_requirements</span></tt> Module<a class="headerlink" href="#module-pants.targets.python_requirements" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="pants.targets.python_requirements.python_requirements">
-<tt class="descclassname">pants.targets.python_requirements.</tt><tt class="descname">python_requirements</tt><big>(</big><em>requirements_relpath=u'requirements.txt'</em><big>)</big><a class="reference internal" href="_modules/pants/targets/python_requirements.html#python_requirements"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.python_requirements.python_requirements" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">pants.targets.python_requirements.</tt><tt class="descname">python_requirements</tt><big>(</big><em>rel_path=None</em>, <em>target_type=None</em>, <em>requirements_relpath=u'requirements.txt'</em><big>)</big><a class="reference internal" href="_modules/pants/targets/python_requirements.html#python_requirements"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.python_requirements.python_requirements" title="Permalink to this definition">¶</a></dt>
 <dd><p>Translates a pip requirements file into an equivalent set of PythonRequirement targets.</p>
 <p>NB that there are some requirements files that can&#8217;t be unambiguously translated; ie: multiple
 find links.  For these files a ValueError will be raised that points out the issue.</p>
@@ -1489,7 +1423,7 @@ BUILD file is assumed.</td>
 <span id="python-target-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">python_target</span></tt> Module<a class="headerlink" href="#module-pants.targets.python_target" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pants.targets.python_target.PythonTarget">
-<em class="property">class </em><tt class="descclassname">pants.targets.python_target.</tt><tt class="descname">PythonTarget</tt><big>(</big><em>name</em>, <em>sources</em>, <em>resources=None</em>, <em>dependencies=None</em>, <em>provides=None</em>, <em>compatibility=None</em>, <em>exclusives=None</em><big>)</big><a class="reference internal" href="_modules/pants/targets/python_target.html#PythonTarget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.python_target.PythonTarget" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pants.targets.python_target.</tt><tt class="descname">PythonTarget</tt><big>(</big><em>address=None</em>, <em>sources=None</em>, <em>resources=None</em>, <em>resource_targets=None</em>, <em>provides=None</em>, <em>compatibility=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/pants/targets/python_target.html#PythonTarget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.python_target.PythonTarget" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base class for all Python targets.</p>
 </dd></dl>
 
@@ -1498,13 +1432,13 @@ BUILD file is assumed.</td>
 <span id="python-tests-module"></span><h2><a class="reference internal" href="build_dictionary.html#python_tests" title="python_tests"><tt class="xref py py-mod docutils literal"><span class="pre">python_tests</span></tt></a> Module<a class="headerlink" href="#module-pants.targets.python_tests" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pants.targets.python_tests.PythonTestSuite">
-<em class="property">class </em><tt class="descclassname">pants.targets.python_tests.</tt><tt class="descname">PythonTestSuite</tt><big>(</big><em>name</em>, <em>dependencies=None</em><big>)</big><a class="reference internal" href="_modules/pants/targets/python_tests.html#PythonTestSuite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.python_tests.PythonTestSuite" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pants.targets.python_tests.</tt><tt class="descname">PythonTestSuite</tt><big>(</big><em>address=None</em>, <em>sources=None</em>, <em>resources=None</em>, <em>resource_targets=None</em>, <em>provides=None</em>, <em>compatibility=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/pants/targets/python_tests.html#PythonTestSuite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.python_tests.PythonTestSuite" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tests one or more python test targets.</p>
 </dd></dl>
 
 <dl class="class">
 <dt id="pants.targets.python_tests.PythonTests">
-<em class="property">class </em><tt class="descclassname">pants.targets.python_tests.</tt><tt class="descname">PythonTests</tt><big>(</big><em>name</em>, <em>sources</em>, <em>resources=None</em>, <em>dependencies=None</em>, <em>timeout=Amount(2</em>, <em>mins)</em>, <em>coverage=None</em>, <em>soft_dependencies=False</em>, <em>entry_point=u'pytest'</em>, <em>exclusives=None</em><big>)</big><a class="reference internal" href="_modules/pants/targets/python_tests.html#PythonTests"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.python_tests.PythonTests" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pants.targets.python_tests.</tt><tt class="descname">PythonTests</tt><big>(</big><em>timeout=Amount(2</em>, <em>mins)</em>, <em>coverage=None</em>, <em>soft_dependencies=False</em>, <em>entry_point=u'pytest'</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/pants/targets/python_tests.html#PythonTests"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.python_tests.PythonTests" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tests a Python library.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1536,7 +1470,7 @@ errors for this test.</li>
 <span id="python-thrift-library-module"></span><h2><a class="reference internal" href="build_dictionary.html#python_thrift_library" title="python_thrift_library"><tt class="xref py py-mod docutils literal"><span class="pre">python_thrift_library</span></tt></a> Module<a class="headerlink" href="#module-pants.targets.python_thrift_library" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pants.targets.python_thrift_library.PythonThriftLibrary">
-<em class="property">class </em><tt class="descclassname">pants.targets.python_thrift_library.</tt><tt class="descname">PythonThriftLibrary</tt><big>(</big><em>name</em>, <em>sources=None</em>, <em>resources=None</em>, <em>dependencies=None</em>, <em>provides=None</em>, <em>exclusives=None</em><big>)</big><a class="reference internal" href="_modules/pants/targets/python_thrift_library.html#PythonThriftLibrary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.python_thrift_library.PythonThriftLibrary" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pants.targets.python_thrift_library.</tt><tt class="descname">PythonThriftLibrary</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/pants/targets/python_thrift_library.html#PythonThriftLibrary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.python_thrift_library.PythonThriftLibrary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates a stub Python library from thrift IDL files.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1564,7 +1498,7 @@ this target depends on.</li>
 <span id="repository-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">repository</span></tt> Module<a class="headerlink" href="#module-pants.targets.repository" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pants.targets.repository.Repository">
-<em class="property">class </em><tt class="descclassname">pants.targets.repository.</tt><tt class="descname">Repository</tt><big>(</big><em>name</em>, <em>url</em>, <em>push_db</em>, <em>exclusives=None</em><big>)</big><a class="reference internal" href="_modules/pants/targets/repository.html#Repository"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.repository.Repository" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pants.targets.repository.</tt><tt class="descname">Repository</tt><big>(</big><em>url=None</em>, <em>push_db=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/pants/targets/repository.html#Repository"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.repository.Repository" title="Permalink to this definition">¶</a></dt>
 <dd><p>An artifact repository, such as a maven repo.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1586,7 +1520,7 @@ this target depends on.</li>
 <span id="resources-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">resources</span></tt> Module<a class="headerlink" href="#module-pants.targets.resources" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pants.targets.resources.Resources">
-<em class="property">class </em><tt class="descclassname">pants.targets.resources.</tt><tt class="descname">Resources</tt><big>(</big><em>name</em>, <em>sources</em>, <em>exclusives=None</em><big>)</big><a class="reference internal" href="_modules/pants/targets/resources.html#Resources"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.resources.Resources" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pants.targets.resources.</tt><tt class="descname">Resources</tt><big>(</big><em>address=None</em>, <em>sources=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/pants/targets/resources.html#Resources"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.resources.Resources" title="Permalink to this definition">¶</a></dt>
 <dd><p>A set of files accessible as resources from the JVM classpath.</p>
 <p>Looking for loose files in your application bundle? Those are <a class="reference internal" href="build_dictionary.html#bdict-bundle"><em>bundle</em></a>s.</p>
 <p>Resources are Java-style resources accessible via the <tt class="docutils literal"><span class="pre">Class.getResource</span></tt>
@@ -1614,18 +1548,12 @@ this library provides.</li>
 
 </dd></dl>
 
-<dl class="class">
-<dt id="pants.targets.resources.WithResources">
-<em class="property">class </em><tt class="descclassname">pants.targets.resources.</tt><tt class="descname">WithResources</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/pants/targets/resources.html#WithResources"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.resources.WithResources" title="Permalink to this definition">¶</a></dt>
-<dd><p>A mixin for internal targets that have resources.</p>
-</dd></dl>
-
 </div>
 <div class="section" id="module-pants.targets.scala_library">
 <span id="scala-library-module"></span><h2><a class="reference internal" href="build_dictionary.html#scala_library" title="scala_library"><tt class="xref py py-mod docutils literal"><span class="pre">scala_library</span></tt></a> Module<a class="headerlink" href="#module-pants.targets.scala_library" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pants.targets.scala_library.ScalaLibrary">
-<em class="property">class </em><tt class="descclassname">pants.targets.scala_library.</tt><tt class="descname">ScalaLibrary</tt><big>(</big><em>name</em>, <em>sources=None</em>, <em>java_sources=None</em>, <em>provides=None</em>, <em>dependencies=None</em>, <em>excludes=None</em>, <em>resources=None</em>, <em>exclusives=None</em><big>)</big><a class="reference internal" href="_modules/pants/targets/scala_library.html#ScalaLibrary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.scala_library.ScalaLibrary" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pants.targets.scala_library.</tt><tt class="descname">ScalaLibrary</tt><big>(</big><em>java_sources=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/pants/targets/scala_library.html#ScalaLibrary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.scala_library.ScalaLibrary" title="Permalink to this definition">¶</a></dt>
 <dd><p>A collection of Scala code.</p>
 <p>Normally has conceptually-related sources; invoking the <tt class="docutils literal"><span class="pre">compile</span></tt> goal
 on this target compiles scala and generates classes. Invoking the <tt class="docutils literal"><span class="pre">bundle</span></tt>
@@ -1665,7 +1593,7 @@ targets containing resources that belong on this library&#8217;s classpath.</li>
 <span id="scala-tests-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">scala_tests</span></tt> Module<a class="headerlink" href="#module-pants.targets.scala_tests" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pants.targets.scala_tests.ScalaTests">
-<em class="property">class </em><tt class="descclassname">pants.targets.scala_tests.</tt><tt class="descname">ScalaTests</tt><big>(</big><em>name</em>, <em>sources=None</em>, <em>java_sources=None</em>, <em>dependencies=None</em>, <em>excludes=None</em>, <em>resources=None</em>, <em>exclusives=None</em><big>)</big><a class="reference internal" href="_modules/pants/targets/scala_tests.html#ScalaTests"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.scala_tests.ScalaTests" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pants.targets.scala_tests.</tt><tt class="descname">ScalaTests</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/pants/targets/scala_tests.html#ScalaTests"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.scala_tests.ScalaTests" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tests a Scala library.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1699,7 +1627,7 @@ to filter this target&#8217;s transitive dependencies against.</li>
 <span id="scalac-plugin-module"></span><h2><a class="reference internal" href="build_dictionary.html#scalac_plugin" title="scalac_plugin"><tt class="xref py py-mod docutils literal"><span class="pre">scalac_plugin</span></tt></a> Module<a class="headerlink" href="#module-pants.targets.scalac_plugin" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pants.targets.scalac_plugin.ScalacPlugin">
-<em class="property">class </em><tt class="descclassname">pants.targets.scalac_plugin.</tt><tt class="descname">ScalacPlugin</tt><big>(</big><em>name</em>, <em>classname</em>, <em>plugin=None</em>, <em>sources=None</em>, <em>java_sources=None</em>, <em>provides=None</em>, <em>dependencies=None</em>, <em>excludes=None</em>, <em>resources=None</em>, <em>exclusives=None</em><big>)</big><a class="reference internal" href="_modules/pants/targets/scalac_plugin.html#ScalacPlugin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.scalac_plugin.ScalacPlugin" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pants.targets.scalac_plugin.</tt><tt class="descname">ScalacPlugin</tt><big>(</big><em>classname=None</em>, <em>plugin=None</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/pants/targets/scalac_plugin.html#ScalacPlugin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.scalac_plugin.ScalacPlugin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Defines a target that produces a scalac_plugin.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1731,92 +1659,6 @@ targets containing resources that belong on this library&#8217;s classpath.</li>
 </table>
 </dd></dl>
 
-</div>
-<div class="section" id="module-pants.targets.sources">
-<span id="sources-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">sources</span></tt> Module<a class="headerlink" href="#module-pants.targets.sources" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="pants.targets.sources.SourceRoot">
-<em class="property">class </em><tt class="descclassname">pants.targets.sources.</tt><tt class="descname">SourceRoot</tt><a class="reference internal" href="_modules/pants/targets/sources.html#SourceRoot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.sources.SourceRoot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Allows registration of a source root for a set of targets.</p>
-<p>A source root is the base path sources for a particular language are found relative to.
-Generally compilers or interpreters for the source will expect sources relative to a base path
-and a source root allows calculation of the correct relative paths.</p>
-<p>E.g., a Java compiler probably expects to find <tt class="docutils literal"><span class="pre">.java</span></tt> files for
-<tt class="docutils literal"><span class="pre">package</span> <span class="pre">com.twitter.common.net</span></tt> in <tt class="docutils literal"><span class="pre">*something*/com/twitter/common/net</span></tt>.
-The <tt class="docutils literal"><span class="pre">source_root</span></tt> command specifies that <em>something</em>.</p>
-<p>It is illegal to have nested source roots.</p>
-<dl class="classmethod">
-<dt id="pants.targets.sources.SourceRoot.all_roots">
-<em class="property">classmethod </em><tt class="descname">all_roots</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pants/targets/sources.html#SourceRoot.all_roots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.sources.SourceRoot.all_roots" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a mapping from source roots to the associated target types.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="pants.targets.sources.SourceRoot.find">
-<em class="property">classmethod </em><tt class="descname">find</tt><big>(</big><em>target</em><big>)</big><a class="reference internal" href="_modules/pants/targets/sources.html#SourceRoot.find"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.sources.SourceRoot.find" title="Permalink to this definition">¶</a></dt>
-<dd><p>Finds the source root for the given target.</p>
-<p>If none is registered, returns the parent directory of the target&#8217;s BUILD file.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="pants.targets.sources.SourceRoot.register">
-<em class="property">classmethod </em><tt class="descname">register</tt><big>(</big><em>basedir</em>, <em>*allowed_target_types</em><big>)</big><a class="reference internal" href="_modules/pants/targets/sources.html#SourceRoot.register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.sources.SourceRoot.register" title="Permalink to this definition">¶</a></dt>
-<dd><p>Registers the given basedir (relative to the buildroot) as a source root.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>basedir</strong> (<em>string</em>) &#8211; The base directory to resolve sources relative to.</li>
-<li><strong>allowed_target_types</strong> (<em>list</em>) &#8211; Optional list of target types. If specified, we enforce that
-only targets of those types appear under this source root.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="pants.targets.sources.SourceRoot.reset">
-<em class="property">classmethod </em><tt class="descname">reset</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pants/targets/sources.html#SourceRoot.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.sources.SourceRoot.reset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reset all source roots to empty. Only intended for testing.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="pants.targets.sources.SourceRoot.roots">
-<em class="property">classmethod </em><tt class="descname">roots</tt><big>(</big><em>target_type</em><big>)</big><a class="reference internal" href="_modules/pants/targets/sources.html#SourceRoot.roots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.sources.SourceRoot.roots" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the set of roots for given target type.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="pants.targets.sources.SourceRoot.types">
-<em class="property">classmethod </em><tt class="descname">types</tt><big>(</big><em>root</em><big>)</big><a class="reference internal" href="_modules/pants/targets/sources.html#SourceRoot.types"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.sources.SourceRoot.types" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the set of target types rooted at root.</p>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="module-pants.targets.util">
-<span id="util-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">util</span></tt> Module<a class="headerlink" href="#module-pants.targets.util" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="pants.targets.util.resolve">
-<tt class="descclassname">pants.targets.util.</tt><tt class="descname">resolve</tt><big>(</big><em>arg</em>, <em>clazz=&lt;class 'pants.targets.pants_target.Pants'&gt;</em><big>)</big><a class="reference internal" href="_modules/pants/targets/util.html#resolve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.util.resolve" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wraps strings in Pants() targets, for BUILD file convenience.</p>
-<ul class="simple">
-<li>single string literal gets wrapped in Pants() target</li>
-<li>single object is left alone</li>
-<li>list of strings and other miscellaneous objects gets its strings wrapped in Pants() targets</li>
-</ul>
-</dd></dl>
-
-</div>
-<div class="section" id="module-pants.targets.with_dependencies">
-<span id="with-dependencies-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">with_dependencies</span></tt> Module<a class="headerlink" href="#module-pants.targets.with_dependencies" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="module-pants.targets.with_sources">
-<span id="with-sources-module"></span><h2><a class="reference internal" href="build_dictionary.html#with_sources" title="with_sources"><tt class="xref py py-mod docutils literal"><span class="pre">with_sources</span></tt></a> Module<a class="headerlink" href="#module-pants.targets.with_sources" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 

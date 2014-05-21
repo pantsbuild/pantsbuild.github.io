@@ -197,14 +197,14 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#authenticating-to-the-artifact-repository">Authenticating to the Artifact Repository</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#troubleshooting">Troubleshooting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#want-to-publish-something-publish-many-things">Want to Publish Something? Publish Many Things</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../publish.html#test-with-a-fake-local-publish">Test with a Fake Local &#8220;Publish&#8221;</a></li>
 </ul>
 </li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../with_intellij.html">Using Pants with IntelliJ IDEA</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#editing-build-files">Editing BUILD Files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#pants-build-plugin-for-intellij">Pants Build Plugin for IntelliJ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
 </ul>
 </li>
 </ul>
@@ -257,6 +257,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-binary">python_binary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-library">python_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-requirement">python_requirement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-requirement-library">python_requirement_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-test-suite">python_test_suite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-tests">python_tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-thrift-library">python_thrift_library</a></li>
@@ -387,10 +388,10 @@ body a.icon-home:hover{
 <span class="kn">import</span> <span class="nn">sys</span>
 
 <span class="kn">import</span> <span class="nn">pants.base.build_file_aliases</span>
-<span class="kn">from</span> <span class="nn">pants.base.address</span> <span class="kn">import</span> <span class="n">Address</span>
+<span class="kn">from</span> <span class="nn">pants.base.address</span> <span class="kn">import</span> <span class="n">Address</span><span class="p">,</span> <span class="n">SyntheticAddress</span>
 <span class="kn">from</span> <span class="nn">pants.base.build_environment</span> <span class="kn">import</span> <span class="n">get_buildroot</span>
 <span class="kn">from</span> <span class="nn">pants.base.target</span> <span class="kn">import</span> <span class="n">Target</span>
-<span class="kn">from</span> <span class="nn">pants.tasks</span> <span class="kn">import</span> <span class="n">TaskError</span>
+<span class="kn">from</span> <span class="nn">pants.tasks.task</span> <span class="kn">import</span> <span class="n">TaskError</span>
 <span class="kn">from</span> <span class="nn">pants.tasks.console_task</span> <span class="kn">import</span> <span class="n">ConsoleTask</span>
 
 
@@ -415,12 +416,12 @@ body a.icon-home:hover{
     <span class="k">yield</span> <span class="nb">filter</span>
 
 
-<span class="k">def</span> <span class="nf">_get_target</span><span class="p">(</span><span class="n">address</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_get_target</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">build_graph</span><span class="p">):</span>
   <span class="k">try</span><span class="p">:</span>
-    <span class="n">address</span> <span class="o">=</span> <span class="n">Address</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">get_buildroot</span><span class="p">(),</span> <span class="n">address</span><span class="p">,</span> <span class="n">is_relative</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">address</span> <span class="o">=</span> <span class="n">SyntheticAddress</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
   <span class="k">except</span> <span class="ne">IOError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
     <span class="k">raise</span> <span class="n">TaskError</span><span class="p">(</span><span class="s">&#39;Failed to parse address: </span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">address</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
-  <span class="n">match</span> <span class="o">=</span> <span class="n">Target</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">address</span><span class="p">)</span>
+  <span class="n">match</span> <span class="o">=</span> <span class="n">build_graph</span><span class="o">.</span><span class="n">get_target</span><span class="p">(</span><span class="n">address</span><span class="p">)</span>
   <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
     <span class="k">raise</span> <span class="n">TaskError</span><span class="p">(</span><span class="s">&#39;Invalid target address: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">address</span><span class="p">)</span>
   <span class="k">return</span> <span class="n">match</span>
@@ -464,12 +465,14 @@ body a.icon-home:hover{
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_filters</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="k">def</span> <span class="nf">filter_for_address</span><span class="p">(</span><span class="n">address</span><span class="p">):</span>
-      <span class="n">match</span> <span class="o">=</span> <span class="n">_get_target</span><span class="p">(</span><span class="n">address</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">filter_for_address</span><span class="p">(</span><span class="n">spec</span><span class="p">):</span>
+      <span class="n">match</span> <span class="o">=</span> <span class="n">_get_target</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">build_graph</span><span class="p">)</span>
       <span class="k">return</span> <span class="k">lambda</span> <span class="n">target</span><span class="p">:</span> <span class="n">target</span> <span class="o">==</span> <span class="n">match</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_filters</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">_create_filters</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">filter_target</span><span class="p">,</span> <span class="n">filter_for_address</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">filter_for_type</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+      <span class="c"># FIXME(pl): This should be a standard function provided by the plugin/BuildFileParser</span>
+      <span class="c"># machinery</span>
       <span class="k">try</span><span class="p">:</span>
         <span class="c"># Try to do a fully qualified import 1st for filtering on custom types.</span>
         <span class="n">from_list</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">type_name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
@@ -477,16 +480,16 @@ body a.icon-home:hover{
         <span class="n">target_type</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">type_name</span><span class="p">)</span>
       <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
         <span class="c"># Fall back on pants provided target types.</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">pants</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">build_file_aliases</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pants</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">build_file_aliases</span><span class="o">.</span><span class="n">target_aliases</span><span class="p">:</span>
           <span class="k">raise</span> <span class="n">TaskError</span><span class="p">(</span><span class="s">&#39;Invalid type name: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
-        <span class="n">target_type</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">pants</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">build_file_aliases</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="n">target_type</span> <span class="o">=</span> <span class="n">pants</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">build_file_aliases</span><span class="o">.</span><span class="n">target_aliases</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
       <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">target_type</span><span class="p">,</span> <span class="n">Target</span><span class="p">):</span>
         <span class="k">raise</span> <span class="n">TaskError</span><span class="p">(</span><span class="s">&#39;Not a Target type: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
       <span class="k">return</span> <span class="k">lambda</span> <span class="n">target</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">target_type</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_filters</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">_create_filters</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">filter_type</span><span class="p">,</span> <span class="n">filter_for_type</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">filter_for_ancestor</span><span class="p">(</span><span class="n">address</span><span class="p">):</span>
-      <span class="n">ancestor</span> <span class="o">=</span> <span class="n">_get_target</span><span class="p">(</span><span class="n">address</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">filter_for_ancestor</span><span class="p">(</span><span class="n">spec</span><span class="p">):</span>
+      <span class="n">ancestor</span> <span class="o">=</span> <span class="n">_get_target</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">build_graph</span><span class="p">)</span>
       <span class="n">children</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
       <span class="n">ancestor</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">children</span><span class="o">.</span><span class="n">add</span><span class="p">)</span>
       <span class="k">return</span> <span class="k">lambda</span> <span class="n">target</span><span class="p">:</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">children</span>
@@ -494,7 +497,7 @@ body a.icon-home:hover{
 
     <span class="k">def</span> <span class="nf">filter_for_regex</span><span class="p">(</span><span class="n">regex</span><span class="p">):</span>
       <span class="n">parser</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">regex</span><span class="p">)</span>
-      <span class="k">return</span> <span class="k">lambda</span> <span class="n">target</span><span class="p">:</span> <span class="n">parser</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">address</span><span class="p">))</span>
+      <span class="k">return</span> <span class="k">lambda</span> <span class="n">target</span><span class="p">:</span> <span class="n">parser</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">address</span><span class="o">.</span><span class="n">build_file_spec</span><span class="p">))</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_filters</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">_create_filters</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">filter_regex</span><span class="p">,</span> <span class="n">filter_for_regex</span><span class="p">))</span>
 
   <span class="k">def</span> <span class="nf">console_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">):</span>
@@ -506,7 +509,7 @@ body a.icon-home:hover{
           <span class="k">if</span> <span class="ow">not</span> <span class="nb">filter</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
             <span class="k">break</span>
         <span class="k">else</span><span class="p">:</span>
-          <span class="k">yield</span> <span class="nb">str</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">address</span><span class="p">)</span></div>
+          <span class="k">yield</span> <span class="n">target</span><span class="o">.</span><span class="n">address</span><span class="o">.</span><span class="n">build_file_spec</span></div>
 </pre></div>
 
           <footer>

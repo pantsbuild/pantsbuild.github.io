@@ -197,14 +197,14 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#authenticating-to-the-artifact-repository">Authenticating to the Artifact Repository</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#troubleshooting">Troubleshooting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#want-to-publish-something-publish-many-things">Want to Publish Something? Publish Many Things</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../publish.html#test-with-a-fake-local-publish">Test with a Fake Local &#8220;Publish&#8221;</a></li>
 </ul>
 </li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../with_intellij.html">Using Pants with IntelliJ IDEA</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#editing-build-files">Editing BUILD Files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#pants-build-plugin-for-intellij">Pants Build Plugin for IntelliJ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
 </ul>
 </li>
 </ul>
@@ -257,6 +257,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-binary">python_binary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-library">python_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-requirement">python_requirement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-requirement-library">python_requirement_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-test-suite">python_test_suite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-tests">python_tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-thrift-library">python_thrift_library</a></li>
@@ -399,15 +400,19 @@ body a.icon-home:hover{
 
 <span class="kn">from</span> <span class="nn">pants.base.address</span> <span class="kn">import</span> <span class="n">Address</span>
 <span class="kn">from</span> <span class="nn">pants.base.build_environment</span> <span class="kn">import</span> <span class="n">get_buildroot</span><span class="p">,</span> <span class="n">get_scm</span>
+<span class="kn">from</span> <span class="nn">pants.base.build_graph</span> <span class="kn">import</span> <span class="n">sort_targets</span>
+<span class="kn">from</span> <span class="nn">pants.base.exceptions</span> <span class="kn">import</span> <span class="n">TaskError</span>
 <span class="kn">from</span> <span class="nn">pants.base.generator</span> <span class="kn">import</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">TemplateData</span>
 <span class="kn">from</span> <span class="nn">pants.base.target</span> <span class="kn">import</span> <span class="n">Target</span>
 <span class="kn">from</span> <span class="nn">pants.ivy.bootstrapper</span> <span class="kn">import</span> <span class="n">Bootstrapper</span>
 <span class="kn">from</span> <span class="nn">pants.ivy.ivy</span> <span class="kn">import</span> <span class="n">Ivy</span>
-<span class="kn">from</span> <span class="nn">pants.targets.internal</span> <span class="kn">import</span> <span class="n">InternalTarget</span>
 <span class="kn">from</span> <span class="nn">pants.targets.resources</span> <span class="kn">import</span> <span class="n">Resources</span>
 <span class="kn">from</span> <span class="nn">pants.targets.scala_library</span> <span class="kn">import</span> <span class="n">ScalaLibrary</span>
-<span class="kn">from</span> <span class="nn">pants.tasks</span> <span class="kn">import</span> <span class="n">Task</span><span class="p">,</span> <span class="n">TaskError</span>
+<span class="kn">from</span> <span class="nn">pants.tasks.task</span> <span class="kn">import</span> <span class="n">Task</span>
 <span class="kn">from</span> <span class="nn">pants.tasks.scm_publish</span> <span class="kn">import</span> <span class="n">ScmPublish</span><span class="p">,</span> <span class="n">Semver</span>
+
+
+<span class="c"># XXX(pl): This entire file still needs to be converted over to new Targets</span>
 
 
 <span class="k">class</span> <span class="nc">PushDb</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -595,7 +600,7 @@ body a.icon-home:hover{
 
 
 <span class="k">def</span> <span class="nf">target_internal_dependencies</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
-  <span class="k">return</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">tgt</span><span class="p">:</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tgt</span><span class="p">,</span> <span class="n">Resources</span><span class="p">),</span> <span class="n">target</span><span class="o">.</span><span class="n">internal_dependencies</span><span class="p">)</span>
+  <span class="k">return</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">tgt</span><span class="p">:</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tgt</span><span class="p">,</span> <span class="n">Resources</span><span class="p">),</span> <span class="n">target</span><span class="o">.</span><span class="n">dependencies</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="JarPublish"><a class="viewcode-back" href="../../../tasks.html#pants.tasks.jar_publish.JarPublish">[docs]</a><span class="k">class</span> <span class="nc">JarPublish</span><span class="p">(</span><span class="n">Task</span><span class="p">,</span> <span class="n">ScmPublish</span><span class="p">):</span>
@@ -838,8 +843,6 @@ body a.icon-home:hover{
       <span class="k">return</span> <span class="n">get_db</span><span class="p">(</span><span class="n">tgt</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">fingerprint_internal</span><span class="p">(</span><span class="n">tgt</span><span class="p">):</span>
-      <span class="k">if</span> <span class="ow">not</span> <span class="n">tgt</span><span class="o">.</span><span class="n">is_internal</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Expected an internal target for fingerprinting, got </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">tgt</span><span class="p">)</span>
       <span class="n">pushdb</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_db</span><span class="p">(</span><span class="n">tgt</span><span class="p">)</span>
       <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">fingerprint</span> <span class="o">=</span> <span class="n">pushdb</span><span class="o">.</span><span class="n">as_jar_with_version</span><span class="p">(</span><span class="n">tgt</span><span class="p">)</span>
       <span class="k">return</span> <span class="n">fingerprint</span> <span class="ow">or</span> <span class="s">&#39;0.0.0&#39;</span>
@@ -1087,7 +1090,7 @@ body a.icon-home:hover{
       <span class="k">return</span> <span class="n">tgt</span> <span class="ow">in</span> <span class="n">candidates</span> <span class="ow">and</span> <span class="n">tgt</span><span class="o">.</span><span class="n">is_exported</span>
 
     <span class="k">return</span> <span class="n">OrderedSet</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">exportable</span><span class="p">,</span>
-                             <span class="nb">reversed</span><span class="p">(</span><span class="n">InternalTarget</span><span class="o">.</span><span class="n">sort_targets</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">exportable</span><span class="p">,</span> <span class="n">candidates</span><span class="p">)))))</span>
+                             <span class="nb">reversed</span><span class="p">(</span><span class="n">sort_targets</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">exportable</span><span class="p">,</span> <span class="n">candidates</span><span class="p">)))))</span>
 
   <span class="k">def</span> <span class="nf">fingerprint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">fingerprint_internal</span><span class="p">):</span>
     <span class="n">sha</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha1</span><span class="p">()</span>

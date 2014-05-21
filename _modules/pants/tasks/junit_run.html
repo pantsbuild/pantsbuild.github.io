@@ -197,14 +197,14 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#authenticating-to-the-artifact-repository">Authenticating to the Artifact Repository</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#troubleshooting">Troubleshooting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#want-to-publish-something-publish-many-things">Want to Publish Something? Publish Many Things</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../publish.html#test-with-a-fake-local-publish">Test with a Fake Local &#8220;Publish&#8221;</a></li>
 </ul>
 </li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../with_intellij.html">Using Pants with IntelliJ IDEA</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#editing-build-files">Editing BUILD Files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#pants-build-plugin-for-intellij">Pants Build Plugin for IntelliJ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
 </ul>
 </li>
 </ul>
@@ -257,6 +257,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-binary">python_binary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-library">python_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-requirement">python_requirement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-requirement-library">python_requirement_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-test-suite">python_test_suite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-tests">python_tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-thrift-library">python_thrift_library</a></li>
@@ -394,10 +395,10 @@ body a.icon-home:hover{
 <span class="kn">from</span> <span class="nn">pants.base.build_environment</span> <span class="kn">import</span> <span class="n">get_buildroot</span>
 <span class="kn">from</span> <span class="nn">pants.base.workunit</span> <span class="kn">import</span> <span class="n">WorkUnit</span>
 <span class="kn">from</span> <span class="nn">pants.java.util</span> <span class="kn">import</span> <span class="n">execute_java</span>
+<span class="kn">from</span> <span class="nn">pants.jvm.jvm_tool_task_mixin</span> <span class="kn">import</span> <span class="n">JvmToolTaskMixin</span>
 <span class="kn">from</span> <span class="nn">pants.targets.java_tests</span> <span class="kn">import</span> <span class="n">JavaTests</span> <span class="k">as</span> <span class="n">junit_tests</span>
-<span class="kn">from</span> <span class="nn">pants.tasks</span> <span class="kn">import</span> <span class="n">TaskError</span>
+<span class="kn">from</span> <span class="nn">pants.tasks.task</span> <span class="kn">import</span> <span class="n">TaskError</span>
 <span class="kn">from</span> <span class="nn">pants.tasks.jvm_task</span> <span class="kn">import</span> <span class="n">JvmTask</span>
-<span class="kn">from</span> <span class="nn">pants.tasks.jvm_tool_bootstrapper</span> <span class="kn">import</span> <span class="n">JvmToolBootstrapper</span>
 
 <span class="c"># TODO(ji): Add unit tests.</span>
 <span class="c"># TODO(ji): Add coverage in ci.run (https://github.com/pantsbuild/pants/issues/83)</span>
@@ -482,7 +483,7 @@ body a.icon-home:hover{
     <span class="n">option_group</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="n">mkflag</span><span class="p">(</span><span class="s">&#39;suppress-output&#39;</span><span class="p">),</span> <span class="n">mkflag</span><span class="p">(</span><span class="s">&#39;suppress-output&#39;</span><span class="p">,</span> <span class="n">negate</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
                             <span class="n">dest</span><span class="o">=</span><span class="s">&#39;junit_run_suppress_output&#39;</span><span class="p">,</span>
                             <span class="n">action</span><span class="o">=</span><span class="s">&#39;callback&#39;</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="n">mkflag</span><span class="o">.</span><span class="n">set_bool</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-                            <span class="n">help</span><span class="o">=</span><span class="s">&#39;[</span><span class="si">%%</span><span class="s">default] Redirects test output to files.  &#39;</span>
+                            <span class="n">help</span><span class="o">=</span><span class="s">&#39;[</span><span class="si">%%</span><span class="s">default] Redirects test output to files (in .pants.d/test/junit).  &#39;</span>
                                  <span class="s">&#39;Implied by </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">xmlreport</span><span class="p">)</span>
 
     <span class="n">option_group</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="n">mkflag</span><span class="p">(</span><span class="s">&quot;arg&quot;</span><span class="p">),</span> <span class="n">dest</span><span class="o">=</span><span class="s">&quot;junit_run_arg&quot;</span><span class="p">,</span>
@@ -775,13 +776,13 @@ body a.icon-home:hover{
         <span class="p">]</span>
       <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">patterns</span><span class="p">:</span>
         <span class="n">args</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s">&#39;-filter&#39;</span><span class="p">,</span> <span class="n">pattern</span><span class="p">])</span>
-        <span class="n">main</span> <span class="o">=</span> <span class="s">&#39;emma&#39;</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">execute_java</span><span class="p">(</span><span class="n">classpath</span><span class="o">=</span><span class="n">emma_classpath</span><span class="p">,</span> <span class="n">main</span><span class="o">=</span><span class="n">main</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span>
-                              <span class="n">workunit_factory</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">new_workunit</span><span class="p">,</span>
-                              <span class="n">workunit_name</span><span class="o">=</span><span class="s">&#39;emma-instrument&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">result</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-          <span class="k">raise</span> <span class="n">TaskError</span><span class="p">(</span><span class="s">&quot;java </span><span class="si">%s</span><span class="s"> ... exited non-zero (</span><span class="si">%i</span><span class="s">)&quot;</span>
-                          <span class="s">&quot; &#39;failed to instrument&#39;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">main</span><span class="p">,</span> <span class="n">result</span><span class="p">))</span>
+      <span class="n">main</span> <span class="o">=</span> <span class="s">&#39;emma&#39;</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="n">execute_java</span><span class="p">(</span><span class="n">classpath</span><span class="o">=</span><span class="n">emma_classpath</span><span class="p">,</span> <span class="n">main</span><span class="o">=</span><span class="n">main</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span>
+                            <span class="n">workunit_factory</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">new_workunit</span><span class="p">,</span>
+                            <span class="n">workunit_name</span><span class="o">=</span><span class="s">&#39;emma-instrument&#39;</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">result</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">TaskError</span><span class="p">(</span><span class="s">&quot;java </span><span class="si">%s</span><span class="s"> ... exited non-zero (</span><span class="si">%i</span><span class="s">)&quot;</span>
+                        <span class="s">&quot; &#39;failed to instrument&#39;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">main</span><span class="p">,</span> <span class="n">result</span><span class="p">))</span>
 
   <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">tests</span><span class="p">,</span> <span class="n">junit_classpath</span><span class="p">):</span>
     <span class="n">emma_classpath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_task_exports</span><span class="o">.</span><span class="n">tool_classpath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_emma_bootstrap_key</span><span class="p">)</span>
@@ -832,7 +833,7 @@ body a.icon-home:hover{
       <span class="n">binary_util</span><span class="o">.</span><span class="n">ui_open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_coverage_html_file</span><span class="p">)</span>
 
 </div>
-<span class="k">class</span> <span class="nc">JUnitRun</span><span class="p">(</span><span class="n">JvmTask</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">JUnitRun</span><span class="p">(</span><span class="n">JvmTask</span><span class="p">,</span> <span class="n">JvmToolTaskMixin</span><span class="p">):</span>
   <span class="n">_MAIN</span> <span class="o">=</span> <span class="s">&#39;com.twitter.common.junit.runner.ConsoleRunner&#39;</span>
 
   <span class="nd">@classmethod</span>

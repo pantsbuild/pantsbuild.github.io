@@ -197,14 +197,14 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#authenticating-to-the-artifact-repository">Authenticating to the Artifact Repository</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#troubleshooting">Troubleshooting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#want-to-publish-something-publish-many-things">Want to Publish Something? Publish Many Things</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../publish.html#test-with-a-fake-local-publish">Test with a Fake Local &#8220;Publish&#8221;</a></li>
 </ul>
 </li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../with_intellij.html">Using Pants with IntelliJ IDEA</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#editing-build-files">Editing BUILD Files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#pants-build-plugin-for-intellij">Pants Build Plugin for IntelliJ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
 </ul>
 </li>
 </ul>
@@ -257,6 +257,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-binary">python_binary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-library">python_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-requirement">python_requirement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-requirement-library">python_requirement_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-test-suite">python_test_suite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-tests">python_tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-thrift-library">python_thrift_library</a></li>
@@ -391,11 +392,13 @@ body a.icon-home:hover{
 <span class="kn">from</span> <span class="nn">twitter.common.collections</span> <span class="kn">import</span> <span class="n">OrderedSet</span>
 <span class="kn">from</span> <span class="nn">twitter.common.dirutil</span> <span class="kn">import</span> <span class="n">safe_mkdir</span>
 
+<span class="kn">from</span> <span class="nn">pants.base.address</span> <span class="kn">import</span> <span class="n">SyntheticAddress</span>
+<span class="kn">from</span> <span class="nn">pants.base.build_environment</span> <span class="kn">import</span> <span class="n">get_buildroot</span>
 <span class="kn">from</span> <span class="nn">pants.binary_util</span> <span class="kn">import</span> <span class="n">select_binary</span>
 <span class="kn">from</span> <span class="nn">pants.targets.java_library</span> <span class="kn">import</span> <span class="n">JavaLibrary</span>
 <span class="kn">from</span> <span class="nn">pants.targets.java_protobuf_library</span> <span class="kn">import</span> <span class="n">JavaProtobufLibrary</span>
 <span class="kn">from</span> <span class="nn">pants.targets.python_library</span> <span class="kn">import</span> <span class="n">PythonLibrary</span>
-<span class="kn">from</span> <span class="nn">pants.tasks</span> <span class="kn">import</span> <span class="n">TaskError</span>
+<span class="kn">from</span> <span class="nn">pants.tasks.task</span> <span class="kn">import</span> <span class="n">TaskError</span>
 <span class="kn">from</span> <span class="nn">pants.tasks.code_gen</span> <span class="kn">import</span> <span class="n">CodeGen</span>
 
 
@@ -413,16 +416,7 @@ body a.icon-home:hover{
     <span class="bp">self</span><span class="o">.</span><span class="n">protoc_version</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;protobuf-gen&#39;</span><span class="p">,</span> <span class="s">&#39;version&#39;</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">getlist</span><span class="p">(</span><span class="s">&#39;protobuf-gen&#39;</span><span class="p">,</span> <span class="s">&#39;plugins&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[])</span>
 
-    <span class="k">def</span> <span class="nf">resolve_deps</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
-      <span class="n">deps</span> <span class="o">=</span> <span class="n">OrderedSet</span><span class="p">()</span>
-      <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">context</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">getlist</span><span class="p">(</span><span class="s">&#39;protobuf-gen&#39;</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-        <span class="n">deps</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">dep</span><span class="p">))</span>
-      <span class="k">return</span> <span class="n">deps</span>
-
-    <span class="bp">self</span><span class="o">.</span><span class="n">javadeps</span> <span class="o">=</span> <span class="n">resolve_deps</span><span class="p">(</span><span class="s">&#39;javadeps&#39;</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">java_out</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workdir</span><span class="p">,</span> <span class="s">&#39;gen-java&#39;</span><span class="p">)</span>
-
-    <span class="bp">self</span><span class="o">.</span><span class="n">pythondeps</span> <span class="o">=</span> <span class="n">resolve_deps</span><span class="p">(</span><span class="s">&#39;pythondeps&#39;</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">py_out</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workdir</span><span class="p">,</span> <span class="s">&#39;gen-py&#39;</span><span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">gen_langs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">protobuf_gen_langs</span><span class="p">)</span>
@@ -436,6 +430,20 @@ body a.icon-home:hover{
       <span class="s">&#39;protoc&#39;</span><span class="p">,</span>
       <span class="n">context</span><span class="o">.</span><span class="n">config</span>
     <span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">resolve_deps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="n">deps</span> <span class="o">=</span> <span class="n">OrderedSet</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">getlist</span><span class="p">(</span><span class="s">&#39;protobuf-gen&#39;</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+      <span class="n">deps</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">dep</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">deps</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span> <span class="nf">javadeps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolve_deps</span><span class="p">(</span><span class="s">&#39;javadeps&#39;</span><span class="p">)</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span> <span class="nf">pythondeps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolve_deps</span><span class="p">(</span><span class="s">&#39;pythondeps&#39;</span><span class="p">)</span>
 
   <span class="k">def</span> <span class="nf">invalidate_for</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gen_langs</span>
@@ -508,34 +516,40 @@ body a.icon-home:hover{
 
   <span class="k">def</span> <span class="nf">_create_java_target</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">dependees</span><span class="p">):</span>
     <span class="n">genfiles</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">sources</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">sources_relative_to_source_root</span><span class="p">():</span>
       <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">target_base</span><span class="p">,</span> <span class="n">source</span><span class="p">)</span>
       <span class="n">genfiles</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">calculate_genfiles</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">source</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;java&#39;</span><span class="p">,</span> <span class="p">[]))</span>
-    <span class="n">tgt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">add_new_target</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">java_out</span><span class="p">,</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;{target_name}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">target_name</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">spec_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">java_out</span><span class="p">,</span> <span class="n">get_buildroot</span><span class="p">())</span>
+    <span class="n">spec</span> <span class="o">=</span> <span class="s">&#39;{spec_path}:{name}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">spec_path</span><span class="o">=</span><span class="n">spec_path</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">address</span> <span class="o">=</span> <span class="n">SyntheticAddress</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">spec</span><span class="p">)</span>
+    <span class="n">tgt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">add_new_target</span><span class="p">(</span><span class="n">address</span><span class="p">,</span>
                                       <span class="n">JavaLibrary</span><span class="p">,</span>
-                                      <span class="n">name</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                                      <span class="n">derived_from</span><span class="o">=</span><span class="n">target</span><span class="p">,</span>
                                       <span class="n">sources</span><span class="o">=</span><span class="n">genfiles</span><span class="p">,</span>
                                       <span class="n">provides</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">provides</span><span class="p">,</span>
                                       <span class="n">dependencies</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">javadeps</span><span class="p">,</span>
-                                      <span class="n">excludes</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">excludes</span><span class="p">)</span>
-    <span class="n">tgt</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="s">&#39;.protobuf_gen&#39;</span>
+                                      <span class="n">excludes</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">payload</span><span class="o">.</span><span class="n">excludes</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">dependee</span> <span class="ow">in</span> <span class="n">dependees</span><span class="p">:</span>
-      <span class="n">dependee</span><span class="o">.</span><span class="n">update_dependencies</span><span class="p">([</span><span class="n">tgt</span><span class="p">])</span>
+      <span class="n">dependee</span><span class="o">.</span><span class="n">inject_dependency</span><span class="p">(</span><span class="n">tgt</span><span class="o">.</span><span class="n">address</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">tgt</span>
 
   <span class="k">def</span> <span class="nf">_create_python_target</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">dependees</span><span class="p">):</span>
     <span class="n">genfiles</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">sources</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">sources_relative_to_source_root</span><span class="p">():</span>
       <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">target_base</span><span class="p">,</span> <span class="n">source</span><span class="p">)</span>
       <span class="n">genfiles</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">calculate_genfiles</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">source</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;py&#39;</span><span class="p">,</span> <span class="p">[]))</span>
-    <span class="n">tgt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">add_new_target</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">py_out</span><span class="p">,</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;{target_name}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">target_name</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">spec_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">py_out</span><span class="p">,</span> <span class="n">get_buildroot</span><span class="p">())</span>
+    <span class="n">spec</span> <span class="o">=</span> <span class="s">&#39;{spec_path}:{name}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">spec_path</span><span class="o">=</span><span class="n">spec_path</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">address</span> <span class="o">=</span> <span class="n">SyntheticAddress</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">spec</span><span class="p">)</span>
+    <span class="n">tgt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">add_new_target</span><span class="p">(</span><span class="n">address</span><span class="p">,</span>
                                       <span class="n">PythonLibrary</span><span class="p">,</span>
-                                      <span class="n">name</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                                      <span class="n">derived_from</span><span class="o">=</span><span class="n">target</span><span class="p">,</span>
                                       <span class="n">sources</span><span class="o">=</span><span class="n">genfiles</span><span class="p">,</span>
                                       <span class="n">dependencies</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pythondeps</span><span class="p">)</span>
-    <span class="n">tgt</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">id</span>
     <span class="k">for</span> <span class="n">dependee</span> <span class="ow">in</span> <span class="n">dependees</span><span class="p">:</span>
-      <span class="n">dependee</span><span class="o">.</span><span class="n">dependencies</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tgt</span><span class="p">)</span>
+      <span class="n">dependee</span><span class="o">.</span><span class="n">inject_dependency</span><span class="p">(</span><span class="n">tgt</span><span class="o">.</span><span class="n">address</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">tgt</span>
 
 

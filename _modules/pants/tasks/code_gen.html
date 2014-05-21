@@ -197,14 +197,14 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#authenticating-to-the-artifact-repository">Authenticating to the Artifact Repository</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#troubleshooting">Troubleshooting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#want-to-publish-something-publish-many-things">Want to Publish Something? Publish Many Things</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../publish.html#test-with-a-fake-local-publish">Test with a Fake Local &#8220;Publish&#8221;</a></li>
 </ul>
 </li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../with_intellij.html">Using Pants with IntelliJ IDEA</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#editing-build-files">Editing BUILD Files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#pants-build-plugin-for-intellij">Pants Build Plugin for IntelliJ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
 </ul>
 </li>
 </ul>
@@ -257,6 +257,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-binary">python_binary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-library">python_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-requirement">python_requirement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-requirement-library">python_requirement_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-test-suite">python_test_suite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-tests">python_tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-thrift-library">python_thrift_library</a></li>
@@ -382,10 +383,11 @@ body a.icon-home:hover{
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="p">(</span><span class="n">nested_scopes</span><span class="p">,</span> <span class="n">generators</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">with_statement</span><span class="p">,</span>
                         <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">)</span>
 
+<span class="kn">import</span> <span class="nn">os.path</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
 
 <span class="kn">from</span> <span class="nn">pants.base.build_environment</span> <span class="kn">import</span> <span class="n">get_buildroot</span>
-<span class="kn">from</span> <span class="nn">pants.tasks</span> <span class="kn">import</span> <span class="n">Task</span>
+<span class="kn">from</span> <span class="nn">pants.tasks.task</span> <span class="kn">import</span> <span class="n">Task</span>
 
 
 <div class="viewcode-block" id="CodeGen"><a class="viewcode-back" href="../../../tasks.html#pants.tasks.code_gen.CodeGen">[docs]</a><span class="k">class</span> <span class="nc">CodeGen</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
@@ -435,17 +437,10 @@ body a.icon-home:hover{
     <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 </div>
   <span class="k">def</span> <span class="nf">getdependencies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gentarget</span><span class="p">):</span>
-    <span class="c"># TODO(John Sirois): fix python/jvm dependencies handling to be uniform</span>
-    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">gentarget</span><span class="p">,</span> <span class="s">&#39;internal_dependencies&#39;</span><span class="p">):</span>
-      <span class="k">return</span> <span class="n">gentarget</span><span class="o">.</span><span class="n">internal_dependencies</span>
-    <span class="k">else</span><span class="p">:</span>
-      <span class="k">return</span> <span class="n">gentarget</span><span class="o">.</span><span class="n">dependencies</span>
+    <span class="k">return</span> <span class="n">gentarget</span><span class="o">.</span><span class="n">dependencies</span>
 
   <span class="k">def</span> <span class="nf">updatedependencies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">dependency</span><span class="p">):</span>
-    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="s">&#39;update_dependencies&#39;</span><span class="p">):</span>
-      <span class="n">target</span><span class="o">.</span><span class="n">update_dependencies</span><span class="p">([</span><span class="n">dependency</span><span class="p">])</span>
-    <span class="k">else</span><span class="p">:</span>
-      <span class="n">target</span><span class="o">.</span><span class="n">dependencies</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">dependency</span><span class="p">)</span>
+    <span class="n">target</span><span class="o">.</span><span class="n">inject_dependency</span><span class="p">(</span><span class="n">dependency</span><span class="o">.</span><span class="n">address</span><span class="p">)</span>
 
   <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
     <span class="n">gentargets</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">targets</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_gentarget</span><span class="p">(</span><span class="n">t</span><span class="p">)]</span>
@@ -502,7 +497,8 @@ body a.icon-home:hover{
             <span class="n">syn_target</span><span class="o">.</span><span class="n">derived_from</span> <span class="o">=</span> <span class="n">target</span>
             <span class="n">syn_target</span><span class="o">.</span><span class="n">add_labels</span><span class="p">(</span><span class="s">&#39;codegen&#39;</span><span class="p">,</span> <span class="s">&#39;synthetic&#39;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">write_to_artifact_cache</span> <span class="ow">and</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">invalid_vts_by_target</span><span class="p">:</span>
-              <span class="n">generated_sources</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">syn_target</span><span class="o">.</span><span class="n">sources_absolute_paths</span><span class="p">())</span>
+              <span class="n">generated_sources</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_buildroot</span><span class="p">(),</span> <span class="n">path</span><span class="p">)</span>
+                                   <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">syn_target</span><span class="o">.</span><span class="n">sources_relative_to_buildroot</span><span class="p">()]</span>
               <span class="n">vts_artifactfiles_pairs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">invalid_vts_by_target</span><span class="p">[</span><span class="n">target</span><span class="p">],</span> <span class="n">generated_sources</span><span class="p">))</span>
             <span class="n">langtarget_by_gentarget</span><span class="p">[</span><span class="n">target</span><span class="p">]</span> <span class="o">=</span> <span class="n">syn_target</span>
           <span class="n">genmap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">lang</span><span class="p">)</span>

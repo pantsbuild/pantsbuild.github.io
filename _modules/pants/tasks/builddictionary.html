@@ -197,14 +197,14 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#authenticating-to-the-artifact-repository">Authenticating to the Artifact Repository</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#troubleshooting">Troubleshooting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#want-to-publish-something-publish-many-things">Want to Publish Something? Publish Many Things</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../publish.html#test-with-a-fake-local-publish">Test with a Fake Local &#8220;Publish&#8221;</a></li>
 </ul>
 </li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../with_intellij.html">Using Pants with IntelliJ IDEA</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#editing-build-files">Editing BUILD Files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#pants-build-plugin-for-intellij">Pants Build Plugin for IntelliJ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
 </ul>
 </li>
 </ul>
@@ -257,6 +257,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-binary">python_binary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-library">python_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-requirement">python_requirement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-requirement-library">python_requirement_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-test-suite">python_test_suite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-tests">python_tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-thrift-library">python_thrift_library</a></li>
@@ -387,19 +388,20 @@ body a.icon-home:hover{
 <span class="kn">import</span> <span class="nn">os</span>
 
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
-<span class="kn">from</span> <span class="nn">pkg_resources</span> <span class="kn">import</span> <span class="n">resource_string</span>
 
+<span class="kn">from</span> <span class="nn">pkg_resources</span> <span class="kn">import</span> <span class="n">resource_string</span>
 <span class="kn">from</span> <span class="nn">twitter.common.dirutil</span> <span class="kn">import</span> <span class="n">Fileset</span><span class="p">,</span> <span class="n">safe_open</span>
 
 <span class="kn">from</span> <span class="nn">pants.base.build_environment</span> <span class="kn">import</span> <span class="n">get_buildroot</span>
-<span class="kn">from</span> <span class="nn">pants.base.build_file_helpers</span> <span class="kn">import</span> <span class="n">maven_layout</span>
 <span class="kn">from</span> <span class="nn">pants.base.build_manual</span> <span class="kn">import</span> <span class="n">get_builddict_info</span>
+<span class="kn">from</span> <span class="nn">pants.base.build_file_aliases</span> <span class="kn">import</span> <span class="n">maven_layout</span>
+<span class="kn">from</span> <span class="nn">pants.base.build_file_parser</span> <span class="kn">import</span> <span class="n">BuildFileParser</span>
 <span class="kn">from</span> <span class="nn">pants.base.config</span> <span class="kn">import</span> <span class="n">ConfigOption</span>
+<span class="kn">from</span> <span class="nn">pants.base.exceptions</span> <span class="kn">import</span> <span class="n">TaskError</span>
 <span class="kn">from</span> <span class="nn">pants.base.generator</span> <span class="kn">import</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">TemplateData</span>
-<span class="kn">from</span> <span class="nn">pants.base.parse_context</span> <span class="kn">import</span> <span class="n">ParseContext</span>
 <span class="kn">from</span> <span class="nn">pants.goal.option_helpers</span> <span class="kn">import</span> <span class="n">add_global_options</span>
 <span class="kn">from</span> <span class="nn">pants.goal.phase</span> <span class="kn">import</span> <span class="n">Phase</span>
-<span class="kn">from</span> <span class="nn">pants.tasks</span> <span class="kn">import</span> <span class="n">Task</span><span class="p">,</span> <span class="n">TaskError</span>
+<span class="kn">from</span> <span class="nn">pants.tasks.task</span> <span class="kn">import</span> <span class="n">Task</span>
 
 
 <div class="viewcode-block" id="indent_docstring_by_n"><a class="viewcode-back" href="../../../tasks.html#pants.tasks.builddictionary.indent_docstring_by_n">[docs]</a><span class="k">def</span> <span class="nf">indent_docstring_by_n</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
@@ -510,8 +512,12 @@ body a.icon-home:hover{
                   <span class="sd">&quot;&quot;&quot;Old name for `dependencies`_&quot;&quot;&quot;</span><span class="p">)},</span>
   <span class="s">&quot;java_tests&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s">&quot;defn&quot;</span><span class="p">:</span> <span class="n">msg_entry</span><span class="p">(</span><span class="s">&quot;java_tests&quot;</span><span class="p">,</span>
                   <span class="sd">&quot;&quot;&quot;Old name for `junit_tests`_&quot;&quot;&quot;</span><span class="p">)},</span>
+  <span class="s">&quot;pants&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s">&quot;defn&quot;</span><span class="p">:</span> <span class="n">msg_entry</span><span class="p">(</span><span class="s">&quot;pants&quot;</span><span class="p">,</span>
+                  <span class="sd">&quot;&quot;&quot;In old Pants versions, a reference to a Pants targets. (In new Pants versions, just use strings.)&quot;&quot;&quot;</span><span class="p">),</span>
+            <span class="s">&quot;tags&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&quot;anylang&quot;</span><span class="p">]},</span>
   <span class="s">&quot;maven_layout&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s">&quot;defn&quot;</span><span class="p">:</span> <span class="n">entry_for_one</span><span class="p">(</span><span class="s">&quot;maven_layout&quot;</span><span class="p">,</span> <span class="n">maven_layout</span><span class="p">)},</span>
   <span class="s">&quot;python_artifact&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s">&quot;suppress&quot;</span><span class="p">:</span> <span class="bp">True</span><span class="p">},</span>  <span class="c"># unused alias for PythonArtifact</span>
+
   <span class="s">&quot;rglobs&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s">&quot;defn&quot;</span><span class="p">:</span> <span class="n">entry_for_one</span><span class="p">(</span><span class="s">&quot;rglobs&quot;</span><span class="p">,</span> <span class="n">Fileset</span><span class="o">.</span><span class="n">rglobs</span><span class="p">)},</span>
   <span class="s">&quot;ROOT_DIR&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s">&quot;defn&quot;</span><span class="p">:</span> <span class="n">msg_entry</span><span class="p">(</span><span class="s">&quot;ROOT_DIR&quot;</span><span class="p">,</span>
                                   <span class="s">&quot;Root directory of source code (string).&quot;</span><span class="p">)},</span>
@@ -527,10 +533,9 @@ body a.icon-home:hover{
 <span class="c"># Returns list of duples [(name, object), (name, object), (name, object),...]</span>
 <span class="k">def</span> <span class="nf">get_syms</span><span class="p">():</span>
   <span class="n">r</span> <span class="o">=</span> <span class="p">{}</span>
-  <span class="n">vc</span> <span class="o">=</span> <span class="n">ParseContext</span><span class="o">.</span><span class="n">default_globals</span><span class="p">()</span>
+  <span class="n">vc</span> <span class="o">=</span> <span class="n">BuildFileParser</span><span class="o">.</span><span class="n">report_registered_context</span><span class="p">()</span>
   <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">vc</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">PREDEFS</span><span class="p">:</span> <span class="k">continue</span>
-    <span class="k">if</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">isupper</span><span class="p">():</span> <span class="k">continue</span>  <span class="c"># REMIND see both jvm_binary and JvmBinary??</span>
     <span class="n">o</span> <span class="o">=</span> <span class="n">vc</span><span class="p">[</span><span class="n">s</span><span class="p">]</span>
     <span class="n">r</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="n">o</span>
   <span class="k">return</span> <span class="n">r</span>

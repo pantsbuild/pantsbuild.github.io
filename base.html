@@ -199,14 +199,14 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="publish.html#authenticating-to-the-artifact-repository">Authenticating to the Artifact Repository</a></li>
 <li class="toctree-l2"><a class="reference internal" href="publish.html#troubleshooting">Troubleshooting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="publish.html#want-to-publish-something-publish-many-things">Want to Publish Something? Publish Many Things</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publish.html#test-with-a-fake-local-publish">Test with a Fake Local &#8220;Publish&#8221;</a></li>
 </ul>
 </li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="with_intellij.html">Using Pants with IntelliJ IDEA</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
-<li class="toctree-l2"><a class="reference internal" href="with_intellij.html#editing-build-files">Editing BUILD Files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="with_intellij.html#pants-build-plugin-for-intellij">Pants Build Plugin for IntelliJ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
 </ul>
 </li>
 </ul>
@@ -259,6 +259,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-binary">python_binary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-library">python_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-requirement">python_requirement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-requirement-library">python_requirement_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-test-suite">python_test_suite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-tests">python_tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-thrift-library">python_thrift_library</a></li>
@@ -423,15 +424,15 @@ target IDs.</p>
 <span id="address-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">address</span></tt> Module<a class="headerlink" href="#module-pants.base.address" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pants.base.address.Address">
-<em class="property">class </em><tt class="descclassname">pants.base.address.</tt><tt class="descname">Address</tt><big>(</big><em>buildfile</em>, <em>target_name</em><big>)</big><a class="reference internal" href="_modules/pants/base/address.html#Address"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.address.Address" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pants.base.address.</tt><tt class="descname">Address</tt><big>(</big><em>spec_path</em>, <em>target_name</em><big>)</big><a class="reference internal" href="_modules/pants/base/address.html#Address"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.address.Address" title="Permalink to this definition">¶</a></dt>
 <dd><p>A target address.</p>
 <p>An address is a unique name representing a
-<a class="reference internal" href="#pants.base.target.Target" title="pants.base.target.Target"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.target.Target</span></tt></a>. Its composed of the
-<tt class="xref py py-class docutils literal"><span class="pre">pants.base.build_file.BuildFile</span></tt> plus target name.</p>
+<a class="reference internal" href="#pants.base.target.Target" title="pants.base.target.Target"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.target.Target</span></tt></a>. It&#8217;s composed of the
+path from the root of the repo to the Target plus the target name.</p>
 <p>While not their only use, a noteworthy use of addresses is specifying
 target dependencies. For example:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">some_target</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;mytarget&#39;</span><span class="p">,</span>
-  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="n">pants</span><span class="p">(</span><span class="s">&#39;path/to/buildfile:targetname&#39;</span><span class="p">)]</span>
+  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;path/to/buildfile:targetname&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -441,32 +442,16 @@ target dependencies. For example:</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>buildfile</strong> (<em>BuildFile</em>) &#8211; A BuildFile defined in the repo.</li>
-<li><strong>target_name</strong> (<em>string</em>) &#8211; The name of a target defined in buildfile.</li>
+<li><strong>spec_path</strong> (<em>string</em>) &#8211; The path from the root of the repo to this Target.</li>
+<li><strong>target_name</strong> (<em>string</em>) &#8211; The name of a target this Address refers to.</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
-<dl class="classmethod">
-<dt id="pants.base.address.Address.parse">
-<em class="property">classmethod </em><tt class="descname">parse</tt><big>(</big><em>root_dir</em>, <em>spec</em>, <em>is_relative=True</em><big>)</big><a class="reference internal" href="_modules/pants/base/address.html#Address.parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.address.Address.parse" title="Permalink to this definition">¶</a></dt>
-<dd><p>Parses the given spec into an Address.</p>
-<p>An address spec can be one of:
-1.) the (relative) path of a BUILD file
-2.) the (relative) path of a directory containing a BUILD file child
-3.) either of 1 or 2 with a &#8216;:[target name]&#8217; suffix
-4.) a bare &#8216;:[target name]&#8217; indicating the BUILD file to use is the one in the current directory</p>
-<p>If the spec does not have a target name suffix the target name is taken to be the same name
-as the BUILD file&#8217;s parent directory.  In this way the containing directory name
-becomes the &#8216;default&#8217; target name for a BUILD file.</p>
-<p>If there is no BUILD file at the path pointed to, or if there is but the specified target name
-is not defined in the BUILD file, an IOError is raised.</p>
-</dd></dl>
-
 <dl class="method">
 <dt id="pants.base.address.Address.reference">
-<tt class="descname">reference</tt><big>(</big><em>referencing_buildfile_path=None</em><big>)</big><a class="reference internal" href="_modules/pants/base/address.html#Address.reference"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.address.Address.reference" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">reference</tt><big>(</big><em>referencing_path=None</em><big>)</big><a class="reference internal" href="_modules/pants/base/address.html#Address.reference"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.address.Address.reference" title="Permalink to this definition">¶</a></dt>
 <dd><p>How to reference this address in a BUILD file.</p>
 </dd></dl>
 
@@ -506,15 +491,9 @@ is not defined in the BUILD file, an IOError is raised.</p>
 </div>
 <div class="section" id="module-pants.base.build_file_aliases">
 <span id="build-file-aliases-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">build_file_aliases</span></tt> Module<a class="headerlink" href="#module-pants.base.build_file_aliases" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="module-pants.base.build_file_context">
-<span id="build-file-context-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">build_file_context</span></tt> Module<a class="headerlink" href="#module-pants.base.build_file_context" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="module-pants.base.build_file_helpers">
-<span id="build-file-helpers-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">build_file_helpers</span></tt> Module<a class="headerlink" href="#module-pants.base.build_file_helpers" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
-<dt id="pants.base.build_file_helpers.maven_layout">
-<tt class="descclassname">pants.base.build_file_helpers.</tt><tt class="descname">maven_layout</tt><big>(</big><em>basedir=None</em><big>)</big><a class="reference internal" href="_modules/pants/base/build_file_helpers.html#maven_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.build_file_helpers.maven_layout" title="Permalink to this definition">¶</a></dt>
+<dt id="pants.base.build_file_aliases.maven_layout">
+<tt class="descclassname">pants.base.build_file_aliases.</tt><tt class="descname">maven_layout</tt><big>(</big><em>basedir=u''</em>, <em>rel_path=None</em><big>)</big><a class="reference internal" href="_modules/pants/base/build_file_aliases.html#maven_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.build_file_aliases.maven_layout" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets up typical maven project source roots for all built-in pants target types.</p>
 <p>Shortcut for <tt class="docutils literal"><span class="pre">source_root('src/main/java',</span> <span class="pre">*java</span> <span class="pre">targets*)</span></tt>,
 <tt class="docutils literal"><span class="pre">source_root('src/main/python',</span> <span class="pre">*python</span> <span class="pre">targets*)</span></tt>, ...</p>
@@ -529,6 +508,61 @@ expecting to find java files in <tt class="docutils literal"><span class="pre">s
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pants.base.build_file_parser">
+<span id="build-file-parser-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">build_file_parser</span></tt> Module<a class="headerlink" href="#module-pants.base.build_file_parser" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pants.base.build_file_parser.BuildFileCache">
+<em class="property">class </em><tt class="descclassname">pants.base.build_file_parser.</tt><tt class="descname">BuildFileCache</tt><a class="reference internal" href="_modules/pants/base/build_file_parser.html#BuildFileCache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.build_file_parser.BuildFileCache" title="Permalink to this definition">¶</a></dt>
+<dd><p>A little cache for BuildFiles.
+They are mildly expensive to construct since they actually peek
+at the filesystem in their __init__.  This adds up when translating specs to addresses.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pants.base.build_graph">
+<span id="build-graph-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">build_graph</span></tt> Module<a class="headerlink" href="#module-pants.base.build_graph" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pants.base.build_graph.BuildGraph">
+<em class="property">class </em><tt class="descclassname">pants.base.build_graph.</tt><tt class="descname">BuildGraph</tt><big>(</big><em>run_tracker=None</em><big>)</big><a class="reference internal" href="_modules/pants/base/build_graph.html#BuildGraph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.build_graph.BuildGraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>A directed acyclic graph of Targets and dependencies.
+Not necessarily connected.  Always serializable.</p>
+<dl class="method">
+<dt id="pants.base.build_graph.BuildGraph.get_concrete_derived_from">
+<tt class="descname">get_concrete_derived_from</tt><big>(</big><em>address</em><big>)</big><a class="reference internal" href="_modules/pants/base/build_graph.html#BuildGraph.get_concrete_derived_from"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.build_graph.BuildGraph.get_concrete_derived_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the concrete target the specified target was (directly or indirectly) derived from.</p>
+<p>The returned target is guaranteed to not have been derived from any other target.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pants.base.build_graph.BuildGraph.get_derived_from">
+<tt class="descname">get_derived_from</tt><big>(</big><em>address</em><big>)</big><a class="reference internal" href="_modules/pants/base/build_graph.html#BuildGraph.get_derived_from"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.build_graph.BuildGraph.get_derived_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the target the specified target was derived from.</p>
+<p>If a Target was injected programmatically, e.g. from codegen, this allows us to trace its
+ancestry.  If a Target is not derived, default to returning itself.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="pants.base.build_graph.CycleException">
+<em class="property">exception </em><tt class="descclassname">pants.base.build_graph.</tt><tt class="descname">CycleException</tt><big>(</big><em>cycle</em><big>)</big><a class="reference internal" href="_modules/pants/base/build_graph.html#CycleException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.build_graph.CycleException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Thrown when a circular dependency is detected.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pants.base.build_graph.coalesce_targets">
+<tt class="descclassname">pants.base.build_graph.</tt><tt class="descname">coalesce_targets</tt><big>(</big><em>targets</em>, <em>discriminator</em><big>)</big><a class="reference internal" href="_modules/pants/base/build_graph.html#coalesce_targets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.build_graph.coalesce_targets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of Targets that <cite>targets</cite> depend on sorted from most dependent to least.
+Grouped where possible by target type as categorized by the given discriminator.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pants.base.build_graph.sort_targets">
+<tt class="descclassname">pants.base.build_graph.</tt><tt class="descname">sort_targets</tt><big>(</big><em>targets</em><big>)</big><a class="reference internal" href="_modules/pants/base/build_graph.html#sort_targets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.build_graph.sort_targets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the targets that targets depend on sorted from most dependent to least.</p>
 </dd></dl>
 
 </div>
@@ -592,7 +626,7 @@ expecting to find java files in <tt class="docutils literal"><span class="pre">s
 <dl class="class">
 <dt id="pants.base.build_invalidator.CacheKey">
 <em class="property">class </em><tt class="descclassname">pants.base.build_invalidator.</tt><tt class="descname">CacheKey</tt><a class="headerlink" href="#pants.base.build_invalidator.CacheKey" title="Permalink to this definition">¶</a></dt>
-<dd><p>CacheKey(id, hash, num_sources, sources)</p>
+<dd><p>CacheKey(id, hash, num_chunking_units, payloads)</p>
 <dl class="attribute">
 <dt id="pants.base.build_invalidator.CacheKey.hash">
 <tt class="descname">hash</tt><a class="headerlink" href="#pants.base.build_invalidator.CacheKey.hash" title="Permalink to this definition">¶</a></dt>
@@ -606,14 +640,14 @@ expecting to find java files in <tt class="docutils literal"><span class="pre">s
 </dd></dl>
 
 <dl class="attribute">
-<dt id="pants.base.build_invalidator.CacheKey.num_sources">
-<tt class="descname">num_sources</tt><a class="headerlink" href="#pants.base.build_invalidator.CacheKey.num_sources" title="Permalink to this definition">¶</a></dt>
+<dt id="pants.base.build_invalidator.CacheKey.num_chunking_units">
+<tt class="descname">num_chunking_units</tt><a class="headerlink" href="#pants.base.build_invalidator.CacheKey.num_chunking_units" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias for field number 2</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="pants.base.build_invalidator.CacheKey.sources">
-<tt class="descname">sources</tt><a class="headerlink" href="#pants.base.build_invalidator.CacheKey.sources" title="Permalink to this definition">¶</a></dt>
+<dt id="pants.base.build_invalidator.CacheKey.payloads">
+<tt class="descname">payloads</tt><a class="headerlink" href="#pants.base.build_invalidator.CacheKey.payloads" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias for field number 3</p>
 </dd></dl>
 
@@ -623,8 +657,8 @@ expecting to find java files in <tt class="docutils literal"><span class="pre">s
 <dt id="pants.base.build_invalidator.CacheKeyGenerator">
 <em class="property">class </em><tt class="descclassname">pants.base.build_invalidator.</tt><tt class="descname">CacheKeyGenerator</tt><big>(</big><em>cache_key_gen_version=None</em><big>)</big><a class="reference internal" href="_modules/pants/base/build_invalidator.html#CacheKeyGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.build_invalidator.CacheKeyGenerator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates cache keys for versions of target sets.</p>
-<p>cache_key_gen_version - If provided, added to all cache keys. Allows you to invalidate all cache
-keys in a single pants repo, by changing this value in config.</p>
+<p>cache_key_gen_version - If provided, added to all cache keys. Allows you to invalidate
+all cache keys in a single pants repo, by changing this value in config.</p>
 <dl class="staticmethod">
 <dt id="pants.base.build_invalidator.CacheKeyGenerator.combine_cache_keys">
 <em class="property">static </em><tt class="descname">combine_cache_keys</tt><big>(</big><em>cache_keys</em><big>)</big><a class="reference internal" href="_modules/pants/base/build_invalidator.html#CacheKeyGenerator.combine_cache_keys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.build_invalidator.CacheKeyGenerator.combine_cache_keys" title="Permalink to this definition">¶</a></dt>
@@ -637,15 +671,8 @@ in practice.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="pants.base.build_invalidator.CacheKeyGenerator.key_for">
-<tt class="descname">key_for</tt><big>(</big><em>target_id</em>, <em>sources</em><big>)</big><a class="reference internal" href="_modules/pants/base/build_invalidator.html#CacheKeyGenerator.key_for"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.build_invalidator.CacheKeyGenerator.key_for" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a cache key representing some id and its associated source files.</p>
-<p>Useful primarily in tests. Normally we use key_for_target().</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="pants.base.build_invalidator.CacheKeyGenerator.key_for_target">
-<tt class="descname">key_for_target</tt><big>(</big><em>target</em>, <em>sources=&lt;pants.base.build_invalidator.DefaultSourceScope object at 0x10e87f050&gt;</em>, <em>fingerprint_extra=None</em><big>)</big><a class="reference internal" href="_modules/pants/base/build_invalidator.html#CacheKeyGenerator.key_for_target"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.build_invalidator.CacheKeyGenerator.key_for_target" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">key_for_target</tt><big>(</big><em>target</em>, <em>transitive=False</em><big>)</big><a class="reference internal" href="_modules/pants/base/build_invalidator.html#CacheKeyGenerator.key_for_target"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.build_invalidator.CacheKeyGenerator.key_for_target" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a key representing the given target and its sources.</p>
 <p>A key for a set of targets can be created by calling combine_cache_keys()
 on the target&#8217;s individual cache keys.</p>
@@ -655,67 +682,11 @@ on the target&#8217;s individual cache keys.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Target:</th><td class="field-body">The target to create a CacheKey for.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Sources:</th><td class="field-body">A source scope to select from the target for hashing, defaults to TARGET_SOURCES.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name" colspan="2">Fingerprint_extra:</th></tr>
-<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">A function that accepts a sha hash and updates it with extra fprint data.</td>
+<tr class="field-even field"><th class="field-name" colspan="2">Fingerprint_extra:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body">A function that accepts a sha hash and updates it with extra fprint data.</td>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="pants.base.build_invalidator.DefaultSourceScope">
-<em class="property">class </em><tt class="descclassname">pants.base.build_invalidator.</tt><tt class="descname">DefaultSourceScope</tt><big>(</big><em>recursive</em>, <em>include_buildfile</em><big>)</big><a class="reference internal" href="_modules/pants/base/build_invalidator.html#DefaultSourceScope"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.build_invalidator.DefaultSourceScope" title="Permalink to this definition">¶</a></dt>
-<dd><p>Selects sources from subclasses of TargetWithSources.</p>
-<dl class="method">
-<dt id="pants.base.build_invalidator.DefaultSourceScope.select">
-<tt class="descname">select</tt><big>(</big><em>tgt</em><big>)</big><a class="reference internal" href="_modules/pants/base/build_invalidator.html#DefaultSourceScope.select"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.build_invalidator.DefaultSourceScope.select" title="Permalink to this definition">¶</a></dt>
-<dd><p>Selects source files from the given target and returns them as absolute paths.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pants.base.build_invalidator.DefaultSourceScope.valid">
-<tt class="descname">valid</tt><big>(</big><em>target</em><big>)</big><a class="reference internal" href="_modules/pants/base/build_invalidator.html#DefaultSourceScope.valid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.build_invalidator.DefaultSourceScope.valid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns True if the given target can be used with this SourceScope.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="pants.base.build_invalidator.NoSources">
-<em class="property">class </em><tt class="descclassname">pants.base.build_invalidator.</tt><tt class="descname">NoSources</tt><a class="reference internal" href="_modules/pants/base/build_invalidator.html#NoSources"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.build_invalidator.NoSources" title="Permalink to this definition">¶</a></dt>
-<dd><p>A SourceScope where all targets are valid but no sources are ever selected.</p>
-<dl class="method">
-<dt id="pants.base.build_invalidator.NoSources.select">
-<tt class="descname">select</tt><big>(</big><em>target</em><big>)</big><a class="reference internal" href="_modules/pants/base/build_invalidator.html#NoSources.select"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.build_invalidator.NoSources.select" title="Permalink to this definition">¶</a></dt>
-<dd><p>Selects source files from the given target and returns them as absolute paths.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pants.base.build_invalidator.NoSources.valid">
-<tt class="descname">valid</tt><big>(</big><em>target</em><big>)</big><a class="reference internal" href="_modules/pants/base/build_invalidator.html#NoSources.valid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.build_invalidator.NoSources.valid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns True if the given target can be used with this SourceScope.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="pants.base.build_invalidator.SourceScope">
-<em class="property">class </em><tt class="descclassname">pants.base.build_invalidator.</tt><tt class="descname">SourceScope</tt><a class="reference internal" href="_modules/pants/base/build_invalidator.html#SourceScope"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.build_invalidator.SourceScope" title="Permalink to this definition">¶</a></dt>
-<dd><p>Selects sources of a given scope from targets.</p>
-<dl class="method">
-<dt id="pants.base.build_invalidator.SourceScope.select">
-<tt class="descname">select</tt><big>(</big><em>target</em><big>)</big><a class="reference internal" href="_modules/pants/base/build_invalidator.html#SourceScope.select"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.build_invalidator.SourceScope.select" title="Permalink to this definition">¶</a></dt>
-<dd><p>Selects source files from the given target and returns them as absolute paths.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pants.base.build_invalidator.SourceScope.valid">
-<tt class="descname">valid</tt><big>(</big><em>target</em><big>)</big><a class="reference internal" href="_modules/pants/base/build_invalidator.html#SourceScope.valid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.build_invalidator.SourceScope.valid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns True if the given target can be used with this SourceScope.</p>
 </dd></dl>
 
 </dd></dl>
@@ -785,6 +756,63 @@ environment with the path to the ROOT_DIR or manipulated through this interface.
 exit.</p>
 </dd></dl>
 
+</dd></dl>
+
+</div>
+<div class="section" id="module-pants.base.cache_manager">
+<span id="cache-manager-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">cache_manager</span></tt> Module<a class="headerlink" href="#module-pants.base.cache_manager" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pants.base.cache_manager.InvalidationCacheManager">
+<em class="property">class </em><tt class="descclassname">pants.base.cache_manager.</tt><tt class="descname">InvalidationCacheManager</tt><big>(</big><em>cache_key_generator</em>, <em>build_invalidator_dir</em>, <em>invalidate_dependents</em>, <em>extra_data</em><big>)</big><a class="reference internal" href="_modules/pants/base/cache_manager.html#InvalidationCacheManager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.cache_manager.InvalidationCacheManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Manages cache checks, updates and invalidation keeping track of basic change
+and invalidation statistics.
+Note that this is distinct from the ArtifactCache concept, and should probably be renamed.</p>
+<dl class="exception">
+<dt id="pants.base.cache_manager.InvalidationCacheManager.CacheValidationError">
+<em class="property">exception </em><tt class="descname">CacheValidationError</tt><a class="reference internal" href="_modules/pants/base/cache_manager.html#InvalidationCacheManager.CacheValidationError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.cache_manager.InvalidationCacheManager.CacheValidationError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicates a problem accessing the cache.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pants.base.cache_manager.InvalidationCacheManager.check">
+<tt class="descclassname">InvalidationCacheManager.</tt><tt class="descname">check</tt><big>(</big><em>targets</em>, <em>partition_size_hint=None</em>, <em>target_colors=None</em><big>)</big><a class="reference internal" href="_modules/pants/base/cache_manager.html#InvalidationCacheManager.check"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.cache_manager.InvalidationCacheManager.check" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether each of the targets has changed and invalidates it if so.</p>
+<p>Returns a list of VersionedTargetSet objects (either valid or invalid). The returned sets
+&#8216;cover&#8217; the input targets, possibly partitioning them, and are in topological order.
+The caller can inspect these in order and, e.g., rebuild the invalid ones.</p>
+<p>If target_colors is specified, it must be a map from Target -&gt; opaque &#8216;color&#8217; values.
+Two Targets will be in the same partition only if they have the same color.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pants.base.cache_manager.InvalidationCacheManager.force_invalidate">
+<tt class="descclassname">InvalidationCacheManager.</tt><tt class="descname">force_invalidate</tt><big>(</big><em>vts</em><big>)</big><a class="reference internal" href="_modules/pants/base/cache_manager.html#InvalidationCacheManager.force_invalidate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.cache_manager.InvalidationCacheManager.force_invalidate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Force invalidation of a VersionedTargetSet.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pants.base.cache_manager.InvalidationCacheManager.update">
+<tt class="descclassname">InvalidationCacheManager.</tt><tt class="descname">update</tt><big>(</big><em>vts</em><big>)</big><a class="reference internal" href="_modules/pants/base/cache_manager.html#InvalidationCacheManager.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.cache_manager.InvalidationCacheManager.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mark a changed or invalidated VersionedTargetSet as successfully processed.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pants.base.cache_manager.VersionedTarget">
+<em class="property">class </em><tt class="descclassname">pants.base.cache_manager.</tt><tt class="descname">VersionedTarget</tt><big>(</big><em>cache_manager</em>, <em>target</em>, <em>cache_key</em><big>)</big><a class="reference internal" href="_modules/pants/base/cache_manager.html#VersionedTarget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.cache_manager.VersionedTarget" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class represents a singleton VersionedTargetSet, and has links to VersionedTargets that
+the wrapped target depends on (after having resolved through any &#8220;alias&#8221; targets.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="pants.base.cache_manager.VersionedTargetSet">
+<em class="property">class </em><tt class="descclassname">pants.base.cache_manager.</tt><tt class="descname">VersionedTargetSet</tt><big>(</big><em>cache_manager</em>, <em>versioned_targets</em><big>)</big><a class="reference internal" href="_modules/pants/base/cache_manager.html#VersionedTargetSet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.cache_manager.VersionedTargetSet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a list of targets, a corresponding CacheKey, and a flag determining whether the
+list of targets is currently valid.</p>
+<p>When invalidating a single target, this can be used to represent that target as a singleton.
+When checking the artifact cache, this can also be used to represent a list of targets that are
+built together into a single artifact.</p>
 </dd></dl>
 
 </div>
@@ -997,6 +1025,29 @@ result of this removal.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-pants.base.exceptions">
+<span id="exceptions-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">exceptions</span></tt> Module<a class="headerlink" href="#module-pants.base.exceptions" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="pants.base.exceptions.TargetDefinitionException">
+<em class="property">exception </em><tt class="descclassname">pants.base.exceptions.</tt><tt class="descname">TargetDefinitionException</tt><big>(</big><em>target</em>, <em>msg</em><big>)</big><a class="reference internal" href="_modules/pants/base/exceptions.html#TargetDefinitionException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.exceptions.TargetDefinitionException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Thrown on errors in target definitions.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="pants.base.exceptions.TaskError">
+<em class="property">exception </em><tt class="descclassname">pants.base.exceptions.</tt><tt class="descname">TaskError</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/pants/base/exceptions.html#TaskError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.exceptions.TaskError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raised to indicate a task has failed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>exit_code</strong> (<em>int</em>) &#8211; an optional exit code (1, by default)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
 <div class="section" id="module-pants.base.generator">
 <span id="generator-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">generator</span></tt> Module<a class="headerlink" href="#module-pants.base.generator" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
@@ -1078,101 +1129,8 @@ to the args of the outer template, which can then contain <tt class="docutils li
 </dd></dl>
 
 </div>
-<div class="section" id="module-pants.base.parse_context">
-<span id="parse-context-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">parse_context</span></tt> Module<a class="headerlink" href="#module-pants.base.parse_context" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="pants.base.parse_context.ParseContext">
-<em class="property">class </em><tt class="descclassname">pants.base.parse_context.</tt><tt class="descname">ParseContext</tt><big>(</big><em>buildfile</em><big>)</big><a class="reference internal" href="_modules/pants/base/parse_context.html#ParseContext"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.parse_context.ParseContext" title="Permalink to this definition">¶</a></dt>
-<dd><p>Defines the context of a parseable BUILD file target and provides a mechanism for targets to
-discover their context when invoked via eval.</p>
-<dl class="exception">
-<dt id="pants.base.parse_context.ParseContext.ContextError">
-<em class="property">exception </em><tt class="descname">ContextError</tt><a class="reference internal" href="_modules/pants/base/parse_context.html#ParseContext.ContextError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.parse_context.ParseContext.ContextError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Indicates an action that requires a BUILD file parse context was attempted outside any.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="pants.base.parse_context.ParseContext.activate">
-<em class="property">classmethod </em><tt class="descclassname">ParseContext.</tt><tt class="descname">activate</tt><big>(</big><em>*args</em>, <em>**kwds</em><big>)</big><a class="reference internal" href="_modules/pants/base/parse_context.html#ParseContext.activate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.parse_context.ParseContext.activate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Activates the given ParseContext.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="pants.base.parse_context.ParseContext.add_to_exec_context">
-<em class="property">classmethod </em><tt class="descclassname">ParseContext.</tt><tt class="descname">add_to_exec_context</tt><big>(</big><em>str_to_exec</em><big>)</big><a class="reference internal" href="_modules/pants/base/parse_context.html#ParseContext.add_to_exec_context"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.parse_context.ParseContext.add_to_exec_context" title="Permalink to this definition">¶</a></dt>
-<dd><p>This hook allows for adding symbols to the execution context in which BUILD files are
-parsed. This should only be used for importing symbols that are used fairly ubiquitously in
-BUILD files, and possibly for appending to sys.path to get local python code on the python
-path.</p>
-<p>This will be phased out in favor of a more robust plugin architecture that supports import
-injection and path amendment.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pants.base.parse_context.ParseContext.current_buildfile">
-<tt class="descclassname">ParseContext.</tt><tt class="descname">current_buildfile</tt><a class="reference internal" href="_modules/pants/base/parse_context.html#ParseContext.current_buildfile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.parse_context.ParseContext.current_buildfile" title="Permalink to this definition">¶</a></dt>
-<dd><p>This property return the current build file being parsed from all BUILD files co-located
-with this BUILD file within the family.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="pants.base.parse_context.ParseContext.default_globals">
-<em class="property">classmethod </em><tt class="descclassname">ParseContext.</tt><tt class="descname">default_globals</tt><big>(</big><em>config=None</em><big>)</big><a class="reference internal" href="_modules/pants/base/parse_context.html#ParseContext.default_globals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.parse_context.ParseContext.default_globals" title="Permalink to this definition">¶</a></dt>
-<dd><p>Has pants.*, but not file-specfic things like __file__
-If you want to add new imports to be available to all BUILD files, add a section to the config
-similar to:</p>
-<blockquote>
-<div>[parse]
-headers: [&#8216;from test import get_jar&#8217;,]</div></blockquote>
-<p>You may also need to add new roots to the sys.path. see _run in pants_exe.py</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pants.base.parse_context.ParseContext.do_in_context">
-<tt class="descclassname">ParseContext.</tt><tt class="descname">do_in_context</tt><big>(</big><em>work</em><big>)</big><a class="reference internal" href="_modules/pants/base/parse_context.html#ParseContext.do_in_context"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.parse_context.ParseContext.do_in_context" title="Permalink to this definition">¶</a></dt>
-<dd><p>Executes the callable work in this parse context.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="pants.base.parse_context.ParseContext.locate">
-<em class="property">classmethod </em><tt class="descclassname">ParseContext.</tt><tt class="descname">locate</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pants/base/parse_context.html#ParseContext.locate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.parse_context.ParseContext.locate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Attempts to find the current root directory and buildfile.</p>
-<p>If there is an active parse context (see do_in_context), then it is returned.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pants.base.parse_context.ParseContext.on_context_exit">
-<tt class="descclassname">ParseContext.</tt><tt class="descname">on_context_exit</tt><big>(</big><em>func</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/pants/base/parse_context.html#ParseContext.on_context_exit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.parse_context.ParseContext.on_context_exit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Registers a command to invoke just before this parse context is exited.</p>
-<p>It is an error to attempt to register an on_context_exit action outside an active parse
-context.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pants.base.parse_context.ParseContext.parse">
-<tt class="descclassname">ParseContext.</tt><tt class="descname">parse</tt><big>(</big><em>**globalargs</em><big>)</big><a class="reference internal" href="_modules/pants/base/parse_context.html#ParseContext.parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.parse_context.ParseContext.parse" title="Permalink to this definition">¶</a></dt>
-<dd><p>The entry point to parsing of a BUILD file.</p>
-<p>from pants.targets.sources import SourceRoot</p>
-<p>See locate().</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="pants.base.parse_context.ParseContext.path">
-<em class="property">classmethod </em><tt class="descclassname">ParseContext.</tt><tt class="descname">path</tt><big>(</big><em>relpath=None</em><big>)</big><a class="reference internal" href="_modules/pants/base/parse_context.html#ParseContext.path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.parse_context.ParseContext.path" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the active parse context path or <cite>os.getcwd()</cite> if there is no active context.</p>
-<p>If relpath is specified the path returned will be joined to it but in either case the returned
-path will be absolute.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="pants.base.parse_context.ParseContext.temp">
-<em class="property">classmethod </em><tt class="descclassname">ParseContext.</tt><tt class="descname">temp</tt><big>(</big><em>*args</em>, <em>**kwds</em><big>)</big><a class="reference internal" href="_modules/pants/base/parse_context.html#ParseContext.temp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.parse_context.ParseContext.temp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Activates a temporary parse context in the given basedir relative to the build root or else
-in the build root dir itself if no basedir is specified.</p>
-</dd></dl>
-
-</dd></dl>
-
+<div class="section" id="module-pants.base.payload">
+<span id="payload-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">payload</span></tt> Module<a class="headerlink" href="#module-pants.base.payload" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-pants.base.rcfile">
 <span id="rcfile-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">rcfile</span></tt> Module<a class="headerlink" href="#module-pants.base.rcfile" title="Permalink to this headline">¶</a></h2>
@@ -1292,11 +1250,93 @@ heuristics inspired by PHP&#8217;s version_compare.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-pants.base.source_root">
+<span id="source-root-module"></span><h2><a class="reference internal" href="build_dictionary.html#source_root" title="source_root"><tt class="xref py py-mod docutils literal"><span class="pre">source_root</span></tt></a> Module<a class="headerlink" href="#module-pants.base.source_root" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pants.base.source_root.SourceRoot">
+<em class="property">class </em><tt class="descclassname">pants.base.source_root.</tt><tt class="descname">SourceRoot</tt><big>(</big><em>rel_path</em><big>)</big><a class="reference internal" href="_modules/pants/base/source_root.html#SourceRoot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.source_root.SourceRoot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allows registration of a source root for a set of targets.</p>
+<p>A source root is the base path sources for a particular language are found relative to.
+Generally compilers or interpreters for the source will expect sources relative to a base path
+and a source root allows calculation of the correct relative paths.</p>
+<p>E.g., a Java compiler probably expects to find <tt class="docutils literal"><span class="pre">.java</span></tt> files for
+<tt class="docutils literal"><span class="pre">package</span> <span class="pre">com.twitter.common.net</span></tt> in <tt class="docutils literal"><span class="pre">*something*/com/twitter/common/net</span></tt>.
+The <tt class="docutils literal"><span class="pre">source_root</span></tt> command specifies that <em>something</em>.</p>
+<p>It is illegal to have nested source roots.</p>
+<dl class="classmethod">
+<dt id="pants.base.source_root.SourceRoot.all_roots">
+<em class="property">classmethod </em><tt class="descname">all_roots</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pants/base/source_root.html#SourceRoot.all_roots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.source_root.SourceRoot.all_roots" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a mapping from source roots to the associated target types.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pants.base.source_root.SourceRoot.find">
+<em class="property">classmethod </em><tt class="descname">find</tt><big>(</big><em>target</em><big>)</big><a class="reference internal" href="_modules/pants/base/source_root.html#SourceRoot.find"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.source_root.SourceRoot.find" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds the source root for the given target.</p>
+<p>If none is registered, returns the parent directory of the target&#8217;s BUILD file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pants.base.source_root.SourceRoot.here">
+<tt class="descname">here</tt><big>(</big><em>*allowed_target_types</em><big>)</big><a class="reference internal" href="_modules/pants/base/source_root.html#SourceRoot.here"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.source_root.SourceRoot.here" title="Permalink to this definition">¶</a></dt>
+<dd><p>Registers the cwd as a source root for the given target types.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pants.base.source_root.SourceRoot.register">
+<em class="property">classmethod </em><tt class="descname">register</tt><big>(</big><em>basedir</em>, <em>*allowed_target_types</em><big>)</big><a class="reference internal" href="_modules/pants/base/source_root.html#SourceRoot.register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.source_root.SourceRoot.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Registers the given basedir (relative to the buildroot) as a source root.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>basedir</strong> (<em>string</em>) &#8211; The base directory to resolve sources relative to.</li>
+<li><strong>allowed_target_types</strong> (<em>list</em>) &#8211; Optional list of target types. If specified, we enforce that
+only targets of those types appear under this source root.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pants.base.source_root.SourceRoot.reset">
+<em class="property">classmethod </em><tt class="descname">reset</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pants/base/source_root.html#SourceRoot.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.source_root.SourceRoot.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset all source roots to empty. Only intended for testing.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pants.base.source_root.SourceRoot.roots">
+<em class="property">classmethod </em><tt class="descname">roots</tt><big>(</big><em>target_type</em><big>)</big><a class="reference internal" href="_modules/pants/base/source_root.html#SourceRoot.roots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.source_root.SourceRoot.roots" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the set of roots for given target type.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pants.base.source_root.SourceRoot.types">
+<em class="property">classmethod </em><tt class="descname">types</tt><big>(</big><em>root</em><big>)</big><a class="reference internal" href="_modules/pants/base/source_root.html#SourceRoot.types"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.source_root.SourceRoot.types" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the set of target types rooted at root.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pants.base.spec_parser">
+<span id="spec-parser-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">spec_parser</span></tt> Module<a class="headerlink" href="#module-pants.base.spec_parser" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pants.base.spec_parser.SpecParser">
+<em class="property">class </em><tt class="descclassname">pants.base.spec_parser.</tt><tt class="descname">SpecParser</tt><big>(</big><em>root_dir</em>, <em>build_file_parser</em><big>)</big><a class="reference internal" href="_modules/pants/base/spec_parser.html#SpecParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.spec_parser.SpecParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses goal target specs; either simple target addresses or else sibling (:) or descendant
+(::) selector forms</p>
+</dd></dl>
+
+</div>
 <div class="section" id="module-pants.base.target">
 <span id="target-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">target</span></tt> Module<a class="headerlink" href="#module-pants.base.target" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pants.base.target.Target">
-<em class="property">class </em><tt class="descclassname">pants.base.target.</tt><tt class="descname">Target</tt><big>(</big><em>name</em>, <em>reinit_check=True</em>, <em>exclusives=None</em><big>)</big><a class="reference internal" href="_modules/pants/base/target.html#Target"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.target.Target" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pants.base.target.</tt><tt class="descname">Target</tt><big>(</big><em>name</em>, <em>address</em>, <em>build_graph</em>, <em>payload=None</em>, <em>exclusives=None</em><big>)</big><a class="reference internal" href="_modules/pants/base/target.html#Target"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.target.Target" title="Permalink to this definition">¶</a></dt>
 <dd><p>The baseclass for all pants targets.</p>
 <p>Handles registration of a target amongst all parsed targets as well as location of the target
 parse context.</p>
@@ -1304,7 +1344,12 @@ parse context.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>string</em>) &#8211; The target name.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<em>string</em>) &#8211; The target name.</li>
+<li><strong>address</strong> (<em>Address</em>) &#8211; The Address that maps to this Target in the BuildGraph</li>
+<li><strong>build_graph</strong> (<em>BuildGraph</em>) &#8211; The BuildGraph that this Target lives within</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
@@ -1315,32 +1360,18 @@ parse context.</p>
 </dd></dl>
 
 <dl class="attribute">
+<dt id="pants.base.target.Target.concrete_derived_from">
+<tt class="descname">concrete_derived_from</tt><a class="reference internal" href="_modules/pants/base/target.html#Target.concrete_derived_from"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.target.Target.concrete_derived_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the concrete target this target was (directly or indirectly) derived from.</p>
+<p>The returned target is guaranteed to not have been derived from any other target, and is thus
+guaranteed to be a &#8216;real&#8217; target from a BUILD file, not a programmatically injected target.</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="pants.base.target.Target.derived_from">
 <tt class="descname">derived_from</tt><a class="reference internal" href="_modules/pants/base/target.html#Target.derived_from"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.target.Target.derived_from" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the target this target was derived from.</p>
 <p>If this target was not derived from another, returns itself.</p>
-</dd></dl>
-
-<dl class="staticmethod">
-<dt id="pants.base.target.Target.extract_jvm_targets">
-<em class="property">static </em><tt class="descname">extract_jvm_targets</tt><big>(</big><em>targets</em><big>)</big><a class="reference internal" href="_modules/pants/base/target.html#Target.extract_jvm_targets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.target.Target.extract_jvm_targets" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns an iterator over the jvm targets the given sequence of targets resolve to.  The
-given targets can be a mix of types and only valid jvm targets (as determined by is_jvm(...)
-will be returned by the iterator.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="pants.base.target.Target.get">
-<em class="property">classmethod </em><tt class="descname">get</tt><big>(</big><em>address</em><big>)</big><a class="reference internal" href="_modules/pants/base/target.html#Target.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.target.Target.get" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the specified module target if already parsed; otherwise, parses the buildfile in the
-context of its parent directory and returns the parsed target.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="pants.base.target.Target.get_all_addresses">
-<em class="property">classmethod </em><tt class="descname">get_all_addresses</tt><big>(</big><em>buildfile</em><big>)</big><a class="reference internal" href="_modules/pants/base/target.html#Target.get_all_addresses"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.target.Target.get_all_addresses" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns all of the target addresses in the specified buildfile if already parsed; otherwise,
-parses the buildfile to find all the addresses it contains and then returns them.</p>
 </dd></dl>
 
 <dl class="method">
@@ -1351,25 +1382,17 @@ parses the buildfile to find all the addresses it contains and then returns them
 see the documentation of the CheckExclusives task.</p>
 </dd></dl>
 
-<dl class="staticmethod">
-<dt id="pants.base.target.Target.has_jvm_targets">
-<em class="property">static </em><tt class="descname">has_jvm_targets</tt><big>(</big><em>targets</em><big>)</big><a class="reference internal" href="_modules/pants/base/target.html#Target.has_jvm_targets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.target.Target.has_jvm_targets" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns true if the given sequence of targets contains at least one jvm target as determined
-by is_jvm(...)</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pants.base.target.Target.has_sources">
-<tt class="descname">has_sources</tt><big>(</big><em>extension=None</em><big>)</big><a class="reference internal" href="_modules/pants/base/target.html#Target.has_sources"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.target.Target.has_sources" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns True if the target has sources.</p>
-<p>If an extension is supplied the target is further checked for at least 1 source with the given
-extension.</p>
+<dl class="attribute">
+<dt id="pants.base.target.Target.id">
+<tt class="descname">id</tt><a class="reference internal" href="_modules/pants/base/target.html#Target.id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.target.Target.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>A unique identifier for the Target.</p>
+<p>The generated id is safe for use as a path name on unix systems.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="pants.base.target.Target.identifier">
 <tt class="descname">identifier</tt><a class="reference internal" href="_modules/pants/base/target.html#Target.identifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.target.Target.identifier" title="Permalink to this definition">¶</a></dt>
-<dd><p>A unique identifier for the BUILD target.</p>
+<dd><p>A unique identifier for the Target.</p>
 <p>The generated id is safe for use as a path name on unix systems.</p>
 </dd></dl>
 
@@ -1390,13 +1413,6 @@ extension.</p>
 <em class="property">classmethod </em><tt class="descname">maybe_readable_identify</tt><big>(</big><em>targets</em><big>)</big><a class="reference internal" href="_modules/pants/base/target.html#Target.maybe_readable_identify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.target.Target.maybe_readable_identify" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates an id for a set of targets.</p>
 <p>If the set is a single target, just use that target&#8217;s id.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="pants.base.target.Target.resolve_all">
-<em class="property">classmethod </em><tt class="descname">resolve_all</tt><big>(</big><em>targets</em>, <em>*expected_types</em><big>)</big><a class="reference internal" href="_modules/pants/base/target.html#Target.resolve_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.target.Target.resolve_all" title="Permalink to this definition">¶</a></dt>
-<dd><p>Yield the resolved concrete targets checking each is a subclass of one of the expected types
-if specified.</p>
 </dd></dl>
 
 <dl class="method">
@@ -1436,12 +1452,6 @@ as its single argument and returns True if the target should passed to <tt class
 </table>
 </dd></dl>
 
-</dd></dl>
-
-<dl class="exception">
-<dt id="pants.base.target.TargetDefinitionException">
-<em class="property">exception </em><tt class="descclassname">pants.base.target.</tt><tt class="descname">TargetDefinitionException</tt><big>(</big><em>target</em>, <em>msg</em><big>)</big><a class="reference internal" href="_modules/pants/base/target.html#TargetDefinitionException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.target.TargetDefinitionException" title="Permalink to this definition">¶</a></dt>
-<dd><p>Thrown on errors in target definitions.</p>
 </dd></dl>
 
 </div>
