@@ -601,6 +601,14 @@ body a.icon-home:hover{
 
     <span class="bp">self</span><span class="o">.</span><span class="n">addresses_by_build_file</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
 
+  <span class="k">def</span> <span class="nf">inject_address_into_build_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="n">build_graph</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_populate_target_proxy_for_address</span><span class="p">(</span><span class="n">address</span><span class="p">)</span>
+    <span class="n">target_proxy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_proxy_by_address</span><span class="p">[</span><span class="n">address</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">build_graph</span><span class="o">.</span><span class="n">contains_address</span><span class="p">(</span><span class="n">address</span><span class="p">):</span>
+      <span class="n">target</span> <span class="o">=</span> <span class="n">target_proxy</span><span class="o">.</span><span class="n">to_target</span><span class="p">(</span><span class="n">build_graph</span><span class="p">)</span>
+      <span class="n">build_graph</span><span class="o">.</span><span class="n">inject_target</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+
   <span class="k">def</span> <span class="nf">inject_address_closure_into_build_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                                               <span class="n">address</span><span class="p">,</span>
                                               <span class="n">build_graph</span><span class="p">,</span>
@@ -644,6 +652,18 @@ body a.icon-home:hover{
     <span class="n">build_file</span> <span class="o">=</span> <span class="n">BuildFileCache</span><span class="o">.</span><span class="n">spec_path_to_build_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_root_dir</span><span class="p">,</span> <span class="n">spec_path</span><span class="p">)</span>
     <span class="n">address</span> <span class="o">=</span> <span class="n">BuildFileAddress</span><span class="p">(</span><span class="n">build_file</span><span class="p">,</span> <span class="n">target_name</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">inject_address_closure_into_build_graph</span><span class="p">(</span><span class="n">address</span><span class="p">,</span> <span class="n">build_graph</span><span class="p">,</span> <span class="n">addresses_already_closed</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">_populate_target_proxy_for_address</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">address</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">parse_build_file_family</span><span class="p">(</span><span class="n">address</span><span class="o">.</span><span class="n">build_file</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">address</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_proxy_by_address</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;{address} from spec {spec} was not found in BUILD file {build_file}.&#39;</span>
+                       <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">address</span><span class="o">=</span><span class="n">address</span><span class="p">,</span>
+                               <span class="n">spec</span><span class="o">=</span><span class="n">address</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span>
+                               <span class="n">build_file</span><span class="o">=</span><span class="n">address</span><span class="o">.</span><span class="n">build_file</span><span class="p">))</span>
+
+    <span class="n">target_proxy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_proxy_by_address</span><span class="p">[</span><span class="n">address</span><span class="p">]</span>
+
 
   <span class="k">def</span> <span class="nf">_populate_target_proxy_transitive_closure_for_address</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                                                             <span class="n">address</span><span class="p">,</span>

@@ -446,20 +446,6 @@ body a.icon-home:hover{
     <span class="bp">self</span><span class="o">.</span><span class="n">strict</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">getbool</span><span class="p">(</span><span class="s">&#39;thrift-gen&#39;</span><span class="p">,</span> <span class="s">&#39;strict&#39;</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">getbool</span><span class="p">(</span><span class="s">&#39;thrift-gen&#39;</span><span class="p">,</span> <span class="s">&#39;verbose&#39;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">create_geninfo</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
-      <span class="n">gen_info</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">getdict</span><span class="p">(</span><span class="s">&#39;thrift-gen&#39;</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
-      <span class="n">gen</span> <span class="o">=</span> <span class="n">gen_info</span><span class="p">[</span><span class="s">&#39;gen&#39;</span><span class="p">]</span>
-      <span class="n">deps</span> <span class="o">=</span> <span class="p">{}</span>
-      <span class="k">for</span> <span class="n">category</span><span class="p">,</span> <span class="n">depspecs</span> <span class="ow">in</span> <span class="n">gen_info</span><span class="p">[</span><span class="s">&#39;deps&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="n">dependencies</span> <span class="o">=</span> <span class="n">OrderedSet</span><span class="p">()</span>
-        <span class="n">deps</span><span class="p">[</span><span class="n">category</span><span class="p">]</span> <span class="o">=</span> <span class="n">dependencies</span>
-        <span class="k">for</span> <span class="n">depspec</span> <span class="ow">in</span> <span class="n">depspecs</span><span class="p">:</span>
-          <span class="n">dependencies</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">depspec</span><span class="p">))</span>
-      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">GenInfo</span><span class="p">(</span><span class="n">gen</span><span class="p">,</span> <span class="n">deps</span><span class="p">)</span>
-
-    <span class="bp">self</span><span class="o">.</span><span class="n">gen_java</span> <span class="o">=</span> <span class="n">create_geninfo</span><span class="p">(</span><span class="s">&#39;java&#39;</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">gen_python</span> <span class="o">=</span> <span class="n">create_geninfo</span><span class="p">(</span><span class="s">&#39;python&#39;</span><span class="p">)</span>
-
     <span class="bp">self</span><span class="o">.</span><span class="n">gen_langs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">thrift_gen_langs</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">lang</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&#39;java&#39;</span><span class="p">,</span> <span class="s">&#39;python&#39;</span><span class="p">):</span>
       <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">isrequired</span><span class="p">(</span><span class="n">lang</span><span class="p">):</span>
@@ -473,6 +459,31 @@ body a.icon-home:hover{
     <span class="c"># TODO(pl): This is broken because of how __init__.py files are generated/cached</span>
     <span class="c"># for combined python thrift packages.</span>
     <span class="c"># self.setup_artifact_cache_from_config(config_section=&#39;thrift-gen&#39;)</span>
+
+  <span class="k">def</span> <span class="nf">create_geninfo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="n">gen_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">getdict</span><span class="p">(</span><span class="s">&#39;thrift-gen&#39;</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+    <span class="n">gen</span> <span class="o">=</span> <span class="n">gen_info</span><span class="p">[</span><span class="s">&#39;gen&#39;</span><span class="p">]</span>
+    <span class="n">deps</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">category</span><span class="p">,</span> <span class="n">depspecs</span> <span class="ow">in</span> <span class="n">gen_info</span><span class="p">[</span><span class="s">&#39;deps&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+      <span class="n">dependencies</span> <span class="o">=</span> <span class="n">OrderedSet</span><span class="p">()</span>
+      <span class="n">deps</span><span class="p">[</span><span class="n">category</span><span class="p">]</span> <span class="o">=</span> <span class="n">dependencies</span>
+      <span class="k">for</span> <span class="n">depspec</span> <span class="ow">in</span> <span class="n">depspecs</span><span class="p">:</span>
+        <span class="n">dependencies</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">depspec</span><span class="p">))</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">GenInfo</span><span class="p">(</span><span class="n">gen</span><span class="p">,</span> <span class="n">deps</span><span class="p">)</span>
+
+  <span class="n">_gen_java</span> <span class="o">=</span> <span class="bp">None</span>
+  <span class="nd">@property</span>
+  <span class="k">def</span> <span class="nf">gen_java</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gen_java</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_gen_java</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_geninfo</span><span class="p">(</span><span class="s">&#39;java&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gen_java</span>
+
+  <span class="n">_gen_python</span> <span class="o">=</span> <span class="bp">None</span>
+  <span class="nd">@property</span>
+  <span class="k">def</span> <span class="nf">gen_python</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gen_python</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_gen_python</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_geninfo</span><span class="p">(</span><span class="s">&#39;python&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gen_python</span>
 
   <span class="k">def</span> <span class="nf">invalidate_for</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gen_langs</span>
@@ -557,8 +568,7 @@ body a.icon-home:hover{
   <span class="k">def</span> <span class="nf">_create_java_target</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">dependees</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">create_target</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">deps</span><span class="p">):</span>
       <span class="n">spec_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">combined_relpath</span><span class="p">,</span> <span class="s">&#39;gen-java&#39;</span><span class="p">)</span>
-      <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;{target_name}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">target_name</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-      <span class="n">spec</span> <span class="o">=</span> <span class="s">&#39;{spec_path}:{name}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">spec_path</span><span class="o">=</span><span class="n">spec_path</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+      <span class="n">spec</span> <span class="o">=</span> <span class="s">&#39;{spec_path}:{name}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">spec_path</span><span class="o">=</span><span class="n">spec_path</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
       <span class="n">address</span> <span class="o">=</span> <span class="n">SyntheticAddress</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">spec</span><span class="p">)</span>
       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">add_new_target</span><span class="p">(</span><span class="n">address</span><span class="p">,</span>
                                          <span class="n">JavaLibrary</span><span class="p">,</span>
@@ -572,8 +582,7 @@ body a.icon-home:hover{
   <span class="k">def</span> <span class="nf">_create_python_target</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">dependees</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">create_target</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">deps</span><span class="p">):</span>
       <span class="n">spec_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">combined_relpath</span><span class="p">,</span> <span class="s">&#39;gen-py&#39;</span><span class="p">)</span>
-      <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;{target_name}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">target_name</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-      <span class="n">spec</span> <span class="o">=</span> <span class="s">&#39;{spec_path}:{name}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">spec_path</span><span class="o">=</span><span class="n">spec_path</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+      <span class="n">spec</span> <span class="o">=</span> <span class="s">&#39;{spec_path}:{name}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">spec_path</span><span class="o">=</span><span class="n">spec_path</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
       <span class="n">address</span> <span class="o">=</span> <span class="n">SyntheticAddress</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">spec</span><span class="p">)</span>
       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">add_new_target</span><span class="p">(</span><span class="n">address</span><span class="p">,</span>
                                          <span class="n">PythonLibrary</span><span class="p">,</span>
