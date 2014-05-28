@@ -218,8 +218,6 @@ body a.icon-home:hover{
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installing Pants</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../install.html#system-wide-installation">System-wide Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../install.html#virtualenv-based-installation">Virtualenv-based Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../install.html#pex-based-installation">PEX-based Installation</a></li>
 </ul>
 </li>
@@ -452,7 +450,7 @@ body a.icon-home:hover{
 <span class="kn">from</span> <span class="nn">twitter.common.quantity</span> <span class="kn">import</span> <span class="n">Amount</span><span class="p">,</span> <span class="n">Time</span>
 <span class="kn">from</span> <span class="nn">pants.goal</span> <span class="kn">import</span> <span class="n">Goal</span><span class="p">,</span> <span class="n">Group</span><span class="p">,</span> <span class="n">Phase</span>
 <span class="kn">from</span> <span class="nn">pants.targets.exclude</span> <span class="kn">import</span> <span class="n">Exclude</span>
-<span class="kn">from</span> <span class="nn">.build_environment</span> <span class="kn">import</span> <span class="n">get_buildroot</span><span class="p">,</span> <span class="n">get_version</span><span class="p">,</span> <span class="n">set_buildroot</span><span class="p">,</span> <span class="n">get_scm</span><span class="p">,</span> <span class="n">set_scm</span>
+<span class="kn">from</span> <span class="nn">.build_environment</span> <span class="kn">import</span> <span class="n">get_buildroot</span><span class="p">,</span> <span class="n">get_version</span><span class="p">,</span> <span class="n">get_scm</span><span class="p">,</span> <span class="n">set_scm</span>
 <span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="n">Config</span>
 
 <span class="n">object_aliases</span> <span class="o">=</span> <span class="p">{</span>
@@ -463,7 +461,6 @@ body a.icon-home:hover{
   <span class="s">&#39;config&#39;</span><span class="p">:</span> <span class="n">Config</span><span class="p">,</span>
   <span class="s">&#39;get_version&#39;</span><span class="p">:</span> <span class="n">get_version</span><span class="p">,</span>
   <span class="s">&#39;get_buildroot&#39;</span><span class="p">:</span> <span class="n">get_buildroot</span><span class="p">,</span>
-  <span class="s">&#39;set_buildroot&#39;</span><span class="p">:</span> <span class="n">set_buildroot</span><span class="p">,</span>
   <span class="s">&#39;get_scm&#39;</span><span class="p">:</span> <span class="n">get_scm</span><span class="p">,</span>
   <span class="s">&#39;set_scm&#39;</span><span class="p">:</span> <span class="n">set_scm</span><span class="p">,</span>
   <span class="s">&#39;jar&#39;</span><span class="p">:</span> <span class="n">JarDependency</span><span class="p">,</span>
@@ -532,11 +529,20 @@ body a.icon-home:hover{
   <span class="n">wrapped_fn</span> <span class="o">=</span> <span class="n">Fileset</span><span class="o">.</span><span class="n">zglobs</span>
 
 
+<span class="k">class</span> <span class="nc">BuildFilePath</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rel_path</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">rel_path</span> <span class="o">=</span> <span class="n">rel_path</span>
+
+  <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_buildroot</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">rel_path</span><span class="p">)</span>
+
+
 <span class="n">applicative_path_relative_util_aliases</span> <span class="o">=</span> <span class="p">{</span>
   <span class="s">&#39;source_root&#39;</span><span class="p">:</span> <span class="n">SourceRoot</span><span class="p">,</span>
   <span class="s">&#39;globs&#39;</span><span class="p">:</span> <span class="n">Globs</span><span class="p">,</span>
   <span class="s">&#39;rglobs&#39;</span><span class="p">:</span> <span class="n">RGlobs</span><span class="p">,</span>
   <span class="s">&#39;zglobs&#39;</span><span class="p">:</span> <span class="n">ZGlobs</span><span class="p">,</span>
+  <span class="s">&#39;buildfile_path&#39;</span><span class="p">:</span> <span class="n">BuildFilePath</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="n">partial_path_relative_util_aliases</span> <span class="o">=</span> <span class="p">{</span>

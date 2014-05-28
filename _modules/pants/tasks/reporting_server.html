@@ -218,8 +218,6 @@ body a.icon-home:hover{
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installing Pants</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../install.html#system-wide-installation">System-wide Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../install.html#virtualenv-based-installation">Virtualenv-based Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../install.html#pex-based-installation">PEX-based Installation</a></li>
 </ul>
 </li>
@@ -389,6 +387,7 @@ body a.icon-home:hover{
 <span class="kn">import</span> <span class="nn">signal</span>
 <span class="kn">import</span> <span class="nn">socket</span>
 
+<span class="kn">from</span> <span class="nn">pants</span> <span class="kn">import</span> <span class="n">binary_util</span>
 <span class="kn">from</span> <span class="nn">pants.base.build_environment</span> <span class="kn">import</span> <span class="n">get_buildroot</span>
 <span class="kn">from</span> <span class="nn">pants.base.run_info</span> <span class="kn">import</span> <span class="n">RunInfo</span>
 <span class="kn">from</span> <span class="nn">pants.reporting.reporting_server</span> <span class="kn">import</span> <span class="n">ReportingServer</span><span class="p">,</span> <span class="n">ReportingServerManager</span>
@@ -410,12 +409,20 @@ body a.icon-home:hover{
                                  <span class="s">&#39;temporarily showing build results to a colleague. The special &#39;</span>
                                  <span class="s">&#39;value ALL means any client may connect. Use with caution, as &#39;</span>
                                  <span class="s">&#39;your source code is exposed to all allowed clients!&#39;</span><span class="p">)</span>
+    <span class="n">option_group</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="n">mkflag</span><span class="p">(</span><span class="s">&#39;open&#39;</span><span class="p">),</span> <span class="n">mkflag</span><span class="p">(</span><span class="s">&#39;open&#39;</span><span class="p">,</span> <span class="n">negate</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;server_open&#39;</span><span class="p">,</span>
+                            <span class="n">action</span><span class="o">=</span><span class="s">&#39;callback&#39;</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="n">mkflag</span><span class="o">.</span><span class="n">set_bool</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                            <span class="n">help</span><span class="o">=</span><span class="s">&#39;[</span><span class="si">%d</span><span class="s">efault] Attempt to open the server web ui in a browser.&#39;</span><span class="p">)</span>
 
   <span class="k">def</span> <span class="nf">console_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
     <span class="n">DONE</span> <span class="o">=</span> <span class="s">&#39;__done_reporting&#39;</span>
 
+    <span class="k">def</span> <span class="nf">maybe_open</span><span class="p">(</span><span class="n">port</span><span class="p">):</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">server_open</span><span class="p">:</span>
+        <span class="n">binary_util</span><span class="o">.</span><span class="n">ui_open</span><span class="p">(</span><span class="s">&#39;http://localhost:</span><span class="si">%d</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">port</span><span class="p">)</span>
+
     <span class="n">port</span> <span class="o">=</span> <span class="n">ReportingServerManager</span><span class="o">.</span><span class="n">get_current_server_port</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">port</span><span class="p">:</span>
+      <span class="n">maybe_open</span><span class="p">(</span><span class="n">port</span><span class="p">)</span>
       <span class="k">return</span> <span class="p">[</span><span class="s">&#39;Server already running at http://localhost:</span><span class="si">%d</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">port</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">run_server</span><span class="p">(</span><span class="n">reporting_queue</span><span class="p">):</span>
@@ -451,8 +458,8 @@ body a.icon-home:hover{
         <span class="n">done_reporting</span><span class="p">()</span>
         <span class="k">raise</span>
 
-    <span class="c"># We do reporting on behalf of the child process (necessary, since reporting may be buffered in a</span>
-    <span class="c"># background thread). We use multiprocessing.Process() to spawn the child so we can use that</span>
+    <span class="c"># We do reporting on behalf of the child process (necessary, since reporting may be buffered in</span>
+    <span class="c"># a background thread). We use multiprocessing.Process() to spawn the child so we can use that</span>
     <span class="c"># module&#39;s inter-process Queue implementation.</span>
     <span class="n">reporting_queue</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
     <span class="n">proc</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">run_server</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="n">reporting_queue</span><span class="p">])</span>
@@ -465,6 +472,7 @@ body a.icon-home:hover{
       <span class="n">s</span> <span class="o">=</span> <span class="n">reporting_queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
     <span class="c"># The child process is done reporting, and is now in the server loop, so we can proceed.</span>
     <span class="n">server_port</span> <span class="o">=</span> <span class="n">ReportingServerManager</span><span class="o">.</span><span class="n">get_current_server_port</span><span class="p">()</span>
+    <span class="n">maybe_open</span><span class="p">(</span><span class="n">server_port</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">ret</span>
 
 </div>

@@ -218,8 +218,6 @@ body a.icon-home:hover{
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installing Pants</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../install.html#system-wide-installation">System-wide Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../install.html#virtualenv-based-installation">Virtualenv-based Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../install.html#pex-based-installation">PEX-based Installation</a></li>
 </ul>
 </li>
@@ -385,19 +383,25 @@ body a.icon-home:hover{
 
 <span class="kn">import</span> <span class="nn">functools</span>
 <span class="kn">import</span> <span class="nn">os</span>
+
 <span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
-<span class="kn">from</span> <span class="nn">zipfile</span> <span class="kn">import</span> <span class="n">ZIP_DEFLATED</span><span class="p">,</span> <span class="n">ZIP_STORED</span>
 
 <span class="kn">from</span> <span class="nn">twitter.common.dirutil</span> <span class="kn">import</span> <span class="n">safe_mkdir</span>
 
 <span class="kn">from</span> <span class="nn">pants.base.build_environment</span> <span class="kn">import</span> <span class="n">get_buildroot</span>
 <span class="kn">from</span> <span class="nn">pants.base.exceptions</span> <span class="kn">import</span> <span class="n">TaskError</span>
+<span class="kn">from</span> <span class="nn">pants.base.workunit</span> <span class="kn">import</span> <span class="n">WorkUnit</span>
 <span class="kn">from</span> <span class="nn">pants.fs.fs</span> <span class="kn">import</span> <span class="n">safe_filename</span>
-<span class="kn">from</span> <span class="nn">pants.java.jar</span> <span class="kn">import</span> <span class="n">Manifest</span><span class="p">,</span> <span class="n">open_jar</span>
+<span class="kn">from</span> <span class="nn">pants.java.jar.manifest</span> <span class="kn">import</span> <span class="n">Manifest</span>
+<span class="kn">from</span> <span class="nn">pants.jvm.jar_task</span> <span class="kn">import</span> <span class="n">JarTask</span>
+<span class="kn">from</span> <span class="nn">pants.targets.jvm_binary</span> <span class="kn">import</span> <span class="n">JvmBinary</span>
 <span class="kn">from</span> <span class="nn">pants.targets.scala_library</span> <span class="kn">import</span> <span class="n">ScalaLibrary</span>
-<span class="kn">from</span> <span class="nn">pants.tasks.task</span> <span class="kn">import</span> <span class="n">Task</span>
 <span class="kn">from</span> <span class="nn">pants.tasks.javadoc_gen</span> <span class="kn">import</span> <span class="n">javadoc</span>
 <span class="kn">from</span> <span class="nn">pants.tasks.scaladoc_gen</span> <span class="kn">import</span> <span class="n">scaladoc</span>
+
+
+<span class="k">def</span> <span class="nf">is_jvm_binary</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
+  <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">JvmBinary</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">is_java_library</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
@@ -409,7 +413,9 @@ body a.icon-home:hover{
 
 
 <span class="k">def</span> <span class="nf">is_jvm_library</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
-  <span class="k">return</span> <span class="n">is_java_library</span><span class="p">(</span><span class="n">target</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_scala_library</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+  <span class="k">return</span> <span class="p">(</span><span class="n">is_java_library</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+          <span class="ow">or</span> <span class="n">is_scala_library</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+          <span class="ow">or</span> <span class="p">(</span><span class="n">is_jvm_binary</span><span class="p">(</span><span class="n">target</span><span class="p">)</span> <span class="ow">and</span> <span class="n">target</span><span class="o">.</span><span class="n">has_resources</span><span class="p">))</span>
 
 
 <span class="k">def</span> <span class="nf">jarname</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="s">&#39;.jar&#39;</span><span class="p">):</span>
@@ -427,7 +433,7 @@ body a.icon-home:hover{
     <span class="k">yield</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">abs_source_root</span><span class="p">,</span> <span class="n">source</span><span class="p">),</span> <span class="n">source</span>
 
 
-<div class="viewcode-block" id="JarCreate"><a class="viewcode-back" href="../../../tasks.html#pants.tasks.jar_create.JarCreate">[docs]</a><span class="k">class</span> <span class="nc">JarCreate</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+<div class="viewcode-block" id="JarCreate"><a class="viewcode-back" href="../../../tasks.html#pants.tasks.jar_create.JarCreate">[docs]</a><span class="k">class</span> <span class="nc">JarCreate</span><span class="p">(</span><span class="n">JarTask</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Jars jvm libraries and optionally their sources and their docs.&quot;&quot;&quot;</span>
 
   <span class="nd">@classmethod</span>
@@ -466,7 +472,7 @@ body a.icon-home:hover{
     <span class="n">products</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">products</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">transitive</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">jar_create_transitive</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">compression</span> <span class="o">=</span> <span class="n">ZIP_DEFLATED</span> <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">jar_create_compressed</span> <span class="k">else</span> <span class="n">ZIP_STORED</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">compressed</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">jar_create_compressed</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">jar_classes</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">jar_create_classes</span> <span class="ow">or</span> <span class="n">products</span><span class="o">.</span><span class="n">isrequired</span><span class="p">(</span><span class="s">&#39;jars&#39;</span><span class="p">)</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">jar_classes</span><span class="p">:</span>
@@ -499,24 +505,25 @@ body a.icon-home:hover{
     <span class="k">def</span> <span class="nf">add_genjar</span><span class="p">(</span><span class="n">typename</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">typename</span><span class="p">)</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">workdir</span><span class="p">)</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
-    <span class="c"># TODO(Tejal Desai) pantsbuild/pants/65: Avoid creating 2 jars with java sources for</span>
-    <span class="c"># scala_library with java_sources. Currently publish fails fast if scala_library owning</span>
-    <span class="c"># java sources pointed by java_library target also provides an artifact. However, jar_create</span>
-    <span class="c"># ends up creating 2 jars one scala and other java both including the java_sources.</span>
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">jar_classes</span><span class="p">:</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">_jar</span><span class="p">(</span><span class="n">jar_targets</span><span class="p">(</span><span class="n">is_jvm_library</span><span class="p">),</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">add_genjar</span><span class="p">,</span> <span class="s">&#39;jars&#39;</span><span class="p">))</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">new_workunit</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;jar-create&#39;</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="n">WorkUnit</span><span class="o">.</span><span class="n">MULTITOOL</span><span class="p">]):</span>
+      <span class="c"># TODO(Tejal Desai) pantsbuild/pants/65: Avoid creating 2 jars with java sources for</span>
+      <span class="c"># scala_library with java_sources. Currently publish fails fast if scala_library owning</span>
+      <span class="c"># java sources pointed by java_library target also provides an artifact. However, jar_create</span>
+      <span class="c"># ends up creating 2 jars one scala and other java both including the java_sources.</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">jar_classes</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_jar</span><span class="p">(</span><span class="n">jar_targets</span><span class="p">(</span><span class="n">is_jvm_library</span><span class="p">),</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">add_genjar</span><span class="p">,</span> <span class="s">&#39;jars&#39;</span><span class="p">))</span>
 
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">jar_sources</span><span class="p">:</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">sourcejar</span><span class="p">(</span><span class="n">jar_targets</span><span class="p">(</span><span class="n">is_jvm_library</span><span class="p">),</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">add_genjar</span><span class="p">,</span> <span class="s">&#39;source_jars&#39;</span><span class="p">))</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">jar_sources</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sourcejar</span><span class="p">(</span><span class="n">jar_targets</span><span class="p">(</span><span class="n">is_jvm_library</span><span class="p">),</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">add_genjar</span><span class="p">,</span> <span class="s">&#39;source_jars&#39;</span><span class="p">))</span>
 
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">jar_javadoc</span><span class="p">:</span>
-      <span class="n">javadoc_add_genjar</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">add_genjar</span><span class="p">,</span> <span class="s">&#39;javadoc_jars&#39;</span><span class="p">)</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">javadocjar</span><span class="p">(</span><span class="n">jar_targets</span><span class="p">(</span><span class="n">is_java_library</span><span class="p">),</span>
-                      <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">javadoc</span><span class="o">.</span><span class="n">product_type</span><span class="p">),</span>
-                      <span class="n">javadoc_add_genjar</span><span class="p">)</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">javadocjar</span><span class="p">(</span><span class="n">jar_targets</span><span class="p">(</span><span class="n">is_scala_library</span><span class="p">),</span>
-                      <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">scaladoc</span><span class="o">.</span><span class="n">product_type</span><span class="p">),</span>
-                      <span class="n">javadoc_add_genjar</span><span class="p">)</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">jar_javadoc</span><span class="p">:</span>
+        <span class="n">javadoc_add_genjar</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">add_genjar</span><span class="p">,</span> <span class="s">&#39;javadoc_jars&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">javadocjar</span><span class="p">(</span><span class="n">jar_targets</span><span class="p">(</span><span class="n">is_java_library</span><span class="p">),</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">javadoc</span><span class="o">.</span><span class="n">product_type</span><span class="p">),</span>
+                        <span class="n">javadoc_add_genjar</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">javadocjar</span><span class="p">(</span><span class="n">jar_targets</span><span class="p">(</span><span class="n">is_scala_library</span><span class="p">),</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">scaladoc</span><span class="o">.</span><span class="n">product_type</span><span class="p">),</span>
+                        <span class="n">javadoc_add_genjar</span><span class="p">)</span>
 
   <span class="nd">@contextmanager</span>
   <span class="k">def</span> <span class="nf">create_jar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
@@ -526,7 +533,7 @@ body a.icon-home:hover{
         <span class="n">target</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">existing</span>
       <span class="p">))</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_jars</span><span class="p">[</span><span class="n">path</span><span class="p">]</span> <span class="o">=</span> <span class="n">target</span>
-    <span class="k">with</span> <span class="n">open_jar</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">compression</span><span class="p">)</span> <span class="k">as</span> <span class="n">jar</span><span class="p">:</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">open_jar</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">compressed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">compressed</span><span class="p">)</span> <span class="k">as</span> <span class="n">jar</span><span class="p">:</span>
       <span class="k">yield</span> <span class="n">jar</span>
 
   <span class="k">def</span> <span class="nf">_jar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jvm_targets</span><span class="p">,</span> <span class="n">add_genjar</span><span class="p">):</span>

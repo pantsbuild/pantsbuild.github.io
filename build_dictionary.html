@@ -219,8 +219,6 @@ body a.icon-home:hover{
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installing Pants</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="install.html#system-wide-installation">System-wide Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="install.html#virtualenv-based-installation">Virtualenv-based Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="install.html#pex-based-installation">PEX-based Installation</a></li>
 </ul>
 </li>
@@ -399,7 +397,7 @@ targets; some are handy utilities.</p>
 <a class="reference internal" href="#globs">globs</a> |
 <a class="reference internal" href="#goal">goal</a> |
 <a class="reference internal" href="#jar">jar</a> |
-<a class="reference internal" href="#jar-library">jar_library</a> |
+<a class="reference internal" href="#jar_library">jar_library</a> |
 <a class="reference internal" href="#java_agent">java_agent</a> |
 <a class="reference internal" href="#java_antlr_library">java_antlr_library</a> |
 <a class="reference internal" href="#java_library">java_library</a> |
@@ -441,6 +439,7 @@ targets; some are handy utilities.</p>
 <a class="reference internal" href="#dependencies">dependencies</a> |
 <a class="reference internal" href="#exclude">exclude</a> |
 <a class="reference internal" href="#jar">jar</a> |
+<a class="reference internal" href="#jar_library">jar_library</a> |
 <a class="reference internal" href="#java_agent">java_agent</a> |
 <a class="reference internal" href="#java_antlr_library">java_antlr_library</a> |
 <a class="reference internal" href="#java_library">java_library</a> |
@@ -458,6 +457,7 @@ targets; some are handy utilities.</p>
 <p><strong>Python</strong> |
 <a class="reference internal" href="#dependencies">dependencies</a> |
 <a class="reference internal" href="#egg">egg</a> |
+<a class="reference internal" href="#jar_library">jar_library</a> |
 <a class="reference internal" href="#pants">pants</a> |
 <a class="reference internal" href="#python_antlr_library">python_antlr_library</a> |
 <a class="reference internal" href="#python_binary">python_binary</a> |
@@ -913,8 +913,47 @@ that can use source jars (as of 2013, just eclipse and idea goals).</p>
 </div>
 <div class="section" id="jar-library">
 <span id="bdict-jar-library"></span><h2>jar_library<a class="headerlink" href="#jar-library" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="jar_library">
+<tt class="descname">jar_library</tt><big>(</big><em>jars=None</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#jar_library" title="Permalink to this definition">¶</a></dt>
+<dd><p>A set of jars that may be depended upon.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
+build file defines the target <a class="reference internal" href="base.html#pants.base.address.Address" title="pants.base.address.Address"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.address.Address</span></tt></a>.</li>
+<li><strong>jars</strong> &#8211; List of <a class="reference internal" href="base.html#pants.base.target.Target" title="pants.base.target.Target"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.target.Target</span></tt></a> instances
+this target depends on.</li>
+<li><strong>overrides</strong> &#8211; List of strings, each of which will be recursively resolved to
+any targets that provide artifacts. Those artifacts will override corresponding
+direct/transitive dependencies in the dependencies list.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See CheckExclusives for details.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p><strong>Methods:</strong></p>
 <blockquote>
-<div>Old name for <a class="reference internal" href="#dependencies">dependencies</a></div></blockquote>
+<div><dl class="method">
+<dt>
+<tt class="descname">with_description</tt><big>(</big><em>description</em><big>)</big></dt>
+<dd><p>Set a human-readable description of this target.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>description</strong> &#8211; Descriptive string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div></blockquote>
 </div>
 <div class="section" id="java-agent">
 <span id="bdict-java-agent"></span><h2>java_agent<a class="headerlink" href="#java-agent" title="Permalink to this headline">¶</a></h2>
@@ -1287,7 +1326,7 @@ artifact. In most cases this parameter is not necessary.</li>
 <span id="bdict-jvm-binary"></span><h2>jvm_binary<a class="headerlink" href="#jvm-binary" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="jvm_binary">
-<tt class="descname">jvm_binary</tt><big>(</big><em>name=None</em>, <em>main=None</em>, <em>basename=None</em>, <em>source=None</em>, <em>deploy_excludes=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#jvm_binary" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">jvm_binary</tt><big>(</big><em>name=None</em>, <em>main=None</em>, <em>basename=None</em>, <em>source=None</em>, <em>deploy_excludes=None</em>, <em>deploy_jar_rules=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#jvm_binary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Produces a JVM binary optionally identifying a launcher main class.</p>
 <p>Below are a summary of how key goals affect targets of this type:</p>
 <ul class="simple">
@@ -1321,6 +1360,7 @@ If you, for example, deploy a java servlet that has one version of
 <tt class="docutils literal"><span class="pre">servlet.jar</span></tt> onto a Tomcat environment that provides another version,
 they might conflict. <tt class="docutils literal"><span class="pre">deploy_excludes</span></tt> gives you a way to build your
 code but exclude the conflicting <tt class="docutils literal"><span class="pre">jar</span></tt> when deploying.</li>
+<li><strong>deploy_jar_rules</strong> (A <tt class="xref py py-class docutils literal"><span class="pre">twitter.pants.targets.JarRules</span></tt> specification.) &#8211; Rules for packaging this binary in a deploy jar.</li>
 <li><strong>configurations</strong> (<em>tuple of strings</em>) &#8211; Ivy configurations to resolve for this target.
 This parameter is not intended for general use.</li>
 </ul>
@@ -1632,7 +1672,7 @@ for details.</li>
 <span id="bdict-python-tests"></span><h2>python_tests<a class="headerlink" href="#python-tests" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="python_tests">
-<tt class="descname">python_tests</tt><big>(</big><em>timeout=Amount(2</em>, <em>mins)</em>, <em>coverage=None</em>, <em>soft_dependencies=False</em>, <em>entry_point=u'pytest'</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#python_tests" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">python_tests</tt><big>(</big><em>coverage=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#python_tests" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tests a Python library.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1645,12 +1685,8 @@ this library is compiled from.</li>
 <li><strong>resources</strong> &#8211; See PythonLibrary target</li>
 <li><strong>dependencies</strong> (<em>list of targets</em>) &#8211; List of <a class="reference internal" href="base.html#pants.base.target.Target" title="pants.base.target.Target"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.target.Target</span></tt></a> instances
 this target depends on.</li>
-<li><strong>timeout</strong> &#8211; Amount of time before this test should be considered timed-out.</li>
 <li><strong>coverage</strong> &#8211; the module(s) whose coverage should be generated, e.g.
 &#8216;twitter.common.log&#8217; or [&#8216;twitter.common.log&#8217;, &#8216;twitter.common.http&#8217;]</li>
-<li><strong>soft_dependencies</strong> &#8211; Whether or not we should ignore dependency resolution
-errors for this test.</li>
-<li><strong>entry_point</strong> &#8211; The entry point to use to run the tests.</li>
 <li><strong>exclusives</strong> (<em>dict</em>) &#8211; An optional dict of exclusives tags. See CheckExclusives for details.</li>
 </ul>
 </td>

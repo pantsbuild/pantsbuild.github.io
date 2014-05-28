@@ -220,8 +220,6 @@ body a.icon-home:hover{
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installing Pants</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="install.html#system-wide-installation">System-wide Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="install.html#virtualenv-based-installation">Virtualenv-based Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="install.html#pex-based-installation">PEX-based Installation</a></li>
 </ul>
 </li>
@@ -381,9 +379,6 @@ body a.icon-home:hover{
   <div class="section" id="targets-reference">
 <h1>Targets Reference<a class="headerlink" href="#targets-reference" title="Permalink to this headline">¶</a></h1>
 <p>This page documents targets available as part of the pants build system.</p>
-<div class="section" id="doc-module">
-<h2><tt class="xref py py-mod docutils literal"><span class="pre">#doc</span></tt> Module<a class="headerlink" href="#doc-module" title="Permalink to this headline">¶</a></h2>
-</div>
 <div class="section" id="module-pants.targets.annotation_processor">
 <span id="annotation-processor-module"></span><h2><a class="reference internal" href="build_dictionary.html#annotation_processor" title="annotation_processor"><tt class="xref py py-mod docutils literal"><span class="pre">annotation_processor</span></tt></a> Module<a class="headerlink" href="#module-pants.targets.annotation_processor" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
@@ -539,7 +534,7 @@ for details.</li>
 
 </div>
 <div class="section" id="module-pants.targets.doc">
-<span id="id1"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">doc</span></tt> Module<a class="headerlink" href="#module-pants.targets.doc" title="Permalink to this headline">¶</a></h2>
+<span id="doc-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">doc</span></tt> Module<a class="headerlink" href="#module-pants.targets.doc" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pants.targets.doc.Page">
 <em class="property">class </em><tt class="descclassname">pants.targets.doc.</tt><tt class="descname">Page</tt><big>(</big><em>resources=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/pants/targets/doc.html#Page"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.doc.Page" title="Permalink to this definition">¶</a></dt>
@@ -765,12 +760,11 @@ that can use source jars (as of 2013, just eclipse and idea goals).</p>
 
 </div>
 <div class="section" id="module-pants.targets.jar_library">
-<span id="jar-library-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">jar_library</span></tt> Module<a class="headerlink" href="#module-pants.targets.jar_library" title="Permalink to this headline">¶</a></h2>
+<span id="jar-library-module"></span><h2><a class="reference internal" href="build_dictionary.html#jar_library" title="jar_library"><tt class="xref py py-mod docutils literal"><span class="pre">jar_library</span></tt></a> Module<a class="headerlink" href="#module-pants.targets.jar_library" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pants.targets.jar_library.JarLibrary">
 <em class="property">class </em><tt class="descclassname">pants.targets.jar_library.</tt><tt class="descname">JarLibrary</tt><big>(</big><em>jars=None</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/pants/targets/jar_library.html#JarLibrary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.jar_library.JarLibrary" title="Permalink to this definition">¶</a></dt>
-<dd><p>A set of dependencies that may be depended upon,
-as if depending upon the set of dependencies directly.</p>
+<dd><p>A set of jars that may be depended upon.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1118,6 +1112,183 @@ Note this is a variable length param and may be specified any number of times.</
 </dd></dl>
 
 <dl class="class">
+<dt id="pants.targets.jvm_binary.Duplicate">
+<em class="property">class </em><tt class="descclassname">pants.targets.jvm_binary.</tt><tt class="descname">Duplicate</tt><big>(</big><em>apply_pattern</em>, <em>action</em><big>)</big><a class="reference internal" href="_modules/pants/targets/jvm_binary.html#Duplicate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.jvm_binary.Duplicate" title="Permalink to this definition">¶</a></dt>
+<dd><p>A rule that indicates how duplicate entries should be handled when building a jar.</p>
+<p>Creates a rule for handling duplicate jar entries.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>apply_pattern</strong> (<em>str</em>) &#8211; A regular expression that matches duplicate jar entries this rule
+applies to.</li>
+<li><strong>action</strong> &#8211; An action to take to handle one or more duplicate entries.  Must be one of:
+<tt class="docutils literal"><span class="pre">Duplicate.SKIP</span></tt>, <tt class="docutils literal"><span class="pre">Duplicate.REPLACE</span></tt>, <tt class="docutils literal"><span class="pre">Duplicate.CONCAT</span></tt> or <tt class="docutils literal"><span class="pre">Duplicate.FAIL</span></tt>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="pants.targets.jvm_binary.Duplicate.CONCAT">
+<tt class="descname">CONCAT</tt><em class="property"> = &lt;object object at 0x1106bd5d0&gt;</em><a class="headerlink" href="#pants.targets.jvm_binary.Duplicate.CONCAT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Concatenates the contents of all duplicate entries encountered in the order encountered.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="pants.targets.jvm_binary.Duplicate.Error">
+<em class="property">exception </em><tt class="descname">Error</tt><big>(</big><em>path</em><big>)</big><a class="reference internal" href="_modules/pants/targets/jvm_binary.html#Duplicate.Error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.jvm_binary.Duplicate.Error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raised by the <tt class="docutils literal"><span class="pre">FAIL</span></tt> action when a duplicate entry is encountered</p>
+<p>Creates a duplicate entry error for the given path.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> (<em>str</em>) &#8211; The path of the duplicate entry.</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="pants.targets.jvm_binary.Duplicate.Error.path">
+<tt class="descname">path</tt><a class="reference internal" href="_modules/pants/targets/jvm_binary.html#Duplicate.Error.path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.jvm_binary.Duplicate.Error.path" title="Permalink to this definition">¶</a></dt>
+<dd><p>The path of the duplicate entry.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pants.targets.jvm_binary.Duplicate.FAIL">
+<tt class="descclassname">Duplicate.</tt><tt class="descname">FAIL</tt><em class="property"> = &lt;object object at 0x1106bd5c0&gt;</em><a class="headerlink" href="#pants.targets.jvm_binary.Duplicate.FAIL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raises a :class:<tt class="docutils literal"><span class="pre">twitter.pants.targets.jvm_binary.Duplicate.Error</span></tt> when a duplicate entry is
+encountered.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pants.targets.jvm_binary.Duplicate.REPLACE">
+<tt class="descclassname">Duplicate.</tt><tt class="descname">REPLACE</tt><em class="property"> = &lt;object object at 0x1106bd570&gt;</em><a class="headerlink" href="#pants.targets.jvm_binary.Duplicate.REPLACE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retains the most recent entry and skips prior duplicates.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pants.targets.jvm_binary.Duplicate.SKIP">
+<tt class="descclassname">Duplicate.</tt><tt class="descname">SKIP</tt><em class="property"> = &lt;object object at 0x1106bd590&gt;</em><a class="headerlink" href="#pants.targets.jvm_binary.Duplicate.SKIP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retains the 1st entry and skips subsequent duplicates.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pants.targets.jvm_binary.Duplicate.action">
+<tt class="descclassname">Duplicate.</tt><tt class="descname">action</tt><a class="reference internal" href="_modules/pants/targets/jvm_binary.html#Duplicate.action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.jvm_binary.Duplicate.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>The action to take for any duplicate entries that match this rule&#8217;s <tt class="docutils literal"><span class="pre">apply_pattern</span></tt>.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pants.targets.jvm_binary.Duplicate.validate_action">
+<em class="property">classmethod </em><tt class="descclassname">Duplicate.</tt><tt class="descname">validate_action</tt><big>(</big><em>action</em><big>)</big><a class="reference internal" href="_modules/pants/targets/jvm_binary.html#Duplicate.validate_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.jvm_binary.Duplicate.validate_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verifies the given action is a valid duplicate jar rule action.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The action if it is valid.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><tt class="docutils literal"><span class="pre">ValueError</span></tt> if the action is invalid.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pants.targets.jvm_binary.JarRules">
+<em class="property">class </em><tt class="descclassname">pants.targets.jvm_binary.</tt><tt class="descname">JarRules</tt><big>(</big><em>rules=None</em>, <em>default_dup_action=&lt;object object at 0x1106bd590&gt;</em><big>)</big><a class="reference internal" href="_modules/pants/targets/jvm_binary.html#JarRules"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.jvm_binary.JarRules" title="Permalink to this definition">¶</a></dt>
+<dd><p>A set of rules for packaging up a deploy jar.</p>
+<p>Deploy jars are executable jars with fully self-contained classpaths and as such, assembling them
+presents problems given jar semantics.</p>
+<p>One issue is signed jars that must be included on the
+classpath.  These have a signature that depends on the jar contents and assembly of the deploy jar
+changes the content of the jar, breaking the signatures.  For cases like these the signed jars
+must be verified and then the signature information thrown away.  The <tt class="docutils literal"><span class="pre">Skip</span></tt> rule supports this
+sort of issue by allowing outright entry exclusion in the final deploy jar.</p>
+<p>Another issue is duplicate jar entries.  Although the underlying zip format supports these, the
+java jar tool and libraries do not.  As such some action must be taken for each duplicate entry
+such that there are no duplicates in the final deploy jar.  The four <tt class="docutils literal"><span class="pre">Duplicate</span></tt> rules support
+resolution of these cases by allowing 1st wins, last wins, concatenation of the duplicate entry
+contents or raising an exception.</p>
+<p>Creates a new set of jar rules with the default duplicate action of <tt class="docutils literal"><span class="pre">Duplicate.SKIP</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>rules</strong> &#8211; One or more rules that will be applied in order to jar entries being packaged in
+a deploy jar.</li>
+<li><strong>default_dup_action</strong> &#8211; The default action to take when a duplicate entry is encountered and
+no explicit rules apply to the entry.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="classmethod">
+<dt id="pants.targets.jvm_binary.JarRules.default">
+<em class="property">classmethod </em><tt class="descname">default</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pants/targets/jvm_binary.html#JarRules.default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.jvm_binary.JarRules.default" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the default set of jar rules.</p>
+<p>Can be set with <cite>set_default</cite> but otherwise defaults to
+<cite>skip_signatures_and_duplicates_concat_well_known_metadata</cite>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pants.targets.jvm_binary.JarRules.default_dup_action">
+<tt class="descname">default_dup_action</tt><a class="reference internal" href="_modules/pants/targets/jvm_binary.html#JarRules.default_dup_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.jvm_binary.JarRules.default_dup_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>The default action to take when a duplicate jar entry is encountered.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pants.targets.jvm_binary.JarRules.rules">
+<tt class="descname">rules</tt><a class="reference internal" href="_modules/pants/targets/jvm_binary.html#JarRules.rules"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.jvm_binary.JarRules.rules" title="Permalink to this definition">¶</a></dt>
+<dd><p>The list of explicit entry rules in effect.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pants.targets.jvm_binary.JarRules.set_default">
+<em class="property">classmethod </em><tt class="descname">set_default</tt><big>(</big><em>rules</em><big>)</big><a class="reference internal" href="_modules/pants/targets/jvm_binary.html#JarRules.set_default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.jvm_binary.JarRules.set_default" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the default site-wide jar rules.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pants.targets.jvm_binary.JarRules.skip_signatures_and_duplicates_concat_well_known_metadata">
+<em class="property">classmethod </em><tt class="descname">skip_signatures_and_duplicates_concat_well_known_metadata</tt><big>(</big><em>default_dup_action=None</em>, <em>additional_rules=None</em><big>)</big><a class="reference internal" href="_modules/pants/targets/jvm_binary.html#JarRules.skip_signatures_and_duplicates_concat_well_known_metadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.jvm_binary.JarRules.skip_signatures_and_duplicates_concat_well_known_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produces a rule set useful in many deploy jar creation contexts.</p>
+<p>The rule set skips duplicate entries by default, retaining the 1st encountered.  In addition it
+has the following special handling:</p>
+<ul class="simple">
+<li>jar signature metadata is dropped</li>
+<li><tt class="docutils literal"><span class="pre">java.util.ServiceLoader</span></tt> provider-configuration files are concatenated in the order
+encountered</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>default_dup_action</strong> &#8211; An optional default action to take for duplicates.  Defaults to
+<cite>Duplicate.SKIP</cite> if not specified.</li>
+<li><strong>additional_rules</strong> &#8211; Optionally one or more jar rules to add to those described above.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><tt class="xref py py-class docutils literal"><span class="pre">twitter.pants.targets.JarRules</span></tt></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="pants.targets.jvm_binary.JvmApp">
 <em class="property">class </em><tt class="descclassname">pants.targets.jvm_binary.</tt><tt class="descname">JvmApp</tt><big>(</big><em>name=None</em>, <em>bundles=None</em>, <em>basename=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/pants/targets/jvm_binary.html#JvmApp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.jvm_binary.JvmApp" title="Permalink to this definition">¶</a></dt>
 <dd><p>A JVM-based application consisting of a binary plus &#8220;extra files&#8221;.</p>
@@ -1147,7 +1318,7 @@ artifact. In most cases this parameter is not necessary.</li>
 
 <dl class="class">
 <dt id="pants.targets.jvm_binary.JvmBinary">
-<em class="property">class </em><tt class="descclassname">pants.targets.jvm_binary.</tt><tt class="descname">JvmBinary</tt><big>(</big><em>name=None</em>, <em>main=None</em>, <em>basename=None</em>, <em>source=None</em>, <em>deploy_excludes=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/pants/targets/jvm_binary.html#JvmBinary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.jvm_binary.JvmBinary" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pants.targets.jvm_binary.</tt><tt class="descname">JvmBinary</tt><big>(</big><em>name=None</em>, <em>main=None</em>, <em>basename=None</em>, <em>source=None</em>, <em>deploy_excludes=None</em>, <em>deploy_jar_rules=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/pants/targets/jvm_binary.html#JvmBinary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.jvm_binary.JvmBinary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Produces a JVM binary optionally identifying a launcher main class.</p>
 <p>Below are a summary of how key goals affect targets of this type:</p>
 <ul class="simple">
@@ -1181,6 +1352,7 @@ If you, for example, deploy a java servlet that has one version of
 <tt class="docutils literal"><span class="pre">servlet.jar</span></tt> onto a Tomcat environment that provides another version,
 they might conflict. <tt class="docutils literal"><span class="pre">deploy_excludes</span></tt> gives you a way to build your
 code but exclude the conflicting <tt class="docutils literal"><span class="pre">jar</span></tt> when deploying.</li>
+<li><strong>deploy_jar_rules</strong> (A <tt class="xref py py-class docutils literal"><span class="pre">twitter.pants.targets.JarRules</span></tt> specification.) &#8211; Rules for packaging this binary in a deploy jar.</li>
 <li><strong>configurations</strong> (<em>tuple of strings</em>) &#8211; Ivy configurations to resolve for this target.
 This parameter is not intended for general use.</li>
 </ul>
@@ -1195,6 +1367,12 @@ This parameter is not intended for general use.</li>
 <em class="property">class </em><tt class="descclassname">pants.targets.jvm_binary.</tt><tt class="descname">RelativeToMapper</tt><big>(</big><em>base</em><big>)</big><a class="reference internal" href="_modules/pants/targets/jvm_binary.html#RelativeToMapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.jvm_binary.RelativeToMapper" title="Permalink to this definition">¶</a></dt>
 <dd><p>A mapper that maps files specified relative to a base directory.</p>
 <p>The base directory files should be mapped from.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="pants.targets.jvm_binary.Skip">
+<em class="property">class </em><tt class="descclassname">pants.targets.jvm_binary.</tt><tt class="descname">Skip</tt><big>(</big><em>apply_pattern</em><big>)</big><a class="reference internal" href="_modules/pants/targets/jvm_binary.html#Skip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.jvm_binary.Skip" title="Permalink to this definition">¶</a></dt>
+<dd><p>A rule that skips adding matched entries to a jar.</p>
 </dd></dl>
 
 </div>
@@ -1435,7 +1613,7 @@ BUILD file is assumed.</td>
 <span id="python-tests-module"></span><h2><a class="reference internal" href="build_dictionary.html#python_tests" title="python_tests"><tt class="xref py py-mod docutils literal"><span class="pre">python_tests</span></tt></a> Module<a class="headerlink" href="#module-pants.targets.python_tests" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pants.targets.python_tests.PythonTests">
-<em class="property">class </em><tt class="descclassname">pants.targets.python_tests.</tt><tt class="descname">PythonTests</tt><big>(</big><em>timeout=Amount(2</em>, <em>mins)</em>, <em>coverage=None</em>, <em>soft_dependencies=False</em>, <em>entry_point=u'pytest'</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/pants/targets/python_tests.html#PythonTests"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.python_tests.PythonTests" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pants.targets.python_tests.</tt><tt class="descname">PythonTests</tt><big>(</big><em>coverage=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/pants/targets/python_tests.html#PythonTests"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.targets.python_tests.PythonTests" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tests a Python library.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1448,12 +1626,8 @@ this library is compiled from.</li>
 <li><strong>resources</strong> &#8211; See PythonLibrary target</li>
 <li><strong>dependencies</strong> (<em>list of targets</em>) &#8211; List of <a class="reference internal" href="base.html#pants.base.target.Target" title="pants.base.target.Target"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.target.Target</span></tt></a> instances
 this target depends on.</li>
-<li><strong>timeout</strong> &#8211; Amount of time before this test should be considered timed-out.</li>
 <li><strong>coverage</strong> &#8211; the module(s) whose coverage should be generated, e.g.
 &#8216;twitter.common.log&#8217; or [&#8216;twitter.common.log&#8217;, &#8216;twitter.common.http&#8217;]</li>
-<li><strong>soft_dependencies</strong> &#8211; Whether or not we should ignore dependency resolution
-errors for this test.</li>
-<li><strong>entry_point</strong> &#8211; The entry point to use to run the tests.</li>
 <li><strong>exclusives</strong> (<em>dict</em>) &#8211; An optional dict of exclusives tags. See CheckExclusives for details.</li>
 </ul>
 </td>

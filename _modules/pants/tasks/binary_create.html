@@ -218,8 +218,6 @@ body a.icon-home:hover{
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installing Pants</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../install.html#system-wide-installation">System-wide Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../install.html#virtualenv-based-installation">Virtualenv-based Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../install.html#pex-based-installation">PEX-based Installation</a></li>
 </ul>
 </li>
@@ -388,7 +386,6 @@ body a.icon-home:hover{
 <span class="kn">from</span> <span class="nn">twitter.common.dirutil</span> <span class="kn">import</span> <span class="n">safe_mkdir</span>
 
 <span class="kn">from</span> <span class="nn">pants.base.build_environment</span> <span class="kn">import</span> <span class="n">get_buildroot</span>
-<span class="kn">from</span> <span class="nn">pants.java.jar</span> <span class="kn">import</span> <span class="n">Manifest</span>
 <span class="kn">from</span> <span class="nn">pants.tasks.jvm_binary_task</span> <span class="kn">import</span> <span class="n">JvmBinaryTask</span>
 
 
@@ -411,9 +408,7 @@ body a.icon-home:hover{
     <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;creating </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">binary_jarpath</span><span class="p">,</span> <span class="n">get_buildroot</span><span class="p">()))</span>
 
     <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">monolithic_jar</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">binary_jarpath</span><span class="p">,</span> <span class="n">with_external_deps</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">jar</span><span class="p">:</span>
-      <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">new_workunit</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;add-manifest&#39;</span><span class="p">):</span>
-        <span class="n">manifest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_main_manifest</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
-        <span class="n">jar</span><span class="o">.</span><span class="n">writestr</span><span class="p">(</span><span class="n">Manifest</span><span class="o">.</span><span class="n">PATH</span><span class="p">,</span> <span class="n">manifest</span><span class="o">.</span><span class="n">contents</span><span class="p">())</span></div>
+      <span class="bp">self</span><span class="o">.</span><span class="n">add_main_manifest_entry</span><span class="p">(</span><span class="n">jar</span><span class="p">,</span> <span class="n">binary</span><span class="p">)</span></div>
 </pre></div>
 
           <footer>

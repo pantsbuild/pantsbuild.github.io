@@ -218,8 +218,6 @@ body a.icon-home:hover{
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installing Pants</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../install.html#system-wide-installation">System-wide Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../install.html#virtualenv-based-installation">Virtualenv-based Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../install.html#pex-based-installation">PEX-based Installation</a></li>
 </ul>
 </li>
@@ -384,20 +382,196 @@ body a.icon-home:hover{
                         <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">)</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">import</span> <span class="nn">re</span>
 
 <span class="kn">from</span> <span class="nn">twitter.common.collections</span> <span class="kn">import</span> <span class="n">maybe_list</span>
 <span class="kn">from</span> <span class="nn">twitter.common.dirutil</span> <span class="kn">import</span> <span class="n">Fileset</span>
-<span class="kn">from</span> <span class="nn">twitter.common.lang</span> <span class="kn">import</span> <span class="n">Compatibility</span>
+<span class="kn">from</span> <span class="nn">twitter.common.lang</span> <span class="kn">import</span> <span class="n">AbstractClass</span><span class="p">,</span> <span class="n">Compatibility</span>
 
 <span class="kn">from</span> <span class="nn">pants.base.build_environment</span> <span class="kn">import</span> <span class="n">get_buildroot</span>
 <span class="kn">from</span> <span class="nn">pants.base.build_manual</span> <span class="kn">import</span> <span class="n">manual</span>
+<span class="kn">from</span> <span class="nn">pants.base.exceptions</span> <span class="kn">import</span> <span class="n">TargetDefinitionException</span>
 <span class="kn">from</span> <span class="nn">pants.base.payload</span> <span class="kn">import</span> <span class="n">BundlePayload</span>
 <span class="kn">from</span> <span class="nn">pants.base.target</span> <span class="kn">import</span> <span class="n">Target</span>
-<span class="kn">from</span> <span class="nn">pants.base.exceptions</span> <span class="kn">import</span> <span class="n">TargetDefinitionException</span>
+<span class="kn">from</span> <span class="nn">pants.targets.exclude</span> <span class="kn">import</span> <span class="n">Exclude</span>
 <span class="kn">from</span> <span class="nn">pants.targets.jvm_target</span> <span class="kn">import</span> <span class="n">JvmTarget</span>
 
 
+<span class="k">class</span> <span class="nc">JarRule</span><span class="p">(</span><span class="n">AbstractClass</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">apply_pattern</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">apply_pattern</span><span class="p">,</span> <span class="n">Compatibility</span><span class="o">.</span><span class="n">string</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;The supplied apply_pattern is not a string, given: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">apply_pattern</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_apply_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">apply_pattern</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">re</span><span class="o">.</span><span class="n">error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;The supplied apply_pattern - </span><span class="si">%s</span><span class="s"> - is not a valid regular expression: </span><span class="si">%s</span><span class="s">&#39;</span>
+                       <span class="o">%</span> <span class="p">(</span><span class="n">apply_pattern</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span> <span class="nf">apply_pattern</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The pattern that matches jar entry paths this rule applies to.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_pattern</span>
+
+
+<span class="nd">@manual.builddict</span><span class="p">(</span><span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;jvm&quot;</span><span class="p">])</span>
+<div class="viewcode-block" id="Skip"><a class="viewcode-back" href="../../../targets.html#pants.targets.jvm_binary.Skip">[docs]</a><span class="k">class</span> <span class="nc">Skip</span><span class="p">(</span><span class="n">JarRule</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;A rule that skips adding matched entries to a jar.&quot;&quot;&quot;</span>
+
+</div>
+<span class="nd">@manual.builddict</span><span class="p">(</span><span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;jvm&quot;</span><span class="p">])</span>
+<div class="viewcode-block" id="Duplicate"><a class="viewcode-back" href="../../../targets.html#pants.targets.jvm_binary.Duplicate">[docs]</a><span class="k">class</span> <span class="nc">Duplicate</span><span class="p">(</span><span class="n">JarRule</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;A rule that indicates how duplicate entries should be handled when building a jar.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Duplicate.Error"><a class="viewcode-back" href="../../../targets.html#pants.targets.jvm_binary.Duplicate.Error">[docs]</a>  <span class="k">class</span> <span class="nc">Error</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Raised by the ``FAIL`` action when a duplicate entry is encountered&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+      <span class="sd">&quot;&quot;&quot;Creates a duplicate entry error for the given path.</span>
+
+<span class="sd">      :param str path: The path of the duplicate entry.</span>
+<span class="sd">      &quot;&quot;&quot;</span>
+      <span class="k">assert</span> <span class="n">path</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">Compatibility</span><span class="o">.</span><span class="n">string</span><span class="p">),</span> <span class="s">&#39;A non-empty path must be supplied.&#39;</span>
+      <span class="nb">super</span><span class="p">(</span><span class="n">Duplicate</span><span class="o">.</span><span class="n">Error</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="s">&#39;Duplicate entry encountered for path </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">path</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">path</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Duplicate.Error.path"><a class="viewcode-back" href="../../../targets.html#pants.targets.jvm_binary.Duplicate.Error.path">[docs]</a>    <span class="k">def</span> <span class="nf">path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+      <span class="sd">&quot;&quot;&quot;The path of the duplicate entry.&quot;&quot;&quot;</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span>
+</div></div>
+  <span class="n">SKIP</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
+  <span class="sd">&quot;&quot;&quot;Retains the 1st entry and skips subsequent duplicates.&quot;&quot;&quot;</span>
+
+  <span class="n">REPLACE</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
+  <span class="sd">&quot;&quot;&quot;Retains the most recent entry and skips prior duplicates.&quot;&quot;&quot;</span>
+
+  <span class="n">CONCAT</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
+  <span class="sd">&quot;&quot;&quot;Concatenates the contents of all duplicate entries encountered in the order encountered.&quot;&quot;&quot;</span>
+
+  <span class="n">FAIL</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
+  <span class="sd">&quot;&quot;&quot;Raises a :class:``twitter.pants.targets.jvm_binary.Duplicate.Error`` when a duplicate entry is</span>
+<span class="sd">  encountered.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="n">_VALID_ACTIONS</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">((</span><span class="n">SKIP</span><span class="p">,</span> <span class="n">REPLACE</span><span class="p">,</span> <span class="n">CONCAT</span><span class="p">,</span> <span class="n">FAIL</span><span class="p">))</span>
+
+  <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Duplicate.validate_action"><a class="viewcode-back" href="../../../targets.html#pants.targets.jvm_binary.Duplicate.validate_action">[docs]</a>  <span class="k">def</span> <span class="nf">validate_action</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Verifies the given action is a valid duplicate jar rule action.</span>
+
+<span class="sd">    :returns: The action if it is valid.</span>
+<span class="sd">    :raises: ``ValueError`` if the action is invalid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">action</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cls</span><span class="o">.</span><span class="n">_VALID_ACTIONS</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;The supplied action must be one of </span><span class="si">%s</span><span class="s">, given: </span><span class="si">%s</span><span class="s">&#39;</span>
+                       <span class="o">%</span> <span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">_VALID_ACTIONS</span><span class="p">,</span> <span class="n">action</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">action</span>
+</div>
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">apply_pattern</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Creates a rule for handling duplicate jar entries.</span>
+
+<span class="sd">    :param str apply_pattern: A regular expression that matches duplicate jar entries this rule</span>
+<span class="sd">      applies to.</span>
+<span class="sd">    :param action: An action to take to handle one or more duplicate entries.  Must be one of:</span>
+<span class="sd">      ``Duplicate.SKIP``, ``Duplicate.REPLACE``, ``Duplicate.CONCAT`` or ``Duplicate.FAIL``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">Duplicate</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">apply_pattern</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_action</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+
+  <span class="nd">@property</span>
+<div class="viewcode-block" id="Duplicate.action"><a class="viewcode-back" href="../../../targets.html#pants.targets.jvm_binary.Duplicate.action">[docs]</a>  <span class="k">def</span> <span class="nf">action</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The action to take for any duplicate entries that match this rule&#39;s ``apply_pattern``.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_action</span>
+
+</div></div>
+<span class="nd">@manual.builddict</span><span class="p">(</span><span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;jvm&quot;</span><span class="p">])</span>
+<div class="viewcode-block" id="JarRules"><a class="viewcode-back" href="../../../targets.html#pants.targets.jvm_binary.JarRules">[docs]</a><span class="k">class</span> <span class="nc">JarRules</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;A set of rules for packaging up a deploy jar.</span>
+
+<span class="sd">  Deploy jars are executable jars with fully self-contained classpaths and as such, assembling them</span>
+<span class="sd">  presents problems given jar semantics.</span>
+
+<span class="sd">  One issue is signed jars that must be included on the</span>
+<span class="sd">  classpath.  These have a signature that depends on the jar contents and assembly of the deploy jar</span>
+<span class="sd">  changes the content of the jar, breaking the signatures.  For cases like these the signed jars</span>
+<span class="sd">  must be verified and then the signature information thrown away.  The ``Skip`` rule supports this</span>
+<span class="sd">  sort of issue by allowing outright entry exclusion in the final deploy jar.</span>
+
+<span class="sd">  Another issue is duplicate jar entries.  Although the underlying zip format supports these, the</span>
+<span class="sd">  java jar tool and libraries do not.  As such some action must be taken for each duplicate entry</span>
+<span class="sd">  such that there are no duplicates in the final deploy jar.  The four ``Duplicate`` rules support</span>
+<span class="sd">  resolution of these cases by allowing 1st wins, last wins, concatenation of the duplicate entry</span>
+<span class="sd">  contents or raising an exception.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="JarRules.skip_signatures_and_duplicates_concat_well_known_metadata"><a class="viewcode-back" href="../../../targets.html#pants.targets.jvm_binary.JarRules.skip_signatures_and_duplicates_concat_well_known_metadata">[docs]</a>  <span class="k">def</span> <span class="nf">skip_signatures_and_duplicates_concat_well_known_metadata</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">default_dup_action</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                                                                <span class="n">additional_rules</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Produces a rule set useful in many deploy jar creation contexts.</span>
+
+<span class="sd">    The rule set skips duplicate entries by default, retaining the 1st encountered.  In addition it</span>
+<span class="sd">    has the following special handling:</span>
+
+<span class="sd">    - jar signature metadata is dropped</span>
+<span class="sd">    - ``java.util.ServiceLoader`` provider-configuration files are concatenated in the order</span>
+<span class="sd">      encountered</span>
+
+<span class="sd">    :param default_dup_action: An optional default action to take for duplicates.  Defaults to</span>
+<span class="sd">      `Duplicate.SKIP` if not specified.</span>
+<span class="sd">    :param additional_rules: Optionally one or more jar rules to add to those described above.</span>
+<span class="sd">    :returns: :class:`twitter.pants.targets.JarRules`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">default_dup_action</span> <span class="o">=</span> <span class="n">Duplicate</span><span class="o">.</span><span class="n">validate_action</span><span class="p">(</span><span class="n">default_dup_action</span> <span class="ow">or</span> <span class="n">Duplicate</span><span class="o">.</span><span class="n">SKIP</span><span class="p">)</span>
+    <span class="n">additional_rules</span> <span class="o">=</span> <span class="n">maybe_list</span><span class="p">(</span><span class="n">additional_rules</span> <span class="ow">or</span> <span class="p">[],</span> <span class="n">expected_type</span><span class="o">=</span><span class="p">(</span><span class="n">Duplicate</span><span class="p">,</span> <span class="n">Skip</span><span class="p">))</span>
+
+    <span class="n">rules</span> <span class="o">=</span> <span class="p">[</span><span class="n">Skip</span><span class="p">(</span><span class="s">r&#39;^META-INF/[^/]+\.SF$&#39;</span><span class="p">),</span>  <span class="c"># signature file</span>
+             <span class="n">Skip</span><span class="p">(</span><span class="s">r&#39;^META-INF/[^/]+\.DSA$&#39;</span><span class="p">),</span>  <span class="c"># default signature alg. file</span>
+             <span class="n">Skip</span><span class="p">(</span><span class="s">r&#39;^META-INF/[^/]+\.RSA$&#39;</span><span class="p">),</span>  <span class="c"># default signature alg. file</span>
+             <span class="n">Duplicate</span><span class="p">(</span><span class="s">r&#39;^META-INF/services/&#39;</span><span class="p">,</span> <span class="n">Duplicate</span><span class="o">.</span><span class="n">CONCAT</span><span class="p">)]</span>  <span class="c"># 1 svc fqcn per line</span>
+
+    <span class="k">return</span> <span class="n">cls</span><span class="p">(</span><span class="n">rules</span><span class="o">=</span><span class="n">rules</span> <span class="o">+</span> <span class="n">additional_rules</span><span class="p">,</span> <span class="n">default_dup_action</span><span class="o">=</span><span class="n">default_dup_action</span><span class="p">)</span>
+</div>
+  <span class="n">_DEFAULT</span> <span class="o">=</span> <span class="bp">None</span>
+
+  <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="JarRules.default"><a class="viewcode-back" href="../../../targets.html#pants.targets.jvm_binary.JarRules.default">[docs]</a>  <span class="k">def</span> <span class="nf">default</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns the default set of jar rules.</span>
+
+<span class="sd">    Can be set with `set_default` but otherwise defaults to</span>
+<span class="sd">    `skip_signatures_and_duplicates_concat_well_known_metadata`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">cls</span><span class="o">.</span><span class="n">_DEFAULT</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+      <span class="n">cls</span><span class="o">.</span><span class="n">_DEFAULT</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">skip_signatures_and_duplicates_concat_well_known_metadata</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">_DEFAULT</span>
+</div>
+  <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="JarRules.set_default"><a class="viewcode-back" href="../../../targets.html#pants.targets.jvm_binary.JarRules.set_default">[docs]</a>  <span class="k">def</span> <span class="nf">set_default</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">rules</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Sets the default site-wide jar rules.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rules</span><span class="p">,</span> <span class="n">JarRules</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;The default rules must be a JarRules instance.&#39;</span><span class="p">)</span>
+    <span class="n">cls</span><span class="o">.</span><span class="n">_DEFAULT</span> <span class="o">=</span> <span class="n">rules</span>
+</div>
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rules</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">default_dup_action</span><span class="o">=</span><span class="n">Duplicate</span><span class="o">.</span><span class="n">SKIP</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Creates a new set of jar rules with the default duplicate action of ``Duplicate.SKIP``.</span>
+
+<span class="sd">    :param rules: One or more rules that will be applied in order to jar entries being packaged in</span>
+<span class="sd">      a deploy jar.</span>
+<span class="sd">    :param default_dup_action: The default action to take when a duplicate entry is encountered and</span>
+<span class="sd">      no explicit rules apply to the entry.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_default_dup_action</span> <span class="o">=</span> <span class="n">Duplicate</span><span class="o">.</span><span class="n">validate_action</span><span class="p">(</span><span class="n">default_dup_action</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_rules</span> <span class="o">=</span> <span class="n">maybe_list</span><span class="p">(</span><span class="n">rules</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">JarRule</span><span class="p">)</span> <span class="k">if</span> <span class="n">rules</span> <span class="k">else</span> <span class="p">[]</span>
+
+  <span class="nd">@property</span>
+<div class="viewcode-block" id="JarRules.default_dup_action"><a class="viewcode-back" href="../../../targets.html#pants.targets.jvm_binary.JarRules.default_dup_action">[docs]</a>  <span class="k">def</span> <span class="nf">default_dup_action</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The default action to take when a duplicate jar entry is encountered.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_dup_action</span>
+</div>
+  <span class="nd">@property</span>
+<div class="viewcode-block" id="JarRules.rules"><a class="viewcode-back" href="../../../targets.html#pants.targets.jvm_binary.JarRules.rules">[docs]</a>  <span class="k">def</span> <span class="nf">rules</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The list of explicit entry rules in effect.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rules</span>
+
+</div></div>
 <span class="nd">@manual.builddict</span><span class="p">(</span><span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;jvm&quot;</span><span class="p">])</span>
 <div class="viewcode-block" id="JvmBinary"><a class="viewcode-back" href="../../../targets.html#pants.targets.jvm_binary.JvmBinary">[docs]</a><span class="k">class</span> <span class="nc">JvmBinary</span><span class="p">(</span><span class="n">JvmTarget</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Produces a JVM binary optionally identifying a launcher main class.</span>
@@ -416,6 +590,7 @@ body a.icon-home:hover{
                <span class="n">basename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                <span class="n">source</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                <span class="n">deploy_excludes</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+               <span class="n">deploy_jar_rules</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :param string name: The name of this target, which combined with this</span>
@@ -437,6 +612,8 @@ body a.icon-home:hover{
 <span class="sd">      ``servlet.jar`` onto a Tomcat environment that provides another version,</span>
 <span class="sd">      they might conflict. ``deploy_excludes`` gives you a way to build your</span>
 <span class="sd">      code but exclude the conflicting ``jar`` when deploying.</span>
+<span class="sd">    :param deploy_jar_rules: Rules for packaging this binary in a deploy jar.</span>
+<span class="sd">    :type deploy_jar_rules: A :class:`twitter.pants.targets.JarRules` specification.</span>
 <span class="sd">    :param configurations: Ivy configurations to resolve for this target.</span>
 <span class="sd">      This parameter is not intended for general use.</span>
 <span class="sd">    :type configurations: tuple of strings</span>
@@ -450,9 +627,17 @@ body a.icon-home:hover{
     <span class="k">if</span> <span class="n">source</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">Compatibility</span><span class="o">.</span><span class="n">string</span><span class="p">):</span>
       <span class="k">raise</span> <span class="n">TargetDefinitionException</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;source must be a single relative file path&#39;</span><span class="p">)</span>
 
+    <span class="c"># Consider an alias mechanism (target) that acts like JarLibrary but points to a single item</span>
+    <span class="c"># and admits any pointee type.  Its very likely folks will want to share jar_rules but they</span>
+    <span class="c"># cannot today and it seems heavy-handed to force jar_rules to be a target just to get an</span>
+    <span class="c"># address in the off chance its needed.</span>
+    <span class="k">if</span> <span class="n">deploy_jar_rules</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">deploy_jar_rules</span><span class="p">,</span> <span class="n">JarRules</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="n">TargetDefinitionException</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;deploy_jar_rules must be a JarRules specification&#39;</span><span class="p">)</span>
+
     <span class="bp">self</span><span class="o">.</span><span class="n">main</span> <span class="o">=</span> <span class="n">main</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">basename</span> <span class="o">=</span> <span class="n">basename</span> <span class="ow">or</span> <span class="n">name</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">deploy_excludes</span> <span class="o">=</span> <span class="n">deploy_excludes</span> <span class="ow">or</span> <span class="p">[]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">deploy_excludes</span> <span class="o">=</span> <span class="n">maybe_list</span><span class="p">(</span><span class="n">deploy_excludes</span><span class="p">,</span> <span class="n">Exclude</span><span class="p">)</span> <span class="k">if</span> <span class="n">deploy_excludes</span> <span class="k">else</span> <span class="p">[]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">deploy_jar_rules</span> <span class="o">=</span> <span class="n">deploy_jar_rules</span> <span class="ow">or</span> <span class="n">JarRules</span><span class="o">.</span><span class="n">default</span><span class="p">()</span>
 
 </div>
 <div class="viewcode-block" id="RelativeToMapper"><a class="viewcode-back" href="../../../targets.html#pants.targets.jvm_binary.RelativeToMapper">[docs]</a><span class="k">class</span> <span class="nc">RelativeToMapper</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>

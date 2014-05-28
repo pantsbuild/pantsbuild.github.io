@@ -218,8 +218,6 @@ body a.icon-home:hover{
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installing Pants</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../install.html#system-wide-installation">System-wide Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../install.html#virtualenv-based-installation">Virtualenv-based Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../install.html#pex-based-installation">PEX-based Installation</a></li>
 </ul>
 </li>
@@ -384,7 +382,6 @@ body a.icon-home:hover{
                         <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">twitter.common.collections</span> <span class="kn">import</span> <span class="n">maybe_list</span>
-<span class="kn">from</span> <span class="nn">twitter.common.quantity</span> <span class="kn">import</span> <span class="n">Amount</span><span class="p">,</span> <span class="n">Time</span>
 
 <span class="kn">from</span> <span class="nn">pants.base.build_manual</span> <span class="kn">import</span> <span class="n">manual</span>
 <span class="kn">from</span> <span class="nn">pants.targets.python_target</span> <span class="kn">import</span> <span class="n">PythonTarget</span>
@@ -394,12 +391,7 @@ body a.icon-home:hover{
 <div class="viewcode-block" id="PythonTests"><a class="viewcode-back" href="../../../targets.html#pants.targets.python_tests.PythonTests">[docs]</a><span class="k">class</span> <span class="nc">PythonTests</span><span class="p">(</span><span class="n">PythonTarget</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Tests a Python library.&quot;&quot;&quot;</span>
 
-  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-               <span class="n">timeout</span><span class="o">=</span><span class="n">Amount</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">Time</span><span class="o">.</span><span class="n">MINUTES</span><span class="p">),</span>
-               <span class="n">coverage</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-               <span class="n">soft_dependencies</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
-               <span class="n">entry_point</span><span class="o">=</span><span class="s">&#39;pytest&#39;</span><span class="p">,</span>
-               <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coverage</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :param name: See PythonLibrary target</span>
 <span class="sd">    :param sources: A list of filenames representing the source code</span>
@@ -409,18 +401,11 @@ body a.icon-home:hover{
 <span class="sd">    :param dependencies: List of :class:`pants.base.target.Target` instances</span>
 <span class="sd">      this target depends on.</span>
 <span class="sd">    :type dependencies: list of targets</span>
-<span class="sd">    :param timeout: Amount of time before this test should be considered timed-out.</span>
 <span class="sd">    :param coverage: the module(s) whose coverage should be generated, e.g.</span>
 <span class="sd">      &#39;twitter.common.log&#39; or [&#39;twitter.common.log&#39;, &#39;twitter.common.http&#39;]</span>
-<span class="sd">    :param soft_dependencies: Whether or not we should ignore dependency resolution</span>
-<span class="sd">      errors for this test.</span>
-<span class="sd">    :param entry_point: The entry point to use to run the tests.</span>
 <span class="sd">    :param dict exclusives: An optional dict of exclusives tags. See CheckExclusives for details.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_timeout</span> <span class="o">=</span> <span class="n">timeout</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_soft_dependencies</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">soft_dependencies</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_coverage</span> <span class="o">=</span> <span class="n">maybe_list</span><span class="p">(</span><span class="n">coverage</span><span class="p">)</span> <span class="k">if</span> <span class="n">coverage</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="p">[]</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_entry_point</span> <span class="o">=</span> <span class="n">entry_point</span>
     <span class="nb">super</span><span class="p">(</span><span class="n">PythonTests</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">add_labels</span><span class="p">(</span><span class="s">&#39;python&#39;</span><span class="p">,</span> <span class="s">&#39;tests&#39;</span><span class="p">)</span>
 
@@ -430,11 +415,7 @@ body a.icon-home:hover{
 
   <span class="nd">@property</span>
   <span class="k">def</span> <span class="nf">coverage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coverage</span>
-
-  <span class="nd">@property</span>
-  <span class="k">def</span> <span class="nf">entry_point</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_entry_point</span></div>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coverage</span></div>
 </pre></div>
 
           <footer>

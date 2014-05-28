@@ -65,6 +65,7 @@ targets; some are handy utilities.
 `dependencies`_ |
 `exclude`_ |
 `jar`_ |
+`jar_library`_ |
 `java_agent`_ |
 `java_antlr_library`_ |
 `java_library`_ |
@@ -83,6 +84,7 @@ targets; some are handy utilities.
 **Python** |
 `dependencies`_ |
 `egg`_ |
+`jar_library`_ |
 `pants`_ |
 `python_antlr_library`_ |
 `python_binary`_ |
@@ -440,11 +442,27 @@ jar
 jar_library
 -------------------------------------------------------------------------------
 
+.. py:function:: jar_library(jars=None, *args, **kwargs)
+
+ A set of jars that may be depended upon.
 
 
- Old name for `dependencies`_
+ :param string name: The name of this target, which combined with this
+   build file defines the target :class:`pants.base.address.Address`.
+ :param jars: List of :class:`pants.base.target.Target` instances
+   this target depends on.
+ :param overrides: List of strings, each of which will be recursively resolved to
+   any targets that provide artifacts. Those artifacts will override corresponding
+   direct/transitive dependencies in the dependencies list.
+ :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
 
+**Methods:**
 
+ .. py:method:: with_description(description)
+
+  Set a human-readable description of this target.
+  
+  :param description: Descriptive string
 
 .. _bdict_java_agent:
 
@@ -724,7 +742,7 @@ jvm_app
 jvm_binary
 -------------------------------------------------------------------------------
 
-.. py:function:: jvm_binary(name=None, main=None, basename=None, source=None, deploy_excludes=None, **kwargs)
+.. py:function:: jvm_binary(name=None, main=None, basename=None, source=None, deploy_excludes=None, deploy_jar_rules=None, **kwargs)
 
  Produces a JVM binary optionally identifying a launcher main class.
  
@@ -756,6 +774,8 @@ jvm_binary
    ``servlet.jar`` onto a Tomcat environment that provides another version,
    they might conflict. ``deploy_excludes`` gives you a way to build your
    code but exclude the conflicting ``jar`` when deploying.
+ :param deploy_jar_rules: Rules for packaging this binary in a deploy jar.
+ :type deploy_jar_rules: A :class:`twitter.pants.targets.JarRules` specification.
  :param configurations: Ivy configurations to resolve for this target.
    This parameter is not intended for general use.
  :type configurations: tuple of strings
@@ -999,7 +1019,7 @@ python_test_suite
 python_tests
 -------------------------------------------------------------------------------
 
-.. py:function:: python_tests(timeout=Amount(2, mins), coverage=None, soft_dependencies=False, entry_point=u'pytest', **kwargs)
+.. py:function:: python_tests(coverage=None, **kwargs)
 
  Tests a Python library.
 
@@ -1012,12 +1032,8 @@ python_tests
  :param dependencies: List of :class:`pants.base.target.Target` instances
    this target depends on.
  :type dependencies: list of targets
- :param timeout: Amount of time before this test should be considered timed-out.
  :param coverage: the module(s) whose coverage should be generated, e.g.
    'twitter.common.log' or ['twitter.common.log', 'twitter.common.http']
- :param soft_dependencies: Whether or not we should ignore dependency resolution
-   errors for this test.
- :param entry_point: The entry point to use to run the tests.
  :param dict exclusives: An optional dict of exclusives tags. See CheckExclusives for details.
 
 **Methods:**

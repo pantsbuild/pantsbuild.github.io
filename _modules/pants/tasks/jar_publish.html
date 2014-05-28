@@ -218,8 +218,6 @@ body a.icon-home:hover{
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installing Pants</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../install.html#system-wide-installation">System-wide Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../install.html#virtualenv-based-installation">Virtualenv-based Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../install.html#pex-based-installation">PEX-based Installation</a></li>
 </ul>
 </li>
@@ -406,13 +404,14 @@ body a.icon-home:hover{
 <span class="kn">from</span> <span class="nn">pants.base.target</span> <span class="kn">import</span> <span class="n">Target</span>
 <span class="kn">from</span> <span class="nn">pants.ivy.bootstrapper</span> <span class="kn">import</span> <span class="n">Bootstrapper</span>
 <span class="kn">from</span> <span class="nn">pants.ivy.ivy</span> <span class="kn">import</span> <span class="n">Ivy</span>
+<span class="kn">from</span> <span class="nn">pants.jvm.ivy_utils</span> <span class="kn">import</span> <span class="n">IvyUtils</span>
 <span class="kn">from</span> <span class="nn">pants.targets.resources</span> <span class="kn">import</span> <span class="n">Resources</span>
+<span class="kn">from</span> <span class="nn">pants.targets.jarable</span> <span class="kn">import</span> <span class="n">Jarable</span>
 <span class="kn">from</span> <span class="nn">pants.targets.scala_library</span> <span class="kn">import</span> <span class="n">ScalaLibrary</span>
 <span class="kn">from</span> <span class="nn">pants.tasks.task</span> <span class="kn">import</span> <span class="n">Task</span>
 <span class="kn">from</span> <span class="nn">pants.tasks.scm_publish</span> <span class="kn">import</span> <span class="n">ScmPublish</span><span class="p">,</span> <span class="n">Semver</span>
 
 
-<span class="c"># XXX(pl): This entire file still needs to be converted over to new Targets</span>
 
 
 <span class="k">class</span> <span class="nc">PushDb</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -484,8 +483,9 @@ body a.icon-home:hover{
   <span class="k">def</span> <span class="nf">create_exclude</span><span class="p">(</span><span class="n">exclude</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">TemplateData</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="n">exclude</span><span class="o">.</span><span class="n">org</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">exclude</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 
-  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">get_db</span><span class="p">,</span> <span class="n">template_relpath</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">get_db</span><span class="p">,</span> <span class="n">template_relpath</span><span class="p">,</span> <span class="n">template_package_name</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">get_db</span> <span class="o">=</span> <span class="n">get_db</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">template_package_name</span> <span class="o">=</span> <span class="n">template_package_name</span> <span class="ow">or</span> <span class="n">__name__</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">template_relpath</span> <span class="o">=</span> <span class="n">template_relpath</span>
 
   <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">confs</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
@@ -499,7 +499,7 @@ body a.icon-home:hover{
     <span class="c"># the graph</span>
     <span class="n">dependencies</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
     <span class="n">internal_codegen</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">configurations</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">configurations</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">confs</span> <span class="ow">or</span> <span class="p">[])</span>
     <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">target_internal_dependencies</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
       <span class="n">jar</span> <span class="o">=</span> <span class="n">as_jar</span><span class="p">(</span><span class="n">dep</span><span class="p">)</span>
       <span class="n">dependencies</span><span class="p">[(</span><span class="n">jar</span><span class="o">.</span><span class="n">org</span><span class="p">,</span> <span class="n">jar</span><span class="o">.</span><span class="n">name</span><span class="p">)]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">internaldep</span><span class="p">(</span><span class="n">jar</span><span class="p">,</span> <span class="n">dep</span><span class="p">)</span>
@@ -516,7 +516,7 @@ body a.icon-home:hover{
 
     <span class="n">template_kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">templateargs</span><span class="p">(</span><span class="n">target_jar</span><span class="p">,</span> <span class="n">confs</span><span class="p">)</span>
     <span class="k">with</span> <span class="n">safe_open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output</span><span class="p">:</span>
-      <span class="n">template</span> <span class="o">=</span> <span class="n">pkgutil</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">template_relpath</span><span class="p">)</span>
+      <span class="n">template</span> <span class="o">=</span> <span class="n">pkgutil</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">template_package_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">template_relpath</span><span class="p">)</span>
       <span class="n">Generator</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="o">**</span><span class="n">template_kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
 
 <div class="viewcode-block" id="DependencyWriter.templateargs"><a class="viewcode-back" href="../../../tasks.html#pants.tasks.jar_publish.DependencyWriter.templateargs">[docs]</a>  <span class="k">def</span> <span class="nf">templateargs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_jar</span><span class="p">,</span> <span class="n">confs</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
@@ -560,10 +560,15 @@ body a.icon-home:hover{
 
 
 <span class="k">class</span> <span class="nc">IvyWriter</span><span class="p">(</span><span class="n">DependencyWriter</span><span class="p">):</span>
+  <span class="n">JAVADOC_CONFIG</span> <span class="o">=</span> <span class="s">&#39;javadoc&#39;</span>
+  <span class="n">SOURCES_CONFIG</span> <span class="o">=</span> <span class="s">&#39;sources&#39;</span>
+  <span class="n">DEFAULT_CONFIG</span> <span class="o">=</span> <span class="s">&#39;default&#39;</span>
+
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">get_db</span><span class="p">):</span>
     <span class="nb">super</span><span class="p">(</span><span class="n">IvyWriter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
         <span class="n">get_db</span><span class="p">,</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;templates&#39;</span><span class="p">,</span> <span class="s">&#39;ivy_resolve&#39;</span><span class="p">,</span> <span class="s">&#39;ivy.mustache&#39;</span><span class="p">))</span>
+        <span class="n">IvyUtils</span><span class="o">.</span><span class="n">IVY_TEMPLATE_PATH</span><span class="p">,</span>
+        <span class="n">template_package_name</span><span class="o">=</span><span class="n">IvyUtils</span><span class="o">.</span><span class="n">IVY_TEMPLATE_PACKAGE_NAME</span><span class="p">)</span>
 
   <span class="k">def</span> <span class="nf">templateargs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_jar</span><span class="p">,</span> <span class="n">confs</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">lib</span><span class="o">=</span><span class="n">target_jar</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
@@ -649,7 +654,7 @@ body a.icon-home:hover{
 <span class="sd">         # ivysettings.xml resolver to use for publishing</span>
 <span class="sd">         &#39;resolver&#39;: &#39;maven.twttr.com&#39;,</span>
 <span class="sd">         # ivy configurations to publish</span>
-<span class="sd">         &#39;confs&#39;: [&#39;default&#39;, &#39;sources&#39;, &#39;docs&#39;],</span>
+<span class="sd">         &#39;confs&#39;: [&#39;default&#39;, &#39;sources&#39;, &#39;javadoc&#39;],</span>
 <span class="sd">         # address of a Credentials target to use when publishing</span>
 <span class="sd">         &#39;auth&#39;: &#39;address/of/credentials/BUILD:target&#39;,</span>
 <span class="sd">         # help message if unable to initialize the Credentials target.</span>
@@ -953,9 +958,9 @@ body a.icon-home:hover{
 
         <span class="n">confs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">repo</span><span class="p">[</span><span class="s">&#39;confs&#39;</span><span class="p">])</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">jar_create_sources</span><span class="p">:</span>
-          <span class="n">confs</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&#39;sources&#39;</span><span class="p">)</span>
+          <span class="n">confs</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">IvyWriter</span><span class="o">.</span><span class="n">SOURCES_CONFIG</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">jar_create_javadoc</span><span class="p">:</span>
-          <span class="n">confs</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&#39;docs&#39;</span><span class="p">)</span>
+          <span class="n">confs</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">IvyWriter</span><span class="o">.</span><span class="n">JAVADOC_CONFIG</span><span class="p">)</span>
         <span class="n">ivyxml</span> <span class="o">=</span> <span class="n">stage_artifacts</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">jar</span><span class="p">,</span> <span class="n">newver</span><span class="o">.</span><span class="n">version</span><span class="p">(),</span> <span class="n">changelog</span><span class="p">,</span> <span class="n">confs</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">confs</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dryrun</span><span class="p">:</span>
@@ -1030,13 +1035,13 @@ body a.icon-home:hover{
 
     <span class="k">def</span> <span class="nf">collect</span><span class="p">(</span><span class="n">publish_target</span><span class="p">,</span> <span class="n">walked_target</span><span class="p">):</span>
       <span class="n">derived_by_target</span><span class="p">[</span><span class="n">walked_target</span><span class="o">.</span><span class="n">derived_from</span><span class="p">]</span> <span class="o">=</span> <span class="n">walked_target</span>
-      <span class="k">if</span> <span class="ow">not</span> <span class="n">walked_target</span><span class="o">.</span><span class="n">has_sources</span><span class="p">()</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">walked_target</span><span class="o">.</span><span class="n">sources</span><span class="p">:</span>
+      <span class="k">if</span> <span class="ow">not</span> <span class="n">walked_target</span><span class="o">.</span><span class="n">has_sources</span><span class="p">()</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">walked_target</span><span class="o">.</span><span class="n">sources_relative_to_buildroot</span><span class="p">():</span>
         <span class="n">invalid</span><span class="p">[</span><span class="n">publish_target</span><span class="p">][</span><span class="n">walked_target</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&#39;No sources.&#39;</span><span class="p">)</span>
       <span class="k">if</span> <span class="ow">not</span> <span class="n">walked_target</span><span class="o">.</span><span class="n">is_exported</span><span class="p">:</span>
         <span class="n">invalid</span><span class="p">[</span><span class="n">publish_target</span><span class="p">][</span><span class="n">walked_target</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&#39;Does not provide an artifact.&#39;</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">:</span>
-      <span class="n">target</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">collect</span><span class="p">,</span> <span class="n">target</span><span class="p">),</span> <span class="n">predicate</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">is_concrete</span><span class="p">)</span>
+      <span class="n">target</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">collect</span><span class="p">,</span> <span class="n">target</span><span class="p">),</span> <span class="n">predicate</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Jarable</span><span class="p">))</span>
 
     <span class="c"># When walking the graph of a publishable target, we may encounter families of sibling targets</span>
     <span class="c"># that form a derivation chain.  As long as one of these siblings is publishable, we can</span>
@@ -1094,21 +1099,12 @@ body a.icon-home:hover{
 
   <span class="k">def</span> <span class="nf">fingerprint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">fingerprint_internal</span><span class="p">):</span>
     <span class="n">sha</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha1</span><span class="p">()</span>
-
-    <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">sources</span><span class="p">):</span>
-      <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">target_base</span><span class="p">,</span> <span class="n">source</span><span class="p">)</span>
-      <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">fd</span><span class="p">:</span>
-        <span class="n">sha</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
-        <span class="n">sha</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">fd</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+    <span class="n">sha</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">invalidation_hash</span><span class="p">())</span>
 
     <span class="c"># TODO(Tejal Desai): pantsbuild/pants/65: Remove java_sources attribute for ScalaLibrary</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">ScalaLibrary</span><span class="p">):</span>
       <span class="k">for</span> <span class="n">java_source</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">java_sources</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">java_source</span><span class="o">.</span><span class="n">sources</span><span class="p">):</span>
-          <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">java_source</span><span class="o">.</span><span class="n">target_base</span><span class="p">,</span> <span class="n">source</span><span class="p">)</span>
-          <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">fd</span><span class="p">:</span>
-            <span class="n">sha</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
-            <span class="n">sha</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">fd</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+        <span class="n">sha</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">java_source</span><span class="o">.</span><span class="n">invalidation_hash</span><span class="p">())</span>
 
     <span class="c"># TODO(John Sirois): handle resources</span>
 
@@ -1125,8 +1121,7 @@ body a.icon-home:hover{
 
   <span class="k">def</span> <span class="nf">changelog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">sha</span><span class="p">):</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">scm</span><span class="o">.</span><span class="n">changelog</span><span class="p">(</span><span class="n">from_commit</span><span class="o">=</span><span class="n">sha</span><span class="p">,</span>
-                              <span class="n">files</span><span class="o">=</span><span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">target_base</span><span class="p">,</span> <span class="n">source</span><span class="p">)</span>
-                                     <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">sources</span><span class="p">])</span>
+                              <span class="n">files</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">sources_relative_to_buildroot</span><span class="p">())</span>
 
   <span class="k">def</span> <span class="nf">generate_ivysettings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">publishedjars</span><span class="p">,</span> <span class="n">publish_local</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="n">template_relpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;templates&#39;</span><span class="p">,</span> <span class="s">&#39;jar_publish&#39;</span><span class="p">,</span> <span class="s">&#39;ivysettings.mustache&#39;</span><span class="p">)</span>

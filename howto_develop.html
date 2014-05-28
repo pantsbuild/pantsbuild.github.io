@@ -220,8 +220,6 @@ body a.icon-home:hover{
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installing Pants</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="install.html#system-wide-installation">System-wide Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="install.html#virtualenv-based-installation">Virtualenv-based Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="install.html#pex-based-installation">PEX-based Installation</a></li>
 </ul>
 </li>
@@ -441,6 +439,7 @@ not be discovered correctly.</p>
 <div class="highlight-python"><div class="highlight"><pre>./pants tests/python/pants_test:all
 </pre></div>
 </div>
+<p>To bring up the <tt class="docutils literal"><span class="pre">pdb</span></tt> debugger when tests fail, pass the <tt class="docutils literal"><span class="pre">--pdb</span></tt> flag.</p>
 <p>To try all the tests in a few configurations, you can run the same script
 that our Travis CI does. This can take a while, but it&#8217;s a good idea to
 run it before you contribute a change or merge it to master:</p>
@@ -451,6 +450,53 @@ run it before you contribute a change or merge it to master:</p>
 make sure it passes all tests.</p>
 <p>For convenience, some other test targets enable more granular test running.
 Please see the BUILD files for details.</p>
+</div>
+</div>
+<div class="section" id="debugging">
+<h2>Debugging<a class="headerlink" href="#debugging" title="Permalink to this headline">¶</a></h2>
+<p>To run Pants under <tt class="docutils literal"><span class="pre">pdb</span></tt> and set a breakpoint, you can typically add</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">pdb</span><span class="p">;</span> <span class="n">pdb</span><span class="o">.</span><span class="n">set_trace</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>...where you first want to break. If the code is in a test, instead use</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">pytest</span><span class="p">;</span> <span class="n">pytest</span><span class="o">.</span><span class="n">set_trace</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>To run tests and bring up <tt class="docutils literal"><span class="pre">pdb</span></tt> for failing tests, you can
+instead pass <tt class="docutils literal"><span class="pre">--pdb</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ ./pants tests/python/pants_test/tasks: --pdb
+... plenty of test output ...
+tests/python/pants_test/tasks/test_targets_help.py E
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; traceback &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+
+cls = &lt;class &#39;pants_test.tasks.test_targets_help.TargetsHelpTest&#39;&gt;
+
+    @classmethod
+    def setUpClass(cls):
+&gt;     super(TargetsHelpTest, cls).setUpClass()
+E     AttributeError: &#39;super&#39; object has no attribute &#39;setUpClass&#39;
+
+tests/python/pants_test/tasks/test_targets_help.py:24: AttributeError
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; entering PDB &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+&gt; /Users/lhosken/workspace/pants/tests/python/pants_test/tasks/test_targets_help.py(24)setUpClass()
+-&gt; super(TargetsHelpTest, cls).setUpClass()
+(Pdb)
+</pre></div>
+</div>
+<p>Debug quickly; that test target will time out in a couple of minutes,
+quitting you out.</p>
+<p>To start an interactive Python shell that can <tt class="docutils literal"><span class="pre">import</span></tt> Pants modules,
+use the usual <tt class="docutils literal"><span class="pre">./pants</span> <span class="pre">py</span></tt> on a <tt class="docutils literal"><span class="pre">python_library</span></tt> target that builds
+(or depends on) the modules you want:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ ./pants py src/python/pants/targets:common
+/Users/lhosken/workspace/pants src/python/pants/targets:common
+Python 2.6.8 (unknown, Mar  9 2014, 22:16:00)
+[GCC 4.2.1 Compatible Apple LLVM 5.0 (clang-500.0.68)] on darwin
+Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.
+(InteractiveConsole)
+&gt;&gt;&gt; from pants.targets import repository
+&gt;&gt;&gt;
+</pre></div>
 </div>
 </div>
 </div>
