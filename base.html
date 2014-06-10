@@ -284,7 +284,6 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#bundle">bundle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#check-exclusives">check-exclusives</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#check-published-deps">check_published_deps</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#checkstyle">checkstyle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#clean-all">clean-all</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#clean-all-async">clean-all-async</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#compile">compile</a></li>
@@ -480,28 +479,6 @@ target dependencies. For example:</p>
 <div class="section" id="module-pants.base.build_file">
 <span id="build-file-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">build_file</span></tt> Module<a class="headerlink" href="#module-pants.base.build_file" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-pants.base.build_file_aliases">
-<span id="build-file-aliases-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">build_file_aliases</span></tt> Module<a class="headerlink" href="#module-pants.base.build_file_aliases" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="pants.base.build_file_aliases.maven_layout">
-<tt class="descclassname">pants.base.build_file_aliases.</tt><tt class="descname">maven_layout</tt><big>(</big><em>basedir=u''</em>, <em>rel_path=None</em><big>)</big><a class="reference internal" href="_modules/pants/base/build_file_aliases.html#maven_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.build_file_aliases.maven_layout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets up typical maven project source roots for all built-in pants target types.</p>
-<p>Shortcut for <tt class="docutils literal"><span class="pre">source_root('src/main/java',</span> <span class="pre">*java</span> <span class="pre">targets*)</span></tt>,
-<tt class="docutils literal"><span class="pre">source_root('src/main/python',</span> <span class="pre">*python</span> <span class="pre">targets*)</span></tt>, ...</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>basedir</strong> (<em>string</em>) &#8211; Instead of using this BUILD file&#8217;s directory as
-the base of the source tree, use a subdirectory. E.g., instead of
-expecting to find java files in <tt class="docutils literal"><span class="pre">src/main/java</span></tt>, expect them in
-<tt class="docutils literal"><span class="pre">**basedir**/src/main/java</span></tt>.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</div>
 <div class="section" id="module-pants.base.build_file_parser">
 <span id="build-file-parser-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">build_file_parser</span></tt> Module<a class="headerlink" href="#module-pants.base.build_file_parser" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
@@ -663,7 +640,7 @@ in practice.</p>
 
 <dl class="method">
 <dt id="pants.base.build_invalidator.CacheKeyGenerator.key_for_target">
-<tt class="descname">key_for_target</tt><big>(</big><em>target</em>, <em>transitive=False</em><big>)</big><a class="reference internal" href="_modules/pants/base/build_invalidator.html#CacheKeyGenerator.key_for_target"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.build_invalidator.CacheKeyGenerator.key_for_target" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">key_for_target</tt><big>(</big><em>target</em>, <em>transitive=False</em>, <em>fingerprint_strategy=None</em><big>)</big><a class="reference internal" href="_modules/pants/base/build_invalidator.html#CacheKeyGenerator.key_for_target"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.build_invalidator.CacheKeyGenerator.key_for_target" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a key representing the given target and its sources.</p>
 <p>A key for a set of targets can be created by calling combine_cache_keys()
 on the target&#8217;s individual cache keys.</p>
@@ -673,8 +650,11 @@ on the target&#8217;s individual cache keys.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Target:</th><td class="field-body">The target to create a CacheKey for.</td>
 </tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Fingerprint_extra:</th></tr>
-<tr class="field-even field"><td>&nbsp;</td><td class="field-body">A function that accepts a sha hash and updates it with extra fprint data.</td>
+<tr class="field-even field"><th class="field-name">Transitive:</th><td class="field-body">Whether or not to include a fingerprint of all of :target:&#8217;s dependencies.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">Fingerprint_strategy:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">A FingerprintStrategy instance, which can do per task, finer grained
+fingerprinting of a given Target.</td>
 </tr>
 </tbody>
 </table>
@@ -754,7 +734,7 @@ exit.</p>
 <span id="cache-manager-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">cache_manager</span></tt> Module<a class="headerlink" href="#module-pants.base.cache_manager" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pants.base.cache_manager.InvalidationCacheManager">
-<em class="property">class </em><tt class="descclassname">pants.base.cache_manager.</tt><tt class="descname">InvalidationCacheManager</tt><big>(</big><em>cache_key_generator</em>, <em>build_invalidator_dir</em>, <em>invalidate_dependents</em>, <em>extra_data</em><big>)</big><a class="reference internal" href="_modules/pants/base/cache_manager.html#InvalidationCacheManager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.cache_manager.InvalidationCacheManager" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pants.base.cache_manager.</tt><tt class="descname">InvalidationCacheManager</tt><big>(</big><em>cache_key_generator</em>, <em>build_invalidator_dir</em>, <em>invalidate_dependents</em>, <em>extra_data</em>, <em>fingerprint_strategy=None</em><big>)</big><a class="reference internal" href="_modules/pants/base/cache_manager.html#InvalidationCacheManager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.cache_manager.InvalidationCacheManager" title="Permalink to this definition">¶</a></dt>
 <dd><p>Manages cache checks, updates and invalidation keeping track of basic change
 and invalidation statistics.
 Note that this is distinct from the ArtifactCache concept, and should probably be renamed.</p>
@@ -981,6 +961,29 @@ are used as defined in the configparser docs.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-pants.base.dev_backend_loader">
+<span id="dev-backend-loader-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">dev_backend_loader</span></tt> Module<a class="headerlink" href="#module-pants.base.dev_backend_loader" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="pants.base.dev_backend_loader.load_backends_from_source">
+<tt class="descclassname">pants.base.dev_backend_loader.</tt><tt class="descname">load_backends_from_source</tt><big>(</big><em>build_file_parser</em>, <em>additional_backends=None</em><big>)</big><a class="reference internal" href="_modules/pants/base/dev_backend_loader.html#load_backends_from_source"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.dev_backend_loader.load_backends_from_source" title="Permalink to this definition">¶</a></dt>
+<dd><p>Installs pants backend packages to provide targets and helper functions to BUILD files and
+goals to the cli.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>build_file_parser</strong> &#8211; The parser to populate with target aliases and helper functions from
+the backends.</li>
+<li><strong>additional_backends</strong> &#8211; An optional list of additional packages to load backends from.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
 <div class="section" id="module-pants.base.double_dag">
 <span id="double-dag-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">double_dag</span></tt> Module<a class="headerlink" href="#module-pants.base.double_dag" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
@@ -1036,6 +1039,41 @@ result of this removal.</p>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pants.base.fingerprint_strategy">
+<span id="fingerprint-strategy-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">fingerprint_strategy</span></tt> Module<a class="headerlink" href="#module-pants.base.fingerprint_strategy" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pants.base.fingerprint_strategy.DefaultFingerprintStrategy">
+<em class="property">class </em><tt class="descclassname">pants.base.fingerprint_strategy.</tt><tt class="descname">DefaultFingerprintStrategy</tt><a class="reference internal" href="_modules/pants/base/fingerprint_strategy.html#DefaultFingerprintStrategy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.fingerprint_strategy.DefaultFingerprintStrategy" title="Permalink to this definition">¶</a></dt>
+<dd><p>The default FingerprintStrategy, which delegates to target.payload.invalidation_hash().</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="pants.base.fingerprint_strategy.FingerprintStrategy">
+<em class="property">class </em><tt class="descclassname">pants.base.fingerprint_strategy.</tt><tt class="descname">FingerprintStrategy</tt><a class="reference internal" href="_modules/pants/base/fingerprint_strategy.html#FingerprintStrategy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.fingerprint_strategy.FingerprintStrategy" title="Permalink to this definition">¶</a></dt>
+<dd><p>A helper object for doing per-task, finer grained invalidation of Targets.</p>
+<dl class="method">
+<dt id="pants.base.fingerprint_strategy.FingerprintStrategy.compute_fingerprint">
+<tt class="descname">compute_fingerprint</tt><big>(</big><em>target</em><big>)</big><a class="reference internal" href="_modules/pants/base/fingerprint_strategy.html#FingerprintStrategy.compute_fingerprint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.fingerprint_strategy.FingerprintStrategy.compute_fingerprint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Subclasses override this method to actually compute the Task specific fingerprint.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pants.base.fingerprint_strategy.FingerprintStrategy.fingerprint_target">
+<tt class="descname">fingerprint_target</tt><big>(</big><em>target</em><big>)</big><a class="reference internal" href="_modules/pants/base/fingerprint_strategy.html#FingerprintStrategy.fingerprint_target"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.fingerprint_strategy.FingerprintStrategy.fingerprint_target" title="Permalink to this definition">¶</a></dt>
+<dd><p>Consumers of subclass instances call this to get a fingerprint labeled with the name</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pants.base.fingerprint_strategy.FingerprintStrategy.name">
+<em class="property">classmethod </em><tt class="descname">name</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pants/base/fingerprint_strategy.html#FingerprintStrategy.name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pants.base.fingerprint_strategy.FingerprintStrategy.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>The name of this strategy.</p>
+<p>This will ultimately appear in a human readable form in the fingerprint itself, for debugging
+purposes.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>

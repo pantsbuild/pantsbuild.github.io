@@ -90,8 +90,10 @@ targets; some are handy utilities.
 `python_binary`_ |
 `python_library`_ |
 `python_requirement`_ |
+`python_requirement_library`_ |
 `python_tests`_ |
 `python_thrift_library`_ |
+`resources`_ |
 `setup_py`_ |
 
 
@@ -106,6 +108,7 @@ __file__
 
 
 
+
 .. _bdict_Amount:
 
 Amount
@@ -115,6 +118,7 @@ Amount
 
  `Amount from twitter.commons.quantity <https://github.com/twitter/commons/blob/master/src/python/twitter/common/quantity/__init__.py>`_
  E.g., ``Amount(2, Time.MINUTES)``.
+
 
 
 
@@ -148,6 +152,8 @@ annotation_processor
    annotation processors this library exports.
  :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
 
+ Implemented by ``pants.backend.jvm.targets.annotation_processor.AnnotationProcessor``
+
 **Methods:**
 
  .. py:method:: with_description(description)
@@ -173,6 +179,8 @@ artifact
  :param repo: :class:`pants.targets.repository.Repository`
    this artifact is published to.
  :param string description: Description of this artifact.
+
+ Implemented by ``pants.backend.jvm.targets.artifact.Artifact``
 
 
 .. _bdict_benchmark:
@@ -200,6 +208,8 @@ benchmark
  :param configurations: One or more ivy configurations to resolve for this target.
    This parameter is not intended for general use.
  :type configurations: tuple of strings
+
+ Implemented by ``pants.backend.jvm.targets.benchmark.Benchmark``
 
 **Methods:**
 
@@ -246,6 +256,8 @@ bundle
  :param string relative_to: Set up a simple mapping from source path to bundle path.
    E.g., ``relative_to='common'`` removes that prefix from all files in the application bundle.
 
+ Implemented by ``pants.backend.jvm.targets.jvm_binary.Bundle``
+
 **Methods:**
 
  .. py:method:: add(*filesets)
@@ -258,7 +270,7 @@ bundle
 credentials
 -------------------------------------------------------------------------------
 
-.. py:function:: credentials(name, username=None, password=None, exclusives=None)
+.. py:function:: credentials(username=None, password=None, **kwargs)
 
  Supplies credentials for a maven repository on demand.
  
@@ -271,6 +283,8 @@ credentials
  :type username: string or callable
  :param password: Either a constant password value or else a callable that can fetch one.
  :type password: string or callable
+
+ Implemented by ``pants.backend.jvm.targets.credentials.Credentials``
 
 **Methods:**
 
@@ -297,6 +311,8 @@ dependencies
  :param exclusives: An optional map of exclusives tags. See CheckExclusives
    for details.
 
+ Implemented by ``pants.backend.core.targets.dependencies.Dependencies``
+
 **Methods:**
 
  .. py:method:: with_description(description)
@@ -310,19 +326,11 @@ dependencies
 egg
 -------------------------------------------------------------------------------
 
-.. py:function:: egg(glob, name=None)
 
 
+ In older Pants, loads a pre-built Python egg from file system. Undefined in newer Pants.
 
- Refers to pre-built Python eggs in the file system. (To instead fetch
- eggs in a ``pip``/``easy_install`` way, use ``python_requirement``)
- 
- E.g., ``egg(name='foo', glob='foo-0.1-py2.6.egg')`` would pick up the
- file ``foo-0.1-py2.6.egg`` from the ``BUILD`` file's directory; targets
- could depend on it by name ``foo``.
- 
- :param string glob: File glob pattern.
- :param string name: Target name; by default uses the egg's project name.
+
 
 
 .. _bdict_exclude:
@@ -339,6 +347,8 @@ exclude
    known as groupId in Maven parlance.
  :param string name: Name of the artifact to filter in the org, or filter
    everything if unspecified.
+
+ Implemented by ``pants.backend.jvm.targets.exclude.Exclude``
 
 
 .. _bdict_globs:
@@ -359,13 +369,15 @@ globs
  Walks the current working directory by default, can be overrided with
  the 'root' keyword argument.
 
+ Implemented by ``twitter.common.dirutil.fileset.globs``
+
 
 .. _bdict_goal:
 
 goal
 -------------------------------------------------------------------------------
 
-.. py:function:: goal(name, action, group=None, dependencies=None, serialize=True)
+.. py:function:: goal(name, action, dependencies=None, serialize=True)
 
 
 
@@ -374,6 +386,8 @@ goal
  :param dependencies: the names of other goals which must be achieved before invoking this goal.
  :param serialize: a flag indicating whether or not the action to achieve this goal requires
    the global lock. If true, the action will block until it can acquire the lock.
+
+ Implemented by ``pants.goal.Goal``
 
 
 .. _bdict_jar:
@@ -405,6 +419,8 @@ jar
  :param boolean mutable: Inhibit caching of this mutable artifact. A common use is for
    Maven -SNAPSHOT style artifacts in an active development/integration cycle.
 
+ Implemented by ``pants.backend.jvm.targets.jar_dependency.JarDependency``
+
 **Methods:**
 
  .. py:method:: exclude(org, name=None)
@@ -425,10 +441,10 @@ jar
     extension, but not necessarily. For instance, ivy files are of type 'ivy' but have 'xml' as
     their file extension.
   :param ext: The file extension of the published artifact.
-  :param conf: The public configuration in which this artifact is published. The '*' wildcard can
-    be used to designate all public configurations.
   :param url: The url at which this artifact can be found if it isn't located at the standard
     location in the repository.
+  :param configuration: The public configuration in which this artifact is published. The '*' wildcard can
+    be used to designate all public configurations.
   :param classifier: The maven classifier of this artifact.
 
  .. py:method:: with_sources()
@@ -455,6 +471,8 @@ jar_library
    any targets that provide artifacts. Those artifacts will override corresponding
    direct/transitive dependencies in the dependencies list.
  :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
+
+ Implemented by ``pants.backend.jvm.targets.jar_library.JarLibrary``
 
 **Methods:**
 
@@ -500,6 +518,8 @@ java_agent
  :param bool can_set_native_method_prefix: `True` if the ability to set he native method prefix
    is needed by this agent; `False` by default.
 
+ Implemented by ``pants.backend.jvm.targets.java_agent.JavaAgent``
+
 **Methods:**
 
  .. py:method:: with_description(description)
@@ -536,6 +556,8 @@ java_antlr_library
  :param package: A string which specifies the package to be used on the dependent sources.
      If unset, the package will be based on the path to the sources. Note that if the sources
      Are spread among different files, this must be set as the package cannot be inferred.
+
+ Implemented by ``pants.backend.codegen.targets.java_antlr_library.JavaAntlrLibrary``
 
 **Methods:**
 
@@ -579,6 +601,8 @@ java_library
    indicate text file resources to place in this module's jar.
  :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
 
+ Implemented by ``pants.backend.jvm.targets.java_library.JavaLibrary``
+
 **Methods:**
 
  .. py:method:: with_description(description)
@@ -613,6 +637,8 @@ java_protobuf_library
  :param buildflags: Unused, and will be removed in a future release.
  :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
 
+ Implemented by ``pants.backend.codegen.targets.java_protobuf_library.JavaProtobufLibrary``
+
 **Methods:**
 
  .. py:method:: with_description(description)
@@ -629,6 +655,7 @@ java_tests
 
 
  Old name for `junit_tests`_
+
 
 
 
@@ -661,6 +688,8 @@ java_thrift_library
  :param rpc_style: An optional rpc style to generate service stubs with.
  :param namespace_map: An optional dictionary of namespaces to remap {old: new}
  :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
+
+ Implemented by ``pants.backend.codegen.targets.java_thrift_library.JavaThriftLibrary``
 
 **Methods:**
 
@@ -697,6 +726,8 @@ junit_tests
    file resources to place in this module's jar.
  :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
 
+ Implemented by ``pants.backend.jvm.targets.java_tests.JavaTests``
+
 **Methods:**
 
  .. py:method:: with_description(description)
@@ -728,6 +759,8 @@ jvm_app
  :param string basename: Name of this application, if different from the
    ``name``. Pants uses this in the ``bundle`` goal to name the distribution
    artifact. In most cases this parameter is not necessary.
+
+ Implemented by ``pants.backend.jvm.targets.jvm_binary.JvmApp``
 
 **Methods:**
 
@@ -780,6 +813,8 @@ jvm_binary
    This parameter is not intended for general use.
  :type configurations: tuple of strings
 
+ Implemented by ``pants.backend.jvm.targets.jvm_binary.JvmBinary``
+
 **Methods:**
 
  .. py:method:: with_description(description)
@@ -807,13 +842,15 @@ maven_layout
    expecting to find java files in ``src/main/java``, expect them in
    ``**basedir**/src/main/java``.
 
+ Implemented by ``pants.backend.maven_layout.maven_layout.maven_layout``
+
 
 .. _bdict_page:
 
 page
 -------------------------------------------------------------------------------
 
-.. py:function:: page(resources=None, **kwargs)
+.. py:function:: page(source, resources=None, address=None, **kwargs)
 
  Describes a single documentation page.
 
@@ -825,6 +862,8 @@ page
    this target depends on.
  :type dependencies: list of targets
  :param resources: An optional list of Resources objects.
+
+ Implemented by ``pants.backend.core.targets.doc.Page``
 
 **Methods:**
 
@@ -850,6 +889,7 @@ pants
 
 
 
+
 .. _bdict_phase:
 
 phase
@@ -859,6 +899,8 @@ phase
 
 
 
+
+ Implemented by ``pants.goal.phase.Phase``
 
 
 .. _bdict_python_antlr_library:
@@ -884,6 +926,8 @@ python_antlr_library
    this target depends on.
  :type dependencies: list of targets
  :param dict exclusives: An optional dict of exclusives tags. See CheckExclusives for details.
+
+ Implemented by ``pants.backend.codegen.targets.python_antlr_library.PythonAntlrLibrary``
 
 **Methods:**
 
@@ -928,6 +972,8 @@ python_binary
    e.g. ``'CPython>=3', or just ['>=2.7','<3']`` for requirements agnostic to interpreter class.
  :param dict exclusives: An optional dict of exclusives tags. See CheckExclusives for details.
 
+ Implemented by ``pants.backend.python.targets.python_binary.PythonBinary``
+
 **Methods:**
 
  .. py:method:: with_description(description)
@@ -965,6 +1011,8 @@ python_library
 
 
 
+ Implemented by ``pants.backend.python.targets.python_library.PythonLibrary``
+
 **Methods:**
 
  .. py:method:: with_description(description)
@@ -978,11 +1026,13 @@ python_library
 python_requirement
 -------------------------------------------------------------------------------
 
-.. py:function:: python_requirement(requirement, name=None, repository=None, version_filter=None, use_2to3=False, compatibility=None, exclusives=None)
+.. py:function:: python_requirement(requirement, name=None, repository=None, version_filter=None, use_2to3=False, compatibility=None)
 
  Pants wrapper around pkg_resources.Requirement
 
 
+
+ Implemented by ``pants.backend.python.python_requirement.PythonRequirement``
 
 
 .. _bdict_python_requirement_library:
@@ -994,6 +1044,8 @@ python_requirement_library
 
 
 
+
+ Implemented by ``pants.backend.python.targets.python_requirement_library.PythonRequirementLibrary``
 
 **Methods:**
 
@@ -1011,6 +1063,7 @@ python_test_suite
 
 
  Deprecated way to group Python tests; use `dependencies`_
+
 
 
 
@@ -1035,6 +1088,8 @@ python_tests
  :param coverage: the module(s) whose coverage should be generated, e.g.
    'twitter.common.log' or ['twitter.common.log', 'twitter.common.http']
  :param dict exclusives: An optional dict of exclusives tags. See CheckExclusives for details.
+
+ Implemented by ``pants.backend.python.targets.python_tests.PythonTests``
 
 **Methods:**
 
@@ -1065,6 +1120,8 @@ python_thrift_library
  :type dependencies: list of targets
  :param dict exclusives: An optional dict of exclusives tags. See CheckExclusives for details.
 
+ Implemented by ``pants.backend.codegen.targets.python_thrift_library.PythonThriftLibrary``
+
 **Methods:**
 
  .. py:method:: with_description(description)
@@ -1086,6 +1143,8 @@ repo
  :param string name: Name of the repository.
  :param string url: Optional URL of the repository.
  :param string push_db: Path of the push history file.
+
+ Implemented by ``pants.backend.jvm.targets.repository.Repository``
 
 **Methods:**
 
@@ -1115,6 +1174,8 @@ resources
  :param sources: A list of filenames representing the resources
    this library provides.
 
+ Implemented by ``pants.backend.core.targets.resources.Resources``
+
 **Methods:**
 
  .. py:method:: with_description(description)
@@ -1141,6 +1202,8 @@ rglobs
  For example, ".*" matches ".bashrc" but "*" does not, mirroring the
  semantics of 'ls' without '-a'.
 
+ Implemented by ``twitter.common.dirutil.fileset.rglobs``
+
 
 .. _bdict_ROOT_DIR:
 
@@ -1150,6 +1213,7 @@ ROOT_DIR
 
 
  Root directory of source code (string).
+
 
 
 
@@ -1190,6 +1254,8 @@ scala_library
    targets containing resources that belong on this library's classpath.
  :param exclusives: An optional list of exclusives tags.
 
+ Implemented by ``pants.backend.jvm.targets.scala_library.ScalaLibrary``
+
 **Methods:**
 
  .. py:method:: with_description(description)
@@ -1228,6 +1294,8 @@ scala_specs
  :param resources: An optional list of Resources that should be in this target's classpath.
  :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
 
+ Implemented by ``pants.backend.jvm.targets.scala_tests.ScalaTests``
+
 **Methods:**
 
  .. py:method:: with_description(description)
@@ -1244,6 +1312,7 @@ scala_tests
 
 
  Old name for `scala_specs`_
+
 
 
 
@@ -1280,6 +1349,8 @@ scalac_plugin
    targets containing resources that belong on this library's classpath.
  :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
 
+ Implemented by ``pants.backend.jvm.targets.scalac_plugin.ScalacPlugin``
+
 **Methods:**
 
  .. py:method:: with_description(description)
@@ -1299,6 +1370,8 @@ setup_py
 
 
  Passes params to `setuptools.setup <https://pythonhosted.org/setuptools/setuptools.html>`_.
+
+ Implemented by ``pants.backend.python.python_artifact.PythonArtifact``
 
 **Methods:**
 
@@ -1343,6 +1416,8 @@ source_root
 
 
 
+ Implemented by ``pants.base.source_root.SourceRoot``
+
 
 .. _bdict_Time:
 
@@ -1356,12 +1431,13 @@ Time
 
 
 
+
 .. _bdict_wiki:
 
 wiki
 -------------------------------------------------------------------------------
 
-.. py:function:: wiki(name, url_builder, exclusives=None)
+.. py:function:: wiki(url_builder, **kwargs)
 
  Target that identifies a wiki where pages can be published.
 
@@ -1370,6 +1446,8 @@ wiki
    build file defines the target :class:`pants.base.address.Address`.
  :param url_builder: Function that accepts a page target and an optional wiki config dict.
  :returns: A tuple of (alias, fully qualified url).
+
+ Implemented by ``pants.backend.core.targets.doc.Wiki``
 
 **Methods:**
 

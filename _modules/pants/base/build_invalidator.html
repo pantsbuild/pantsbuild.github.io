@@ -282,7 +282,6 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#bundle">bundle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#check-exclusives">check-exclusives</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#check-published-deps">check_published_deps</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#checkstyle">checkstyle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#clean-all">clean-all</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#clean-all-async">clean-all-async</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#compile">compile</a></li>
@@ -445,24 +444,26 @@ body a.icon-home:hover{
     <span class="bp">self</span><span class="o">.</span><span class="n">_cache_key_gen_version</span> <span class="o">=</span> <span class="s">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">cache_key_gen_version</span> <span class="ow">or</span> <span class="s">&#39;&#39;</span><span class="p">,</span>
                                             <span class="n">GLOBAL_CACHE_KEY_GEN_VERSION</span><span class="p">])</span>
 
-<div class="viewcode-block" id="CacheKeyGenerator.key_for_target"><a class="viewcode-back" href="../../../base.html#pants.base.build_invalidator.CacheKeyGenerator.key_for_target">[docs]</a>  <span class="k">def</span> <span class="nf">key_for_target</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">transitive</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="CacheKeyGenerator.key_for_target"><a class="viewcode-back" href="../../../base.html#pants.base.build_invalidator.CacheKeyGenerator.key_for_target">[docs]</a>  <span class="k">def</span> <span class="nf">key_for_target</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">transitive</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">fingerprint_strategy</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get a key representing the given target and its sources.</span>
 
 <span class="sd">    A key for a set of targets can be created by calling combine_cache_keys()</span>
 <span class="sd">    on the target&#39;s individual cache keys.</span>
 
 <span class="sd">    :target: The target to create a CacheKey for.</span>
-<span class="sd">    :fingerprint_extra: A function that accepts a sha hash and updates it with extra fprint data.</span>
+<span class="sd">    :transitive: Whether or not to include a fingerprint of all of :target:&#39;s dependencies.</span>
+<span class="sd">    :fingerprint_strategy: A FingerprintStrategy instance, which can do per task, finer grained</span>
+<span class="sd">      fingerprinting of a given Target.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">hasher</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha1</span><span class="p">()</span>
     <span class="n">hasher</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cache_key_gen_version</span><span class="p">)</span>
     <span class="n">key_suffix</span> <span class="o">=</span> <span class="n">hasher</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()[:</span><span class="mi">12</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">transitive</span><span class="p">:</span>
-      <span class="n">target_key</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">transitive_invalidation_hash</span><span class="p">()</span>
+      <span class="n">target_key</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">transitive_invalidation_hash</span><span class="p">(</span><span class="n">fingerprint_strategy</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-      <span class="n">target_key</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">invalidation_hash</span><span class="p">()</span>
-    <span class="n">full_key</span> <span class="o">=</span> <span class="s">&#39;{target_key}#{key_suffix}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">target_key</span><span class="o">=</span><span class="n">target_key</span><span class="p">,</span> <span class="n">key_suffix</span><span class="o">=</span><span class="n">key_suffix</span><span class="p">)</span>
+      <span class="n">target_key</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">invalidation_hash</span><span class="p">(</span><span class="n">fingerprint_strategy</span><span class="p">)</span>
+    <span class="n">full_key</span> <span class="o">=</span> <span class="s">&#39;{target_key}_{key_suffix}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">target_key</span><span class="o">=</span><span class="n">target_key</span><span class="p">,</span> <span class="n">key_suffix</span><span class="o">=</span><span class="n">key_suffix</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">CacheKey</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">full_key</span><span class="p">,</span> <span class="n">target</span><span class="o">.</span><span class="n">payload</span><span class="o">.</span><span class="n">num_chunking_units</span><span class="p">,</span> <span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">payload</span><span class="p">,))</span>
 
 

@@ -283,7 +283,6 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#bundle">bundle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#check-exclusives">check-exclusives</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#check-published-deps">check_published_deps</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#checkstyle">checkstyle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#clean-all">clean-all</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#clean-all-async">clean-all-async</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#compile">compile</a></li>
@@ -448,7 +447,9 @@ code shows the BUILD file for a simple Java binary (in the <tt class="docutils l
 <div class="highlight-python"><div class="highlight"><pre><span class="n">jvm_binary</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&#39;main-bin&#39;</span><span class="p">,</span>
   <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
     <span class="n">pants</span><span class="p">(</span><span class="s">&#39;src/java/com/pants/examples/hello/greet&#39;</span><span class="p">),</span>
-    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;3rdparty:log4j&#39;</span><span class="p">),</span>
+  <span class="p">],</span>
+  <span class="n">resources</span><span class="o">=</span><span class="p">[</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;src/resources/com/pants/example/hello&#39;</span><span class="p">),</span>
   <span class="p">],</span>
   <span class="n">source</span> <span class="o">=</span> <span class="s">&#39;HelloMain.java&#39;</span><span class="p">,</span>
   <span class="n">main</span> <span class="o">=</span> <span class="s">&#39;com.pants.examples.hello.main.HelloMain&#39;</span><span class="p">,</span>
@@ -472,9 +473,6 @@ you probably also want to set up a <tt class="docutils literal"><span class="pre
   <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[],</span> <span class="c"># A more realistic example would depend on other libs,</span>
                      <span class="c"># but this &quot;hello world&quot; is pretty simple.</span>
   <span class="n">sources</span> <span class="o">=</span> <span class="n">globs</span><span class="p">(</span><span class="s">&#39;*.java&#39;</span><span class="p">),</span>
-  <span class="n">resources</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s">&#39;src/resources/com/pants/example/hello&#39;</span><span class="p">,</span>
-  <span class="p">],</span>
   <span class="n">provides</span> <span class="o">=</span> <span class="n">artifact</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s">&#39;com.pants.examples&#39;</span><span class="p">,</span>
                     <span class="n">name</span><span class="o">=</span><span class="s">&#39;hello-greet&#39;</span><span class="p">,</span>
                     <span class="n">repo</span><span class="o">=</span><span class="s">&#39;build-support/ivy:public&#39;</span><span class="p">,),</span>
@@ -484,32 +482,6 @@ you probably also want to set up a <tt class="docutils literal"><span class="pre
 <p>This library could depend on other build targets and artifacts;
 if your code imports
 something, that implies a <tt class="docutils literal"><span class="pre">BUILD</span></tt> dependency.</p>
-</div>
-<div class="section" id="depending-on-a-jar">
-<h3>Depending on a Jar<a class="headerlink" href="#depending-on-a-jar" title="Permalink to this headline">¶</a></h3>
-<p>The <cite>main-bin</cite> example depends a jar, <tt class="docutils literal"><span class="pre">log4j</span></tt>. Instead of compiling
-from source, Pants invokes <cite>ivy</cite> to fetch these jars. To reduce danger
-of version conflicts, we use the <a class="reference internal" href="3rdparty.html"><em>Third-Party Dependencies</em></a> idiom: we keep references
-to these &#8220;third-party&#8221; jars together in <tt class="docutils literal"><span class="pre">BUILD</span></tt> files under the
-<tt class="docutils literal"><span class="pre">3rdparty/</span></tt> directory. Thus, <tt class="docutils literal"><span class="pre">main</span></tt> has dependencies:</p>
-<div class="highlight-python"><div class="highlight"><pre>  <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;src/java/com/pants/examples/hello/greet&#39;</span><span class="p">),</span>
-    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;3rdparty:log4j&#39;</span><span class="p">),</span>
-  <span class="p">],</span>
-</pre></div>
-</div>
-<p>The <tt class="docutils literal"><span class="pre">BUILD</span></tt> files in <tt class="docutils literal"><span class="pre">3rdparty/</span></tt> have targets like:</p>
-<div class="highlight-python"><div class="highlight"><pre>dependencies(name=&#39;log4j&#39;,
-    dependencies=[
-       jar(org=&#39;log4j&#39;, name=&#39;log4j&#39;, rev=&#39;1.2.15&#39;).with_sources()
-         .exclude(org=&#39;jline&#39;, name=&#39;jline&#39;)
-         .exclude(org=&#39;javax.jms&#39;, name=&#39;jms&#39;)
-         .exclude(org=&#39;com.sun.jdmk&#39;, name=&#39;jmxtools&#39;)
-         .exclude(org=&#39;com.sun.jmx&#39;, name=&#39;jmxri&#39;))
-    ])
-</pre></div>
-</div>
-<p>Those <a class="reference internal" href="build_dictionary.html#bdict-jar"><em>jar() things</em></a> are references to public jars.</p>
 </div>
 <div class="section" id="a-test-target">
 <h3>A Test Target<a class="headerlink" href="#a-test-target" title="Permalink to this headline">¶</a></h3>
@@ -527,6 +499,35 @@ need a target for them:</p>
 </div>
 <p>As with other targets, this one depends on code that it imports. Thus, a typical
 test target depends on the library that it tests.</p>
+</div>
+<div class="section" id="depending-on-a-jar">
+<h3>Depending on a Jar<a class="headerlink" href="#depending-on-a-jar" title="Permalink to this headline">¶</a></h3>
+<p>The test example depends on a jar, <tt class="docutils literal"><span class="pre">junit</span></tt>. Instead of compiling
+from source, Pants invokes <cite>ivy</cite> to fetch such jars. To reduce the danger
+of version conflicts, we use the <a class="reference internal" href="3rdparty.html"><em>Third-Party Dependencies</em></a> idiom: we keep references
+to these &#8220;third-party&#8221; jars together in <tt class="docutils literal"><span class="pre">BUILD</span></tt> files under the
+<tt class="docutils literal"><span class="pre">3rdparty/</span></tt> directory. Thus, the test has a <tt class="docutils literal"><span class="pre">3rdparty:</span></tt> dependency:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">junit_tests</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;greet&#39;</span><span class="p">,</span>
+  <span class="n">sources</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s">&#39;*.java&#39;</span><span class="p">),</span>
+  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;3rdparty:junit&#39;</span><span class="p">),</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;src/java/com/pants/examples/hello/greet&#39;</span><span class="p">),</span>
+  <span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">BUILD</span></tt> files in <tt class="docutils literal"><span class="pre">3rdparty/</span></tt> have targets like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">jar_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;junit&#39;</span><span class="p">,</span>
+            <span class="n">jars</span> <span class="o">=</span> <span class="p">[</span>
+              <span class="n">jar</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s">&#39;junit&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;junit-dep&#39;</span><span class="p">,</span> <span class="n">rev</span><span class="o">=</span><span class="s">&#39;4.11&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">with_sources</span><span class="p">(),</span>
+            <span class="p">],</span>
+            <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
+              <span class="n">pants</span><span class="p">(</span><span class="s">&#39;:hamcrest-core&#39;</span><span class="p">),</span>
+            <span class="p">],</span>
+           <span class="p">)</span>
+</pre></div>
+</div>
+<p>Those <a class="reference internal" href="build_dictionary.html#bdict-jar"><em>jar() things</em></a> are references to public jars.</p>
 </div>
 </div>
 <div class="section" id="the-usual-commands-jvm">
@@ -555,7 +556,7 @@ dependencies, perhaps including helper files):</p>
 </pre></div>
 </div>
 <p class="last">If your bundle is JVM, it&#8217;s a zipfile which can run by means of an
-<tt class="docutils literal"><span class="pre">unzip</span></tt> and seting your <tt class="docutils literal"><span class="pre">CLASSPATH</span></tt> to <tt class="docutils literal"><span class="pre">$BASEDIR/my_service.jar</span></tt>
+<tt class="docutils literal"><span class="pre">unzip</span></tt> and setting your <tt class="docutils literal"><span class="pre">CLASSPATH</span></tt> to <tt class="docutils literal"><span class="pre">$BASEDIR/my_service.jar</span></tt>
 (where <tt class="docutils literal"><span class="pre">$BASEDIR</span> <span class="pre">is</span></tt> the directory you&#8217;ve just unzipped).</p>
 </dd>
 </dl>

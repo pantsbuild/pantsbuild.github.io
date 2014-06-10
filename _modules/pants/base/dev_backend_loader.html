@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pants.base.abbreviate_target_ids &mdash; pants 0.1 documentation</title>
+  <title>pants.base.dev_backend_loader &mdash; pants 0.1 documentation</title>
   
 
   
@@ -367,108 +367,69 @@ body a.icon-home:hover{
         <div class="rst-content">
           <ul class="wy-breadcrumbs">
   <li><a href="../../../index.html">Docs</a> &raquo;</li>
-  <li><a href="">pants.base.abbreviate_target_ids</a></li>
+  <li><a href="">pants.base.dev_backend_loader</a></li>
   
 </ul>
 <hr/>
 
           
-  <h1>Source code for pants.base.abbreviate_target_ids</h1><div class="highlight"><pre>
+  <h1>Source code for pants.base.dev_backend_loader</h1><div class="highlight"><pre>
 <span class="c"># Copyright 2014 Pants project contributors (see CONTRIBUTORS.md).</span>
 <span class="c"># Licensed under the Apache License, Version 2.0 (see LICENSE).</span>
 
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="p">(</span><span class="n">nested_scopes</span><span class="p">,</span> <span class="n">generators</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">with_statement</span><span class="p">,</span>
                         <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">)</span>
 
+<span class="kn">from</span> <span class="nn">twitter.common.collections</span> <span class="kn">import</span> <span class="n">OrderedSet</span>
 
-<div class="viewcode-block" id="abbreviate_target_ids"><a class="viewcode-back" href="../../../base.html#pants.base.abbreviate_target_ids.abbreviate_target_ids">[docs]</a><span class="k">def</span> <span class="nf">abbreviate_target_ids</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;Map a list of target IDs to shortened versions.</span>
 
-<span class="sd">  This method takes a list of strings (e.g. target IDs) and maps them to shortened versions of</span>
-<span class="sd">  themselves.</span>
+<div class="viewcode-block" id="load_backends_from_source"><a class="viewcode-back" href="../../../base.html#pants.base.dev_backend_loader.load_backends_from_source">[docs]</a><span class="k">def</span> <span class="nf">load_backends_from_source</span><span class="p">(</span><span class="n">build_file_parser</span><span class="p">,</span> <span class="n">additional_backends</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Installs pants backend packages to provide targets and helper functions to BUILD files and</span>
+<span class="sd">  goals to the cli.</span>
 
-<span class="sd">  The original strings should consist of &#39;.&#39;-delimited segments, and the abbreviated versions are</span>
-<span class="sd">  subsequences of these segments such that each string&#39;s subsequence is unique from others in @arr.</span>
-
-<span class="sd">  For example: ::</span>
-
-<span class="sd">     input: [</span>
-<span class="sd">       &#39;com.pants.a.b&#39;,</span>
-<span class="sd">       &#39;com.pants.a.c&#39;,</span>
-<span class="sd">       &#39;com.pants.d&#39;</span>
-<span class="sd">     ]</span>
-
-<span class="sd">  might return: ::</span>
-
-<span class="sd">     {</span>
-<span class="sd">       &#39;com.pants.a.b&#39;: &#39;b&#39;,</span>
-<span class="sd">       &#39;com.pants.a.c&#39;: &#39;c&#39;,</span>
-<span class="sd">       &#39;com.pants.d&#39;: &#39;d&#39;</span>
-<span class="sd">     }</span>
-
-<span class="sd">  This can be useful for debugging purposes, removing a lot of boilerplate from printed lists of</span>
-<span class="sd">  target IDs.</span>
-
-<span class="sd">  :param arr: List of strings representing target IDs.</span>
+<span class="sd">  :param build_file_parser: The parser to populate with target aliases and helper functions from</span>
+<span class="sd">    the backends.</span>
+<span class="sd">  :param additional_backends: An optional list of additional packages to load backends from.</span>
 <span class="sd">  &quot;&quot;&quot;</span>
-  <span class="n">split_keys</span> <span class="o">=</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">))</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">arr</span><span class="p">]</span>
+  <span class="k">print</span><span class="p">(</span><span class="s">&quot;Loading pants backends from source&quot;</span><span class="p">)</span>
+  <span class="n">backend_packages</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s">&#39;pants.backend.core&#39;</span><span class="p">,</span>
+    <span class="s">&#39;pants.backend.python&#39;</span><span class="p">,</span>
+    <span class="s">&#39;pants.backend.jvm&#39;</span><span class="p">,</span>
+    <span class="s">&#39;pants.backend.codegen&#39;</span><span class="p">,</span>
+    <span class="s">&#39;pants.backend.maven_layout&#39;</span><span class="p">,</span>
+  <span class="p">]</span>
+  <span class="k">for</span> <span class="n">backend_package</span> <span class="ow">in</span> <span class="n">OrderedSet</span><span class="p">(</span><span class="n">backend_packages</span> <span class="o">+</span> <span class="p">(</span><span class="n">additional_backends</span> <span class="ow">or</span> <span class="p">[])):</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="n">backend_package</span> <span class="o">+</span> <span class="s">&#39;.register&#39;</span><span class="p">,</span>
+                        <span class="p">{},</span>  <span class="c"># globals</span>
+                        <span class="p">{},</span>  <span class="c"># locals</span>
+                        <span class="p">[</span>
+                          <span class="s">&#39;target_aliases&#39;</span><span class="p">,</span>
+                          <span class="s">&#39;object_aliases&#39;</span><span class="p">,</span>
+                          <span class="s">&#39;applicative_path_relative_util_aliases&#39;</span><span class="p">,</span>
+                          <span class="s">&#39;partial_path_relative_util_aliases&#39;</span><span class="p">,</span>
+                          <span class="s">&#39;target_creation_utils&#39;</span><span class="p">,</span>
+                          <span class="s">&#39;commands&#39;</span><span class="p">,</span>
+                          <span class="s">&#39;goals&#39;</span><span class="p">,</span>
+                        <span class="p">])</span>
+    <span class="c">#TODO (tdesai) ISSUE-191 Consolidate all the 5 in two extension points.</span>
+    <span class="k">for</span> <span class="n">alias</span><span class="p">,</span> <span class="n">target_type</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">target_aliases</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+      <span class="n">build_file_parser</span><span class="o">.</span><span class="n">register_target_alias</span><span class="p">(</span><span class="n">alias</span><span class="p">,</span> <span class="n">target_type</span><span class="p">)</span>
 
-  <span class="n">split_keys_by_subseq</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">alias</span><span class="p">,</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">object_aliases</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+      <span class="n">build_file_parser</span><span class="o">.</span><span class="n">register_exposed_object</span><span class="p">(</span><span class="n">alias</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span>
 
-  <span class="k">def</span> <span class="nf">subseq_map</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">subseq_fn</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">result_cmp_fn</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">subseq_map_rec</span><span class="p">(</span><span class="n">remaining_arr</span><span class="p">,</span> <span class="n">subseq</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
-      <span class="k">if</span> <span class="ow">not</span> <span class="n">remaining_arr</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">subseq_fn</span><span class="p">:</span>
-          <span class="n">subseq_fn</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">subseq</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">subseq</span>
+    <span class="k">for</span> <span class="n">alias</span><span class="p">,</span> <span class="n">util</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">applicative_path_relative_util_aliases</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+      <span class="n">build_file_parser</span><span class="o">.</span><span class="n">register_applicative_path_relative_util</span><span class="p">(</span><span class="n">alias</span><span class="p">,</span> <span class="n">util</span><span class="p">)</span>
 
-      <span class="n">next_segment</span> <span class="o">=</span> <span class="n">remaining_arr</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
-      <span class="n">next_subseq</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">next_segment</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">subseq</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">alias</span><span class="p">,</span> <span class="n">util</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">partial_path_relative_util_aliases</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+      <span class="n">build_file_parser</span><span class="o">.</span><span class="n">register_partial_path_relative_util</span><span class="p">(</span><span class="n">alias</span><span class="p">,</span> <span class="n">util</span><span class="p">)</span>
 
-      <span class="n">skip_value</span> <span class="o">=</span> <span class="n">subseq_map_rec</span><span class="p">(</span><span class="n">remaining_arr</span><span class="p">,</span> <span class="n">subseq</span><span class="p">,</span> <span class="n">indent</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\t</span><span class="s">&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">alias</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">target_creation_utils</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+      <span class="n">build_file_parser</span><span class="o">.</span><span class="n">register_target_creation_utils</span><span class="p">(</span><span class="n">alias</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span>
 
-      <span class="n">add_value</span> <span class="o">=</span> <span class="n">subseq_map_rec</span><span class="p">(</span><span class="n">remaining_arr</span><span class="p">,</span> <span class="n">next_subseq</span><span class="p">,</span> <span class="n">indent</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\t</span><span class="s">&#39;</span><span class="p">)</span>
-
-      <span class="n">remaining_arr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">next_segment</span><span class="p">)</span>
-
-      <span class="k">if</span> <span class="n">result_cmp_fn</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">subseq</span><span class="p">:</span>
-          <span class="c"># Empty subsequence should always lose.</span>
-          <span class="k">return</span> <span class="n">add_value</span>
-        <span class="k">if</span> <span class="n">result_cmp_fn</span><span class="p">(</span><span class="n">skip_value</span><span class="p">,</span> <span class="n">add_value</span><span class="p">):</span>
-          <span class="k">return</span> <span class="n">skip_value</span>
-        <span class="k">return</span> <span class="n">add_value</span>
-
-      <span class="k">return</span> <span class="bp">None</span>
-
-    <span class="n">val</span> <span class="o">=</span> <span class="n">subseq_map_rec</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">arr</span><span class="p">),</span> <span class="nb">tuple</span><span class="p">())</span>
-    <span class="k">return</span> <span class="n">val</span>
-
-  <span class="k">def</span> <span class="nf">add_subseq</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">subseq</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">subseq</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">split_keys_by_subseq</span><span class="p">:</span>
-      <span class="n">split_keys_by_subseq</span><span class="p">[</span><span class="n">subseq</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">split_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">split_keys_by_subseq</span><span class="p">[</span><span class="n">subseq</span><span class="p">]:</span>
-      <span class="n">split_keys_by_subseq</span><span class="p">[</span><span class="n">subseq</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
-
-  <span class="k">for</span> <span class="n">split_key</span> <span class="ow">in</span> <span class="n">split_keys</span><span class="p">:</span>
-    <span class="n">subseq_map</span><span class="p">(</span><span class="n">split_key</span><span class="p">,</span> <span class="n">add_subseq</span><span class="p">)</span>
-
-  <span class="k">def</span> <span class="nf">return_min_subseqs</span><span class="p">(</span><span class="n">subseq1</span><span class="p">,</span> <span class="n">subseq2</span><span class="p">):</span>
-    <span class="n">collisions1</span> <span class="o">=</span> <span class="n">split_keys_by_subseq</span><span class="p">[</span><span class="n">subseq1</span><span class="p">]</span>
-    <span class="n">collisions2</span> <span class="o">=</span> <span class="n">split_keys_by_subseq</span><span class="p">[</span><span class="n">subseq2</span><span class="p">]</span>
-    <span class="k">return</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">collisions1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">collisions2</span><span class="p">)</span>
-            <span class="ow">or</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">collisions1</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">collisions2</span><span class="p">)</span>
-                <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">subseq1</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">subseq2</span><span class="p">)))</span>
-
-  <span class="n">min_subseq_by_key</span> <span class="o">=</span> <span class="p">{}</span>
-
-  <span class="k">for</span> <span class="n">split_key</span> <span class="ow">in</span> <span class="n">split_keys</span><span class="p">:</span>
-    <span class="n">min_subseq</span> <span class="o">=</span> <span class="n">subseq_map</span><span class="p">(</span><span class="n">split_key</span><span class="p">,</span> <span class="n">result_cmp_fn</span><span class="o">=</span><span class="n">return_min_subseqs</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">min_subseq</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;No min subseq found for </span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">split_key</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">min_subseq</span><span class="p">)))</span>
-    <span class="n">min_subseq_by_key</span><span class="p">[</span><span class="s">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">segment</span><span class="p">)</span> <span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="n">split_key</span><span class="p">)]</span> <span class="o">=</span> <span class="s">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">min_subseq</span><span class="p">)</span>
-
-  <span class="k">return</span> <span class="n">min_subseq_by_key</span></div>
+    <span class="n">module</span><span class="o">.</span><span class="n">register_commands</span><span class="p">()</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">register_goals</span><span class="p">()</span></div>
 </pre></div>
 
           <footer>

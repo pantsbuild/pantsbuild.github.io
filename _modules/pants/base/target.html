@@ -282,7 +282,6 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#bundle">bundle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#check-exclusives">check-exclusives</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#check-published-deps">check_published_deps</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#checkstyle">checkstyle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#clean-all">clean-all</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#clean-all-async">clean-all-async</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#compile">compile</a></li>
@@ -387,6 +386,7 @@ body a.icon-home:hover{
 
 <span class="kn">from</span> <span class="nn">pants.base.build_environment</span> <span class="kn">import</span> <span class="n">get_buildroot</span>
 <span class="kn">from</span> <span class="nn">pants.base.build_manual</span> <span class="kn">import</span> <span class="n">manual</span>
+<span class="kn">from</span> <span class="nn">pants.base.fingerprint_strategy</span> <span class="kn">import</span> <span class="n">DefaultFingerprintStrategy</span>
 <span class="kn">from</span> <span class="nn">pants.base.hash_utils</span> <span class="kn">import</span> <span class="n">hash_all</span>
 <span class="kn">from</span> <span class="nn">pants.base.payload</span> <span class="kn">import</span> <span class="n">EmptyPayload</span>
 <span class="kn">from</span> <span class="nn">pants.base.source_root</span> <span class="kn">import</span> <span class="n">SourceRoot</span>
@@ -523,40 +523,45 @@ body a.icon-home:hover{
         <span class="bp">self</span><span class="o">.</span><span class="n">declared_exclusives</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">exclusives</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">exclusives</span> <span class="o">=</span> <span class="bp">None</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">_cached_invalidation_hash</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_cached_transitive_invalidation_hash</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cached_fingerprint_map</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cached_transitive_fingerprint_map</span> <span class="o">=</span> <span class="p">{}</span>
 
-  <span class="k">def</span> <span class="nf">compute_invalidation_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">payload</span><span class="o">.</span><span class="n">invalidation_hash</span><span class="p">()</span>
+  <span class="k">def</span> <span class="nf">compute_invalidation_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fingerprint_strategy</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="n">fingerprint_strategy</span> <span class="o">=</span> <span class="n">fingerprint_strategy</span> <span class="ow">or</span> <span class="n">DefaultFingerprintStrategy</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">fingerprint_strategy</span><span class="o">.</span><span class="n">fingerprint_target</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-  <span class="k">def</span> <span class="nf">invalidation_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_invalidation_hash</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">_cached_invalidation_hash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_invalidation_hash</span><span class="p">()</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_invalidation_hash</span>
+  <span class="k">def</span> <span class="nf">invalidation_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fingerprint_strategy</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="n">fingerprint_strategy</span> <span class="o">=</span> <span class="n">fingerprint_strategy</span> <span class="ow">or</span> <span class="n">DefaultFingerprintStrategy</span><span class="p">()</span>
+    <span class="n">fp_name</span> <span class="o">=</span> <span class="n">fingerprint_strategy</span><span class="o">.</span><span class="n">name</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">fp_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_fingerprint_map</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_cached_fingerprint_map</span><span class="p">[</span><span class="n">fp_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_invalidation_hash</span><span class="p">(</span><span class="n">fingerprint_strategy</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_fingerprint_map</span><span class="p">[</span><span class="n">fp_name</span><span class="p">]</span>
 
   <span class="k">def</span> <span class="nf">mark_extra_invalidation_hash_dirty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">pass</span>
 
   <span class="k">def</span> <span class="nf">mark_invalidation_hash_dirty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_cached_invalidation_hash</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_cached_transitive_invalidation_hash</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cached_fingerprint_map</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cached_transitive_fingerprint_map</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">mark_extra_invalidation_hash_dirty</span><span class="p">()</span>
 
-  <span class="k">def</span> <span class="nf">transitive_invalidation_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_transitive_invalidation_hash</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+  <span class="k">def</span> <span class="nf">transitive_invalidation_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fingerprint_strategy</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="n">fingerprint_strategy</span> <span class="o">=</span> <span class="n">fingerprint_strategy</span> <span class="ow">or</span> <span class="n">DefaultFingerprintStrategy</span><span class="p">()</span>
+    <span class="n">fp_name</span> <span class="o">=</span> <span class="n">fingerprint_strategy</span><span class="o">.</span><span class="n">name</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">fp_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_transitive_fingerprint_map</span><span class="p">:</span>
       <span class="n">hasher</span> <span class="o">=</span> <span class="n">sha1</span><span class="p">()</span>
       <span class="n">direct_deps</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dependencies</span><span class="p">)</span>
       <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">direct_deps</span><span class="p">:</span>
-        <span class="n">hasher</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">dep</span><span class="o">.</span><span class="n">transitive_invalidation_hash</span><span class="p">())</span>
-      <span class="n">target_hash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">invalidation_hash</span><span class="p">()</span>
+        <span class="n">hasher</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">dep</span><span class="o">.</span><span class="n">transitive_invalidation_hash</span><span class="p">(</span><span class="n">fingerprint_strategy</span><span class="p">))</span>
+      <span class="n">target_hash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">invalidation_hash</span><span class="p">(</span><span class="n">fingerprint_strategy</span><span class="p">)</span>
       <span class="n">dependencies_hash</span> <span class="o">=</span> <span class="n">hasher</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()[:</span><span class="mi">12</span><span class="p">]</span>
       <span class="n">combined_hash</span> <span class="o">=</span> <span class="s">&#39;{target_hash}.{deps_hash}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">target_hash</span><span class="o">=</span><span class="n">target_hash</span><span class="p">,</span>
                                                          <span class="n">deps_hash</span><span class="o">=</span><span class="n">dependencies_hash</span><span class="p">)</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">_cached_transitive_invalidation_hash</span> <span class="o">=</span> <span class="n">combined_hash</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_transitive_invalidation_hash</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_cached_transitive_fingerprint_map</span><span class="p">[</span><span class="n">fp_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">combined_hash</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_transitive_fingerprint_map</span><span class="p">[</span><span class="n">fp_name</span><span class="p">]</span>
 
   <span class="k">def</span> <span class="nf">mark_transitive_invalidation_hash_dirty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_cached_transitive_invalidation_hash</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cached_transitive_fingerprint_map</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">mark_extra_transitive_invalidation_hash_dirty</span><span class="p">()</span>
 
   <span class="k">def</span> <span class="nf">mark_extra_transitive_invalidation_hash_dirty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

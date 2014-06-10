@@ -284,7 +284,6 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#bundle">bundle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#check-exclusives">check-exclusives</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#check-published-deps">check_published_deps</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#checkstyle">checkstyle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#clean-all">clean-all</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#clean-all-async">clean-all-async</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#compile">compile</a></li>
@@ -386,6 +385,12 @@ Pants uses <a class="reference external" href="http://ant.apache.org/ivy/">Ivy</
 jar-sharing. You should know the
 (<a class="reference external" href="http://maven.apache.org/guides/mini/guide-central-repository-upload.html">Maven/Ivy groupId, artifactId, and version</a>)
 you want to use.</p>
+<p>The 3rdparty pattern described here eases avoiding diamond dependency
+problems and version conflicts. If your code depends on artifacts
+<tt class="docutils literal"><span class="pre">foo</span></tt> and <tt class="docutils literal"><span class="pre">bar</span></tt>; and if <tt class="docutils literal"><span class="pre">foo</span></tt> and <tt class="docutils literal"><span class="pre">bar</span></tt> depend on different versions
+of the <tt class="docutils literal"><span class="pre">baz</span></tt> artifact; then some code will be linked together with a
+version of <tt class="docutils literal"><span class="pre">baz</span></tt> it didn&#8217;t &#8220;expect.&#8221; Tracking versioned
+dependencies in one place makes it easier to reason about them.</p>
 <div class="section" id="rdparty-jvm">
 <h2>3rdparty/jvm<a class="headerlink" href="#rdparty-jvm" title="Permalink to this headline">¶</a></h2>
 <p><strong>The JVM part of 3rdparty is organized by org (Maven groupId)</strong> Under there,
@@ -395,7 +400,7 @@ If there isn&#8217;t, then you want to create one. E.g., to import
 for a likely-looking <tt class="docutils literal"><span class="pre">BUILD</span></tt> file&#8211;in this example,
 <tt class="docutils literal"><span class="pre">3rdparty/jvm/com/google/sun/jersey/BUILD</span></tt>.</p>
 <p>In the appropriate <tt class="docutils literal"><span class="pre">BUILD</span></tt> file, you want to find a
-<a class="reference internal" href="build_dictionary.html#bdict-dependencies"><em>dependencies</em></a> with a <a class="reference internal" href="build_dictionary.html#bdict-jar"><em>jar</em></a> dependency:</p>
+<a class="reference internal" href="build_dictionary.html#bdict-jar-library"><em>jar_library</em></a> with the <a class="reference internal" href="build_dictionary.html#bdict-jar"><em>jar</em></a>s you want:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">ORG</span> <span class="o">=</span> <span class="s">&#39;com.sun.jersey&#39;</span>
 <span class="n">REV</span> <span class="o">=</span> <span class="s">&#39;1.12&#39;</span>
 
@@ -407,8 +412,8 @@ for a likely-looking <tt class="docutils literal"><span class="pre">BUILD</span>
 </pre></div>
 </div>
 <p>Here, the
-<a class="reference internal" href="build_dictionary.html#bdict-dependencies"><em>dependencies</em></a> name defines a target address that other build
-targets can refer to. The <a class="reference internal" href="build_dictionary.html#bdict-jar"><em>jar</em></a> dependencies refer to Jars known
+<a class="reference internal" href="build_dictionary.html#bdict-jar-library"><em>jar_library</em></a>s&#8217;s name defines a target address that other build
+targets can refer to. The <a class="reference internal" href="build_dictionary.html#bdict-jar"><em>jar</em></a>s refer to jars known
 to your Ivy resolver.</p>
 <p>If there&#8217;s already a <tt class="docutils literal"><span class="pre">jar</span></tt> importing the code you want but with a
 <em>different</em> version, then you probably want to talk to other folks in your
@@ -436,6 +441,30 @@ and add <tt class="docutils literal"><span class="pre">import</span></tt> statem
 </div>
 <p>And your Java code might have:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">org.junit.Test</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="round-trip-dependencies">
+<h2>&#8220;Round Trip&#8221; Dependencies<a class="headerlink" href="#round-trip-dependencies" title="Permalink to this headline">¶</a></h2>
+<p>Depending on your workspace&#8217;s relation with the rest of the world, you might
+want to look out for &#8220;round trip&#8221; dependencies.
+You can publish an artifact <em>near</em> generated from your workspace&#8217;s source code
+and consume a third-party artifact <em>far</em> that depends on <em>near</em>.
+If you&#8217;re not careful, you might depend on two versions of the <em>near</em> code:
+the local source code and an artifact you published a while ago.
+When consuming such third-party artifacts, exclude dependencies that
+&#8220;collide&#8221; with source code and depend on local source:</p>
+<div class="highlight-python"><div class="highlight"><pre>jar_library(name=&#39;far&#39;,
+  jars=[
+    # exclude conflicting dep:
+    jar(org=&#39;org.archie&#39;, name=&#39;far&#39;, rev=&#39;0.0.18&#39;).with_sources()
+      .exclude(org=&#39;org.archimedes&#39;, name=&#39;near&#39;)
+  ]
+  dependencies=[
+    # and re-include local version of source manually:
+    pants(&#39;util/near&#39;),
+  ]
+)
 </pre></div>
 </div>
 </div>
@@ -474,9 +503,11 @@ sets <tt class="docutils literal"><span class="pre">force=True</span></tt> to <e
 tell Pants not to pull in its dependencies. In your <tt class="docutils literal"><span class="pre">3rdparty/.../BUILD</span></tt>
 file, call the <tt class="docutils literal"><span class="pre">jar</span></tt>&#8216;s <tt class="docutils literal"><span class="pre">intransitive</span></tt> method; then carefully add
 hand-picked versions:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">dependencies</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;retro-naming-factory&quot;</span><span class="p">,</span>
-  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">jar_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;retro-naming-factory&quot;</span><span class="p">,</span>
+  <span class="n">jars</span><span class="o">=</span><span class="p">[</span>
     <span class="n">jar</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s">&#39;retro&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;retro-factory&#39;</span><span class="p">,</span> <span class="n">rev</span><span class="o">=</span><span class="s">&#39;5.0.18&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">intransitive</span><span class="p">(),</span>
+  <span class="p">],</span>
+  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
     <span class="c"># Don&#39;t use retro&#39;s expected (old, incompatible) common-logging</span>
     <span class="c"># version, yipe; use the same version we use everywhere else:</span>
     <span class="n">pants</span><span class="p">(</span><span class="s">&#39;3rdparty/jvm/common-logging&#39;</span><span class="p">),</span>
@@ -502,7 +533,7 @@ with the same org, name, and version, only the first reference will win, and sub
 will be silently discarded. One way that this can occur is with dependencies that use a classifier
 to differentiate themselves. Consider this example:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">jar_library</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&#39;stanford-corenlp&#39;</span><span class="p">,</span>
-  <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="n">jars</span> <span class="o">=</span> <span class="p">[</span>
     <span class="n">jar</span><span class="p">(</span><span class="n">org</span> <span class="o">=</span> <span class="s">&#39;edu.stanford.nlp&#39;</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;stanford-corenlp&#39;</span><span class="p">,</span> <span class="n">rev</span> <span class="o">=</span> <span class="s">&#39;3.3.1&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">with_sources</span><span class="p">(),</span>
     <span class="n">jar</span><span class="p">(</span><span class="n">org</span> <span class="o">=</span> <span class="s">&#39;edu.stanford.nlp&#39;</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;stanford-corenlp&#39;</span><span class="p">,</span> <span class="n">rev</span> <span class="o">=</span> <span class="s">&#39;3.3.1&#39;</span><span class="p">,</span> <span class="n">classifier</span><span class="o">=</span><span class="s">&#39;models&#39;</span><span class="p">)</span>
   <span class="p">]</span>
@@ -511,9 +542,9 @@ to differentiate themselves. Consider this example:</p>
 </div>
 <p>In the above example, the <tt class="docutils literal"><span class="pre">edu.stanford.nlp.stanford-corenlp-3.3.1-models.jar</span></tt> will be silently
 skipped by pants. To bring both jars in, use the <tt class="docutils literal"><span class="pre">.with_artifacts()</span></tt> method of the
-<a class="reference internal" href="build_dictionary.html#bdict-jar"><em>jar</em></a> target. Using this method, the above example would be transformed into:</p>
+<a class="reference internal" href="build_dictionary.html#bdict-jar"><em>jar</em></a>. Using this method, the above example would be transformed into:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">jar_library</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&#39;stanford-corenlp&#39;</span><span class="p">,</span>
-  <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="n">jars</span> <span class="o">=</span> <span class="p">[</span>
     <span class="n">jar</span><span class="p">(</span><span class="n">org</span> <span class="o">=</span> <span class="s">&#39;edu.stanford.nlp&#39;</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;stanford-corenlp&#39;</span><span class="p">,</span> <span class="n">rev</span> <span class="o">=</span> <span class="s">&#39;3.3.1&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">with_sources</span><span class="p">()</span><span class="o">.</span><span class="n">with_artifact</span><span class="p">(</span><span class="n">classifier</span><span class="o">=</span><span class="s">&#39;models&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">with_artifact</span><span class="p">(</span><span class="n">classifier</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">),</span>
   <span class="p">]</span>
 <span class="p">)</span>

@@ -284,7 +284,6 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#bundle">bundle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#check-exclusives">check-exclusives</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#check-published-deps">check_published_deps</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#checkstyle">checkstyle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#clean-all">clean-all</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#clean-all-async">clean-all-async</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#compile">compile</a></li>
@@ -421,6 +420,19 @@ at the environment and Targets, invokes some tool, generates things, and reports
 success/failure. It can define command-line flags to check.
 If you&#8217;re giving Pants the ability to do something new, you&#8217;re probably
 adding a Task. See <a class="reference internal" href="dev_tasks.html"><em>Task Developer&#8217;s Guide</em></a>.</dd>
+<dt><strong>Backend</strong></dt>
+<dd>Collection of Targets, Goals, Tasks, Commands to do something useful.
+At Pants&#8217; core are the abstractions Target, and Task.
+These abstractions don&#8217;t do anything in particular.
+To build real code, you need to define and register some more specific
+classes.
+For example, to build Java code, you want the <tt class="docutils literal"><span class="pre">JavaLibrary</span></tt> Target,
+<tt class="docutils literal"><span class="pre">JavaCompile</span></tt> task (registered in the <tt class="docutils literal"><span class="pre">compile</span></tt> goal), and many more.
+We organize this &#8220;real&#8221; code into &#8220;backends&#8221;. A typical backend defines
+several classes and registers them with the Pants core.
+For a design discussion on registering plugins, see the
+<a class="reference external" href="https://groups.google.com/forum/#!topic/pants-devel/uHGpR2K6FBI">Plugin Engine</a>
+<tt class="docutils literal"><span class="pre">pants-devel</span></tt> thread.</dd>
 <dt><strong>Context</strong></dt>
 <dd>An API to the state of the world. A Task uses this to find out
 things like the flags the user set on the command line, <cite>pants.ini</cite> config,
@@ -510,6 +522,9 @@ Perhaps there&#8217;s a lot of overhead starting up the tool, but it takes
 about as long to compile 10 source files as to compile one.
 A <tt class="docutils literal"><span class="pre">goal</span></tt> with a <tt class="docutils literal"><span class="pre">group</span></tt> will try to operate on more than one target at
 a time.</p>
+<p>For a design discussion of a big Group refactor, see the
+<a class="reference external" href="https://groups.google.com/forum/#!msg/pants-devel/glCHuLC9JF4/T6nbPcDVKk0J">RFC: GroupEngine / Task Lifecycle change proposal</a>
+<tt class="docutils literal"><span class="pre">pants-devel</span></tt> thread.</p>
 </div>
 </div>
 <div class="section" id="code-layout">
@@ -544,13 +559,13 @@ probably look at them to see the flow of control.</dd>
 <dt><a class="reference external" href="https://github.com/pantsbuild/pants/tree/master/src/python/pants/java/">java</a></dt>
 <dd>(TODO OMG bluffing) Utility classes useful to many things that work
 with Java code.</dd>
-<dt><a class="reference external" href="https://github.com/pantsbuild/pants/tree/master/src/python/pants/python/">python</a></dt>
+<dt><a class="reference external" href="https://github.com/pantsbuild/pants/tree/master/src/python/pants/backend/python/">python</a></dt>
 <dd>(TODO OMG bluffing) Utility classes useful to many things that work
 with Python code.</dd>
 <dt><a class="reference external" href="https://github.com/pantsbuild/pants/tree/master/src/python/pants/targets/">targets</a></dt>
 <dd>Source of the Target classes; e.g., the code behind <cite>jvm_binary</cite>
 lives here. If you define a new Target type, add its code here.</dd>
-<dt><a class="reference external" href="https://github.com/pantsbuild/pants/tree/master/src/python/pants/tasks/">tasks</a></dt>
+<dt><a class="reference external" href="https://github.com/pantsbuild/pants/tree/master/src/python/pants/backend/core/tasks/">tasks</a></dt>
 <dd>Source of the Task classes. E.g., <cite>junit_run</cite>, the code that
 invokes JUnit if someone tests a <cite>java_tests</cite> target.</dd>
 <dt><a class="reference external" href="https://github.com/pantsbuild/pants/tree/master/tests/python/pants_test/">tests/.../pants</a></dt>

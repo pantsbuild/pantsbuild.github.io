@@ -283,7 +283,6 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="#bundle">bundle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#check-exclusives">check-exclusives</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#check-published-deps">check_published_deps</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#checkstyle">checkstyle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#clean-all">clean-all</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#clean-all-async">clean-all-async</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#compile">compile</a></li>
@@ -396,7 +395,6 @@ goal.</p>
 <li><a class="reference internal" href="#gref-phase-bundle"><em>bundle</em></a> - Create an application bundle from binary targets.</li>
 <li><a class="reference internal" href="#gref-phase-check-exclusives"><em>check-exclusives</em></a> - Check for exclusivity violations.</li>
 <li><a class="reference internal" href="#gref-phase-check-published-deps"><em>check_published_deps</em></a> - Find references to outdated artifacts.</li>
-<li><a class="reference internal" href="#gref-phase-checkstyle"><em>checkstyle</em></a> - Run checkstyle against java source code.</li>
 <li><a class="reference internal" href="#gref-phase-clean-all"><em>clean-all</em></a> - Clean all build output.</li>
 <li><a class="reference internal" href="#gref-phase-clean-all-async"><em>clean-all-async</em></a> - Clean all build output in a background process.</li>
 <li><a class="reference internal" href="#gref-phase-compile"><em>compile</em></a> - Compile source code.</li>
@@ -442,7 +440,7 @@ goal.</p>
 <span id="gref-phase-bench"></span><h2>bench<a class="headerlink" href="#bench" title="Permalink to this headline">¶</a></h2>
 <ul id="gref-cli-bench">
 <li><p class="first"><strong>bench</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">BenchmarkRun</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.tasks.benchmark_run.BenchmarkRun</span></tt></p>
 <ul>
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--bench-target</span></tt>
@@ -477,26 +475,31 @@ Implemented by class <tt class="docutils literal"><span class="pre">BenchmarkRun
 <a class="reference internal" href="#gref-cli-genprotoc"><em>gen:protoc</em></a>
 <a class="reference internal" href="#gref-cli-checkexclusives"><em>check-exclusives</em></a>
 <a class="reference internal" href="#gref-cli-ivy"><em>ivy</em></a>
-<a class="reference internal" href="#gref-cli-compileapt"><em>compile:apt</em></a>
-<a class="reference internal" href="#gref-cli-compilejava"><em>compile:java</em></a>
-<a class="reference internal" href="#gref-cli-compilescala"><em>compile:scala</em></a></div></blockquote>
+<a class="reference internal" href="#gref-cli-jvm"><em>jvm</em></a></div></blockquote>
 </div>
 <div class="section" id="binary">
 <span id="gref-phase-binary"></span><h2>binary<a class="headerlink" href="#binary" title="Permalink to this headline">¶</a></h2>
 <p>Create a jvm binary jar.</p>
 <ul>
-<li><p class="first">Implemented by class <tt class="docutils literal"><span class="pre">BinaryCreate</span></tt></p>
+<li><p class="first">Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.tasks.binary_create.BinaryCreate</span></tt></p>
 <p>Creates a runnable monolithic binary deploy jar.</p>
 </li>
 </ul>
 <ul id="gref-cli-binarydup">
 <li><p class="first"><strong>binary:dup</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">DuplicateDetector</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.tasks.detect_duplicates.DuplicateDetector</span></tt></p>
 <p>Detect classes and resources with the same qualified name on the classpath.</p>
 <ul>
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--binary-dup-fail-fast/--no-binary-dup-fail-fast</span></tt></div>
 <div class="line">Fail fast if duplicate classes/resources are found.</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--binary-dup-excludes</span></tt>
+<tt class="docutils literal"><span class="pre">string</span></tt>
+(Default: <tt class="docutils literal"><span class="pre">dependencies,license,notice,.DS_Store,notice.txt,cmdline.arg.info.txt.1,license.txt</span></tt>)</div>
+<div class="line">A comma separated list of files to exclude from duplicate check, defaults to:</div>
 </div>
 </li>
 </ul>
@@ -510,16 +513,14 @@ Implemented by class <tt class="docutils literal"><span class="pre">DuplicateDet
 <a class="reference internal" href="#gref-cli-genprotoc"><em>gen:protoc</em></a>
 <a class="reference internal" href="#gref-cli-checkexclusives"><em>check-exclusives</em></a>
 <a class="reference internal" href="#gref-cli-ivy"><em>ivy</em></a>
-<a class="reference internal" href="#gref-cli-compileapt"><em>compile:apt</em></a>
-<a class="reference internal" href="#gref-cli-compilejava"><em>compile:java</em></a>
-<a class="reference internal" href="#gref-cli-compilescala"><em>compile:scala</em></a>
+<a class="reference internal" href="#gref-cli-jvm"><em>jvm</em></a>
 <a class="reference internal" href="#gref-cli-jar"><em>jar</em></a></div></blockquote>
 </div>
 <div class="section" id="bootstrap">
 <span id="gref-phase-bootstrap"></span><h2>bootstrap<a class="headerlink" href="#bootstrap" title="Permalink to this headline">¶</a></h2>
 <p>Bootstrap tools needed for building.</p>
 <ul class="simple">
-<li>Implemented by class <tt class="docutils literal"><span class="pre">BootstrapJvmTools</span></tt></li>
+<li>Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.tasks.bootstrap_jvm_tools.BootstrapJvmTools</span></tt></li>
 </ul>
 <p><strong>Other command-line options:</strong></p>
 <blockquote>
@@ -528,7 +529,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">DuplicateDet
 <div class="section" id="builddict">
 <span id="gref-phase-builddict"></span><h2>builddict<a class="headerlink" href="#builddict" title="Permalink to this headline">¶</a></h2>
 <ul>
-<li><p class="first">Implemented by class <tt class="docutils literal"><span class="pre">BuildBuildDictionary</span></tt></p>
+<li><p class="first">Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.tasks.builddictionary.BuildBuildDictionary</span></tt></p>
 <p>Generate documentation for the Sphinx site.</p>
 </li>
 </ul>
@@ -540,7 +541,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">DuplicateDet
 <span id="gref-phase-buildlint"></span><h2>buildlint<a class="headerlink" href="#buildlint" title="Permalink to this headline">¶</a></h2>
 <ul id="gref-cli-buildlint">
 <li><p class="first"><strong>buildlint</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">BuildLint</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.tasks.build_lint.BuildLint</span></tt></p>
 <ul>
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--buildlint-transitive/--no-buildlint-transitive</span></tt></div>
@@ -569,16 +570,14 @@ Implemented by class <tt class="docutils literal"><span class="pre">BuildLint</s
 <a class="reference internal" href="#gref-cli-genprotoc"><em>gen:protoc</em></a>
 <a class="reference internal" href="#gref-cli-checkexclusives"><em>check-exclusives</em></a>
 <a class="reference internal" href="#gref-cli-ivy"><em>ivy</em></a>
-<a class="reference internal" href="#gref-cli-compileapt"><em>compile:apt</em></a>
-<a class="reference internal" href="#gref-cli-compilejava"><em>compile:java</em></a>
-<a class="reference internal" href="#gref-cli-compilescala"><em>compile:scala</em></a></div></blockquote>
+<a class="reference internal" href="#gref-cli-jvm"><em>jvm</em></a></div></blockquote>
 </div>
 <div class="section" id="bundle">
 <span id="gref-phase-bundle"></span><h2>bundle<a class="headerlink" href="#bundle" title="Permalink to this headline">¶</a></h2>
 <p>Create an application bundle from binary targets.</p>
 <ul id="gref-cli-bundle">
 <li><p class="first"><strong>bundle</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">BundleCreate</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.tasks.bundle_create.BundleCreate</span></tt></p>
 <ul>
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--bundle-deployjar/--no-bundle-deployjar</span></tt></div>
@@ -607,17 +606,16 @@ Implemented by class <tt class="docutils literal"><span class="pre">BundleCreate
 <a class="reference internal" href="#gref-cli-genprotoc"><em>gen:protoc</em></a>
 <a class="reference internal" href="#gref-cli-checkexclusives"><em>check-exclusives</em></a>
 <a class="reference internal" href="#gref-cli-ivy"><em>ivy</em></a>
-<a class="reference internal" href="#gref-cli-compileapt"><em>compile:apt</em></a>
-<a class="reference internal" href="#gref-cli-compilejava"><em>compile:java</em></a>
-<a class="reference internal" href="#gref-cli-compilescala"><em>compile:scala</em></a>
-<a class="reference internal" href="#gref-cli-jar"><em>jar</em></a></div></blockquote>
+<a class="reference internal" href="#gref-cli-jvm"><em>jvm</em></a>
+<a class="reference internal" href="#gref-cli-jar"><em>jar</em></a>
+<a class="reference internal" href="#gref-cli-binarydup"><em>binary:dup</em></a></div></blockquote>
 </div>
 <div class="section" id="check-exclusives">
 <span id="gref-phase-check-exclusives"></span><h2>check-exclusives<a class="headerlink" href="#check-exclusives" title="Permalink to this headline">¶</a></h2>
 <p>Check for exclusivity violations.</p>
 <ul id="gref-cli-checkexclusives">
 <li><p class="first"><strong>check-exclusives</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">CheckExclusives</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.tasks.check_exclusives.CheckExclusives</span></tt></p>
 <p>Computes transitive exclusive maps.</p>
 <p>This computes transitive exclusive tags for a dependency graph rooted
 with a set of build targets specified by a user. If this process produces
@@ -675,7 +673,7 @@ ExclusivesMapping object will be created.</p>
 <p>Find references to outdated artifacts.</p>
 <ul id="gref-cli-checkpublisheddeps">
 <li><p class="first"><strong>check_published_deps</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">CheckPublishedDeps</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.tasks.check_published_deps.CheckPublishedDeps</span></tt></p>
 <ul>
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--check_published_deps-sep</span></tt>
@@ -696,36 +694,12 @@ Implemented by class <tt class="docutils literal"><span class="pre">CheckPublish
 <blockquote>
 <div><a class="reference internal" href="#common">Common</a></div></blockquote>
 </div>
-<div class="section" id="checkstyle">
-<span id="gref-phase-checkstyle"></span><h2>checkstyle<a class="headerlink" href="#checkstyle" title="Permalink to this headline">¶</a></h2>
-<p>Run checkstyle against java source code.</p>
-<ul id="gref-cli-checkstyle">
-<li><p class="first"><strong>checkstyle</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">Checkstyle</span></tt></p>
-<ul>
-<li><div class="first line-block">
-<div class="line"><tt class="docutils literal"><span class="pre">--checkstyle-skip/--no-checkstyle-skip</span></tt></div>
-<div class="line">Skip checkstyle.</div>
-</div>
-</li>
-</ul>
-</li>
-</ul>
-<p><strong>Other command-line options:</strong></p>
-<blockquote>
-<div><a class="reference internal" href="#common">Common</a>
-<a class="reference internal" href="#gref-cli-genthrift"><em>gen:thrift</em></a>
-<a class="reference internal" href="#gref-cli-genscrooge"><em>gen:scrooge</em></a>
-<a class="reference internal" href="#gref-cli-genprotoc"><em>gen:protoc</em></a>
-<a class="reference internal" href="#gref-cli-checkexclusives"><em>check-exclusives</em></a>
-<a class="reference internal" href="#gref-cli-ivy"><em>ivy</em></a></div></blockquote>
-</div>
 <div class="section" id="clean-all">
 <span id="gref-phase-clean-all"></span><h2>clean-all<a class="headerlink" href="#clean-all" title="Permalink to this headline">¶</a></h2>
 <p>Clean all build output.</p>
 <ul id="gref-cli-cleanall">
 <li><p class="first"><strong>clean-all</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">Cleaner</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.tasks.clean.Cleaner</span></tt></p>
 <p>Clean all current build products.</p>
 <ul>
 <li><div class="first line-block">
@@ -749,7 +723,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">Cleaner</spa
 <p>Clean all build output in a background process.</p>
 <ul id="gref-cli-cleanallasync">
 <li><p class="first"><strong>clean-all-async</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">AsyncCleaner</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.tasks.clean.AsyncCleaner</span></tt></p>
 <p>Clean all current build products in a background process.</p>
 <ul>
 <li><div class="first line-block">
@@ -771,10 +745,56 @@ Implemented by class <tt class="docutils literal"><span class="pre">AsyncCleaner
 <div class="section" id="compile">
 <span id="gref-phase-compile"></span><h2>compile<a class="headerlink" href="#compile" title="Permalink to this headline">¶</a></h2>
 <p>Compile source code.</p>
-<ul id="gref-cli-compileapt">
-<li><p class="first"><strong>compile:apt</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">AptCompile</span></tt></p>
+<ul id="gref-cli-jvm">
+<li><p class="first"><strong>jvm</strong>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.tasks.group_task.SingletonGroupTask</span></tt></p>
 <ul>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--compile-scala-warnings/--no-compile-scala-warnings</span></tt>
+(Default: <tt class="docutils literal"><span class="pre">True</span></tt>)</div>
+<div class="line">Compile with all configured warnings enabled.</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--compile-scala-partition-size-hint</span></tt>
+<tt class="docutils literal"><span class="pre">int</span></tt>
+(Default: <tt class="docutils literal"><span class="pre">-1</span></tt>)</div>
+<div class="line">Roughly how many source files to attempt to compile together. Set to a large number to compile all sources together. Set this to 0 to compile target-by-target. Default is set in pants.ini.</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--compile-scala-missing-deps</span></tt>
+<tt class="docutils literal"><span class="pre">choice</span></tt>
+(Default: <tt class="docutils literal"><span class="pre">warn</span></tt>)</div>
+<div class="line">One of off, warn, fatal. Check for missing dependencies in scalacode. Reports actual dependencies A -&gt; B where there is no transitive BUILD file dependency path from A to B.If fatal, missing deps are treated as a build error.</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--compile-scala-missing-direct-deps</span></tt>
+<tt class="docutils literal"><span class="pre">choice</span></tt>
+(Default: <tt class="docutils literal"><span class="pre">off</span></tt>)</div>
+<div class="line">One of off, warn, fatal. Check for missing direct dependencies in scala code. Reports actual dependencies A -&gt; B where there is no direct BUILD file dependency path from A to B. This is a very strict check, as in practice it is common to rely on transitive, non-direct dependencies, e.g., due to type inference or when the main target in a BUILD file is modified to depend on other targets in the same BUILD file as an implementation detail. It may still be useful to set it to fatal temorarily, to detect these.</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--compile-scala-unnecessary-deps</span></tt>
+<tt class="docutils literal"><span class="pre">choice</span></tt>
+(Default: <tt class="docutils literal"><span class="pre">off</span></tt>)</div>
+<div class="line">One of off, warn, fatal. Check for declared dependencies in scala code that are not needed. This is a very strict check. For example, generated code will often legitimately have BUILD dependencies that are unused in practice.</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--compile-scala-delete-scratch/--no-compile-scala-delete-scratch</span></tt>
+(Default: <tt class="docutils literal"><span class="pre">True</span></tt>)</div>
+<div class="line">Leave intermediate scratch files around, for debugging build problems.</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--compile-scala-plugins</span></tt>
+<tt class="docutils literal"><span class="pre">string</span></tt></div>
+<div class="line">Use these scalac plugins. Default is set in pants.ini.</div>
+</div>
+</li>
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--compile-apt-warnings/--no-compile-apt-warnings</span></tt>
 (Default: <tt class="docutils literal"><span class="pre">True</span></tt>)</div>
@@ -792,14 +812,14 @@ Implemented by class <tt class="docutils literal"><span class="pre">AptCompile</
 <div class="line"><tt class="docutils literal"><span class="pre">--compile-apt-missing-deps</span></tt>
 <tt class="docutils literal"><span class="pre">choice</span></tt>
 (Default: <tt class="docutils literal"><span class="pre">warn</span></tt>)</div>
-<div class="line">One of off, warn, fatal. Check for missing dependencies in javacode. Reports actual dependencies A -&amp;gt; B where there is no transitive BUILD file dependency path from A to B.If fatal, missing deps are treated as a build error.</div>
+<div class="line">One of off, warn, fatal. Check for missing dependencies in javacode. Reports actual dependencies A -&gt; B where there is no transitive BUILD file dependency path from A to B.If fatal, missing deps are treated as a build error.</div>
 </div>
 </li>
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--compile-apt-missing-direct-deps</span></tt>
 <tt class="docutils literal"><span class="pre">choice</span></tt>
 (Default: <tt class="docutils literal"><span class="pre">off</span></tt>)</div>
-<div class="line">One of off, warn, fatal. Check for missing direct dependencies in java code. Reports actual dependencies A -&amp;gt; B where there is no direct BUILD file dependency path from A to B. This is a very strict check, as in practice it is common to rely on transitive, non-direct dependencies, e.g., due to type inference or when the main target in a BUILD file is modified to depend on other targets in the same BUILD file as an implementation detail. It may still be useful to set it to fatal temorarily, to detect these.</div>
+<div class="line">One of off, warn, fatal. Check for missing direct dependencies in java code. Reports actual dependencies A -&gt; B where there is no direct BUILD file dependency path from A to B. This is a very strict check, as in practice it is common to rely on transitive, non-direct dependencies, e.g., due to type inference or when the main target in a BUILD file is modified to depend on other targets in the same BUILD file as an implementation detail. It may still be useful to set it to fatal temorarily, to detect these.</div>
 </div>
 </li>
 <li><div class="first line-block">
@@ -821,13 +841,6 @@ Implemented by class <tt class="docutils literal"><span class="pre">AptCompile</
 <div class="line">Pass these extra args to javac.</div>
 </div>
 </li>
-</ul>
-</li>
-</ul>
-<ul id="gref-cli-compilejava">
-<li><p class="first"><strong>compile:java</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">JavaCompile</span></tt></p>
-<ul>
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--compile-java-warnings/--no-compile-java-warnings</span></tt>
 (Default: <tt class="docutils literal"><span class="pre">True</span></tt>)</div>
@@ -845,14 +858,14 @@ Implemented by class <tt class="docutils literal"><span class="pre">JavaCompile<
 <div class="line"><tt class="docutils literal"><span class="pre">--compile-java-missing-deps</span></tt>
 <tt class="docutils literal"><span class="pre">choice</span></tt>
 (Default: <tt class="docutils literal"><span class="pre">warn</span></tt>)</div>
-<div class="line">One of off, warn, fatal. Check for missing dependencies in javacode. Reports actual dependencies A -&amp;gt; B where there is no transitive BUILD file dependency path from A to B.If fatal, missing deps are treated as a build error.</div>
+<div class="line">One of off, warn, fatal. Check for missing dependencies in javacode. Reports actual dependencies A -&gt; B where there is no transitive BUILD file dependency path from A to B.If fatal, missing deps are treated as a build error.</div>
 </div>
 </li>
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--compile-java-missing-direct-deps</span></tt>
 <tt class="docutils literal"><span class="pre">choice</span></tt>
 (Default: <tt class="docutils literal"><span class="pre">off</span></tt>)</div>
-<div class="line">One of off, warn, fatal. Check for missing direct dependencies in java code. Reports actual dependencies A -&amp;gt; B where there is no direct BUILD file dependency path from A to B. This is a very strict check, as in practice it is common to rely on transitive, non-direct dependencies, e.g., due to type inference or when the main target in a BUILD file is modified to depend on other targets in the same BUILD file as an implementation detail. It may still be useful to set it to fatal temorarily, to detect these.</div>
+<div class="line">One of off, warn, fatal. Check for missing direct dependencies in java code. Reports actual dependencies A -&gt; B where there is no direct BUILD file dependency path from A to B. This is a very strict check, as in practice it is common to rely on transitive, non-direct dependencies, e.g., due to type inference or when the main target in a BUILD file is modified to depend on other targets in the same BUILD file as an implementation detail. It may still be useful to set it to fatal temorarily, to detect these.</div>
 </div>
 </li>
 <li><div class="first line-block">
@@ -877,59 +890,6 @@ Implemented by class <tt class="docutils literal"><span class="pre">JavaCompile<
 </ul>
 </li>
 </ul>
-<ul id="gref-cli-compilescala">
-<li><p class="first"><strong>compile:scala</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">ScalaCompile</span></tt></p>
-<ul>
-<li><div class="first line-block">
-<div class="line"><tt class="docutils literal"><span class="pre">--compile-scala-warnings/--no-compile-scala-warnings</span></tt>
-(Default: <tt class="docutils literal"><span class="pre">True</span></tt>)</div>
-<div class="line">Compile with all configured warnings enabled.</div>
-</div>
-</li>
-<li><div class="first line-block">
-<div class="line"><tt class="docutils literal"><span class="pre">--compile-scala-partition-size-hint</span></tt>
-<tt class="docutils literal"><span class="pre">int</span></tt>
-(Default: <tt class="docutils literal"><span class="pre">-1</span></tt>)</div>
-<div class="line">Roughly how many source files to attempt to compile together. Set to a large number to compile all sources together. Set this to 0 to compile target-by-target. Default is set in pants.ini.</div>
-</div>
-</li>
-<li><div class="first line-block">
-<div class="line"><tt class="docutils literal"><span class="pre">--compile-scala-missing-deps</span></tt>
-<tt class="docutils literal"><span class="pre">choice</span></tt>
-(Default: <tt class="docutils literal"><span class="pre">warn</span></tt>)</div>
-<div class="line">One of off, warn, fatal. Check for missing dependencies in scalacode. Reports actual dependencies A -&amp;gt; B where there is no transitive BUILD file dependency path from A to B.If fatal, missing deps are treated as a build error.</div>
-</div>
-</li>
-<li><div class="first line-block">
-<div class="line"><tt class="docutils literal"><span class="pre">--compile-scala-missing-direct-deps</span></tt>
-<tt class="docutils literal"><span class="pre">choice</span></tt>
-(Default: <tt class="docutils literal"><span class="pre">off</span></tt>)</div>
-<div class="line">One of off, warn, fatal. Check for missing direct dependencies in scala code. Reports actual dependencies A -&amp;gt; B where there is no direct BUILD file dependency path from A to B. This is a very strict check, as in practice it is common to rely on transitive, non-direct dependencies, e.g., due to type inference or when the main target in a BUILD file is modified to depend on other targets in the same BUILD file as an implementation detail. It may still be useful to set it to fatal temorarily, to detect these.</div>
-</div>
-</li>
-<li><div class="first line-block">
-<div class="line"><tt class="docutils literal"><span class="pre">--compile-scala-unnecessary-deps</span></tt>
-<tt class="docutils literal"><span class="pre">choice</span></tt>
-(Default: <tt class="docutils literal"><span class="pre">off</span></tt>)</div>
-<div class="line">One of off, warn, fatal. Check for declared dependencies in scala code that are not needed. This is a very strict check. For example, generated code will often legitimately have BUILD dependencies that are unused in practice.</div>
-</div>
-</li>
-<li><div class="first line-block">
-<div class="line"><tt class="docutils literal"><span class="pre">--compile-scala-delete-scratch/--no-compile-scala-delete-scratch</span></tt>
-(Default: <tt class="docutils literal"><span class="pre">True</span></tt>)</div>
-<div class="line">Leave intermediate scratch files around, for debugging build problems.</div>
-</div>
-</li>
-<li><div class="first line-block">
-<div class="line"><tt class="docutils literal"><span class="pre">--compile-scala-plugins</span></tt>
-<tt class="docutils literal"><span class="pre">string</span></tt></div>
-<div class="line">Use these scalac plugins. Default is set in pants.ini.</div>
-</div>
-</li>
-</ul>
-</li>
-</ul>
 <p><strong>Other command-line options:</strong></p>
 <blockquote>
 <div><a class="reference internal" href="#common">Common</a>
@@ -944,7 +904,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">ScalaCompile
 <p>Print the target&#8217;s dependees.</p>
 <ul id="gref-cli-dependees">
 <li><p class="first"><strong>dependees</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">ReverseDepmap</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.tasks.dependees.ReverseDepmap</span></tt></p>
 <p>Outputs all targets whose dependencies include at least one of the input targets.</p>
 <ul>
 <li><div class="first line-block">
@@ -982,7 +942,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">ReverseDepma
 <p>Print the target&#8217;s dependencies.</p>
 <ul id="gref-cli-dependencies">
 <li><p class="first"><strong>dependencies</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">Dependencies</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.tasks.dependencies.Dependencies</span></tt></p>
 <p>Generates a textual list (using the target format) for the dependency set of a target.</p>
 <ul>
 <li><div class="first line-block">
@@ -1014,7 +974,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">Dependencies
 <p>Depict the target&#8217;s dependencies.</p>
 <ul id="gref-cli-depmap">
 <li><p class="first"><strong>depmap</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">Depmap</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.tasks.depmap.Depmap</span></tt></p>
 <p>Generates either a textual dependency tree or a graphviz digraph dot file for the dependency
 set of a target.</p>
 <ul>
@@ -1064,12 +1024,19 @@ set of a target.</p>
 <p>Detect duplicate classes and resources on the classpath.</p>
 <ul id="gref-cli-detectduplicates">
 <li><p class="first"><strong>detect-duplicates</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">DuplicateDetector</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.tasks.detect_duplicates.DuplicateDetector</span></tt></p>
 <p>Detect classes and resources with the same qualified name on the classpath.</p>
 <ul>
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--detect-duplicates-fail-fast/--no-detect-duplicates-fail-fast</span></tt></div>
 <div class="line">Fail fast if duplicate classes/resources are found.</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--detect-duplicates-excludes</span></tt>
+<tt class="docutils literal"><span class="pre">string</span></tt>
+(Default: <tt class="docutils literal"><span class="pre">dependencies,license,notice,.DS_Store,notice.txt,cmdline.arg.info.txt.1,license.txt</span></tt>)</div>
+<div class="line">A comma separated list of files to exclude from duplicate check, defaults to:</div>
 </div>
 </li>
 </ul>
@@ -1083,9 +1050,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">DuplicateDet
 <a class="reference internal" href="#gref-cli-genprotoc"><em>gen:protoc</em></a>
 <a class="reference internal" href="#gref-cli-checkexclusives"><em>check-exclusives</em></a>
 <a class="reference internal" href="#gref-cli-ivy"><em>ivy</em></a>
-<a class="reference internal" href="#gref-cli-compileapt"><em>compile:apt</em></a>
-<a class="reference internal" href="#gref-cli-compilejava"><em>compile:java</em></a>
-<a class="reference internal" href="#gref-cli-compilescala"><em>compile:scala</em></a>
+<a class="reference internal" href="#gref-cli-jvm"><em>jvm</em></a>
 <a class="reference internal" href="#gref-cli-jar"><em>jar</em></a></div></blockquote>
 </div>
 <div class="section" id="doc">
@@ -1093,7 +1058,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">DuplicateDet
 <p>Create documentation.</p>
 <ul id="gref-cli-docjavadoc">
 <li><p class="first"><strong>doc:javadoc</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">JavadocGen</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.tasks.javadoc_gen.JavadocGen</span></tt></p>
 <ul>
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--doc-javadoc-include-codegen/--no-doc-javadoc-include-codegen</span></tt></div>
@@ -1126,7 +1091,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">JavadocGen</
 </ul>
 <ul id="gref-cli-docscaladoc">
 <li><p class="first"><strong>doc:scaladoc</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">ScaladocGen</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.tasks.scaladoc_gen.ScaladocGen</span></tt></p>
 <ul>
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--doc-scaladoc-include-codegen/--no-doc-scaladoc-include-codegen</span></tt></div>
@@ -1165,16 +1130,14 @@ Implemented by class <tt class="docutils literal"><span class="pre">ScaladocGen<
 <a class="reference internal" href="#gref-cli-genprotoc"><em>gen:protoc</em></a>
 <a class="reference internal" href="#gref-cli-checkexclusives"><em>check-exclusives</em></a>
 <a class="reference internal" href="#gref-cli-ivy"><em>ivy</em></a>
-<a class="reference internal" href="#gref-cli-compileapt"><em>compile:apt</em></a>
-<a class="reference internal" href="#gref-cli-compilejava"><em>compile:java</em></a>
-<a class="reference internal" href="#gref-cli-compilescala"><em>compile:scala</em></a></div></blockquote>
+<a class="reference internal" href="#gref-cli-jvm"><em>jvm</em></a></div></blockquote>
 </div>
 <div class="section" id="eclipse">
 <span id="gref-phase-eclipse"></span><h2>eclipse<a class="headerlink" href="#eclipse" title="Permalink to this headline">¶</a></h2>
 <p>Create an Eclipse project from the given targets.</p>
 <ul id="gref-cli-eclipse">
 <li><p class="first"><strong>eclipse</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">EclipseGen</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.tasks.eclipse_gen.EclipseGen</span></tt></p>
 <ul>
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--eclipse-project-name</span></tt>
@@ -1248,9 +1211,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">EclipseGen</
 <a class="reference internal" href="#gref-cli-genprotoc"><em>gen:protoc</em></a>
 <a class="reference internal" href="#gref-cli-checkexclusives"><em>check-exclusives</em></a>
 <a class="reference internal" href="#gref-cli-ivy"><em>ivy</em></a>
-<a class="reference internal" href="#gref-cli-compileapt"><em>compile:apt</em></a>
-<a class="reference internal" href="#gref-cli-compilejava"><em>compile:java</em></a>
-<a class="reference internal" href="#gref-cli-compilescala"><em>compile:scala</em></a>
+<a class="reference internal" href="#gref-cli-jvm"><em>jvm</em></a>
 <a class="reference internal" href="#gref-cli-jar"><em>jar</em></a></div></blockquote>
 </div>
 <div class="section" id="filedeps">
@@ -1258,7 +1219,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">EclipseGen</
 <p>Print out the source and BUILD files the target depends on.</p>
 <ul id="gref-cli-filedeps">
 <li><p class="first"><strong>filedeps</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">FileDeps</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.tasks.filedeps.FileDeps</span></tt></p>
 <ul>
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--filedeps-sep</span></tt>
@@ -1279,7 +1240,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">FileDeps</sp
 <p>Outputs a mapping from source file to owning target.</p>
 <ul id="gref-cli-filemap">
 <li><p class="first"><strong>filemap</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">Filemap</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.tasks.filemap.Filemap</span></tt></p>
 <p>Outputs a mapping from source file to the target that owns the source file.</p>
 <ul>
 <li><div class="first line-block">
@@ -1301,7 +1262,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">Filemap</spa
 <p>Filter the input targets based on various criteria.</p>
 <ul id="gref-cli-filter">
 <li><p class="first"><strong>filter</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">Filter</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.tasks.filter.Filter</span></tt></p>
 <p>Filters targets based on various criteria.</p>
 <ul>
 <li><div class="first line-block">
@@ -1346,11 +1307,11 @@ Implemented by class <tt class="docutils literal"><span class="pre">Filter</span
 <span id="gref-phase-gen"></span><h2>gen<a class="headerlink" href="#gen" title="Permalink to this headline">¶</a></h2>
 <p>Generate code.</p>
 <ul class="simple">
-<li>Implemented by class <tt class="docutils literal"><span class="pre">AntlrGen</span></tt></li>
+<li>Implemented by <tt class="docutils literal"><span class="pre">pants.backend.codegen.tasks.antlr_gen.AntlrGen</span></tt></li>
 </ul>
 <ul id="gref-cli-genprotoc">
 <li><p class="first"><strong>gen:protoc</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">ProtobufGen</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.codegen.tasks.protobuf_gen.ProtobufGen</span></tt></p>
 <ul>
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--gen-protoc-lang</span></tt>
@@ -1363,7 +1324,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">ProtobufGen<
 </ul>
 <ul id="gref-cli-genscrooge">
 <li><p class="first"><strong>gen:scrooge</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">ScroogeGen</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.codegen.tasks.scrooge_gen.ScroogeGen</span></tt></p>
 <ul>
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--gen-scrooge-quiet</span></tt></div>
@@ -1375,7 +1336,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">ScroogeGen</
 </ul>
 <ul id="gref-cli-genthrift">
 <li><p class="first"><strong>gen:thrift</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">ApacheThriftGen</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.codegen.tasks.apache_thrift_gen.ApacheThriftGen</span></tt></p>
 <ul>
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--gen-thrift-version</span></tt>
@@ -1401,7 +1362,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">ApacheThrift
 <p>List all documented goals.</p>
 <ul id="gref-cli-goals">
 <li><p class="first"><strong>goals</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">ListGoals</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.tasks.list_goals.ListGoals</span></tt></p>
 <ul>
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--goals-sep</span></tt>
@@ -1432,7 +1393,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">ListGoals</s
 <p>Create an IntelliJ IDEA project from the given targets.</p>
 <ul id="gref-cli-idea">
 <li><p class="first"><strong>idea</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">IdeaGen</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.tasks.idea_gen.IdeaGen</span></tt></p>
 <ul>
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--idea-project-name</span></tt>
@@ -1554,9 +1515,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">IdeaGen</spa
 <a class="reference internal" href="#gref-cli-genprotoc"><em>gen:protoc</em></a>
 <a class="reference internal" href="#gref-cli-checkexclusives"><em>check-exclusives</em></a>
 <a class="reference internal" href="#gref-cli-ivy"><em>ivy</em></a>
-<a class="reference internal" href="#gref-cli-compileapt"><em>compile:apt</em></a>
-<a class="reference internal" href="#gref-cli-compilejava"><em>compile:java</em></a>
-<a class="reference internal" href="#gref-cli-compilescala"><em>compile:scala</em></a>
+<a class="reference internal" href="#gref-cli-jvm"><em>jvm</em></a>
 <a class="reference internal" href="#gref-cli-jar"><em>jar</em></a></div></blockquote>
 </div>
 <div class="section" id="invalidate">
@@ -1564,7 +1523,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">IdeaGen</spa
 <p>Invalidate all targets.</p>
 <ul id="gref-cli-invalidate">
 <li><p class="first"><strong>invalidate</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">Invalidator</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.tasks.clean.Invalidator</span></tt></p>
 <p>Invalidate the entire build.</p>
 <ul>
 <li><div class="first line-block">
@@ -1586,19 +1545,13 @@ Implemented by class <tt class="docutils literal"><span class="pre">Invalidator<
 <span id="gref-phase-jar"></span><h2>jar<a class="headerlink" href="#jar" title="Permalink to this headline">¶</a></h2>
 <ul id="gref-cli-jar">
 <li><p class="first"><strong>jar</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">JarCreate</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.tasks.jar_create.JarCreate</span></tt></p>
 <p>Jars jvm libraries and optionally their sources and their docs.</p>
 <ul>
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--jar-compressed/--no-jar-compressed</span></tt>
 (Default: <tt class="docutils literal"><span class="pre">True</span></tt>)</div>
 <div class="line">Create compressed jars.</div>
-</div>
-</li>
-<li><div class="first line-block">
-<div class="line"><tt class="docutils literal"><span class="pre">--jar-transitive/--no-jar-transitive</span></tt>
-(Default: <tt class="docutils literal"><span class="pre">True</span></tt>)</div>
-<div class="line">Create jars for the transitive closure of internal targets reachable from the roots specified on the command line.</div>
 </div>
 </li>
 <li><div class="first line-block">
@@ -1628,16 +1581,14 @@ Implemented by class <tt class="docutils literal"><span class="pre">JarCreate</s
 <a class="reference internal" href="#gref-cli-genprotoc"><em>gen:protoc</em></a>
 <a class="reference internal" href="#gref-cli-checkexclusives"><em>check-exclusives</em></a>
 <a class="reference internal" href="#gref-cli-ivy"><em>ivy</em></a>
-<a class="reference internal" href="#gref-cli-compileapt"><em>compile:apt</em></a>
-<a class="reference internal" href="#gref-cli-compilejava"><em>compile:java</em></a>
-<a class="reference internal" href="#gref-cli-compilescala"><em>compile:scala</em></a></div></blockquote>
+<a class="reference internal" href="#gref-cli-jvm"><em>jvm</em></a></div></blockquote>
 </div>
 <div class="section" id="killserver">
 <span id="gref-phase-killserver"></span><h2>killserver<a class="headerlink" href="#killserver" title="Permalink to this headline">¶</a></h2>
 <p>Kill the reporting server.</p>
 <ul id="gref-cli-killserver">
 <li><p class="first"><strong>killserver</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">KillServer</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.tasks.reporting_server.KillServer</span></tt></p>
 <p>Kills the reporting server.</p>
 <ul>
 <li><div class="first line-block">
@@ -1659,7 +1610,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">KillServer</
 <p>List available BUILD targets.</p>
 <ul id="gref-cli-list">
 <li><p class="first"><strong>list</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">ListTargets</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.tasks.listtargets.ListTargets</span></tt></p>
 <p>Lists all targets matching the target specs.</p>
 <p>If no targets are specified, lists all targets in the workspace.</p>
 <ul>
@@ -1699,7 +1650,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">ListTargets<
 <p>Generate html from markdown docs.</p>
 <ul id="gref-cli-markdown">
 <li><p class="first"><strong>markdown</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">MarkdownToHtml</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.tasks.markdown_to_html.MarkdownToHtml</span></tt></p>
 <ul>
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--markdown-code-style</span></tt>
@@ -1735,7 +1686,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">MarkdownToHt
 <p>Print the minimal cover of the given targets.</p>
 <ul id="gref-cli-minimize">
 <li><p class="first"><strong>minimize</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">MinimalCover</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.tasks.minimal_cover.MinimalCover</span></tt></p>
 <p>Outputs a minimal covering set of targets.</p>
 <p>For a given set of input targets, the output targets transitive dependency set will include all
 the input targets without gaps.</p>
@@ -1759,7 +1710,7 @@ the input targets without gaps.</p>
 <p>Kill running nailgun servers.</p>
 <ul id="gref-cli-ngkillall">
 <li><p class="first"><strong>ng-killall</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">NailgunKillall</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.tasks.nailgun_task.NailgunKillall</span></tt></p>
 <p>A task to manually kill nailguns.</p>
 <ul>
 <li><div class="first line-block">
@@ -1786,7 +1737,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">NailgunKilla
 <p>Find a dependency path from one target to another.</p>
 <ul id="gref-cli-path">
 <li><p class="first"><strong>path</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">Path</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.tasks.paths.Path</span></tt></p>
 <ul>
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--path-sep</span></tt>
@@ -1807,7 +1758,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">Path</span><
 <p>Print out all paths containing BUILD files the target depends on.</p>
 <ul id="gref-cli-pathdeps">
 <li><p class="first"><strong>pathdeps</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">PathDeps</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.tasks.pathdeps.PathDeps</span></tt></p>
 <ul>
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--pathdeps-sep</span></tt>
@@ -1828,7 +1779,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">PathDeps</sp
 <p>Find all dependency paths from one target to another.</p>
 <ul id="gref-cli-paths">
 <li><p class="first"><strong>paths</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">Paths</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.tasks.paths.Paths</span></tt></p>
 <ul>
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--paths-sep</span></tt>
@@ -1849,7 +1800,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">Paths</span>
 <p>Print the symbols provided by the given targets.</p>
 <ul id="gref-cli-provides">
 <li><p class="first"><strong>provides</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">Provides</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.tasks.provides.Provides</span></tt></p>
 <ul>
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--provides-transitive</span></tt></div>
@@ -1872,9 +1823,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">Provides</sp
 <a class="reference internal" href="#gref-cli-genprotoc"><em>gen:protoc</em></a>
 <a class="reference internal" href="#gref-cli-checkexclusives"><em>check-exclusives</em></a>
 <a class="reference internal" href="#gref-cli-ivy"><em>ivy</em></a>
-<a class="reference internal" href="#gref-cli-compileapt"><em>compile:apt</em></a>
-<a class="reference internal" href="#gref-cli-compilejava"><em>compile:java</em></a>
-<a class="reference internal" href="#gref-cli-compilescala"><em>compile:scala</em></a>
+<a class="reference internal" href="#gref-cli-jvm"><em>jvm</em></a>
 <a class="reference internal" href="#gref-cli-jar"><em>jar</em></a></div></blockquote>
 </div>
 <div class="section" id="publish">
@@ -1882,19 +1831,13 @@ Implemented by class <tt class="docutils literal"><span class="pre">Provides</sp
 <p>Publish artifacts.</p>
 <ul id="gref-cli-publishjarcreatepublish">
 <li><p class="first"><strong>publish:jar_create_publish</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">JarCreate</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.tasks.jar_create.JarCreate</span></tt></p>
 <p>Jars jvm libraries and optionally their sources and their docs.</p>
 <ul>
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--publish-jar_create_publish-compressed/--no-publish-jar_create_publish-compressed</span></tt>
 (Default: <tt class="docutils literal"><span class="pre">True</span></tt>)</div>
 <div class="line">Create compressed jars.</div>
-</div>
-</li>
-<li><div class="first line-block">
-<div class="line"><tt class="docutils literal"><span class="pre">--publish-jar_create_publish-transitive/--no-publish-jar_create_publish-transitive</span></tt>
-(Default: <tt class="docutils literal"><span class="pre">True</span></tt>)</div>
-<div class="line">Create jars for the transitive closure of internal targets reachable from the roots specified on the command line.</div>
 </div>
 </li>
 <li><div class="first line-block">
@@ -1919,7 +1862,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">JarCreate</s
 </ul>
 <ul id="gref-cli-publishjavadocpublish">
 <li><p class="first"><strong>publish:javadoc_publish</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">JavadocJarShim</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.register.JavadocJarShim</span></tt></p>
 <ul>
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--publish-javadoc_publish-include-codegen/--no-publish-javadoc_publish-include-codegen</span></tt></div>
@@ -1952,7 +1895,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">JavadocJarSh
 </ul>
 <ul id="gref-cli-publish">
 <li><p class="first"><strong>publish</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">JarPublish</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.tasks.jar_publish.JarPublish</span></tt></p>
 <p>Publish jars to a maven repository.</p>
 <p>At a high-level, pants uses <a class="reference external" href="http://ant.apache.org/ivy/">Apache Ivy</a> to
 publish artifacts to Maven-style repositories. Pants performs prerequisite
@@ -2068,7 +2011,7 @@ maven coordinate [org]#[name] or target.</div>
 </ul>
 <ul id="gref-cli-publishscaladocpublish">
 <li><p class="first"><strong>publish:scaladoc_publish</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">ScaladocJarShim</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.register.ScaladocJarShim</span></tt></p>
 <ul>
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--publish-scaladoc_publish-include-codegen/--no-publish-scaladoc_publish-include-codegen</span></tt></div>
@@ -2107,16 +2050,14 @@ Implemented by class <tt class="docutils literal"><span class="pre">ScaladocJarS
 <a class="reference internal" href="#gref-cli-genprotoc"><em>gen:protoc</em></a>
 <a class="reference internal" href="#gref-cli-checkexclusives"><em>check-exclusives</em></a>
 <a class="reference internal" href="#gref-cli-ivy"><em>ivy</em></a>
-<a class="reference internal" href="#gref-cli-compileapt"><em>compile:apt</em></a>
-<a class="reference internal" href="#gref-cli-compilejava"><em>compile:java</em></a>
-<a class="reference internal" href="#gref-cli-compilescala"><em>compile:scala</em></a></div></blockquote>
+<a class="reference internal" href="#gref-cli-jvm"><em>jvm</em></a></div></blockquote>
 </div>
 <div class="section" id="repl">
 <span id="gref-phase-repl"></span><h2>repl<a class="headerlink" href="#repl" title="Permalink to this headline">¶</a></h2>
 <p>Run a (currently Scala only) REPL.</p>
 <ul id="gref-cli-scalarepl">
 <li><p class="first"><strong>scala-repl</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">ScalaRepl</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.tasks.scala_repl.ScalaRepl</span></tt></p>
 <ul>
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--scala-repl-jvmargs</span></tt>
@@ -2141,16 +2082,14 @@ Implemented by class <tt class="docutils literal"><span class="pre">ScalaRepl</s
 <a class="reference internal" href="#gref-cli-genprotoc"><em>gen:protoc</em></a>
 <a class="reference internal" href="#gref-cli-checkexclusives"><em>check-exclusives</em></a>
 <a class="reference internal" href="#gref-cli-ivy"><em>ivy</em></a>
-<a class="reference internal" href="#gref-cli-compileapt"><em>compile:apt</em></a>
-<a class="reference internal" href="#gref-cli-compilejava"><em>compile:java</em></a>
-<a class="reference internal" href="#gref-cli-compilescala"><em>compile:scala</em></a></div></blockquote>
+<a class="reference internal" href="#gref-cli-jvm"><em>jvm</em></a></div></blockquote>
 </div>
 <div class="section" id="repl-dirty">
 <span id="gref-phase-repl-dirty"></span><h2>repl-dirty<a class="headerlink" href="#repl-dirty" title="Permalink to this headline">¶</a></h2>
 <p>Run a (currently Scala only) REPL, skipping compilation.</p>
 <ul id="gref-cli-scalarepldirty">
 <li><p class="first"><strong>scala-repl-dirty</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">ScalaRepl</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.tasks.scala_repl.ScalaRepl</span></tt></p>
 <ul>
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--scala-repl-dirty-jvmargs</span></tt>
@@ -2176,7 +2115,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">ScalaRepl</s
 <p>Resolve dependencies and produce dependency reports.</p>
 <ul id="gref-cli-ivy">
 <li><p class="first"><strong>ivy</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">IvyResolve</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.tasks.ivy_resolve.IvyResolve</span></tt></p>
 <ul>
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--ivy-override</span></tt>
@@ -2231,7 +2170,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">IvyResolve</
 <div class="section" id="resources">
 <span id="gref-phase-resources"></span><h2>resources<a class="headerlink" href="#resources" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Implemented by class <tt class="docutils literal"><span class="pre">PrepareResources</span></tt></li>
+<li>Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.tasks.prepare_resources.PrepareResources</span></tt></li>
 </ul>
 <p><strong>Other command-line options:</strong></p>
 <blockquote>
@@ -2242,7 +2181,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">IvyResolve</
 <p>Print the workspace&#8217;s source roots and associated target types.</p>
 <ul id="gref-cli-roots">
 <li><p class="first"><strong>roots</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">ListRoots</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.tasks.roots.ListRoots</span></tt></p>
 <p>List the registered source roots of the repo.</p>
 <ul>
 <li><div class="first line-block">
@@ -2264,7 +2203,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">ListRoots</s
 <p>Run a (currently JVM only) binary target.</p>
 <ul id="gref-cli-jvmrun">
 <li><p class="first"><strong>jvm-run</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">JvmRun</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.tasks.jvm_run.JvmRun</span></tt></p>
 <ul>
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--jvm-run-jvmargs</span></tt>
@@ -2300,16 +2239,14 @@ Implemented by class <tt class="docutils literal"><span class="pre">JvmRun</span
 <a class="reference internal" href="#gref-cli-genprotoc"><em>gen:protoc</em></a>
 <a class="reference internal" href="#gref-cli-checkexclusives"><em>check-exclusives</em></a>
 <a class="reference internal" href="#gref-cli-ivy"><em>ivy</em></a>
-<a class="reference internal" href="#gref-cli-compileapt"><em>compile:apt</em></a>
-<a class="reference internal" href="#gref-cli-compilejava"><em>compile:java</em></a>
-<a class="reference internal" href="#gref-cli-compilescala"><em>compile:scala</em></a></div></blockquote>
+<a class="reference internal" href="#gref-cli-jvm"><em>jvm</em></a></div></blockquote>
 </div>
 <div class="section" id="run-dirty">
 <span id="gref-phase-run-dirty"></span><h2>run-dirty<a class="headerlink" href="#run-dirty" title="Permalink to this headline">¶</a></h2>
 <p>Run a (currently JVM only) binary target, skipping compilation.</p>
 <ul id="gref-cli-jvmrundirty">
 <li><p class="first"><strong>jvm-run-dirty</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">JvmRun</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.tasks.jvm_run.JvmRun</span></tt></p>
 <ul>
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--jvm-run-dirty-jvmargs</span></tt>
@@ -2346,7 +2283,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">JvmRun</span
 <p>Run the pants reporting server.</p>
 <ul id="gref-cli-server">
 <li><p class="first"><strong>server</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">RunServer</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.tasks.reporting_server.RunServer</span></tt></p>
 <p>Runs the reporting server.</p>
 <ul>
 <li><div class="first line-block">
@@ -2386,7 +2323,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">RunServer</s
 <p>Setup the target&#8217;s build environment.</p>
 <ul id="gref-cli-pythonsetup">
 <li><p class="first"><strong>python-setup</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">SetupPythonEnvironment</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.python.tasks.setup_python_environment.SetupPythonEnvironment</span></tt></p>
 <p>Establishes the python intepreter(s) for downstream Python tasks e.g. Resolve, Run, PytestRun.</p>
 <dl class="docutils">
 <dt>Populates the product namespace (for typename = &#8216;python&#8217;):</dt>
@@ -2408,7 +2345,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">SetupPythonE
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--python-setup-interpreter</span></tt>
 <tt class="docutils literal"><span class="pre">string</span></tt></div>
-<div class="line">Constrain what Python interpreters to use.  Uses Requirement format from pkg_resources, e.g. &#8216;CPython&amp;gt;=2.6,&amp;lt;3&#8217; or &#8216;PyPy&#8217;. By default, no constraints are used.  Multiple constraints may be added.  They will be ORed together.</div>
+<div class="line">Constrain what Python interpreters to use.  Uses Requirement format from pkg_resources, e.g. &#8216;CPython&gt;=2.6,&lt;3&#8217; or &#8216;PyPy&#8217;. By default, no constraints are used.  Multiple constraints may be added.  They will be ORed together.</div>
 </div>
 </li>
 <li><div class="first line-block">
@@ -2428,7 +2365,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">SetupPythonE
 <p>Topologically sort the targets.</p>
 <ul id="gref-cli-sort">
 <li><p class="first"><strong>sort</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">SortTargets</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.tasks.sorttargets.SortTargets</span></tt></p>
 <ul>
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--sort-sep</span></tt>
@@ -2454,7 +2391,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">SortTargets<
 <p>List all target types.</p>
 <ul id="gref-cli-targets">
 <li><p class="first"><strong>targets</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">TargetsHelp</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.tasks.targets_help.TargetsHelp</span></tt></p>
 <p>Provides online help for installed targets.</p>
 <p>This task provides online help modes for installed targets. Without args,
 all installed targets are listed with their one-line description.
@@ -2486,7 +2423,7 @@ help about.</p>
 <p>Test compiled code.</p>
 <ul id="gref-cli-testjunit">
 <li><p class="first"><strong>test:junit</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">JUnitRun</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.tasks.junit_run.JUnitRun</span></tt></p>
 <ul>
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--test-junit-coverage-patterns</span></tt>
@@ -2573,7 +2510,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">JUnitRun</sp
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--test-junit-test-shard</span></tt>
 <tt class="docutils literal"><span class="pre">string</span></tt></div>
-<div class="line">Subset of tests to run, in the form M/N, 0 &amp;lt;= M &amp;lt; N.For example, 1/3 means run tests number 2, 5, 8, 11, ...</div>
+<div class="line">Subset of tests to run, in the form M/N, 0 &lt;= M &lt; N.For example, 1/3 means run tests number 2, 5, 8, 11, ...</div>
 </div>
 </li>
 <li><div class="first line-block">
@@ -2603,9 +2540,40 @@ Implemented by class <tt class="docutils literal"><span class="pre">JUnitRun</sp
 </ul>
 </li>
 </ul>
+<ul id="gref-cli-testpytest">
+<li><p class="first"><strong>test:pytest</strong>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.python.tasks.python_run_tests.PythonRunTests</span></tt></p>
+<ul>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--test-pytest-timeout</span></tt>
+<tt class="docutils literal"><span class="pre">int</span></tt></div>
+<div class="line">Number of seconds to wait for http connections.</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--test-pytest-interpreter</span></tt>
+<tt class="docutils literal"><span class="pre">string</span></tt></div>
+<div class="line">Constrain what Python interpreters to use.  Uses Requirement format from pkg_resources, e.g. &#8216;CPython&gt;=2.6,&lt;3&#8217; or &#8216;PyPy&#8217;. By default, no constraints are used.  Multiple constraints may be added.  They will be ORed together.</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--test-pytest-fast/--no-test-pytest-fast</span></tt>
+(Default: <tt class="docutils literal"><span class="pre">True</span></tt>)</div>
+<div class="line">Run all tests in a single chroot. If set to false, each test target will create a new chroot, which will be much slower.</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--test-pytest-options</span></tt>
+<tt class="docutils literal"><span class="pre">string</span></tt></div>
+<div class="line">options to pass to the underlying pytest runner.</div>
+</div>
+</li>
+</ul>
+</li>
+</ul>
 <ul id="gref-cli-testspecs">
 <li><p class="first"><strong>test:specs</strong>
-Implemented by class <tt class="docutils literal"><span class="pre">SpecsRun</span></tt></p>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.tasks.specs_run.SpecsRun</span></tt></p>
 <ul>
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--test-specs-skip/--no-test-specs-skip</span></tt></div>
@@ -2646,9 +2614,7 @@ Implemented by class <tt class="docutils literal"><span class="pre">SpecsRun</sp
 <a class="reference internal" href="#gref-cli-genprotoc"><em>gen:protoc</em></a>
 <a class="reference internal" href="#gref-cli-checkexclusives"><em>check-exclusives</em></a>
 <a class="reference internal" href="#gref-cli-ivy"><em>ivy</em></a>
-<a class="reference internal" href="#gref-cli-compileapt"><em>compile:apt</em></a>
-<a class="reference internal" href="#gref-cli-compilejava"><em>compile:java</em></a>
-<a class="reference internal" href="#gref-cli-compilescala"><em>compile:scala</em></a></div></blockquote>
+<a class="reference internal" href="#gref-cli-jvm"><em>jvm</em></a></div></blockquote>
 </div>
 <div class="section" id="common">
 <h2>Common<a class="headerlink" href="#common" title="Permalink to this headline">¶</a></h2>

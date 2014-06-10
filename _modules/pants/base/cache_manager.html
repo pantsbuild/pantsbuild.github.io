@@ -282,7 +282,6 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#bundle">bundle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#check-exclusives">check-exclusives</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#check-published-deps">check_published_deps</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#checkstyle">checkstyle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#clean-all">clean-all</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#clean-all-async">clean-all-async</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#compile">compile</a></li>
@@ -560,11 +559,13 @@ body a.icon-home:hover{
                <span class="n">cache_key_generator</span><span class="p">,</span>
                <span class="n">build_invalidator_dir</span><span class="p">,</span>
                <span class="n">invalidate_dependents</span><span class="p">,</span>
-               <span class="n">extra_data</span><span class="p">):</span>
+               <span class="n">extra_data</span><span class="p">,</span>
+               <span class="n">fingerprint_strategy</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_cache_key_generator</span> <span class="o">=</span> <span class="n">cache_key_generator</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_invalidate_dependents</span> <span class="o">=</span> <span class="n">invalidate_dependents</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_extra_data</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">extra_data</span><span class="p">)</span>  <span class="c"># extra_data may be None.</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_invalidator</span> <span class="o">=</span> <span class="n">BuildInvalidator</span><span class="p">(</span><span class="n">build_invalidator_dir</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_fingerprint_strategy</span> <span class="o">=</span> <span class="n">fingerprint_strategy</span>
 
 <div class="viewcode-block" id="InvalidationCacheManager.update"><a class="viewcode-back" href="../../../base.html#pants.base.cache_manager.InvalidationCacheManager.update">[docs]</a>  <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vts</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Mark a changed or invalidated VersionedTargetSet as successfully processed.&quot;&quot;&quot;</span>
@@ -582,7 +583,10 @@ body a.icon-home:hover{
     <span class="bp">self</span><span class="o">.</span><span class="n">_invalidator</span><span class="o">.</span><span class="n">force_invalidate</span><span class="p">(</span><span class="n">vts</span><span class="o">.</span><span class="n">cache_key</span><span class="p">)</span>
     <span class="n">vts</span><span class="o">.</span><span class="n">valid</span> <span class="o">=</span> <span class="bp">False</span>
 </div>
-<div class="viewcode-block" id="InvalidationCacheManager.check"><a class="viewcode-back" href="../../../base.html#pants.base.cache_manager.InvalidationCacheManager.check">[docs]</a>  <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">partition_size_hint</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">target_colors</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="InvalidationCacheManager.check"><a class="viewcode-back" href="../../../base.html#pants.base.cache_manager.InvalidationCacheManager.check">[docs]</a>  <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+            <span class="n">targets</span><span class="p">,</span>
+            <span class="n">partition_size_hint</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+            <span class="n">target_colors</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Checks whether each of the targets has changed and invalidates it if so.</span>
 
 <span class="sd">    Returns a list of VersionedTargetSet objects (either valid or invalid). The returned sets</span>
@@ -637,7 +641,9 @@ body a.icon-home:hover{
 
   <span class="k">def</span> <span class="nf">_key_for</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">transitive</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="k">try</span><span class="p">:</span>
-      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache_key_generator</span><span class="o">.</span><span class="n">key_for_target</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">transitive</span><span class="o">=</span><span class="n">transitive</span><span class="p">)</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache_key_generator</span><span class="o">.</span><span class="n">key_for_target</span><span class="p">(</span><span class="n">target</span><span class="p">,</span>
+                                                      <span class="n">transitive</span><span class="o">=</span><span class="n">transitive</span><span class="p">,</span>
+                                                      <span class="n">fingerprint_strategy</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_fingerprint_strategy</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
       <span class="c"># This is a catch-all for problems we haven&#39;t caught up with and given a better diagnostic.</span>
       <span class="c"># TODO(Eric Ayers): If you see this exception, add a fix to catch the problem earlier.</span>

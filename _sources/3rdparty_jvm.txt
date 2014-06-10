@@ -12,6 +12,13 @@ jar-sharing. You should know the
 (`Maven/Ivy groupId, artifactId, and version <http://maven.apache.org/guides/mini/guide-central-repository-upload.html>`_)
 you want to use.
 
+The 3rdparty pattern described here eases avoiding diamond dependency
+problems and version conflicts. If your code depends on artifacts
+``foo`` and ``bar``; and if ``foo`` and ``bar`` depend on different versions
+of the ``baz`` artifact; then some code will be linked together with a
+version of ``baz`` it didn't "expect." Tracking versioned
+dependencies in one place makes it easier to reason about them.
+
 ************
 3rdparty/jvm
 ************
@@ -24,7 +31,7 @@ for a likely-looking ``BUILD`` file--in this example,
 ``3rdparty/jvm/com/google/sun/jersey/BUILD``.
 
 In the appropriate ``BUILD`` file, you want to find a
-:ref:`bdict_dependencies` with a :ref:`bdict_jar` dependency:
+:ref:`bdict_jar_library` with the :ref:`bdict_jar`\s you want:
 
 .. literalinclude:: ../../../../3rdparty/jvm/com/sun/jersey/BUILD
    :start-after: LICENSE
@@ -32,8 +39,8 @@ In the appropriate ``BUILD`` file, you want to find a
 
 
 Here, the
-:ref:`bdict_dependencies` name defines a target address that other build
-targets can refer to. The :ref:`bdict_jar` dependencies refer to Jars known
+:ref:`bdict_jar_library`\s's name defines a target address that other build
+targets can refer to. The :ref:`bdict_jar`\s refer to jars known
 to your Ivy resolver.
 
 If there's already a ``jar`` importing the code you want but with a
@@ -69,6 +76,31 @@ For example, your ``BUILD`` file might have
 And your Java code might have::
 
     import org.junit.Test;
+
+*************************
+"Round Trip" Dependencies
+*************************
+
+Depending on your workspace's relation with the rest of the world, you might
+want to look out for "round trip" dependencies.
+You can publish an artifact *near* generated from your workspace's source code
+and consume a third-party artifact *far* that depends on *near*.
+If you're not careful, you might depend on two versions of the *near* code:
+the local source code and an artifact you published a while ago.
+When consuming such third-party artifacts, exclude dependencies that
+"collide" with source code and depend on local source::
+
+    jar_library(name='far',
+      jars=[
+        # exclude conflicting dep:
+        jar(org='org.archie', name='far', rev='0.0.18').with_sources()
+          .exclude(org='org.archimedes', name='near')
+      ]
+      dependencies=[
+        # and re-include local version of source manually:
+        pants('util/near'),
+      ]
+    )
 
 ******************************************
 Troubleshooting a JVM Dependencies Problem
@@ -109,10 +141,12 @@ tell Pants not to pull in its dependencies. In your ``3rdparty/.../BUILD``
 file, call the ``jar``\'s ``intransitive`` method; then carefully add
 hand-picked versions::
 
-    dependencies(name="retro-naming-factory",
-      dependencies=[
+    jar_library(name="retro-naming-factory",
+      jars=[
         jar(org='retro', name='retro-factory', rev='5.0.18').intransitive(),
-	# Don't use retro's expected (old, incompatible) common-logging
+      ],
+      dependencies=[
+        # Don't use retro's expected (old, incompatible) common-logging
         # version, yipe; use the same version we use everywhere else:
 	pants('3rdparty/jvm/common-logging'),
       ])
@@ -137,7 +171,7 @@ will be silently discarded. One way that this can occur is with dependencies tha
 to differentiate themselves. Consider this example::
 
     jar_library(name = 'stanford-corenlp',
-      dependencies = [
+      jars = [
         jar(org = 'edu.stanford.nlp', name = 'stanford-corenlp', rev = '3.3.1').with_sources(),
         jar(org = 'edu.stanford.nlp', name = 'stanford-corenlp', rev = '3.3.1', classifier='models')
       ]
@@ -145,10 +179,10 @@ to differentiate themselves. Consider this example::
 
 In the above example, the ``edu.stanford.nlp.stanford-corenlp-3.3.1-models.jar`` will be silently
 skipped by pants. To bring both jars in, use the ``.with_artifacts()`` method of the
-:ref:`bdict_jar` target. Using this method, the above example would be transformed into::
+:ref:`bdict_jar`. Using this method, the above example would be transformed into::
 
     jar_library(name = 'stanford-corenlp',
-      dependencies = [
+      jars = [
         jar(org = 'edu.stanford.nlp', name = 'stanford-corenlp', rev = '3.3.1').with_sources().with_artifact(classifier='models').with_artifact(classifier=''),
       ]
     )
