@@ -244,6 +244,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#java-protobuf-library">java_protobuf_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#java-tests">java_tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#java-thrift-library">java_thrift_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#jaxb-library">jaxb_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#junit-tests">junit_tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#jvm-app">jvm_app</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#jvm-binary">jvm_binary</a></li>
@@ -382,12 +383,31 @@ body a.icon-home:hover{
 
 <span class="kn">import</span> <span class="nn">os</span>
 
+<span class="kn">from</span> <span class="nn">twitter.common.lang</span> <span class="kn">import</span> <span class="n">AbstractClass</span>
 
-<span class="c"># TODO(pl): Add a nice docstring for this</span>
-<span class="k">def</span> <span class="nf">parse_spec</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">relative_to</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+
+
+<div class="viewcode-block" id="parse_spec"><a class="viewcode-back" href="../../../base.html#pants.base.address.parse_spec">[docs]</a><span class="k">def</span> <span class="nf">parse_spec</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">relative_to</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Parses a target address spec and returns the path from the root of the repo to this Target</span>
+<span class="sd">  and Target name.</span>
+<span class="sd">  :param string spec: target address spec</span>
+<span class="sd">  For Example</span>
+<span class="sd">  ::</span>
+<span class="sd">    some_target(name=&#39;mytarget&#39;,</span>
+<span class="sd">      dependencies=[&#39;path/to/buildfile:targetname&#39;]</span>
+<span class="sd">    )</span>
+
+<span class="sd">  Where  ``path/to/buildfile:targetname`` is the dependent target address spec</span>
+
+<span class="sd">  In case, the target name is empty it returns the last component of the path as target name.</span>
+<span class="sd">  ::</span>
+<span class="sd">    spec_path, target_name = parse_spec(&#39;path/to/buildfile/foo&#39;)</span>
+
+<span class="sd">  Will return spec_path as &#39;path/to/buildfile/foo&#39; and target_name as &#39;foo&#39;</span>
+<span class="sd">  &quot;&quot;&quot;</span>
   <span class="n">spec_parts</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
   <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">spec_parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-    <span class="n">spec_path</span> <span class="o">=</span> <span class="n">spec_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">spec_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">spec_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
     <span class="k">assert</span> <span class="n">spec_path</span><span class="p">,</span> <span class="p">(</span>
       <span class="s">&#39;Attempted to parse a bad spec string {spec}: empty spec string&#39;</span>
       <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">spec</span><span class="p">)</span>
@@ -400,8 +420,8 @@ body a.icon-home:hover{
     <span class="n">spec_path</span> <span class="o">=</span> <span class="n">relative_to</span>
   <span class="k">return</span> <span class="n">spec_path</span><span class="p">,</span> <span class="n">target_name</span>
 
-
-<div class="viewcode-block" id="Address"><a class="viewcode-back" href="../../../base.html#pants.base.address.Address">[docs]</a><span class="k">class</span> <span class="nc">Address</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="Address"><a class="viewcode-back" href="../../../base.html#pants.base.address.Address">[docs]</a><span class="k">class</span> <span class="nc">Address</span><span class="p">(</span><span class="n">AbstractClass</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;A target address.</span>
 
 <span class="sd">  An address is a unique name representing a</span>
@@ -425,6 +445,9 @@ body a.icon-home:hover{
 <span class="sd">    :param string spec_path: The path from the root of the repo to this Target.</span>
 <span class="sd">    :param string target_name: The name of a target this Address refers to.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># TODO(John Sirois): AbstractClass / Interface should probably have this feature built in.</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="n">Address</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;Cannot instantiate abstract class Address&#39;</span><span class="p">)</span>
     <span class="n">norm_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">spec_path</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">spec_path</span> <span class="o">=</span> <span class="n">norm_path</span> <span class="k">if</span> <span class="n">norm_path</span> <span class="o">!=</span> <span class="s">&#39;.&#39;</span> <span class="k">else</span> <span class="s">&#39;&#39;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">target_name</span> <span class="o">=</span> <span class="n">target_name</span>
@@ -433,6 +456,7 @@ body a.icon-home:hover{
   <span class="k">def</span> <span class="nf">spec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="s">&#39;{spec_path}:{target_name}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">spec_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_path</span><span class="p">,</span>
                                               <span class="n">target_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">target_name</span><span class="p">)</span>
+
   <span class="nd">@property</span>
   <span class="k">def</span> <span class="nf">path_safe_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">(</span><span class="s">&#39;{safe_spec_path}.{target_name}&#39;</span>
@@ -495,9 +519,10 @@ body a.icon-home:hover{
 
 
 <span class="k">class</span> <span class="nc">SyntheticAddress</span><span class="p">(</span><span class="n">Address</span><span class="p">):</span>
-  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">relative_to</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">relative_to</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
     <span class="n">spec_path</span><span class="p">,</span> <span class="n">target_name</span> <span class="o">=</span> <span class="n">parse_spec</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">relative_to</span><span class="o">=</span><span class="n">relative_to</span><span class="p">)</span>
-    <span class="nb">super</span><span class="p">(</span><span class="n">SyntheticAddress</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">spec_path</span><span class="o">=</span><span class="n">spec_path</span><span class="p">,</span> <span class="n">target_name</span><span class="o">=</span><span class="n">target_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">cls</span><span class="p">(</span><span class="n">spec_path</span><span class="p">,</span> <span class="n">target_name</span><span class="p">)</span>
 
   <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="s">&quot;SyntheticAddress({spec})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">)</span>

@@ -246,6 +246,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-protobuf-library">java_protobuf_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-tests">java_tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-thrift-library">java_thrift_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jaxb-library">jaxb_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#junit-tests">junit_tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jvm-app">jvm_app</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jvm-binary">jvm_binary</a></li>
@@ -495,6 +496,14 @@ Actually do something; perhaps generate some products from some sources.</li>
 </ul>
 <p>There are some base <tt class="docutils literal"><span class="pre">Task</span></tt> classes to help you get started. E.g., if your
 goal just outputs information to the console, subclass <tt class="docutils literal"><span class="pre">ConsoleTask</span></tt>.</p>
+<p>The user&#8217;s source code is organized by <a class="reference internal" href="setup_repo.html#setup-source-root"><em>source roots</em></a>.
+If a task needs to know the path from &#8220;the root&#8221; to a source file (perhaps
+to turn a path/to/dir/Foo into a package path.to.dir.Foo), it should probably
+compute that based on the source root (<tt class="docutils literal"><span class="pre">target.target_base</span></tt>), not the
+build root. The absolute paths to a target&#8217;s source files are:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">abspaths</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_buildroot</span><span class="p">(),</span> <span class="n">target</span><span class="o">.</span><span class="n">target_base</span><span class="p">,</span> <span class="n">rel_path</span><span class="p">)</span> <span class="k">for</span> <span class="n">rel_path</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">sources_relative_to_source_root</span><span class="p">()]</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="group">
 <h3>Group<a class="headerlink" href="#group" title="Permalink to this headline">¶</a></h3>

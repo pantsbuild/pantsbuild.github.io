@@ -245,6 +245,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="#java-protobuf-library">java_protobuf_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#java-tests">java_tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#java-thrift-library">java_thrift_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jaxb-library">jaxb_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#junit-tests">junit_tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#jvm-app">jvm_app</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#jvm-binary">jvm_binary</a></li>
@@ -403,6 +404,7 @@ targets; some are handy utilities.</p>
 <a class="reference internal" href="#java_protobuf_library">java_protobuf_library</a> |
 <a class="reference internal" href="#java-tests">java_tests</a> |
 <a class="reference internal" href="#java_thrift_library">java_thrift_library</a> |
+<a class="reference internal" href="#jaxb_library">jaxb_library</a> |
 <a class="reference internal" href="#junit_tests">junit_tests</a> |
 <a class="reference internal" href="#jvm_app">jvm_app</a> |
 <a class="reference internal" href="#jvm_binary">jvm_binary</a> |
@@ -444,6 +446,7 @@ targets; some are handy utilities.</p>
 <a class="reference internal" href="#java_library">java_library</a> |
 <a class="reference internal" href="#java_protobuf_library">java_protobuf_library</a> |
 <a class="reference internal" href="#java_thrift_library">java_thrift_library</a> |
+<a class="reference internal" href="#jaxb_library">jaxb_library</a> |
 <a class="reference internal" href="#junit_tests">junit_tests</a> |
 <a class="reference internal" href="#jvm_app">jvm_app</a> |
 <a class="reference internal" href="#jvm_binary">jvm_binary</a> |
@@ -951,7 +954,7 @@ direct/transitive dependencies in the dependencies list.</li>
 <span id="bdict-java-agent"></span><h2>java_agent<a class="headerlink" href="#java-agent" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="java_agent">
-<tt class="descname">java_agent</tt><big>(</big><em>name</em>, <em>sources=None</em>, <em>dependencies=None</em>, <em>excludes=None</em>, <em>resources=None</em>, <em>exclusives=None</em>, <em>premain=None</em>, <em>agent_class=None</em>, <em>can_redefine=False</em>, <em>can_retransform=False</em>, <em>can_set_native_method_prefix=False</em><big>)</big><a class="headerlink" href="#java_agent" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">java_agent</tt><big>(</big><em>name</em>, <em>sources=None</em>, <em>excludes=None</em>, <em>resources=None</em>, <em>exclusives=None</em>, <em>premain=None</em>, <em>agent_class=None</em>, <em>can_redefine=False</em>, <em>can_retransform=False</em>, <em>can_set_native_method_prefix=False</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#java_agent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Defines a java agent entrypoint.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1011,7 +1014,7 @@ is needed by this agent; <cite>False</cite> by default.</li>
 <span id="bdict-java-antlr-library"></span><h2>java_antlr_library<a class="headerlink" href="#java-antlr-library" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="java_antlr_library">
-<tt class="descname">java_antlr_library</tt><big>(</big><em>name</em>, <em>sources</em>, <em>provides=None</em>, <em>dependencies=None</em>, <em>excludes=None</em>, <em>compiler=u'antlr3'</em>, <em>package=None</em><big>)</big><a class="headerlink" href="#java_antlr_library" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">java_antlr_library</tt><big>(</big><em>name</em>, <em>sources</em>, <em>provides=None</em>, <em>excludes=None</em>, <em>compiler=u'antlr3'</em>, <em>package=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#java_antlr_library" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates a stub Java library from Antlr grammar files.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1222,6 +1225,60 @@ to filter this target&#8217;s transitive dependencies against.</li>
 
 </div></blockquote>
 </div>
+<div class="section" id="jaxb-library">
+<span id="bdict-jaxb-library"></span><h2>jaxb_library<a class="headerlink" href="#jaxb-library" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="jaxb_library">
+<tt class="descname">jaxb_library</tt><big>(</big><em>package=None</em>, <em>language=u'java'</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#jaxb_library" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a stub Java library from jaxb xsd files.</p>
+<p>Initialize the JaxbLibrary target, currently with a lot of copypasta for the payload.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>package</strong> &#8211; java package (com.company.package) in which to generate the output java files.</td>
+</tr>
+</tbody>
+</table>
+<p>If left unspecified, pants will attempt to guess it from the file path leading to the schema
+(xsd) file. This will only be accurate if the .xsd file is in the format
+.../com/company/package/schema.xsd; it is recommended that the package be manually defined in
+the BUILD file for robustness.
+:param language: currently, anything other than &#8216;java&#8217; is unsupported (this is the default)
+:param buildflags: currently unused Parameters inherited from JvmTarget.
+:param string name: The name of this target, which combined with this build file defines the
+target <a class="reference internal" href="base.html#pants.base.address.Address" title="pants.base.address.Address"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.address.Address</span></tt></a>.
+:param sources: A list of filenames representing the source code this library is compiled from.
+:type sources: <tt class="docutils literal"><span class="pre">FileSet</span></tt> or list of strings.
+:param dependencies: List of <a class="reference internal" href="base.html#pants.base.target.Target" title="pants.base.target.Target"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.target.Target</span></tt></a> instances this target depends on.
+:type dependencies: Other targets that this target depends on.
+:type dependencies: List of target specs.
+:param excludes: One or more <tt class="xref py py-class docutils literal"><span class="pre">pants.targets.exclude.Exclude</span></tt> instances to filter this
+target&#8217;s transitive dependencies against.
+:param configurations: One or more ivy configurations to resolve for this target. This parameter
+is not intended for general use.
+:type configurations: tuple of strings</p>
+<p>Implemented by <tt class="docutils literal"><span class="pre">pants.backend.codegen.targets.jaxb_library.JaxbLibrary</span></tt></p>
+</dd></dl>
+
+<p><strong>Methods:</strong></p>
+<blockquote>
+<div><dl class="method">
+<dt>
+<tt class="descname">with_description</tt><big>(</big><em>description</em><big>)</big></dt>
+<dd><p>Set a human-readable description of this target.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>description</strong> &#8211; Descriptive string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div></blockquote>
+</div>
 <div class="section" id="junit-tests">
 <span id="bdict-junit-tests"></span><h2>junit_tests<a class="headerlink" href="#junit-tests" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
@@ -1276,7 +1333,7 @@ file resources to place in this module&#8217;s jar.</li>
 <span id="bdict-jvm-app"></span><h2>jvm_app<a class="headerlink" href="#jvm-app" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="jvm_app">
-<tt class="descname">jvm_app</tt><big>(</big><em>name=None</em>, <em>bundles=None</em>, <em>basename=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#jvm_app" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">jvm_app</tt><big>(</big><em>name=None</em>, <em>binary=None</em>, <em>bundles=None</em>, <em>basename=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#jvm_app" title="Permalink to this definition">¶</a></dt>
 <dd><p>A JVM-based application consisting of a binary plus &#8220;extra files&#8221;.</p>
 <p>Invoking the <tt class="docutils literal"><span class="pre">bundle</span></tt> goal on one of these targets creates a
 self-contained artifact suitable for deployment on some other machine.
@@ -1289,6 +1346,8 @@ extra files like config files, startup scripts, etc.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
 build file defines the target <a class="reference internal" href="base.html#pants.base.address.Address" title="pants.base.address.Address"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.address.Address</span></tt></a>.</li>
+<li><strong>binary</strong> &#8211; A pointer to the <tt class="xref py py-class docutils literal"><span class="pre">pants.targets.jvm_binary.JvmBinary</span></tt>. that contains the
+app main.</li>
 <li><strong>bundles</strong> &#8211; One or more <tt class="xref py py-class docutils literal"><span class="pre">pants.targets.jvm_binary.Bundle</span></tt>&#8216;s
 describing &#8220;extra files&#8221; that should be included with this app
 (e.g.: config files, startup scripts).</li>
@@ -1527,7 +1586,7 @@ this target depends on.</li>
 <span id="bdict-python-binary"></span><h2>python_binary<a class="headerlink" href="#python-binary" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="python_binary">
-<tt class="descname">python_binary</tt><big>(</big><em>source=None</em>, <em>entry_point=None</em>, <em>inherit_path=False</em>, <em>zip_safe=True</em>, <em>always_write_cache=False</em>, <em>repositories=None</em>, <em>indices=None</em>, <em>ignore_errors=False</em>, <em>allow_pypi=False</em>, <em>platforms=()</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#python_binary" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">python_binary</tt><big>(</big><em>source=None</em>, <em>entry_point=None</em>, <em>inherit_path=False</em>, <em>zip_safe=True</em>, <em>always_write_cache=False</em>, <em>repositories=None</em>, <em>indices=None</em>, <em>ignore_errors=False</em>, <em>platforms=()</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#python_binary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Produces a Python binary.</p>
 <p>Python binaries are pex files, self-contained executable shell
 scripts that contain a complete Python environment capable of
@@ -1551,6 +1610,7 @@ point that is defined by source</li>
 be written to disk.</li>
 <li><strong>repositories</strong> &#8211; a list of repositories to query for dependencies.</li>
 <li><strong>indices</strong> &#8211; a list of indices to use for packages.</li>
+<li><strong>ignore_errors</strong> &#8211; should we ignore inability to resolve dependencies?</li>
 <li><strong>platforms</strong> &#8211; extra platforms to target when building this binary.</li>
 <li><strong>compatibility</strong> &#8211; either a string or list of strings that represents
 interpreter compatibility for this target, using the Requirement-style format,

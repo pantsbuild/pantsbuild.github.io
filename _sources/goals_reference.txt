@@ -149,6 +149,21 @@ Create a jvm binary jar.
 
 
 
+.. _gref_cli_binarypythonbinarycreate:
+
+*
+  **binary:python-binary-create**
+  Implemented by ``pants.backend.python.tasks.python_binary_create.PythonBinaryCreate``
+
+
+
+  * | ``--binary-python-binary-create-timeout``
+      ``int``
+    |
+      Number of seconds to wait for http connections.
+
+
+
 
 **Other command-line options:**
 
@@ -159,7 +174,6 @@ Create a jvm binary jar.
   :ref:`check-exclusives <gref_cli_checkexclusives>`
   :ref:`ivy <gref_cli_ivy>`
   :ref:`jvm <gref_cli_jvm>`
-  :ref:`jar <gref_cli_jar>`
 
 
 
@@ -279,6 +293,27 @@ Create an application bundle from binary targets.
 
 
 
+.. _gref_cli_bundledup:
+
+*
+  **bundle:dup**
+  Implemented by ``pants.backend.jvm.tasks.detect_duplicates.DuplicateDetector``
+
+
+  Detect classes and resources with the same qualified name on the classpath.
+
+  * | ``--bundle-dup-fail-fast/--no-bundle-dup-fail-fast``
+    |
+      Fail fast if duplicate classes/resources are found.
+
+  * | ``--bundle-dup-excludes``
+      ``string``
+      (Default: ``dependencies,license,notice,.DS_Store,notice.txt,cmdline.arg.info.txt.1,license.txt``)
+    |
+      A comma separated list of files to exclude from duplicate check, defaults to:
+
+
+
 
 **Other command-line options:**
 
@@ -289,8 +324,6 @@ Create an application bundle from binary targets.
   :ref:`check-exclusives <gref_cli_checkexclusives>`
   :ref:`ivy <gref_cli_ivy>`
   :ref:`jvm <gref_cli_jvm>`
-  :ref:`jar <gref_cli_jar>`
-  :ref:`binary:dup <gref_cli_binarydup>`
 
 
 
@@ -1091,6 +1124,13 @@ Generate code.
 * Implemented by ``pants.backend.codegen.tasks.antlr_gen.AntlrGen``
 
 
+
+
+
+* Implemented by ``pants.backend.codegen.tasks.jaxb_gen.JaxbGen``
+
+
+  Generates java source files from jaxb schema (.xsd).
 
 
 
@@ -2519,7 +2559,7 @@ Test compiled code.
 
 *
   **test:pytest**
-  Implemented by ``pants.backend.python.tasks.python_run_tests.PythonRunTests``
+  Implemented by ``pants.backend.python.tasks.pytest_run.PytestRun``
 
 
 
@@ -2527,11 +2567,6 @@ Test compiled code.
       ``int``
     |
       Number of seconds to wait for http connections.
-
-  * | ``--test-pytest-interpreter``
-      ``string``
-    |
-      Constrain what Python interpreters to use.  Uses Requirement format from pkg_resources, e.g. 'CPython>=2.6,<3' or 'PyPy'. By default, no constraints are used.  Multiple constraints may be added.  They will be ORed together.
 
   * | ``--test-pytest-fast/--no-test-pytest-fast``
       (Default: ``True``)
@@ -2621,8 +2656,14 @@ These command-line flags are available with all Pants goals.
   ``-q/--quiet``
   Squelches all console output apart from errors.
 
+  ``-i/--interpreter``
+  Constrain what Python interpreters to use.  Uses Requirement format from pkg_resources, e.g. 'CPython&gt;=2.6,&lt;3' or 'PyPy'. By default, no constraints are used.  Multiple constraints may be added.  They will be ORed together.
+
   ``--no-colors``
   Do not colorize log messages.
+
+  ``--no-lock``
+  Don't attempt to grab the global lock. This lock prevents two concurrent pants instances from stomping on each others data, so only use this if you know what you're doing.
 
   ``--read-from-artifact-cache/--no-read-from-artifact-cache``
   Read build artifacts from cache, if available.

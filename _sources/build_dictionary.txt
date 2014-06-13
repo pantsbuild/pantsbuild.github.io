@@ -29,6 +29,7 @@ targets; some are handy utilities.
 `java_protobuf_library`_ |
 `java_tests`_ |
 `java_thrift_library`_ |
+`jaxb_library`_ |
 `junit_tests`_ |
 `jvm_app`_ |
 `jvm_binary`_ |
@@ -71,6 +72,7 @@ targets; some are handy utilities.
 `java_library`_ |
 `java_protobuf_library`_ |
 `java_thrift_library`_ |
+`jaxb_library`_ |
 `junit_tests`_ |
 `jvm_app`_ |
 `jvm_binary`_ |
@@ -487,7 +489,7 @@ jar_library
 java_agent
 -------------------------------------------------------------------------------
 
-.. py:function:: java_agent(name, sources=None, dependencies=None, excludes=None, resources=None, exclusives=None, premain=None, agent_class=None, can_redefine=False, can_retransform=False, can_set_native_method_prefix=False)
+.. py:function:: java_agent(name, sources=None, excludes=None, resources=None, exclusives=None, premain=None, agent_class=None, can_redefine=False, can_retransform=False, can_set_native_method_prefix=False, **kwargs)
 
  Defines a java agent entrypoint.
 
@@ -533,7 +535,7 @@ java_agent
 java_antlr_library
 -------------------------------------------------------------------------------
 
-.. py:function:: java_antlr_library(name, sources, provides=None, dependencies=None, excludes=None, compiler=u'antlr3', package=None)
+.. py:function:: java_antlr_library(name, sources, provides=None, excludes=None, compiler=u'antlr3', package=None, **kwargs)
 
  Generates a stub Java library from Antlr grammar files.
 
@@ -699,6 +701,48 @@ java_thrift_library
   
   :param description: Descriptive string
 
+.. _bdict_jaxb_library:
+
+jaxb_library
+-------------------------------------------------------------------------------
+
+.. py:function:: jaxb_library(package=None, language=u'java', **kwargs)
+
+ Generates a stub Java library from jaxb xsd files.
+
+
+ Initialize the JaxbLibrary target, currently with a lot of copypasta for the payload.
+ 
+ :param package: java package (com.company.package) in which to generate the output java files.
+ If left unspecified, pants will attempt to guess it from the file path leading to the schema
+ (xsd) file. This will only be accurate if the .xsd file is in the format
+ .../com/company/package/schema.xsd; it is recommended that the package be manually defined in
+ the BUILD file for robustness.
+ :param language: currently, anything other than 'java' is unsupported (this is the default)
+ :param buildflags: currently unused Parameters inherited from JvmTarget.
+ :param string name: The name of this target, which combined with this build file defines the
+ target :class:`pants.base.address.Address`.
+ :param sources: A list of filenames representing the source code this library is compiled from.
+ :type sources: ``FileSet`` or list of strings.
+ :param dependencies: List of :class:`pants.base.target.Target` instances this target depends on.
+ :type dependencies: Other targets that this target depends on.
+ :type dependencies: List of target specs.
+ :param excludes: One or more :class:`pants.targets.exclude.Exclude` instances to filter this
+ target's transitive dependencies against.
+ :param configurations: One or more ivy configurations to resolve for this target. This parameter
+ is not intended for general use.
+ :type configurations: tuple of strings
+
+ Implemented by ``pants.backend.codegen.targets.jaxb_library.JaxbLibrary``
+
+**Methods:**
+
+ .. py:method:: with_description(description)
+
+  Set a human-readable description of this target.
+  
+  :param description: Descriptive string
+
 .. _bdict_junit_tests:
 
 junit_tests
@@ -741,7 +785,7 @@ junit_tests
 jvm_app
 -------------------------------------------------------------------------------
 
-.. py:function:: jvm_app(name=None, bundles=None, basename=None, **kwargs)
+.. py:function:: jvm_app(name=None, binary=None, bundles=None, basename=None, **kwargs)
 
  A JVM-based application consisting of a binary plus "extra files".
  
@@ -753,6 +797,8 @@ jvm_app
 
  :param string name: The name of this target, which combined with this
    build file defines the target :class:`pants.base.address.Address`.
+ :param binary: A pointer to the :class:`pants.targets.jvm_binary.JvmBinary`. that contains the
+   app main.
  :param bundles: One or more :class:`pants.targets.jvm_binary.Bundle`'s
    describing "extra files" that should be included with this app
    (e.g.: config files, startup scripts).
@@ -942,7 +988,7 @@ python_antlr_library
 python_binary
 -------------------------------------------------------------------------------
 
-.. py:function:: python_binary(source=None, entry_point=None, inherit_path=False, zip_safe=True, always_write_cache=False, repositories=None, indices=None, ignore_errors=False, allow_pypi=False, platforms=(), **kwargs)
+.. py:function:: python_binary(source=None, entry_point=None, inherit_path=False, zip_safe=True, always_write_cache=False, repositories=None, indices=None, ignore_errors=False, platforms=(), **kwargs)
 
  Produces a Python binary.
  
@@ -966,6 +1012,7 @@ python_binary
    be written to disk.
  :param repositories: a list of repositories to query for dependencies.
  :param indices: a list of indices to use for packages.
+ :param ignore_errors: should we ignore inability to resolve dependencies?
  :param platforms: extra platforms to target when building this binary.
  :param compatibility: either a string or list of strings that represents
    interpreter compatibility for this target, using the Requirement-style format,
