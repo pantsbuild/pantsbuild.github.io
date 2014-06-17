@@ -375,6 +375,7 @@ body a.icon-home:hover{
 
           
   <h1>Source code for pants.base.target</h1><div class="highlight"><pre>
+<span class="c"># coding=utf-8</span>
 <span class="c"># Copyright 2014 Pants project contributors (see CONTRIBUTORS.md).</span>
 <span class="c"># Licensed under the Apache License, Version 2.0 (see LICENSE).</span>
 
@@ -629,6 +630,11 @@ body a.icon-home:hover{
   <span class="k">def</span> <span class="nf">is_synthetic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="o">.</span><span class="n">is_synthetic</span>
 
+  <span class="nd">@property</span>
+<div class="viewcode-block" id="Target.is_original"><a class="viewcode-back" href="../../../base.html#pants.base.target.Target.is_original">[docs]</a>  <span class="k">def</span> <span class="nf">is_original</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns ``True`` if this target is derived from no other.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">derived_from</span> <span class="o">==</span> <span class="bp">self</span>
+</div>
 <div class="viewcode-block" id="Target.get_all_exclusives"><a class="viewcode-back" href="../../../base.html#pants.base.target.Target.get_all_exclusives">[docs]</a>  <span class="k">def</span> <span class="nf">get_all_exclusives</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Get a map of all exclusives declarations in the transitive dependency graph.</span>
 
@@ -679,7 +685,7 @@ body a.icon-home:hover{
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span>
 </div>
 <div class="viewcode-block" id="Target.walk"><a class="viewcode-back" href="../../../base.html#pants.base.target.Target.walk">[docs]</a>  <span class="k">def</span> <span class="nf">walk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">work</span><span class="p">,</span> <span class="n">predicate</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Walk of this target&#39;s dependency graph visiting each node exactly once.</span>
+    <span class="sd">&quot;&quot;&quot;Walk of this target&#39;s dependency graph, in DFS order, visiting each node exactly once.</span>
 
 <span class="sd">    If a predicate is supplied it will be used to test each target before handing the target to</span>
 <span class="sd">    work and descending. Work can return targets in which case these will be added to the walk</span>
@@ -695,6 +701,10 @@ body a.icon-home:hover{
     <span class="k">if</span> <span class="n">predicate</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">predicate</span><span class="p">):</span>
       <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;predicate must be callable but was </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">predicate</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_build_graph</span><span class="o">.</span><span class="n">walk_transitive_dependency_graph</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">],</span> <span class="n">work</span><span class="p">,</span> <span class="n">predicate</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Target.closure"><a class="viewcode-back" href="../../../base.html#pants.base.target.Target.closure">[docs]</a>  <span class="k">def</span> <span class="nf">closure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns this target&#39;s transitive dependencies, in DFS order.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_graph</span><span class="o">.</span><span class="n">transitive_subgraph_of_addresses</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">])</span>
 </div>
   <span class="nd">@manual.builddict</span><span class="p">()</span>
 <div class="viewcode-block" id="Target.with_description"><a class="viewcode-back" href="../../../base.html#pants.base.target.Target.with_description">[docs]</a>  <span class="k">def</span> <span class="nf">with_description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">description</span><span class="p">):</span>

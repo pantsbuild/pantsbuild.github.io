@@ -405,7 +405,8 @@ an explicit constructor as there&#8217;s no configuration to setup nor do we nee
 to register product requirements. We implement <tt class="docutils literal"><span class="pre">console_output</span></tt> as
 required by <tt class="docutils literal"><span class="pre">ConsoleTask</span></tt> which parses the targets graph, calculates
 pagerank, then returns the report lines.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># Copyright 2014 Pants project contributors (see CONTRIBUTORS.md).</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># coding=utf-8</span>
+<span class="c"># Copyright 2014 Pants project contributors (see CONTRIBUTORS.md).</span>
 <span class="c"># Licensed under the Apache License, Version 2.0 (see LICENSE).</span>
 
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="p">(</span><span class="n">nested_scopes</span><span class="p">,</span> <span class="n">generators</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">with_statement</span><span class="p">,</span>
@@ -423,7 +424,6 @@ pagerank, then returns the report lines.</p>
   <span class="k">def</span> <span class="nf">console_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
     <span class="n">dependencies_by_target</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
     <span class="n">dependees_by_target</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
-    <span class="n">pagerank_by_target</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>When processing dependencies we populate the maps by walking a filtered
@@ -443,18 +443,19 @@ specific target types.</p>
 </pre></div>
 </div>
 <p>Now let&#8217;s calculate pagerank.</p>
-<div class="highlight-python"><div class="highlight"><pre>        for resolved in dependency.resolve():
+<div class="highlight-python"><div class="highlight"><pre>      for dependency in target.dependencies:
+        for resolved in dependency.resolve():
           if is_concrete(resolved):
             dependees_by_target[resolved].add(target)
 
   def _pagerank(self, dependees_by_target, dependencies_by_target, pagerank_by_target):
     &quot;&quot;&quot;Calculate PageRank.&quot;&quot;&quot;
     d = 0.85
-    for x in range(0, 100):
 </pre></div>
 </div>
 <p>And finally return the report lines.</p>
-<div class="highlight-python"><div class="highlight"><pre>        <span class="n">contributions</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span>
+<div class="highlight-python"><div class="highlight"><pre>      <span class="k">for</span> <span class="n">target</span><span class="p">,</span> <span class="n">dependees</span> <span class="ow">in</span> <span class="n">dependees_by_target</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="n">contributions</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span>
           <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">pagerank_by_target</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">dependencies_by_target</span><span class="p">[</span><span class="n">t</span><span class="p">]),</span> <span class="n">dependees</span><span class="p">)</span>
         <span class="n">pagerank_by_target</span><span class="p">[</span><span class="n">target</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">d</span><span class="p">)</span> <span class="o">+</span> <span class="n">d</span> <span class="o">*</span> <span class="nb">sum</span><span class="p">(</span><span class="n">contributions</span><span class="p">)</span>
 </pre></div>

@@ -375,6 +375,7 @@ body a.icon-home:hover{
 
           
   <h1>Source code for pants.base.build_file_parser</h1><div class="highlight"><pre>
+<span class="c"># coding=utf-8</span>
 <span class="c"># Copyright 2014 Pants project contributors (see CONTRIBUTORS.md).</span>
 <span class="c"># Licensed under the Apache License, Version 2.0 (see LICENSE).</span>
 
@@ -389,7 +390,9 @@ body a.icon-home:hover{
 <span class="kn">from</span> <span class="nn">twitter.common.lang</span> <span class="kn">import</span> <span class="n">Compatibility</span>
 
 <span class="kn">from</span> <span class="nn">pants.base.address</span> <span class="kn">import</span> <span class="n">BuildFileAddress</span><span class="p">,</span> <span class="n">parse_spec</span><span class="p">,</span> <span class="n">SyntheticAddress</span>
+<span class="kn">from</span> <span class="nn">pants.base.build_environment</span> <span class="kn">import</span> <span class="n">get_buildroot</span>
 <span class="kn">from</span> <span class="nn">pants.base.build_file</span> <span class="kn">import</span> <span class="n">BuildFile</span>
+<span class="kn">from</span> <span class="nn">pants.base.build_graph</span> <span class="kn">import</span> <span class="n">BuildGraph</span>
 <span class="kn">from</span> <span class="nn">pants.base.exceptions</span> <span class="kn">import</span> <span class="n">TargetDefinitionException</span>
 
 
@@ -826,6 +829,23 @@ body a.icon-home:hover{
                  <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">build_file</span><span class="o">=</span><span class="n">build_file</span><span class="p">))</span>
     <span class="k">for</span> <span class="n">target_proxy</span> <span class="ow">in</span> <span class="n">registered_target_proxies</span><span class="p">:</span>
       <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;  * {target_proxy}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">target_proxy</span><span class="o">=</span><span class="n">target_proxy</span><span class="p">))</span>
+
+  <span class="k">def</span> <span class="nf">scan</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Scans and parses all BUILD files found under ``root``.</span>
+
+<span class="sd">    Only BUILD files found under ``root`` are parsed as roots in the graph, but any dependencies of</span>
+<span class="sd">    targets parsed in the root tree&#39;s BUILD files will be followed and this may lead to BUILD files</span>
+<span class="sd">    outside of ``root`` being parsed and included in the returned build graph.</span>
+
+<span class="sd">    :param string root: The path to scan; by default, the build root.</span>
+<span class="sd">    :returns: A new build graph encapsulating the targets found.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">build_graph</span> <span class="o">=</span> <span class="n">BuildGraph</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">build_file</span> <span class="ow">in</span> <span class="n">BuildFile</span><span class="o">.</span><span class="n">scan_buildfiles</span><span class="p">(</span><span class="n">root</span> <span class="ow">or</span> <span class="n">get_buildroot</span><span class="p">()):</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">parse_build_file</span><span class="p">(</span><span class="n">build_file</span><span class="p">)</span>
+      <span class="k">for</span> <span class="n">address</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">addresses_by_build_file</span><span class="p">[</span><span class="n">build_file</span><span class="p">]:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inject_address_closure_into_build_graph</span><span class="p">(</span><span class="n">address</span><span class="p">,</span> <span class="n">build_graph</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">build_graph</span>
 </pre></div>
 
           <footer>
