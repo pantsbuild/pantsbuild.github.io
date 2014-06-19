@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pants.base.run_info &mdash; pants 0.1 documentation</title>
+  <title>pants.base.fingerprint_strategy &mdash; pants 0.1 documentation</title>
   
 
   
@@ -365,13 +365,13 @@ body a.icon-home:hover{
         <div class="rst-content">
           <ul class="wy-breadcrumbs">
   <li><a href="../../../index.html">Docs</a> &raquo;</li>
-  <li><a href="">pants.base.run_info</a></li>
+  <li><a href="">pants.base.fingerprint_strategy</a></li>
   
 </ul>
 <hr/>
 
           
-  <h1>Source code for pants.base.run_info</h1><div class="highlight"><pre>
+  <h1>Source code for pants.base.fingerprint_strategy</h1><div class="highlight"><pre>
 <span class="c"># coding=utf-8</span>
 <span class="c"># Copyright 2014 Pants project contributors (see CONTRIBUTORS.md).</span>
 <span class="c"># Licensed under the Apache License, Version 2.0 (see LICENSE).</span>
@@ -379,93 +379,41 @@ body a.icon-home:hover{
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="p">(</span><span class="n">nested_scopes</span><span class="p">,</span> <span class="n">generators</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">with_statement</span><span class="p">,</span>
                         <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">)</span>
 
-<span class="kn">import</span> <span class="nn">getpass</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">socket</span>
-<span class="kn">import</span> <span class="nn">time</span>
-
-<span class="kn">from</span> <span class="nn">twitter.common.dirutil</span> <span class="kn">import</span> <span class="n">safe_mkdir_for</span>
-
-<span class="kn">from</span> <span class="nn">pants.base.build_environment</span> <span class="kn">import</span> <span class="n">get_buildroot</span><span class="p">,</span> <span class="n">get_scm</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">twitter.common.lang</span> <span class="kn">import</span> <span class="n">AbstractClass</span>
 
 
-<div class="viewcode-block" id="RunInfo"><a class="viewcode-back" href="../../../base.html#pants.base.run_info.RunInfo">[docs]</a><span class="k">class</span> <span class="nc">RunInfo</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;A little plaintext file containing very basic info about a pants run.</span>
-
-<span class="sd">  Can only be appended to, never edited.</span>
-<span class="sd">  &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="FingerprintStrategy"><a class="viewcode-back" href="../../../base.html#pants.base.fingerprint_strategy.FingerprintStrategy">[docs]</a><span class="k">class</span> <span class="nc">FingerprintStrategy</span><span class="p">(</span><span class="n">AbstractClass</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;A helper object for doing per-task, finer grained invalidation of Targets.&quot;&quot;&quot;</span>
 
   <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="RunInfo.dir"><a class="viewcode-back" href="../../../base.html#pants.base.run_info.RunInfo.dir">[docs]</a>  <span class="k">def</span> <span class="nf">dir</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns the configured base directory run info files are stored under.&quot;&quot;&quot;</span>
-    <span class="c"># TODO(John Sirois): This is centralized, but in an awkward location.  Isolate RunInfo reading</span>
-    <span class="c"># and writing in 1 package or class that could naturally know this location and synthesize</span>
-    <span class="c"># info_file names.</span>
-    <span class="k">return</span> <span class="n">config</span><span class="o">.</span><span class="n">getdefault</span><span class="p">(</span><span class="s">&#39;info_dir&#39;</span><span class="p">,</span>
-                             <span class="n">default</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">getdefault</span><span class="p">(</span><span class="s">&#39;pants_workdir&#39;</span><span class="p">),</span> <span class="s">&#39;runs&#39;</span><span class="p">))</span>
+<div class="viewcode-block" id="FingerprintStrategy.name"><a class="viewcode-back" href="../../../base.html#pants.base.fingerprint_strategy.FingerprintStrategy.name">[docs]</a>  <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The name of this strategy.</span>
+
+<span class="sd">    This will ultimately appear in a human readable form in the fingerprint itself, for debugging</span>
+<span class="sd">    purposes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">raise</span> <span class="bp">NotImplemented</span>
 </div>
-  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info_file</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_info_file</span> <span class="o">=</span> <span class="n">info_file</span>
-    <span class="n">safe_mkdir_for</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_info_file</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_info</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_info_file</span><span class="p">):</span>
-      <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_info_file</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
-        <span class="n">info</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-      <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">re</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="s">&quot;&quot;&quot;^([^:]+):(.*)$&quot;&quot;&quot;</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_info</span><span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-
-  <span class="k">def</span> <span class="nf">path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_info_file</span>
-
-  <span class="k">def</span> <span class="nf">get_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
-
-  <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-    <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">ret</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">ret</span>
-
-  <span class="k">def</span> <span class="nf">get_as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_info</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-
-<div class="viewcode-block" id="RunInfo.add_info"><a class="viewcode-back" href="../../../base.html#pants.base.run_info.RunInfo.add_info">[docs]</a>  <span class="k">def</span> <span class="nf">add_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Adds the given info and returns a dict composed of just this added info.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_infos</span><span class="p">((</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">))</span>
+  <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="FingerprintStrategy.compute_fingerprint"><a class="viewcode-back" href="../../../base.html#pants.base.fingerprint_strategy.FingerprintStrategy.compute_fingerprint">[docs]</a>  <span class="k">def</span> <span class="nf">compute_fingerprint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Subclasses override this method to actually compute the Task specific fingerprint.&quot;&quot;&quot;</span>
 </div>
-<div class="viewcode-block" id="RunInfo.add_infos"><a class="viewcode-back" href="../../../base.html#pants.base.run_info.RunInfo.add_infos">[docs]</a>  <span class="k">def</span> <span class="nf">add_infos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">keyvals</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Adds the given info and returns a dict composed of just this added info.&quot;&quot;&quot;</span>
-    <span class="n">infos</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">keyvals</span><span class="p">)</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_info_file</span><span class="p">,</span> <span class="s">&#39;a&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
-      <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">infos</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="n">key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        <span class="n">val</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        <span class="k">if</span> <span class="s">&#39;:&#39;</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
-          <span class="k">raise</span> <span class="ne">Exception</span><span class="p">,</span> <span class="s">&#39;info key must not contain a colon&#39;</span>
-        <span class="n">outfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_info</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
-    <span class="k">return</span> <span class="n">infos</span>
-</div>
-<div class="viewcode-block" id="RunInfo.add_basic_info"><a class="viewcode-back" href="../../../base.html#pants.base.run_info.RunInfo.add_basic_info">[docs]</a>  <span class="k">def</span> <span class="nf">add_basic_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_id</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Adds basic build info and returns a dict composed of just this added info.&quot;&quot;&quot;</span>
-    <span class="n">datetime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s">&#39;%A %b </span><span class="si">%d</span><span class="s">, %Y %H:%M:%S&#39;</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">localtime</span><span class="p">(</span><span class="n">timestamp</span><span class="p">))</span>
-    <span class="n">user</span> <span class="o">=</span> <span class="n">getpass</span><span class="o">.</span><span class="n">getuser</span><span class="p">()</span>
-    <span class="n">machine</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">gethostname</span><span class="p">()</span>
-    <span class="n">path</span> <span class="o">=</span> <span class="n">get_buildroot</span><span class="p">()</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_infos</span><span class="p">((</span><span class="s">&#39;id&#39;</span><span class="p">,</span> <span class="n">run_id</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;timestamp&#39;</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;datetime&#39;</span><span class="p">,</span> <span class="n">datetime</span><span class="p">),</span>
-                          <span class="p">(</span><span class="s">&#39;user&#39;</span><span class="p">,</span> <span class="n">user</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;machine&#39;</span><span class="p">,</span> <span class="n">machine</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;path&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">))</span>
-</div>
-<div class="viewcode-block" id="RunInfo.add_scm_info"><a class="viewcode-back" href="../../../base.html#pants.base.run_info.RunInfo.add_scm_info">[docs]</a>  <span class="k">def</span> <span class="nf">add_scm_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Adds SCM-related info and returns a dict composed of just this added info.&quot;&quot;&quot;</span>
-    <span class="n">scm</span> <span class="o">=</span> <span class="n">get_scm</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">scm</span><span class="p">:</span>
-      <span class="n">revision</span> <span class="o">=</span> <span class="n">scm</span><span class="o">.</span><span class="n">commit_id</span>
-      <span class="n">tag</span> <span class="o">=</span> <span class="n">scm</span><span class="o">.</span><span class="n">tag_name</span> <span class="ow">or</span> <span class="s">&#39;none&#39;</span>
-      <span class="n">branch</span> <span class="o">=</span> <span class="n">scm</span><span class="o">.</span><span class="n">branch_name</span> <span class="ow">or</span> <span class="n">revision</span>
-    <span class="k">else</span><span class="p">:</span>
-      <span class="n">revision</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">branch</span> <span class="o">=</span> <span class="s">&#39;none&#39;</span><span class="p">,</span> <span class="s">&#39;none&#39;</span><span class="p">,</span> <span class="s">&#39;none&#39;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_infos</span><span class="p">((</span><span class="s">&#39;revision&#39;</span><span class="p">,</span> <span class="n">revision</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;tag&#39;</span><span class="p">,</span> <span class="n">tag</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;branch&#39;</span><span class="p">,</span> <span class="n">branch</span><span class="p">))</span></div></div>
+<div class="viewcode-block" id="FingerprintStrategy.fingerprint_target"><a class="viewcode-back" href="../../../base.html#pants.base.fingerprint_strategy.FingerprintStrategy.fingerprint_target">[docs]</a>  <span class="k">def</span> <span class="nf">fingerprint_target</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Consumers of subclass instances call this to get a fingerprint labeled with the name&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="s">&#39;{fingerprint}-{name}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fingerprint</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">compute_fingerprint</span><span class="p">(</span><span class="n">target</span><span class="p">),</span>
+                                         <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">())</span>
+
+</div></div>
+<div class="viewcode-block" id="DefaultFingerprintStrategy"><a class="viewcode-back" href="../../../base.html#pants.base.fingerprint_strategy.DefaultFingerprintStrategy">[docs]</a><span class="k">class</span> <span class="nc">DefaultFingerprintStrategy</span><span class="p">(</span><span class="n">FingerprintStrategy</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;The default FingerprintStrategy, which delegates to target.payload.invalidation_hash().&quot;&quot;&quot;</span>
+
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s">&#39;default&#39;</span>
+
+  <span class="k">def</span> <span class="nf">compute_fingerprint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">target</span><span class="o">.</span><span class="n">payload</span><span class="o">.</span><span class="n">invalidation_hash</span><span class="p">()</span></div>
 </pre></div>
 
           <footer>

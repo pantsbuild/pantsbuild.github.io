@@ -51,21 +51,17 @@
         <link rel="prev" title="Pants Development with IntelliJ IDEA" href="intellij.html"/>
  
 <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-39101739-2']);
-  _gaq.push(['_trackPageview']);
-</script>
-<script type="text/javascript">
   // In a plain template, we'd put this in the footer block.
   // In the read-the-docs template, there is no footer. So use jQuery ready:
   $(document).ready(function() {
     // Ping Google analytics
-    var ga = document.createElement('script');
-    ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ?
-              'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    ga.setAttribute('async', 'true');
-    $(document).append(ga);
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-39101739-2', 'auto');
+    ga('send', 'pageview');
 
     // Show the travis-ci status graphic
     $('.wy-breadcrumbs').append(
@@ -160,6 +156,7 @@ body a.icon-home:hover{
 <li class="toctree-l1"><a class="reference internal" href="build_files.html">BUILD files</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="build_files.html#debugging-a-build-file">Debugging a BUILD File</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_files.html#default-target">Default Target</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_files.html#the-1-1-1-rule">The 1:1:1 Rule</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_files.html#avoid-rglobs">Avoid rglobs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_files.html#define-separate-targets-for-interface-and-implementation">Define Separate Targets for Interface and Implementation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_files.html#depend-on-api-in-library-targets-implementation-in-binary-targets">Depend on API in Library Targets, Implementation in Binary Targets</a></li>
@@ -198,14 +195,14 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="publish.html#authenticating-to-the-artifact-repository">Authenticating to the Artifact Repository</a></li>
 <li class="toctree-l2"><a class="reference internal" href="publish.html#troubleshooting">Troubleshooting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="publish.html#want-to-publish-something-publish-many-things">Want to Publish Something? Publish Many Things</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publish.html#test-with-a-fake-local-publish">Test with a Fake Local &#8220;Publish&#8221;</a></li>
 </ul>
 </li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="with_intellij.html">Using Pants with IntelliJ IDEA</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
-<li class="toctree-l2"><a class="reference internal" href="with_intellij.html#editing-build-files">Editing BUILD Files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="with_intellij.html#pants-build-plugin-for-intellij">Pants Build Plugin for IntelliJ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
 </ul>
 </li>
 </ul>
@@ -219,116 +216,117 @@ body a.icon-home:hover{
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installing Pants</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="install.html#system-wide-installation">System-wide Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="install.html#virtualenv-based-installation">Virtualenv-based Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="install.html#pex-based-installation">PEX-based Installation</a></li>
 </ul>
 </li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="build_dictionary.html">BUILD Dictionary</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#pants">pants</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#egg">egg</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#resources">resources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#page">page</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#exclude">exclude</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#repo">repo</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jar">jar</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#dependencies">dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-antlr-library">python_antlr_library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-thrift-library">python_thrift_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#file">__file__</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#amount">Amount</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#annotation-processor">annotation_processor</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#artifact">artifact</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#benchmark">benchmark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#bundle">bundle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#credentials">credentials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#dependencies">dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#egg">egg</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#exclude">exclude</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#globs">globs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#goal">goal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jar">jar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jar-library">jar_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-agent">java_agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-antlr-library">java_antlr_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-library">java_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-protobuf-library">java_protobuf_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-tests">java_tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-thrift-library">java_thrift_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jaxb-library">jaxb_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#junit-tests">junit_tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jvm-app">jvm_app</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jvm-binary">jvm_binary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#maven-layout">maven_layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#page">page</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#pants">pants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#phase">phase</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-antlr-library">python_antlr_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-binary">python_binary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-library">python_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-requirement">python_requirement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-requirement-library">python_requirement_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-test-suite">python_test_suite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-tests">python_tests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#goal">goal</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#phase">phase</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-antlr-library">java_antlr_library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#benchmark">benchmark</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jvm-binary">jvm_binary</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-library">java_library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-thrift-library">java_thrift_library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#amount">Amount</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#file">__file__</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#globs">globs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jar-library">jar_library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-tests">java_tests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#maven-layout">maven_layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-thrift-library">python_thrift_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#repo">repo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#resources">resources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#rglobs">rglobs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#root-dir">ROOT_DIR</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#scala-tests">scala_tests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#time">Time</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#bundle">bundle</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#wiki">wiki</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-agent">java_agent</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#scala-library">scala_library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#annotation-processor">annotation_processor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-protobuf-library">java_protobuf_library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#credentials">credentials</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#junit-tests">junit_tests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jvm-app">jvm_app</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#setup-py">setup_py</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#scala-specs">scala_specs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#source-root">source_root</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-test-suite">python_test_suite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#scala-tests">scala_tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#scalac-plugin">scalac_plugin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#setup-py">setup_py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#source-root">source_root</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#time">Time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#wiki">wiki</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#wiki-artifact">wiki_artifact</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="goals_reference.html">Goals Reference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#goals">goals</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#targets">targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#bench">bench</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#binary">binary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#bootstrap">bootstrap</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#builddict">builddict</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#invalidate">invalidate</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#ng-killall">ng-killall</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#buildlint">buildlint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#bundle">bundle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#check-exclusives">check-exclusives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#check-published-deps">check_published_deps</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#clean-all">clean-all</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#clean-all-async">clean-all-async</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#server">server</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#killserver">killserver</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#bootstrap">bootstrap</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#setup">setup</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#gen">gen</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#check-exclusives">check-exclusives</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#resolve">resolve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#checkstyle">checkstyle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#compile">compile</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#resources">resources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#doc">doc</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#markdown">markdown</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#publish">publish</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#jar">jar</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#binary">binary</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#bundle">bundle</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#check-published-deps">check_published_deps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#dependees">dependees</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#dependencies">dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#depmap">depmap</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#detect-duplicates">detect-duplicates</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#buildlint">buildlint</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#test">test</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#bench">bench</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#run">run</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#run-dirty">run-dirty</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#doc">doc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#eclipse">eclipse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#filedeps">filedeps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#filemap">filemap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#filter">filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#gen">gen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#goals">goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#gref-phase-idea">idea</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#invalidate">invalidate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#jar">jar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#killserver">killserver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#list">list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#markdown">markdown</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#minimize">minimize</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#ng-killall">ng-killall</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#path">path</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#pathdeps">pathdeps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#paths">paths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#provides">provides</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#publish">publish</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#repl">repl</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#repl-dirty">repl-dirty</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#filedeps">filedeps</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#pathdeps">pathdeps</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#list">list</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#gref-phase-idea">idea</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#eclipse">eclipse</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#provides">provides</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#path">path</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#paths">paths</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#dependees">dependees</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#depmap">depmap</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#dependencies">dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#filemap">filemap</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#minimize">minimize</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#filter">filter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#sort">sort</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#resolve">resolve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#resources">resources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#roots">roots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#run">run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#run-dirty">run-dirty</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#server">server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#setup">setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#sort">sort</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#targets">targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#test">test</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#common">Common</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pants_ini_reference.html">pants.ini Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="pants_ini_reference.html#default-section">DEFAULT section</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pants_ini_reference.html#idea-section">idea section</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pants_ini_reference.html#configref-section-idea">idea section</a></li>
 </ul>
 </li>
 </ul>
@@ -420,6 +418,19 @@ at the environment and Targets, invokes some tool, generates things, and reports
 success/failure. It can define command-line flags to check.
 If you&#8217;re giving Pants the ability to do something new, you&#8217;re probably
 adding a Task. See <a class="reference internal" href="dev_tasks.html"><em>Task Developer&#8217;s Guide</em></a>.</dd>
+<dt><strong>Backend</strong></dt>
+<dd>Collection of Targets, Goals, Tasks, Commands to do something useful.
+At Pants&#8217; core are the abstractions Target, and Task.
+These abstractions don&#8217;t do anything in particular.
+To build real code, you need to define and register some more specific
+classes.
+For example, to build Java code, you want the <tt class="docutils literal"><span class="pre">JavaLibrary</span></tt> Target,
+<tt class="docutils literal"><span class="pre">JavaCompile</span></tt> task (registered in the <tt class="docutils literal"><span class="pre">compile</span></tt> goal), and many more.
+We organize this &#8220;real&#8221; code into &#8220;backends&#8221;. A typical backend defines
+several classes and registers them with the Pants core.
+For a design discussion on registering plugins, see the
+<a class="reference external" href="https://groups.google.com/forum/#!topic/pants-devel/uHGpR2K6FBI">Plugin Engine</a>
+<tt class="docutils literal"><span class="pre">pants-devel</span></tt> thread.</dd>
 <dt><strong>Context</strong></dt>
 <dd>An API to the state of the world. A Task uses this to find out
 things like the flags the user set on the command line, <cite>pants.ini</cite> config,
@@ -482,6 +493,14 @@ Actually do something; perhaps generate some products from some sources.</li>
 </ul>
 <p>There are some base <tt class="docutils literal"><span class="pre">Task</span></tt> classes to help you get started. E.g., if your
 goal just outputs information to the console, subclass <tt class="docutils literal"><span class="pre">ConsoleTask</span></tt>.</p>
+<p>The user&#8217;s source code is organized by <a class="reference internal" href="setup_repo.html#setup-source-root"><em>source roots</em></a>.
+If a task needs to know the path from &#8220;the root&#8221; to a source file (perhaps
+to turn a path/to/dir/Foo into a package path.to.dir.Foo), it should probably
+compute that based on the source root (<tt class="docutils literal"><span class="pre">target.target_base</span></tt>), not the
+build root. The absolute paths to a target&#8217;s source files are:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">abspaths</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_buildroot</span><span class="p">(),</span> <span class="n">target</span><span class="o">.</span><span class="n">target_base</span><span class="p">,</span> <span class="n">rel_path</span><span class="p">)</span> <span class="k">for</span> <span class="n">rel_path</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">sources_relative_to_source_root</span><span class="p">()]</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="group">
 <h3>Group<a class="headerlink" href="#group" title="Permalink to this headline">¶</a></h3>
@@ -509,6 +528,9 @@ Perhaps there&#8217;s a lot of overhead starting up the tool, but it takes
 about as long to compile 10 source files as to compile one.
 A <tt class="docutils literal"><span class="pre">goal</span></tt> with a <tt class="docutils literal"><span class="pre">group</span></tt> will try to operate on more than one target at
 a time.</p>
+<p>For a design discussion of a big Group refactor, see the
+<a class="reference external" href="https://groups.google.com/forum/#!msg/pants-devel/glCHuLC9JF4/T6nbPcDVKk0J">RFC: GroupEngine / Task Lifecycle change proposal</a>
+<tt class="docutils literal"><span class="pre">pants-devel</span></tt> thread.</p>
 </div>
 </div>
 <div class="section" id="code-layout">
@@ -543,13 +565,13 @@ probably look at them to see the flow of control.</dd>
 <dt><a class="reference external" href="https://github.com/pantsbuild/pants/tree/master/src/python/pants/java/">java</a></dt>
 <dd>(TODO OMG bluffing) Utility classes useful to many things that work
 with Java code.</dd>
-<dt><a class="reference external" href="https://github.com/pantsbuild/pants/tree/master/src/python/pants/python/">python</a></dt>
+<dt><a class="reference external" href="https://github.com/pantsbuild/pants/tree/master/src/python/pants/backend/python/">python</a></dt>
 <dd>(TODO OMG bluffing) Utility classes useful to many things that work
 with Python code.</dd>
 <dt><a class="reference external" href="https://github.com/pantsbuild/pants/tree/master/src/python/pants/targets/">targets</a></dt>
 <dd>Source of the Target classes; e.g., the code behind <cite>jvm_binary</cite>
 lives here. If you define a new Target type, add its code here.</dd>
-<dt><a class="reference external" href="https://github.com/pantsbuild/pants/tree/master/src/python/pants/tasks/">tasks</a></dt>
+<dt><a class="reference external" href="https://github.com/pantsbuild/pants/tree/master/src/python/pants/backend/core/tasks/">tasks</a></dt>
 <dd>Source of the Task classes. E.g., <cite>junit_run</cite>, the code that
 invokes JUnit if someone tests a <cite>java_tests</cite> target.</dd>
 <dt><a class="reference external" href="https://github.com/pantsbuild/pants/tree/master/tests/python/pants_test/">tests/.../pants</a></dt>

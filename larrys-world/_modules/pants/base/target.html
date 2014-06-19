@@ -49,21 +49,17 @@
         <link rel="up" title="Module code" href="../../index.html"/>
  
 <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-39101739-2']);
-  _gaq.push(['_trackPageview']);
-</script>
-<script type="text/javascript">
   // In a plain template, we'd put this in the footer block.
   // In the read-the-docs template, there is no footer. So use jQuery ready:
   $(document).ready(function() {
     // Ping Google analytics
-    var ga = document.createElement('script');
-    ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ?
-              'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    ga.setAttribute('async', 'true');
-    $(document).append(ga);
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-39101739-2', 'auto');
+    ga('send', 'pageview');
 
     // Show the travis-ci status graphic
     $('.wy-breadcrumbs').append(
@@ -158,6 +154,7 @@ body a.icon-home:hover{
 <li class="toctree-l1"><a class="reference internal" href="../../../build_files.html">BUILD files</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_files.html#debugging-a-build-file">Debugging a BUILD File</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_files.html#default-target">Default Target</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_files.html#the-1-1-1-rule">The 1:1:1 Rule</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_files.html#avoid-rglobs">Avoid rglobs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_files.html#define-separate-targets-for-interface-and-implementation">Define Separate Targets for Interface and Implementation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_files.html#depend-on-api-in-library-targets-implementation-in-binary-targets">Depend on API in Library Targets, Implementation in Binary Targets</a></li>
@@ -196,14 +193,14 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#authenticating-to-the-artifact-repository">Authenticating to the Artifact Repository</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#troubleshooting">Troubleshooting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../publish.html#want-to-publish-something-publish-many-things">Want to Publish Something? Publish Many Things</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../publish.html#test-with-a-fake-local-publish">Test with a Fake Local &#8220;Publish&#8221;</a></li>
 </ul>
 </li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../with_intellij.html">Using Pants with IntelliJ IDEA</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#editing-build-files">Editing BUILD Files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#pants-build-plugin-for-intellij">Pants Build Plugin for IntelliJ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
 </ul>
 </li>
 </ul>
@@ -217,116 +214,117 @@ body a.icon-home:hover{
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installing Pants</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../install.html#system-wide-installation">System-wide Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../install.html#virtualenv-based-installation">Virtualenv-based Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../install.html#pex-based-installation">PEX-based Installation</a></li>
 </ul>
 </li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_dictionary.html">BUILD Dictionary</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#pants">pants</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#egg">egg</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#resources">resources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#page">page</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#exclude">exclude</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#repo">repo</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#jar">jar</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#dependencies">dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-antlr-library">python_antlr_library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-thrift-library">python_thrift_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#file">__file__</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#amount">Amount</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#annotation-processor">annotation_processor</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#artifact">artifact</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#benchmark">benchmark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#bundle">bundle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#credentials">credentials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#dependencies">dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#egg">egg</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#exclude">exclude</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#globs">globs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#goal">goal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#jar">jar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#jar-library">jar_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#java-agent">java_agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#java-antlr-library">java_antlr_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#java-library">java_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#java-protobuf-library">java_protobuf_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#java-tests">java_tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#java-thrift-library">java_thrift_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#jaxb-library">jaxb_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#junit-tests">junit_tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#jvm-app">jvm_app</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#jvm-binary">jvm_binary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#maven-layout">maven_layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#page">page</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#pants">pants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#phase">phase</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-antlr-library">python_antlr_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-binary">python_binary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-library">python_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-requirement">python_requirement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-requirement-library">python_requirement_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-test-suite">python_test_suite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-tests">python_tests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#goal">goal</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#phase">phase</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#java-antlr-library">java_antlr_library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#benchmark">benchmark</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#jvm-binary">jvm_binary</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#java-library">java_library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#java-thrift-library">java_thrift_library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#amount">Amount</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#file">__file__</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#globs">globs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#jar-library">jar_library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#java-tests">java_tests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#maven-layout">maven_layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-thrift-library">python_thrift_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#repo">repo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#resources">resources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#rglobs">rglobs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#root-dir">ROOT_DIR</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#scala-tests">scala_tests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#time">Time</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#bundle">bundle</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#wiki">wiki</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#java-agent">java_agent</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#scala-library">scala_library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#annotation-processor">annotation_processor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#java-protobuf-library">java_protobuf_library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#credentials">credentials</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#junit-tests">junit_tests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#jvm-app">jvm_app</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#setup-py">setup_py</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#scala-specs">scala_specs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#source-root">source_root</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-test-suite">python_test_suite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#scala-tests">scala_tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#scalac-plugin">scalac_plugin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#setup-py">setup_py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#source-root">source_root</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#time">Time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#wiki">wiki</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#wiki-artifact">wiki_artifact</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../goals_reference.html">Goals Reference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#goals">goals</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#targets">targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#bench">bench</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#binary">binary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#bootstrap">bootstrap</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#builddict">builddict</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#invalidate">invalidate</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#ng-killall">ng-killall</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#buildlint">buildlint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#bundle">bundle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#check-exclusives">check-exclusives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#check-published-deps">check_published_deps</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#clean-all">clean-all</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#clean-all-async">clean-all-async</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#server">server</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#killserver">killserver</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#bootstrap">bootstrap</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#setup">setup</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#gen">gen</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#check-exclusives">check-exclusives</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#resolve">resolve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#checkstyle">checkstyle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#compile">compile</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#resources">resources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#doc">doc</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#markdown">markdown</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#publish">publish</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#jar">jar</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#binary">binary</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#bundle">bundle</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#check-published-deps">check_published_deps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#dependees">dependees</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#dependencies">dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#depmap">depmap</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#detect-duplicates">detect-duplicates</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#buildlint">buildlint</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#test">test</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#bench">bench</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#run">run</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#run-dirty">run-dirty</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#doc">doc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#eclipse">eclipse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#filedeps">filedeps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#filemap">filemap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#filter">filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#gen">gen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#goals">goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#gref-phase-idea">idea</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#invalidate">invalidate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#jar">jar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#killserver">killserver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#list">list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#markdown">markdown</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#minimize">minimize</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#ng-killall">ng-killall</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#path">path</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#pathdeps">pathdeps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#paths">paths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#provides">provides</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#publish">publish</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#repl">repl</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#repl-dirty">repl-dirty</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#filedeps">filedeps</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#pathdeps">pathdeps</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#list">list</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#gref-phase-idea">idea</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#eclipse">eclipse</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#provides">provides</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#path">path</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#paths">paths</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#dependees">dependees</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#depmap">depmap</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#dependencies">dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#filemap">filemap</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#minimize">minimize</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#filter">filter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#sort">sort</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#resolve">resolve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#resources">resources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#roots">roots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#run">run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#run-dirty">run-dirty</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#server">server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#setup">setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#sort">sort</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#targets">targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#test">test</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#common">Common</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../pants_ini_reference.html">pants.ini Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../pants_ini_reference.html#default-section">DEFAULT section</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../pants_ini_reference.html#idea-section">idea section</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../pants_ini_reference.html#configref-section-idea">idea section</a></li>
 </ul>
 </li>
 </ul>
@@ -374,6 +372,7 @@ body a.icon-home:hover{
 
           
   <h1>Source code for pants.base.target</h1><div class="highlight"><pre>
+<span class="c"># coding=utf-8</span>
 <span class="c"># Copyright 2014 Pants project contributors (see CONTRIBUTORS.md).</span>
 <span class="c"># Licensed under the Apache License, Version 2.0 (see LICENSE).</span>
 
@@ -381,40 +380,18 @@ body a.icon-home:hover{
                         <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">)</span>
 
 <span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">from</span> <span class="nn">hashlib</span> <span class="kn">import</span> <span class="n">sha1</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">sys</span>
 
-<span class="kn">from</span> <span class="nn">twitter.common.collections</span> <span class="kn">import</span> <span class="n">OrderedSet</span><span class="p">,</span> <span class="n">maybe_list</span>
-<span class="kn">from</span> <span class="nn">twitter.common.lang</span> <span class="kn">import</span> <span class="n">Compatibility</span>
-
-<span class="kn">from</span> <span class="nn">pants.base.address</span> <span class="kn">import</span> <span class="n">Address</span>
+<span class="kn">from</span> <span class="nn">pants.base.build_environment</span> <span class="kn">import</span> <span class="n">get_buildroot</span>
 <span class="kn">from</span> <span class="nn">pants.base.build_manual</span> <span class="kn">import</span> <span class="n">manual</span>
+<span class="kn">from</span> <span class="nn">pants.base.fingerprint_strategy</span> <span class="kn">import</span> <span class="n">DefaultFingerprintStrategy</span>
 <span class="kn">from</span> <span class="nn">pants.base.hash_utils</span> <span class="kn">import</span> <span class="n">hash_all</span>
-<span class="kn">from</span> <span class="nn">pants.base.parse_context</span> <span class="kn">import</span> <span class="n">ParseContext</span>
+<span class="kn">from</span> <span class="nn">pants.base.payload</span> <span class="kn">import</span> <span class="n">EmptyPayload</span>
+<span class="kn">from</span> <span class="nn">pants.base.source_root</span> <span class="kn">import</span> <span class="n">SourceRoot</span>
 
 
-<div class="viewcode-block" id="TargetDefinitionException"><a class="viewcode-back" href="../../../base.html#pants.base.target.TargetDefinitionException">[docs]</a><span class="k">class</span> <span class="nc">TargetDefinitionException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;Thrown on errors in target definitions.&quot;&quot;&quot;</span>
-
-  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
-    <span class="n">address</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="s">&#39;address&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">address</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-      <span class="k">try</span><span class="p">:</span>
-        <span class="n">location</span> <span class="o">=</span> <span class="n">ParseContext</span><span class="o">.</span><span class="n">locate</span><span class="p">()</span><span class="o">.</span><span class="n">current_buildfile</span>
-      <span class="k">except</span> <span class="n">ParseContext</span><span class="o">.</span><span class="n">ContextError</span><span class="p">:</span>
-        <span class="n">location</span> <span class="o">=</span> <span class="s">&#39;unknown location&#39;</span>
-      <span class="n">address</span> <span class="o">=</span> <span class="s">&#39;unknown target of type </span><span class="si">%s</span><span class="s"> in </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">location</span><span class="p">)</span>
-    <span class="nb">super</span><span class="p">(</span><span class="ne">Exception</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="s">&#39;Error with </span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">address</span><span class="p">,</span> <span class="n">msg</span><span class="p">))</span>
-
-</div>
 <span class="k">class</span> <span class="nc">AbstractTarget</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-
-  <span class="nd">@property</span>
-  <span class="k">def</span> <span class="nf">is_concrete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns true if a target resolves to itself.&quot;&quot;&quot;</span>
-    <span class="n">targets</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resolve</span><span class="p">())</span>
-    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">targets</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span>
-
   <span class="nd">@property</span>
   <span class="k">def</span> <span class="nf">has_resources</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns True if the target has an associated set of Resources.&quot;&quot;&quot;</span>
@@ -425,11 +402,6 @@ body a.icon-home:hover{
     <span class="sd">&quot;&quot;&quot;Returns True if the target provides an artifact exportable from the repo.&quot;&quot;&quot;</span>
     <span class="c"># TODO(John Sirois): fixup predicate dipping down into details here.</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_label</span><span class="p">(</span><span class="s">&#39;exportable&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">provides</span>
-
-  <span class="nd">@property</span>
-  <span class="k">def</span> <span class="nf">is_internal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns True if the target is internal to the repo (ie: it might have dependencies).&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_label</span><span class="p">(</span><span class="s">&#39;internal&#39;</span><span class="p">)</span>
 
   <span class="nd">@property</span>
   <span class="k">def</span> <span class="nf">is_jar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -460,11 +432,6 @@ body a.icon-home:hover{
   <span class="k">def</span> <span class="nf">is_codegen</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns True if the target is a codegen target.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_label</span><span class="p">(</span><span class="s">&#39;codegen&#39;</span><span class="p">)</span>
-
-  <span class="nd">@property</span>
-  <span class="k">def</span> <span class="nf">is_synthetic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns True if the target is a synthetic target injected by the runtime.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_label</span><span class="p">(</span><span class="s">&#39;synthetic&#39;</span><span class="p">)</span>
 
   <span class="nd">@property</span>
   <span class="k">def</span> <span class="nf">is_jar_library</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -501,10 +468,6 @@ body a.icon-home:hover{
     <span class="sd">&quot;&quot;&quot;Returns True if the target is comprised of tests.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_label</span><span class="p">(</span><span class="s">&#39;tests&#39;</span><span class="p">)</span>
 
-  <span class="k">def</span> <span class="nf">resolve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns an iterator over the target(s) this target represents.&quot;&quot;&quot;</span>
-    <span class="k">yield</span> <span class="bp">self</span>
-
 
 <span class="nd">@manual.builddict</span><span class="p">()</span>
 <div class="viewcode-block" id="Target"><a class="viewcode-back" href="../../../base.html#pants.base.target.Target">[docs]</a><span class="k">class</span> <span class="nc">Target</span><span class="p">(</span><span class="n">AbstractTarget</span><span class="p">):</span>
@@ -514,8 +477,9 @@ body a.icon-home:hover{
 <span class="sd">  parse context.</span>
 <span class="sd">  &quot;&quot;&quot;</span>
 
-  <span class="n">_targets_by_address</span> <span class="o">=</span> <span class="bp">None</span>
-  <span class="n">_addresses_by_buildfile</span> <span class="o">=</span> <span class="bp">None</span>
+  <span class="nd">@property</span>
+  <span class="k">def</span> <span class="nf">target_base</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">SourceRoot</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
   <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="Target.identify"><a class="viewcode-back" href="../../../base.html#pants.base.target.Target.identify">[docs]</a>  <span class="k">def</span> <span class="nf">identify</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
@@ -540,123 +504,134 @@ body a.icon-home:hover{
     <span class="n">ids</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span>  <span class="c"># We can&#39;t len a generator.</span>
     <span class="k">return</span> <span class="n">ids</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">cls</span><span class="o">.</span><span class="n">combine_ids</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span>
 </div>
-  <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="Target.get_all_addresses"><a class="viewcode-back" href="../../../base.html#pants.base.target.Target.get_all_addresses">[docs]</a>  <span class="k">def</span> <span class="nf">get_all_addresses</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">buildfile</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns all of the target addresses in the specified buildfile if already parsed; otherwise,</span>
-<span class="sd">    parses the buildfile to find all the addresses it contains and then returns them.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">lookup</span><span class="p">():</span>
-      <span class="k">if</span> <span class="n">buildfile</span> <span class="ow">in</span> <span class="n">cls</span><span class="o">.</span><span class="n">_addresses_by_buildfile</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">_addresses_by_buildfile</span><span class="p">[</span><span class="n">buildfile</span><span class="p">]</span>
-      <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">OrderedSet</span><span class="p">()</span>
-
-    <span class="n">addresses</span> <span class="o">=</span> <span class="n">lookup</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">addresses</span><span class="p">:</span>
-      <span class="k">return</span> <span class="n">addresses</span>
-    <span class="k">else</span><span class="p">:</span>
-      <span class="n">ParseContext</span><span class="p">(</span><span class="n">buildfile</span><span class="p">)</span><span class="o">.</span><span class="n">parse</span><span class="p">()</span>
-      <span class="k">return</span> <span class="n">lookup</span><span class="p">()</span>
-</div>
-  <span class="nd">@classmethod</span>
-  <span class="k">def</span> <span class="nf">_clear_all_addresses</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
-    <span class="n">cls</span><span class="o">.</span><span class="n">_targets_by_address</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">cls</span><span class="o">.</span><span class="n">_addresses_by_buildfile</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="n">OrderedSet</span><span class="p">)</span>
-
-  <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="Target.get"><a class="viewcode-back" href="../../../base.html#pants.base.target.Target.get">[docs]</a>  <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">address</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns the specified module target if already parsed; otherwise, parses the buildfile in the</span>
-<span class="sd">    context of its parent directory and returns the parsed target.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">lookup</span><span class="p">():</span>
-      <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">_targets_by_address</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">address</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
-
-    <span class="n">target</span> <span class="o">=</span> <span class="n">lookup</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">target</span><span class="p">:</span>
-      <span class="k">return</span> <span class="n">target</span>
-    <span class="k">else</span><span class="p">:</span>
-      <span class="n">ParseContext</span><span class="p">(</span><span class="n">address</span><span class="o">.</span><span class="n">buildfile</span><span class="p">)</span><span class="o">.</span><span class="n">parse</span><span class="p">()</span>
-      <span class="k">return</span> <span class="n">lookup</span><span class="p">()</span>
-</div>
-  <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="Target.resolve_all"><a class="viewcode-back" href="../../../base.html#pants.base.target.Target.resolve_all">[docs]</a>  <span class="k">def</span> <span class="nf">resolve_all</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="o">*</span><span class="n">expected_types</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Yield the resolved concrete targets checking each is a subclass of one of the expected types</span>
-<span class="sd">    if specified.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">targets</span><span class="p">:</span>
-      <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">maybe_list</span><span class="p">(</span><span class="n">targets</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">Target</span><span class="p">):</span>
-        <span class="n">concrete_targets</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span> <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">is_concrete</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">resolved</span> <span class="ow">in</span> <span class="n">concrete_targets</span><span class="p">:</span>
-          <span class="k">if</span> <span class="n">expected_types</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">resolved</span><span class="p">,</span> <span class="n">expected_types</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s"> requires types: </span><span class="si">%s</span><span class="s"> and found </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">expected_types</span><span class="p">,</span> <span class="n">resolved</span><span class="p">))</span>
-          <span class="k">yield</span> <span class="n">resolved</span>
-</div>
-  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">reinit_check</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">exclusives</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="n">build_graph</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">exclusives</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :param string name: The target name.</span>
+<span class="sd">    :param Address address: The Address that maps to this Target in the BuildGraph</span>
+<span class="sd">    :param BuildGraph build_graph: The BuildGraph that this Target lives within</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># See &quot;get_all_exclusives&quot; below for an explanation of the exclusives parameter.</span>
-    <span class="c"># This check prevents double-initialization in multiple-inheritance situations.</span>
-    <span class="c"># TODO(John Sirois): fix target inheritance - use super() to linearize or use alternatives to</span>
-    <span class="c"># multiple inheritance.</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">reinit_check</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;_initialized&#39;</span><span class="p">):</span>
-      <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">Compatibility</span><span class="o">.</span><span class="n">string</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">address</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">:</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ParseContext</span><span class="o">.</span><span class="n">locate</span><span class="p">()</span><span class="o">.</span><span class="n">current_buildfile</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
-        <span class="k">raise</span> <span class="n">TargetDefinitionException</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&quot;Invalid target name: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">address</span> <span class="o">=</span> <span class="n">address</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">payload</span> <span class="o">=</span> <span class="n">payload</span> <span class="ow">or</span> <span class="n">EmptyPayload</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_build_graph</span> <span class="o">=</span> <span class="n">build_graph</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">declared_exclusives</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">exclusives</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+      <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">exclusives</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">declared_exclusives</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">exclusives</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">exclusives</span> <span class="o">=</span> <span class="bp">None</span>
 
-      <span class="bp">self</span><span class="o">.</span><span class="n">address</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_locate</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cached_fingerprint_map</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cached_transitive_fingerprint_map</span> <span class="o">=</span> <span class="p">{}</span>
 
-      <span class="c"># TODO(John Sirois): Transition all references to self.identifier to eliminate id builtin</span>
-      <span class="c"># ambiguity</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_id</span><span class="p">()</span>
+  <span class="k">def</span> <span class="nf">compute_invalidation_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fingerprint_strategy</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="n">fingerprint_strategy</span> <span class="o">=</span> <span class="n">fingerprint_strategy</span> <span class="ow">or</span> <span class="n">DefaultFingerprintStrategy</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">fingerprint_strategy</span><span class="o">.</span><span class="n">fingerprint_target</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-      <span class="bp">self</span><span class="o">.</span><span class="n">_register</span><span class="p">()</span>
+  <span class="k">def</span> <span class="nf">invalidation_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fingerprint_strategy</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="n">fingerprint_strategy</span> <span class="o">=</span> <span class="n">fingerprint_strategy</span> <span class="ow">or</span> <span class="n">DefaultFingerprintStrategy</span><span class="p">()</span>
+    <span class="n">fp_name</span> <span class="o">=</span> <span class="n">fingerprint_strategy</span><span class="o">.</span><span class="n">name</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">fp_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_fingerprint_map</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_cached_fingerprint_map</span><span class="p">[</span><span class="n">fp_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_invalidation_hash</span><span class="p">(</span><span class="n">fingerprint_strategy</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_fingerprint_map</span><span class="p">[</span><span class="n">fp_name</span><span class="p">]</span>
 
-      <span class="bp">self</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+  <span class="k">def</span> <span class="nf">mark_extra_invalidation_hash_dirty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">pass</span>
 
-      <span class="bp">self</span><span class="o">.</span><span class="n">_initialized</span> <span class="o">=</span> <span class="bp">True</span>
+  <span class="k">def</span> <span class="nf">mark_invalidation_hash_dirty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cached_fingerprint_map</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cached_transitive_fingerprint_map</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">mark_extra_invalidation_hash_dirty</span><span class="p">()</span>
 
-      <span class="bp">self</span><span class="o">.</span><span class="n">declared_exclusives</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
-      <span class="k">if</span> <span class="n">exclusives</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">exclusives</span><span class="p">:</span>
-          <span class="bp">self</span><span class="o">.</span><span class="n">declared_exclusives</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">exclusives</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">exclusives</span> <span class="o">=</span> <span class="bp">None</span>
+  <span class="k">def</span> <span class="nf">transitive_invalidation_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fingerprint_strategy</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="n">fingerprint_strategy</span> <span class="o">=</span> <span class="n">fingerprint_strategy</span> <span class="ow">or</span> <span class="n">DefaultFingerprintStrategy</span><span class="p">()</span>
+    <span class="n">fp_name</span> <span class="o">=</span> <span class="n">fingerprint_strategy</span><span class="o">.</span><span class="n">name</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">fp_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_transitive_fingerprint_map</span><span class="p">:</span>
+      <span class="n">hasher</span> <span class="o">=</span> <span class="n">sha1</span><span class="p">()</span>
+      <span class="n">direct_deps</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dependencies</span><span class="p">)</span>
+      <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">direct_deps</span><span class="p">:</span>
+        <span class="n">hasher</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">dep</span><span class="o">.</span><span class="n">transitive_invalidation_hash</span><span class="p">(</span><span class="n">fingerprint_strategy</span><span class="p">))</span>
+      <span class="n">target_hash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">invalidation_hash</span><span class="p">(</span><span class="n">fingerprint_strategy</span><span class="p">)</span>
+      <span class="n">dependencies_hash</span> <span class="o">=</span> <span class="n">hasher</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()[:</span><span class="mi">12</span><span class="p">]</span>
+      <span class="n">combined_hash</span> <span class="o">=</span> <span class="s">&#39;{target_hash}.{deps_hash}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">target_hash</span><span class="o">=</span><span class="n">target_hash</span><span class="p">,</span>
+                                                         <span class="n">deps_hash</span><span class="o">=</span><span class="n">dependencies_hash</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_cached_transitive_fingerprint_map</span><span class="p">[</span><span class="n">fp_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">combined_hash</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_transitive_fingerprint_map</span><span class="p">[</span><span class="n">fp_name</span><span class="p">]</span>
 
-      <span class="c"># For synthetic codegen targets this will be the original target from which</span>
-      <span class="c"># the target was synthesized.</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">_derived_from</span> <span class="o">=</span> <span class="bp">self</span>
+  <span class="k">def</span> <span class="nf">mark_transitive_invalidation_hash_dirty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cached_transitive_fingerprint_map</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">mark_extra_transitive_invalidation_hash_dirty</span><span class="p">()</span>
+
+  <span class="k">def</span> <span class="nf">mark_extra_transitive_invalidation_hash_dirty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+  <span class="k">def</span> <span class="nf">inject_dependency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dependency_address</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_build_graph</span><span class="o">.</span><span class="n">inject_dependency</span><span class="p">(</span><span class="n">dependent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">,</span> <span class="n">dependency</span><span class="o">=</span><span class="n">dependency_address</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">invalidate_dependee</span><span class="p">(</span><span class="n">dependee</span><span class="p">):</span>
+      <span class="n">dependee</span><span class="o">.</span><span class="n">mark_transitive_invalidation_hash_dirty</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_build_graph</span><span class="o">.</span><span class="n">walk_transitive_dependee_graph</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">],</span> <span class="n">work</span><span class="o">=</span><span class="n">invalidate_dependee</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">has_sources</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">payload</span><span class="o">.</span><span class="n">has_sources</span><span class="p">(</span><span class="n">extension</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">sources_relative_to_buildroot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_sources</span><span class="p">():</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">payload</span><span class="o">.</span><span class="n">sources_relative_to_buildroot</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">return</span> <span class="p">[]</span>
+
+  <span class="k">def</span> <span class="nf">sources_relative_to_source_root</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_sources</span><span class="p">():</span>
+      <span class="n">abs_source_root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_buildroot</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_base</span><span class="p">)</span>
+      <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sources_relative_to_buildroot</span><span class="p">():</span>
+        <span class="n">abs_source</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_buildroot</span><span class="p">(),</span> <span class="n">source</span><span class="p">)</span>
+        <span class="k">yield</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">abs_source</span><span class="p">,</span> <span class="n">abs_source_root</span><span class="p">)</span>
 
   <span class="nd">@property</span>
-  <span class="k">def</span> <span class="nf">derived_from</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Target.derived_from"><a class="viewcode-back" href="../../../base.html#pants.base.target.Target.derived_from">[docs]</a>  <span class="k">def</span> <span class="nf">derived_from</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns the target this target was derived from.</span>
 
 <span class="sd">    If this target was not derived from another, returns itself.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_derived_from</span>
-
-  <span class="nd">@derived_from.setter</span>
-<div class="viewcode-block" id="Target.derived_from"><a class="viewcode-back" href="../../../base.html#pants.base.target.Target.derived_from">[docs]</a>  <span class="k">def</span> <span class="nf">derived_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Sets the target this target was derived from.</span>
-
-<span class="sd">    Various tasks may create targets not written down in any BUILD file.  Often these targets are</span>
-<span class="sd">    derived from targets written down in BUILD files though in which case the derivation chain</span>
-<span class="sd">    should be maintained.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">value</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">AbstractTarget</span><span class="p">):</span>
-      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Expected derived_from to be a Target, given </span><span class="si">%s</span><span class="s"> of type </span><span class="si">%s</span><span class="s">&#39;</span>
-                       <span class="o">%</span> <span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_derived_from</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_graph</span><span class="o">.</span><span class="n">get_derived_from</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">)</span>
 </div>
-  <span class="k">def</span> <span class="nf">get_declared_exclusives</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">declared_exclusives</span>
+  <span class="nd">@property</span>
+<div class="viewcode-block" id="Target.concrete_derived_from"><a class="viewcode-back" href="../../../base.html#pants.base.target.Target.concrete_derived_from">[docs]</a>  <span class="k">def</span> <span class="nf">concrete_derived_from</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns the concrete target this target was (directly or indirectly) derived from.</span>
 
-  <span class="k">def</span> <span class="nf">add_to_exclusives</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exclusives</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">exclusives</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-      <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">exclusives</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">exclusives</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">|=</span> <span class="n">exclusives</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+<span class="sd">    The returned target is guaranteed to not have been derived from any other target, and is thus</span>
+<span class="sd">    guaranteed to be a &#39;real&#39; target from a BUILD file, not a programmatically injected target.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_graph</span><span class="o">.</span><span class="n">get_concrete_derived_from</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">)</span>
+</div>
+  <span class="nd">@property</span>
+  <span class="k">def</span> <span class="nf">traversable_specs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[]</span>
 
+  <span class="nd">@property</span>
+  <span class="k">def</span> <span class="nf">traversable_dependency_specs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[]</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span> <span class="nf">dependencies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_build_graph</span><span class="o">.</span><span class="n">get_target</span><span class="p">(</span><span class="n">dep_address</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">dep_address</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_graph</span><span class="o">.</span><span class="n">dependencies_of</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">)]</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span> <span class="nf">dependents</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_build_graph</span><span class="o">.</span><span class="n">get_target</span><span class="p">(</span><span class="n">dep_address</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">dep_address</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_graph</span><span class="o">.</span><span class="n">dependents_of</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">)]</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span> <span class="nf">is_synthetic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="o">.</span><span class="n">is_synthetic</span>
+
+  <span class="nd">@property</span>
+<div class="viewcode-block" id="Target.is_original"><a class="viewcode-back" href="../../../base.html#pants.base.target.Target.is_original">[docs]</a>  <span class="k">def</span> <span class="nf">is_original</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns ``True`` if this target is derived from no other.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">derived_from</span> <span class="o">==</span> <span class="bp">self</span>
+</div>
 <div class="viewcode-block" id="Target.get_all_exclusives"><a class="viewcode-back" href="../../../base.html#pants.base.target.Target.get_all_exclusives">[docs]</a>  <span class="k">def</span> <span class="nf">get_all_exclusives</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Get a map of all exclusives declarations in the transitive dependency graph.</span>
 
@@ -682,51 +657,32 @@ body a.icon-home:hover{
     <span class="c"># Note: this will cause a stack overflow if there is a cycle in</span>
     <span class="c"># the dependency graph, so exclusives checking should occur after</span>
     <span class="c"># cycle detection.</span>
-    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="s">&quot;declared_exclusives&quot;</span><span class="p">):</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">add_to_exclusives</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">declared_exclusives</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">add_to_exclusives</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">declared_exclusives</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">None</span>
 
-  <span class="k">def</span> <span class="nf">_post_construct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Registers a command to invoke after this target&#39;s BUILD file is parsed.&quot;&quot;&quot;</span>
-    <span class="n">ParseContext</span><span class="o">.</span><span class="n">locate</span><span class="p">()</span><span class="o">.</span><span class="n">on_context_exit</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+  <span class="k">def</span> <span class="nf">add_to_exclusives</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exclusives</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">exclusives</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+      <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">exclusives</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exclusives</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">|=</span> <span class="n">exclusives</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
 
-  <span class="k">def</span> <span class="nf">_create_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Generates a unique identifier for the BUILD target.</span>
+  <span class="nd">@property</span>
+<div class="viewcode-block" id="Target.id"><a class="viewcode-back" href="../../../base.html#pants.base.target.Target.id">[docs]</a>  <span class="k">def</span> <span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A unique identifier for the Target.</span>
 
 <span class="sd">    The generated id is safe for use as a path name on unix systems.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">buildfile_relpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="o">.</span><span class="n">buildfile</span><span class="o">.</span><span class="n">relpath</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">buildfile_relpath</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">):</span>
-      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
-    <span class="k">else</span><span class="p">:</span>
-      <span class="k">return</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">.</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">buildfile_relpath</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">,</span> <span class="s">&#39;.&#39;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-
-  <span class="k">def</span> <span class="nf">_locate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="n">parse_context</span> <span class="o">=</span> <span class="n">ParseContext</span><span class="o">.</span><span class="n">locate</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">Address</span><span class="p">(</span><span class="n">parse_context</span><span class="o">.</span><span class="n">current_buildfile</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-
-  <span class="k">def</span> <span class="nf">_register</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="n">existing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_targets_by_address</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">existing</span> <span class="ow">and</span> <span class="n">existing</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">self</span><span class="p">:</span>
-      <span class="k">if</span> <span class="n">existing</span><span class="o">.</span><span class="n">address</span><span class="o">.</span><span class="n">buildfile</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="o">.</span><span class="n">buildfile</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">TargetDefinitionException</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&quot;already defined in a sibling BUILD &quot;</span>
-                                              <span class="s">&quot;file: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">existing</span><span class="o">.</span><span class="n">address</span><span class="o">.</span><span class="n">buildfile</span><span class="o">.</span><span class="n">relpath</span><span class="p">)</span>
-      <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">TargetDefinitionException</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&quot;duplicate to </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">existing</span><span class="p">)</span>
-
-    <span class="bp">self</span><span class="o">.</span><span class="n">_targets_by_address</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_addresses_by_buildfile</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="o">.</span><span class="n">buildfile</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">)</span>
-
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="o">.</span><span class="n">path_safe_spec</span>
+</div>
   <span class="nd">@property</span>
 <div class="viewcode-block" id="Target.identifier"><a class="viewcode-back" href="../../../base.html#pants.base.target.Target.identifier">[docs]</a>  <span class="k">def</span> <span class="nf">identifier</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A unique identifier for the BUILD target.</span>
+    <span class="sd">&quot;&quot;&quot;A unique identifier for the Target.</span>
 
 <span class="sd">    The generated id is safe for use as a path name on unix systems.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span>
 </div>
 <div class="viewcode-block" id="Target.walk"><a class="viewcode-back" href="../../../base.html#pants.base.target.Target.walk">[docs]</a>  <span class="k">def</span> <span class="nf">walk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">work</span><span class="p">,</span> <span class="n">predicate</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Walk of this target&#39;s dependency graph visiting each node exactly once.</span>
+    <span class="sd">&quot;&quot;&quot;Walk of this target&#39;s dependency graph, in DFS order, visiting each node exactly once.</span>
 
 <span class="sd">    If a predicate is supplied it will be used to test each target before handing the target to</span>
 <span class="sd">    work and descending. Work can return targets in which case these will be added to the walk</span>
@@ -741,21 +697,12 @@ body a.icon-home:hover{
       <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;work must be callable but was </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">work</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">predicate</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">predicate</span><span class="p">):</span>
       <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;predicate must be callable but was </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">predicate</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_walk</span><span class="p">(</span><span class="nb">set</span><span class="p">(),</span> <span class="n">work</span><span class="p">,</span> <span class="n">predicate</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_build_graph</span><span class="o">.</span><span class="n">walk_transitive_dependency_graph</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">],</span> <span class="n">work</span><span class="p">,</span> <span class="n">predicate</span><span class="p">)</span>
 </div>
-  <span class="k">def</span> <span class="nf">_walk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">walked</span><span class="p">,</span> <span class="n">work</span><span class="p">,</span> <span class="n">predicate</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-    <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolve</span><span class="p">():</span>
-      <span class="k">if</span> <span class="n">target</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">walked</span><span class="p">:</span>
-        <span class="n">walked</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">predicate</span> <span class="ow">or</span> <span class="n">predicate</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
-          <span class="n">additional_targets</span> <span class="o">=</span> <span class="n">work</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
-          <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="s">&#39;_walk&#39;</span><span class="p">):</span>
-            <span class="n">target</span><span class="o">.</span><span class="n">_walk</span><span class="p">(</span><span class="n">walked</span><span class="p">,</span> <span class="n">work</span><span class="p">,</span> <span class="n">predicate</span><span class="p">)</span>
-          <span class="k">if</span> <span class="n">additional_targets</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">additional_target</span> <span class="ow">in</span> <span class="n">additional_targets</span><span class="p">:</span>
-              <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">additional_target</span><span class="p">,</span> <span class="s">&#39;_walk&#39;</span><span class="p">):</span>
-                <span class="n">additional_target</span><span class="o">.</span><span class="n">_walk</span><span class="p">(</span><span class="n">walked</span><span class="p">,</span> <span class="n">work</span><span class="p">,</span> <span class="n">predicate</span><span class="p">)</span>
-
+<div class="viewcode-block" id="Target.closure"><a class="viewcode-back" href="../../../base.html#pants.base.target.Target.closure">[docs]</a>  <span class="k">def</span> <span class="nf">closure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns this target&#39;s transitive dependencies, in DFS order.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_graph</span><span class="o">.</span><span class="n">transitive_subgraph_of_addresses</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">])</span>
+</div>
   <span class="nd">@manual.builddict</span><span class="p">()</span>
 <div class="viewcode-block" id="Target.with_description"><a class="viewcode-back" href="../../../base.html#pants.base.target.Target.with_description">[docs]</a>  <span class="k">def</span> <span class="nf">with_description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">description</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Set a human-readable description of this target.</span>
@@ -773,6 +720,9 @@ body a.icon-home:hover{
   <span class="k">def</span> <span class="nf">has_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">label</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">labels</span>
 
+  <span class="k">def</span> <span class="nf">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">address</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">address</span>
+
   <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
     <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Target</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">address</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">address</span>
 
@@ -783,44 +733,7 @@ body a.icon-home:hover{
     <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
 
   <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">(</span><span class="si">%s</span><span class="s">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">)</span>
-
-  <span class="nd">@staticmethod</span>
-<div class="viewcode-block" id="Target.has_jvm_targets"><a class="viewcode-back" href="../../../base.html#pants.base.target.Target.has_jvm_targets">[docs]</a>  <span class="k">def</span> <span class="nf">has_jvm_targets</span><span class="p">(</span><span class="n">targets</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns true if the given sequence of targets contains at least one jvm target as determined</span>
-<span class="sd">    by is_jvm(...)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">Target</span><span class="o">.</span><span class="n">extract_jvm_targets</span><span class="p">(</span><span class="n">targets</span><span class="p">)))</span> <span class="o">&gt;</span> <span class="mi">0</span>
-</div>
-  <span class="nd">@staticmethod</span>
-<div class="viewcode-block" id="Target.extract_jvm_targets"><a class="viewcode-back" href="../../../base.html#pants.base.target.Target.extract_jvm_targets">[docs]</a>  <span class="k">def</span> <span class="nf">extract_jvm_targets</span><span class="p">(</span><span class="n">targets</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns an iterator over the jvm targets the given sequence of targets resolve to.  The</span>
-<span class="sd">    given targets can be a mix of types and only valid jvm targets (as determined by is_jvm(...)</span>
-<span class="sd">    will be returned by the iterator.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">:</span>
-      <span class="k">if</span> <span class="n">target</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="k">print</span><span class="p">(</span><span class="s">&#39;Warning! Null target!&#39;</span><span class="p">,</span> <span class="nb">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
-        <span class="k">continue</span>
-      <span class="k">for</span> <span class="n">real_target</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">resolve</span><span class="p">():</span>
-        <span class="k">if</span> <span class="n">real_target</span><span class="o">.</span><span class="n">is_jvm</span><span class="p">:</span>
-          <span class="k">yield</span> <span class="n">real_target</span>
-</div>
-<div class="viewcode-block" id="Target.has_sources"><a class="viewcode-back" href="../../../base.html#pants.base.target.Target.has_sources">[docs]</a>  <span class="k">def</span> <span class="nf">has_sources</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns True if the target has sources.</span>
-
-<span class="sd">    If an extension is supplied the target is further checked for at least 1 source with the given</span>
-<span class="sd">    extension.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">has_label</span><span class="p">(</span><span class="s">&#39;sources&#39;</span><span class="p">)</span> <span class="ow">and</span>
-            <span class="p">(</span><span class="ow">not</span> <span class="n">extension</span> <span class="ow">or</span>
-             <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;sources&#39;</span><span class="p">)</span> <span class="ow">and</span>
-              <span class="nb">any</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">extension</span><span class="p">)</span> <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sources</span><span class="p">))))</span>
-
-</div></div>
-<span class="n">Target</span><span class="o">.</span><span class="n">_clear_all_addresses</span><span class="p">()</span>
+    <span class="k">return</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">(</span><span class="si">%s</span><span class="s">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">)</span></div>
 </pre></div>
 
           <footer>

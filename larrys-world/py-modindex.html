@@ -49,21 +49,17 @@
 
  
 <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-39101739-2']);
-  _gaq.push(['_trackPageview']);
-</script>
-<script type="text/javascript">
   // In a plain template, we'd put this in the footer block.
   // In the read-the-docs template, there is no footer. So use jQuery ready:
   $(document).ready(function() {
     // Ping Google analytics
-    var ga = document.createElement('script');
-    ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ?
-              'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    ga.setAttribute('async', 'true');
-    $(document).append(ga);
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-39101739-2', 'auto');
+    ga('send', 'pageview');
 
     // Show the travis-ci status graphic
     $('.wy-breadcrumbs').append(
@@ -160,6 +156,7 @@ body a.icon-home:hover{
 <li class="toctree-l1"><a class="reference internal" href="build_files.html">BUILD files</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="build_files.html#debugging-a-build-file">Debugging a BUILD File</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_files.html#default-target">Default Target</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_files.html#the-1-1-1-rule">The 1:1:1 Rule</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_files.html#avoid-rglobs">Avoid rglobs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_files.html#define-separate-targets-for-interface-and-implementation">Define Separate Targets for Interface and Implementation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_files.html#depend-on-api-in-library-targets-implementation-in-binary-targets">Depend on API in Library Targets, Implementation in Binary Targets</a></li>
@@ -198,14 +195,14 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="publish.html#authenticating-to-the-artifact-repository">Authenticating to the Artifact Repository</a></li>
 <li class="toctree-l2"><a class="reference internal" href="publish.html#troubleshooting">Troubleshooting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="publish.html#want-to-publish-something-publish-many-things">Want to Publish Something? Publish Many Things</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publish.html#test-with-a-fake-local-publish">Test with a Fake Local &#8220;Publish&#8221;</a></li>
 </ul>
 </li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="with_intellij.html">Using Pants with IntelliJ IDEA</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
-<li class="toctree-l2"><a class="reference internal" href="with_intellij.html#editing-build-files">Editing BUILD Files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="with_intellij.html#pants-build-plugin-for-intellij">Pants Build Plugin for IntelliJ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
 </ul>
 </li>
 </ul>
@@ -219,116 +216,117 @@ body a.icon-home:hover{
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installing Pants</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="install.html#system-wide-installation">System-wide Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="install.html#virtualenv-based-installation">Virtualenv-based Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="install.html#pex-based-installation">PEX-based Installation</a></li>
 </ul>
 </li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="build_dictionary.html">BUILD Dictionary</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#pants">pants</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#egg">egg</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#resources">resources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#page">page</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#exclude">exclude</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#repo">repo</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jar">jar</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#dependencies">dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-antlr-library">python_antlr_library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-thrift-library">python_thrift_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#file">__file__</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#amount">Amount</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#annotation-processor">annotation_processor</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#artifact">artifact</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#benchmark">benchmark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#bundle">bundle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#credentials">credentials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#dependencies">dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#egg">egg</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#exclude">exclude</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#globs">globs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#goal">goal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jar">jar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jar-library">jar_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-agent">java_agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-antlr-library">java_antlr_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-library">java_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-protobuf-library">java_protobuf_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-tests">java_tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-thrift-library">java_thrift_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jaxb-library">jaxb_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#junit-tests">junit_tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jvm-app">jvm_app</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jvm-binary">jvm_binary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#maven-layout">maven_layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#page">page</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#pants">pants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#phase">phase</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-antlr-library">python_antlr_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-binary">python_binary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-library">python_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-requirement">python_requirement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-requirement-library">python_requirement_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-test-suite">python_test_suite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-tests">python_tests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#goal">goal</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#phase">phase</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-antlr-library">java_antlr_library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#benchmark">benchmark</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jvm-binary">jvm_binary</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-library">java_library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-thrift-library">java_thrift_library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#amount">Amount</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#file">__file__</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#globs">globs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jar-library">jar_library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-tests">java_tests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#maven-layout">maven_layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-thrift-library">python_thrift_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#repo">repo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#resources">resources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#rglobs">rglobs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#root-dir">ROOT_DIR</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#scala-tests">scala_tests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#time">Time</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#bundle">bundle</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#wiki">wiki</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-agent">java_agent</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#scala-library">scala_library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#annotation-processor">annotation_processor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-protobuf-library">java_protobuf_library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#credentials">credentials</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#junit-tests">junit_tests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jvm-app">jvm_app</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#setup-py">setup_py</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#scala-specs">scala_specs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#source-root">source_root</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-test-suite">python_test_suite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#scala-tests">scala_tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#scalac-plugin">scalac_plugin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#setup-py">setup_py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#source-root">source_root</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#time">Time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#wiki">wiki</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#wiki-artifact">wiki_artifact</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="goals_reference.html">Goals Reference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#goals">goals</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#targets">targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#bench">bench</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#binary">binary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#bootstrap">bootstrap</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#builddict">builddict</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#invalidate">invalidate</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#ng-killall">ng-killall</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#buildlint">buildlint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#bundle">bundle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#check-exclusives">check-exclusives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#check-published-deps">check_published_deps</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#clean-all">clean-all</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#clean-all-async">clean-all-async</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#server">server</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#killserver">killserver</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#bootstrap">bootstrap</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#setup">setup</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#gen">gen</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#check-exclusives">check-exclusives</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#resolve">resolve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#checkstyle">checkstyle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#compile">compile</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#resources">resources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#doc">doc</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#markdown">markdown</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#publish">publish</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#jar">jar</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#binary">binary</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#bundle">bundle</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#check-published-deps">check_published_deps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#dependees">dependees</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#dependencies">dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#depmap">depmap</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#detect-duplicates">detect-duplicates</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#buildlint">buildlint</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#test">test</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#bench">bench</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#run">run</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#run-dirty">run-dirty</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#doc">doc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#eclipse">eclipse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#filedeps">filedeps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#filemap">filemap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#filter">filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#gen">gen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#goals">goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#gref-phase-idea">idea</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#invalidate">invalidate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#jar">jar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#killserver">killserver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#list">list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#markdown">markdown</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#minimize">minimize</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#ng-killall">ng-killall</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#path">path</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#pathdeps">pathdeps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#paths">paths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#provides">provides</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#publish">publish</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#repl">repl</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#repl-dirty">repl-dirty</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#filedeps">filedeps</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#pathdeps">pathdeps</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#list">list</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#gref-phase-idea">idea</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#eclipse">eclipse</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#provides">provides</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#path">path</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#paths">paths</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#dependees">dependees</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#depmap">depmap</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#dependencies">dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#filemap">filemap</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#minimize">minimize</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#filter">filter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#sort">sort</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#resolve">resolve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#resources">resources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#roots">roots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#run">run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#run-dirty">run-dirty</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#server">server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#setup">setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#sort">sort</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#targets">targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#test">test</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#common">Common</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pants_ini_reference.html">pants.ini Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="pants_ini_reference.html#default-section">DEFAULT section</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pants_ini_reference.html#idea-section">idea section</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pants_ini_reference.html#configref-section-idea">idea section</a></li>
 </ul>
 </li>
 </ul>
@@ -415,17 +413,12 @@ body a.icon-home:hover{
      <tr class="cg-1">
        <td></td>
        <td>&nbsp;&nbsp;&nbsp;
-       <a href="base.html#module-pants.base.build_file_aliases"><tt class="xref">pants.base.build_file_aliases</tt></a></td><td>
+       <a href="base.html#module-pants.base.build_file_parser"><tt class="xref">pants.base.build_file_parser</tt></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&nbsp;&nbsp;&nbsp;
-       <a href="base.html#module-pants.base.build_file_context"><tt class="xref">pants.base.build_file_context</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="base.html#module-pants.base.build_file_helpers"><tt class="xref">pants.base.build_file_helpers</tt></a></td><td>
+       <a href="base.html#module-pants.base.build_graph"><tt class="xref">pants.base.build_graph</tt></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
@@ -445,12 +438,32 @@ body a.icon-home:hover{
      <tr class="cg-1">
        <td></td>
        <td>&nbsp;&nbsp;&nbsp;
+       <a href="base.html#module-pants.base.cache_manager"><tt class="xref">pants.base.cache_manager</tt></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&nbsp;&nbsp;&nbsp;
        <a href="base.html#module-pants.base.config"><tt class="xref">pants.base.config</tt></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&nbsp;&nbsp;&nbsp;
+       <a href="base.html#module-pants.base.dev_backend_loader"><tt class="xref">pants.base.dev_backend_loader</tt></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&nbsp;&nbsp;&nbsp;
        <a href="base.html#module-pants.base.double_dag"><tt class="xref">pants.base.double_dag</tt></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&nbsp;&nbsp;&nbsp;
+       <a href="base.html#module-pants.base.exceptions"><tt class="xref">pants.base.exceptions</tt></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&nbsp;&nbsp;&nbsp;
+       <a href="base.html#module-pants.base.fingerprint_strategy"><tt class="xref">pants.base.fingerprint_strategy</tt></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
@@ -470,7 +483,7 @@ body a.icon-home:hover{
      <tr class="cg-1">
        <td></td>
        <td>&nbsp;&nbsp;&nbsp;
-       <a href="base.html#module-pants.base.parse_context"><tt class="xref">pants.base.parse_context</tt></a></td><td>
+       <a href="base.html#module-pants.base.payload"><tt class="xref">pants.base.payload</tt></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
@@ -490,12 +503,17 @@ body a.icon-home:hover{
      <tr class="cg-1">
        <td></td>
        <td>&nbsp;&nbsp;&nbsp;
-       <a href="base.html#module-pants.base.target"><tt class="xref">pants.base.target</tt></a></td><td>
+       <a href="base.html#module-pants.base.source_root"><tt class="xref">pants.base.source_root</tt></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&nbsp;&nbsp;&nbsp;
-       <a href="base.html#module-pants.base.timer"><tt class="xref">pants.base.timer</tt></a></td><td>
+       <a href="base.html#module-pants.base.spec_parser"><tt class="xref">pants.base.spec_parser</tt></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&nbsp;&nbsp;&nbsp;
+       <a href="base.html#module-pants.base.target"><tt class="xref">pants.base.target</tt></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
@@ -506,516 +524,6 @@ body a.icon-home:hover{
        <td></td>
        <td>&nbsp;&nbsp;&nbsp;
        <a href="base.html#module-pants.base.workunit"><tt class="xref">pants.base.workunit</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.annotation_processor"><tt class="xref">pants.targets.annotation_processor</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.anonymous"><tt class="xref">pants.targets.anonymous</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.artifact"><tt class="xref">pants.targets.artifact</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.benchmark"><tt class="xref">pants.targets.benchmark</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.credentials"><tt class="xref">pants.targets.credentials</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.doc"><tt class="xref">pants.targets.doc</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.exclude"><tt class="xref">pants.targets.exclude</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.exportable_jvm_library"><tt class="xref">pants.targets.exportable_jvm_library</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.external_dependency"><tt class="xref">pants.targets.external_dependency</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.internal"><tt class="xref">pants.targets.internal</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.jar_dependency"><tt class="xref">pants.targets.jar_dependency</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.jar_library"><tt class="xref">pants.targets.jar_library</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.jarable"><tt class="xref">pants.targets.jarable</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.java_agent"><tt class="xref">pants.targets.java_agent</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.java_antlr_library"><tt class="xref">pants.targets.java_antlr_library</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.java_library"><tt class="xref">pants.targets.java_library</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.java_protobuf_library"><tt class="xref">pants.targets.java_protobuf_library</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.java_tests"><tt class="xref">pants.targets.java_tests</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.java_thrift_library"><tt class="xref">pants.targets.java_thrift_library</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.jvm_binary"><tt class="xref">pants.targets.jvm_binary</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.jvm_target"><tt class="xref">pants.targets.jvm_target</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.pants_target"><tt class="xref">pants.targets.pants_target</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.python_antlr_library"><tt class="xref">pants.targets.python_antlr_library</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.python_artifact"><tt class="xref">pants.targets.python_artifact</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.python_binary"><tt class="xref">pants.targets.python_binary</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.python_egg"><tt class="xref">pants.targets.python_egg</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.python_library"><tt class="xref">pants.targets.python_library</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.python_requirement"><tt class="xref">pants.targets.python_requirement</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.python_requirements"><tt class="xref">pants.targets.python_requirements</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.python_target"><tt class="xref">pants.targets.python_target</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.python_tests"><tt class="xref">pants.targets.python_tests</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.python_thrift_library"><tt class="xref">pants.targets.python_thrift_library</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.repository"><tt class="xref">pants.targets.repository</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.resources"><tt class="xref">pants.targets.resources</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.scala_library"><tt class="xref">pants.targets.scala_library</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.scala_tests"><tt class="xref">pants.targets.scala_tests</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.scalac_plugin"><tt class="xref">pants.targets.scalac_plugin</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.sources"><tt class="xref">pants.targets.sources</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.util"><tt class="xref">pants.targets.util</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.with_dependencies"><tt class="xref">pants.targets.with_dependencies</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="targets.html#module-pants.targets.with_sources"><tt class="xref">pants.targets.with_sources</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.__init__"><tt class="xref">pants.tasks.__init__</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.antlr_gen"><tt class="xref">pants.tasks.antlr_gen</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.apache_thrift_gen"><tt class="xref">pants.tasks.apache_thrift_gen</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.benchmark_run"><tt class="xref">pants.tasks.benchmark_run</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.binary_create"><tt class="xref">pants.tasks.binary_create</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.bootstrap_jvm_tools"><tt class="xref">pants.tasks.bootstrap_jvm_tools</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.build_lint"><tt class="xref">pants.tasks.build_lint</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.builddictionary"><tt class="xref">pants.tasks.builddictionary</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.bundle_create"><tt class="xref">pants.tasks.bundle_create</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.cache_manager"><tt class="xref">pants.tasks.cache_manager</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.check_exclusives"><tt class="xref">pants.tasks.check_exclusives</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.check_published_deps"><tt class="xref">pants.tasks.check_published_deps</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.checkstyle"><tt class="xref">pants.tasks.checkstyle</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.clean"><tt class="xref">pants.tasks.clean</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.code_gen"><tt class="xref">pants.tasks.code_gen</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.confluence_publish"><tt class="xref">pants.tasks.confluence_publish</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.console_task"><tt class="xref">pants.tasks.console_task</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.dependees"><tt class="xref">pants.tasks.dependees</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.dependencies"><tt class="xref">pants.tasks.dependencies</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.depmap"><tt class="xref">pants.tasks.depmap</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.detect_duplicates"><tt class="xref">pants.tasks.detect_duplicates</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.eclipse_gen"><tt class="xref">pants.tasks.eclipse_gen</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.filedeps"><tt class="xref">pants.tasks.filedeps</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.filemap"><tt class="xref">pants.tasks.filemap</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.filter"><tt class="xref">pants.tasks.filter</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.ide_gen"><tt class="xref">pants.tasks.ide_gen</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.idea_gen"><tt class="xref">pants.tasks.idea_gen</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.ivy_resolve"><tt class="xref">pants.tasks.ivy_resolve</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.ivy_utils"><tt class="xref">pants.tasks.ivy_utils</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.jar_create"><tt class="xref">pants.tasks.jar_create</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.jar_publish"><tt class="xref">pants.tasks.jar_publish</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.javadoc_gen"><tt class="xref">pants.tasks.javadoc_gen</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.junit_run"><tt class="xref">pants.tasks.junit_run</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.jvm_binary_task"><tt class="xref">pants.tasks.jvm_binary_task</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.jvm_run"><tt class="xref">pants.tasks.jvm_run</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.jvm_task"><tt class="xref">pants.tasks.jvm_task</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.jvm_tool_bootstrapper"><tt class="xref">pants.tasks.jvm_tool_bootstrapper</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.jvmdoc_gen"><tt class="xref">pants.tasks.jvmdoc_gen</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.list_goals"><tt class="xref">pants.tasks.list_goals</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.listtargets"><tt class="xref">pants.tasks.listtargets</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.markdown_to_html"><tt class="xref">pants.tasks.markdown_to_html</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.minimal_cover"><tt class="xref">pants.tasks.minimal_cover</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.nailgun_task"><tt class="xref">pants.tasks.nailgun_task</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.pathdeps"><tt class="xref">pants.tasks.pathdeps</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.paths"><tt class="xref">pants.tasks.paths</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.prepare_resources"><tt class="xref">pants.tasks.prepare_resources</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.protobuf_gen"><tt class="xref">pants.tasks.protobuf_gen</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.provides"><tt class="xref">pants.tasks.provides</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.reporting_server"><tt class="xref">pants.tasks.reporting_server</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.roots"><tt class="xref">pants.tasks.roots</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.scala_repl"><tt class="xref">pants.tasks.scala_repl</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.scaladoc_gen"><tt class="xref">pants.tasks.scaladoc_gen</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.scalastyle"><tt class="xref">pants.tasks.scalastyle</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.scm_publish"><tt class="xref">pants.tasks.scm_publish</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.scrooge_gen"><tt class="xref">pants.tasks.scrooge_gen</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.sorttargets"><tt class="xref">pants.tasks.sorttargets</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.specs_run"><tt class="xref">pants.tasks.specs_run</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.targets_help"><tt class="xref">pants.tasks.targets_help</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.task"><tt class="xref">pants.tasks.task</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.task_error"><tt class="xref">pants.tasks.task_error</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="tasks.html#module-pants.tasks.what_changed"><tt class="xref">pants.tasks.what_changed</tt></a></td><td>
        <em></em></td></tr>
    </table>
 
