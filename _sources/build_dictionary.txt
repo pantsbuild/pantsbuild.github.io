@@ -57,6 +57,7 @@ targets; some are handy utilities.
 `source_root`_ |
 `Time`_ |
 `wiki`_ |
+`wiki_artifact`_ |
 
 **JVM** |
 `annotation_processor`_ |
@@ -535,7 +536,7 @@ java_agent
 java_antlr_library
 -------------------------------------------------------------------------------
 
-.. py:function:: java_antlr_library(name, sources, provides=None, excludes=None, compiler=u'antlr3', package=None, **kwargs)
+.. py:function:: java_antlr_library(name=None, sources=None, provides=None, excludes=None, compiler=u'antlr3', package=None, **kwargs)
 
  Generates a stub Java library from Antlr grammar files.
 
@@ -714,23 +715,22 @@ jaxb_library
  Initialize the JaxbLibrary target, currently with a lot of copypasta for the payload.
  
  :param package: java package (com.company.package) in which to generate the output java files.
- If left unspecified, pants will attempt to guess it from the file path leading to the schema
- (xsd) file. This will only be accurate if the .xsd file is in the format
- .../com/company/package/schema.xsd; it is recommended that the package be manually defined in
- the BUILD file for robustness.
+   If left unspecified, pants will attempt to guess it from the file path leading to the schema
+   (xsd) file. This will only be accurate if the .xsd file is in the format
+   .../com/company/package/schema.xsd; it is recommended that the package be manually defined in
+   the BUILD file for robustness.
  :param language: currently, anything other than 'java' is unsupported (this is the default)
  :param buildflags: currently unused Parameters inherited from JvmTarget.
  :param string name: The name of this target, which combined with this build file defines the
- target :class:`pants.base.address.Address`.
+   target :class:`pants.base.address.Address`.
  :param sources: A list of filenames representing the source code this library is compiled from.
  :type sources: ``FileSet`` or list of strings.
- :param dependencies: List of :class:`pants.base.target.Target` instances this target depends on.
- :type dependencies: Other targets that this target depends on.
+ :param dependencies: Other targets that this target depends on.
  :type dependencies: List of target specs.
  :param excludes: One or more :class:`pants.targets.exclude.Exclude` instances to filter this
- target's transitive dependencies against.
+   target's transitive dependencies against.
  :param configurations: One or more ivy configurations to resolve for this target. This parameter
- is not intended for general use.
+   is not intended for general use.
  :type configurations: tuple of strings
 
  Implemented by ``pants.backend.codegen.targets.jaxb_library.JaxbLibrary``
@@ -896,9 +896,25 @@ maven_layout
 page
 -------------------------------------------------------------------------------
 
-.. py:function:: page(source, resources=None, address=None, **kwargs)
+.. py:function:: page(source, resources=None, provides=None, **kwargs)
 
  Describes a single documentation page.
+ 
+ Here is an example, that shows a markdown page providing a wiki page on an Atlassian Confluence
+ wiki: ::
+ 
+    page(name='mypage',
+      source='mypage.md',
+      provides=[
+        wiki_artifact(wiki='address/of/my/wiki/target',
+                      space='my_space',
+                      title='my_page',
+                      parent='my_parent'),
+      ],
+    )
+ 
+ Multiple :class:`pants.backend.core.targets.WikiArtifact` objects can be provided, to bind a page
+ to multiple wikis.
 
 
  :param string name: The name of this target, which combined with this
@@ -912,11 +928,6 @@ page
  Implemented by ``pants.backend.core.targets.doc.Page``
 
 **Methods:**
-
- .. py:method:: register_wiki(wiki, **kwargs)
-
-  Adds this page to the given wiki for publishing.  Wiki-specific configuration is passed as
-  kwargs.
 
  .. py:method:: with_description(description)
 
@@ -1484,7 +1495,7 @@ Time
 wiki
 -------------------------------------------------------------------------------
 
-.. py:function:: wiki(url_builder, **kwargs)
+.. py:function:: wiki(name, url_builder, **kwargs)
 
  Target that identifies a wiki where pages can be published.
 
@@ -1503,6 +1514,29 @@ wiki
   Set a human-readable description of this target.
   
   :param description: Descriptive string
+
+.. _bdict_wiki_artifact:
+
+wiki_artifact
+-------------------------------------------------------------------------------
+
+.. py:function:: wiki_artifact(wiki, **kwargs)
+
+ Binds a single documentation page to a wiki instance.
+ 
+ This object allows you to specify which wiki a page should be published to, along with additional
+ wiki-specific parameters, such as the title, parent page, etc.
+
+
+ :param wiki: target spec of a ``wiki``.
+ :param kwargs: a dictionary that may contain configuration directives for your particular wiki.
+ For example, the following keys are supported for Atlassian's Confluence:
+ * `space` -- A wiki space in which to place the page (used in Confluence)
+ * `title` -- A title for the wiki page
+ * `parent` -- The title of a wiki page that will denote this page as a child.
+
+ Implemented by ``pants.backend.core.targets.doc.WikiArtifact``
+
 
 
 

@@ -272,6 +272,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#source-root">source_root</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#time">Time</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#wiki">wiki</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#wiki-artifact">wiki_artifact</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../goals_reference.html">Goals Reference</a><ul>
@@ -624,60 +625,7 @@ body a.icon-home:hover{
   <span class="k">for</span> <span class="n">root</span> <span class="ow">in</span> <span class="n">roots</span><span class="p">:</span>
     <span class="n">topological_sort</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
 
-  <span class="k">return</span> <span class="n">ordered</span>
-
-</div>
-<div class="viewcode-block" id="coalesce_targets"><a class="viewcode-back" href="../../../base.html#pants.base.build_graph.coalesce_targets">[docs]</a><span class="k">def</span> <span class="nf">coalesce_targets</span><span class="p">(</span><span class="n">targets</span><span class="p">,</span> <span class="n">discriminator</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;Returns a list of Targets that `targets` depend on sorted from most dependent to least.</span>
-<span class="sd">  Grouped where possible by target type as categorized by the given discriminator.</span>
-<span class="sd">  &quot;&quot;&quot;</span>
-
-  <span class="n">sorted_targets</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="n">discriminator</span><span class="p">,</span> <span class="n">sort_targets</span><span class="p">(</span><span class="n">targets</span><span class="p">))</span>
-
-  <span class="c"># can do no better for any of these:</span>
-  <span class="c"># []</span>
-  <span class="c"># [a]</span>
-  <span class="c"># [a,b]</span>
-  <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sorted_targets</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">sorted_targets</span>
-
-  <span class="c"># For these, we&#39;d like to coalesce if possible, like:</span>
-  <span class="c"># [a,b,a,c,a,c] -&gt; [a,a,a,b,c,c]</span>
-  <span class="c"># adopt a quadratic worst case solution, when we find a type change edge, scan forward for</span>
-  <span class="c"># the opposite edge and then try to swap dependency pairs to move the type back left to its</span>
-  <span class="c"># grouping.  If the leftwards migration fails due to a dependency constraint, we just stop</span>
-  <span class="c"># and move on leaving &quot;type islands&quot;.</span>
-  <span class="n">current_type</span> <span class="o">=</span> <span class="bp">None</span>
-
-  <span class="c"># main scan left to right no backtracking</span>
-  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sorted_targets</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
-    <span class="n">current_target</span> <span class="o">=</span> <span class="n">sorted_targets</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">current_type</span> <span class="o">!=</span> <span class="n">discriminator</span><span class="p">(</span><span class="n">current_target</span><span class="p">):</span>
-      <span class="n">scanned_back</span> <span class="o">=</span> <span class="bp">False</span>
-
-      <span class="c"># scan ahead for next type match</span>
-      <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sorted_targets</span><span class="p">)):</span>
-        <span class="n">look_ahead_target</span> <span class="o">=</span> <span class="n">sorted_targets</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">current_type</span> <span class="o">==</span> <span class="n">discriminator</span><span class="p">(</span><span class="n">look_ahead_target</span><span class="p">):</span>
-          <span class="n">scanned_back</span> <span class="o">=</span> <span class="bp">True</span>
-
-          <span class="c"># swap this guy as far back as we can</span>
-          <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-            <span class="n">previous_target</span> <span class="o">=</span> <span class="n">sorted_targets</span><span class="p">[</span><span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
-            <span class="n">mismatching_types</span> <span class="o">=</span> <span class="n">current_type</span> <span class="o">!=</span> <span class="n">discriminator</span><span class="p">(</span><span class="n">previous_target</span><span class="p">)</span>
-            <span class="n">not_a_dependency</span> <span class="o">=</span> <span class="n">look_ahead_target</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">previous_target</span><span class="o">.</span><span class="n">dependencies</span>
-            <span class="k">if</span> <span class="n">mismatching_types</span> <span class="ow">and</span> <span class="n">not_a_dependency</span><span class="p">:</span>
-              <span class="n">sorted_targets</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">sorted_targets</span><span class="p">[</span><span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
-              <span class="n">sorted_targets</span><span class="p">[</span><span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">look_ahead_target</span>
-            <span class="k">else</span><span class="p">:</span>
-              <span class="k">break</span>  <span class="c"># out of k</span>
-
-          <span class="k">break</span>  <span class="c"># out of j</span>
-
-      <span class="k">if</span> <span class="ow">not</span> <span class="n">scanned_back</span><span class="p">:</span>  <span class="c"># done with coalescing the current type, move on to next</span>
-        <span class="n">current_type</span> <span class="o">=</span> <span class="n">discriminator</span><span class="p">(</span><span class="n">current_target</span><span class="p">)</span>
-
-  <span class="k">return</span> <span class="n">sorted_targets</span></div>
+  <span class="k">return</span> <span class="n">ordered</span></div>
 </pre></div>
 
           <footer>

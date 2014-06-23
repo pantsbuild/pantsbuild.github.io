@@ -273,6 +273,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="#source-root">source_root</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#time">Time</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#wiki">wiki</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#wiki-artifact">wiki_artifact</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="goals_reference.html">Goals Reference</a><ul>
@@ -431,7 +432,8 @@ targets; some are handy utilities.</p>
 <a class="reference internal" href="#setup_py">setup_py</a> |
 <a class="reference internal" href="#source_root">source_root</a> |
 <a class="reference internal" href="#time">Time</a> |
-<a class="reference internal" href="#wiki">wiki</a> |</p>
+<a class="reference internal" href="#wiki">wiki</a> |
+<a class="reference internal" href="#wiki_artifact">wiki_artifact</a> |</p>
 <p><strong>JVM</strong> |
 <a class="reference internal" href="#annotation_processor">annotation_processor</a> |
 <a class="reference internal" href="#artifact">artifact</a> |
@@ -1014,7 +1016,7 @@ is needed by this agent; <cite>False</cite> by default.</li>
 <span id="bdict-java-antlr-library"></span><h2>java_antlr_library<a class="headerlink" href="#java-antlr-library" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="java_antlr_library">
-<tt class="descname">java_antlr_library</tt><big>(</big><em>name</em>, <em>sources</em>, <em>provides=None</em>, <em>excludes=None</em>, <em>compiler=u'antlr3'</em>, <em>package=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#java_antlr_library" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">java_antlr_library</tt><big>(</big><em>name=None</em>, <em>sources=None</em>, <em>provides=None</em>, <em>excludes=None</em>, <em>compiler=u'antlr3'</em>, <em>package=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#java_antlr_library" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates a stub Java library from Antlr grammar files.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1236,28 +1238,27 @@ to filter this target&#8217;s transitive dependencies against.</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>package</strong> &#8211; java package (com.company.package) in which to generate the output java files.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>package</strong> &#8211; java package (com.company.package) in which to generate the output java files.
+If left unspecified, pants will attempt to guess it from the file path leading to the schema
+(xsd) file. This will only be accurate if the .xsd file is in the format
+.../com/company/package/schema.xsd; it is recommended that the package be manually defined in
+the BUILD file for robustness.</li>
+<li><strong>language</strong> &#8211; currently, anything other than &#8216;java&#8217; is unsupported (this is the default)</li>
+<li><strong>buildflags</strong> &#8211; currently unused Parameters inherited from JvmTarget.</li>
+<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this build file defines the
+target <a class="reference internal" href="base.html#pants.base.address.Address" title="pants.base.address.Address"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.address.Address</span></tt></a>.</li>
+<li><strong>sources</strong> (<tt class="docutils literal"><span class="pre">FileSet</span></tt> or list of strings.) &#8211; A list of filenames representing the source code this library is compiled from.</li>
+<li><strong>dependencies</strong> (<em>List of target specs.</em>) &#8211; Other targets that this target depends on.</li>
+<li><strong>excludes</strong> &#8211; One or more <tt class="xref py py-class docutils literal"><span class="pre">pants.targets.exclude.Exclude</span></tt> instances to filter this
+target&#8217;s transitive dependencies against.</li>
+<li><strong>configurations</strong> (<em>tuple of strings</em>) &#8211; One or more ivy configurations to resolve for this target. This parameter
+is not intended for general use.</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
-<p>If left unspecified, pants will attempt to guess it from the file path leading to the schema
-(xsd) file. This will only be accurate if the .xsd file is in the format
-.../com/company/package/schema.xsd; it is recommended that the package be manually defined in
-the BUILD file for robustness.
-:param language: currently, anything other than &#8216;java&#8217; is unsupported (this is the default)
-:param buildflags: currently unused Parameters inherited from JvmTarget.
-:param string name: The name of this target, which combined with this build file defines the
-target <a class="reference internal" href="base.html#pants.base.address.Address" title="pants.base.address.Address"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.address.Address</span></tt></a>.
-:param sources: A list of filenames representing the source code this library is compiled from.
-:type sources: <tt class="docutils literal"><span class="pre">FileSet</span></tt> or list of strings.
-:param dependencies: List of <a class="reference internal" href="base.html#pants.base.target.Target" title="pants.base.target.Target"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.target.Target</span></tt></a> instances this target depends on.
-:type dependencies: Other targets that this target depends on.
-:type dependencies: List of target specs.
-:param excludes: One or more <tt class="xref py py-class docutils literal"><span class="pre">pants.targets.exclude.Exclude</span></tt> instances to filter this
-target&#8217;s transitive dependencies against.
-:param configurations: One or more ivy configurations to resolve for this target. This parameter
-is not intended for general use.
-:type configurations: tuple of strings</p>
 <p>Implemented by <tt class="docutils literal"><span class="pre">pants.backend.codegen.targets.jaxb_library.JaxbLibrary</span></tt></p>
 </dd></dl>
 
@@ -1474,8 +1475,23 @@ expecting to find java files in <tt class="docutils literal"><span class="pre">s
 <span id="bdict-page"></span><h2>page<a class="headerlink" href="#page" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt>
-<tt class="descname">page</tt><big>(</big><em>source</em>, <em>resources=None</em>, <em>address=None</em>, <em>**kwargs</em><big>)</big></dt>
+<tt class="descname">page</tt><big>(</big><em>source</em>, <em>resources=None</em>, <em>provides=None</em>, <em>**kwargs</em><big>)</big></dt>
 <dd><p>Describes a single documentation page.</p>
+<p>Here is an example, that shows a markdown page providing a wiki page on an Atlassian Confluence
+wiki:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">page</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;mypage&#39;</span><span class="p">,</span>
+  <span class="n">source</span><span class="o">=</span><span class="s">&#39;mypage.md&#39;</span><span class="p">,</span>
+  <span class="n">provides</span><span class="o">=</span><span class="p">[</span>
+    <span class="n">wiki_artifact</span><span class="p">(</span><span class="n">wiki</span><span class="o">=</span><span class="s">&#39;address/of/my/wiki/target&#39;</span><span class="p">,</span>
+                  <span class="n">space</span><span class="o">=</span><span class="s">&#39;my_space&#39;</span><span class="p">,</span>
+                  <span class="n">title</span><span class="o">=</span><span class="s">&#39;my_page&#39;</span><span class="p">,</span>
+                  <span class="n">parent</span><span class="o">=</span><span class="s">&#39;my_parent&#39;</span><span class="p">),</span>
+  <span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Multiple <tt class="xref py py-class docutils literal"><span class="pre">pants.backend.core.targets.WikiArtifact</span></tt> objects can be provided, to bind a page
+to multiple wikis.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1498,13 +1514,6 @@ this target depends on.</li>
 <p><strong>Methods:</strong></p>
 <blockquote>
 <div><dl class="method">
-<dt id="register_wiki">
-<tt class="descname">register_wiki</tt><big>(</big><em>wiki</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#register_wiki" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds this page to the given wiki for publishing.  Wiki-specific configuration is passed as
-kwargs.</p>
-</dd></dl>
-
-<dl class="method">
 <dt>
 <tt class="descname">with_description</tt><big>(</big><em>description</em><big>)</big></dt>
 <dd><p>Set a human-readable description of this target.</p>
@@ -2164,7 +2173,7 @@ E.g., <tt class="docutils literal"><span class="pre">Amount(2,</span> <span clas
 <span id="bdict-wiki"></span><h2>wiki<a class="headerlink" href="#wiki" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt>
-<tt class="descname">wiki</tt><big>(</big><em>url_builder</em>, <em>**kwargs</em><big>)</big></dt>
+<tt class="descname">wiki</tt><big>(</big><em>name</em>, <em>url_builder</em>, <em>**kwargs</em><big>)</big></dt>
 <dd><p>Target that identifies a wiki where pages can be published.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -2202,6 +2211,34 @@ build file defines the target <a class="reference internal" href="base.html#pant
 </dd></dl>
 
 </div></blockquote>
+</div>
+<div class="section" id="wiki-artifact">
+<span id="bdict-wiki-artifact"></span><h2>wiki_artifact<a class="headerlink" href="#wiki-artifact" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="wiki_artifact">
+<tt class="descname">wiki_artifact</tt><big>(</big><em>wiki</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#wiki_artifact" title="Permalink to this definition">¶</a></dt>
+<dd><p>Binds a single documentation page to a wiki instance.</p>
+<p>This object allows you to specify which wiki a page should be published to, along with additional
+wiki-specific parameters, such as the title, parent page, etc.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>wiki</strong> &#8211; target spec of a <tt class="docutils literal"><span class="pre">wiki</span></tt>.</li>
+<li><strong>kwargs</strong> &#8211; a dictionary that may contain configuration directives for your particular wiki.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>For example, the following keys are supported for Atlassian&#8217;s Confluence:
+* <cite>space</cite> &#8211; A wiki space in which to place the page (used in Confluence)
+* <cite>title</cite> &#8211; A title for the wiki page
+* <cite>parent</cite> &#8211; The title of a wiki page that will denote this page as a child.</p>
+<p>Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.targets.doc.WikiArtifact</span></tt></p>
+</dd></dl>
+
 </div>
 </div>
 
