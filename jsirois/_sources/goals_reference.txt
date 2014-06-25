@@ -1,0 +1,2707 @@
+***************
+Goals Reference
+***************
+
+This page documents ``goals``, actions that can be taken on build targets.
+A goal identifies some high-level goal that you wish to accomplish, such as
+compiling your code.
+
+A goal depends on other goals that must happen first; for example, Pants must
+compile code before it can run tests.
+
+Each goal is implemented by one or more Tasks. For example, the
+``JavaCompile`` task compiles java code, and its installed in the ``compile``
+goal.
+
+
+**Goals and Tasks summary**
+
+  * :ref:`gref_phase_bench` - None
+  * :ref:`gref_phase_binary` - Create a jvm binary jar.
+  * :ref:`gref_phase_bootstrap` - Bootstrap tools needed for building.
+  * :ref:`gref_phase_builddict` - None
+  * :ref:`gref_phase_buildlint` - None
+  * :ref:`gref_phase_bundle` - Create an application bundle from binary targets.
+  * :ref:`gref_phase_check-exclusives` - Check for exclusivity violations.
+  * :ref:`gref_phase_check_published_deps` - Find references to outdated artifacts.
+  * :ref:`gref_phase_clean-all` - Clean all build output.
+  * :ref:`gref_phase_clean-all-async` - Clean all build output in a background process.
+  * :ref:`gref_phase_compile` - Compile source code.
+  * :ref:`gref_phase_dependees` - Print the target's dependees.
+  * :ref:`gref_phase_dependencies` - Print the target's dependencies.
+  * :ref:`gref_phase_depmap` - Depict the target's dependencies.
+  * :ref:`gref_phase_detect-duplicates` - Detect duplicate classes and resources on the classpath.
+  * :ref:`gref_phase_doc` - Create documentation.
+  * :ref:`gref_phase_eclipse` - Create an Eclipse project from the given targets.
+  * :ref:`gref_phase_filedeps` - Print out the source and BUILD files the target depends on.
+  * :ref:`gref_phase_filemap` - Outputs a mapping from source file to owning target.
+  * :ref:`gref_phase_filter` - Filter the input targets based on various criteria.
+  * :ref:`gref_phase_gen` - Generate code.
+  * :ref:`gref_phase_goals` - List all documented goals.
+  * :ref:`gref_phase_idea` - Create an IntelliJ IDEA project from the given targets.
+  * :ref:`gref_phase_invalidate` - Invalidate all targets.
+  * :ref:`gref_phase_jar` - None
+  * :ref:`gref_phase_killserver` - Kill the reporting server.
+  * :ref:`gref_phase_list` - List available BUILD targets.
+  * :ref:`gref_phase_markdown` - Generate html from markdown docs.
+  * :ref:`gref_phase_minimize` - Print the minimal cover of the given targets.
+  * :ref:`gref_phase_ng-killall` - Kill running nailgun servers.
+  * :ref:`gref_phase_path` - Find a dependency path from one target to another.
+  * :ref:`gref_phase_pathdeps` - Print out all paths containing BUILD files the target depends on.
+  * :ref:`gref_phase_paths` - Find all dependency paths from one target to another.
+  * :ref:`gref_phase_provides` - Print the symbols provided by the given targets.
+  * :ref:`gref_phase_publish` - Publish artifacts.
+  * :ref:`gref_phase_repl` - Run a REPL.
+  * :ref:`gref_phase_repl-dirty` - Run a REPL, skipping compilation.
+  * :ref:`gref_phase_resolve` - Resolve dependencies and produce dependency reports.
+  * :ref:`gref_phase_resources` - None
+  * :ref:`gref_phase_roots` - Print the workspace's source roots and associated target types.
+  * :ref:`gref_phase_run` - Run a binary target.
+  * :ref:`gref_phase_run-dirty` - Run a binary target, skipping compilation.
+  * :ref:`gref_phase_server` - Run the pants reporting server.
+  * :ref:`gref_phase_setup` - Setup the target's build environment.
+  * :ref:`gref_phase_sort` - Topologically sort the targets.
+  * :ref:`gref_phase_targets` - List all target types.
+  * :ref:`gref_phase_test` - Test compiled code.
+
+
+.. _gref_phase_bench:
+
+bench
+-----------------------------------------------------------------------------
+
+
+
+.. _gref_cli_bench:
+
+*
+  **bench**
+  Implemented by ``pants.backend.jvm.tasks.benchmark_run.BenchmarkRun``
+
+
+
+  * | ``--bench-target``
+      ``string``
+    |
+      Name of the benchmark class.
+
+  * | ``--bench-memory/--no-bench-memory``
+    |
+      Enable memory profiling.
+
+  * | ``--bench-debug/--no-bench-debug``
+    |
+      Enable caliper debug mode.
+
+  * | ``--bench-caliper-args``
+      ``string``
+    |
+      Allows the user to pass additional command line options to caliper. Can be used multiple times and arguments will be concatenated. Example use: --bench-caliper-args='-Dsize=10,20 -Dcomplex=true,false' --bench-caliper-args=-Dmem=1,2,3
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+  :ref:`gen:thrift <gref_cli_genthrift>`
+  :ref:`gen:scrooge <gref_cli_genscrooge>`
+  :ref:`gen:protoc <gref_cli_genprotoc>`
+  :ref:`check-exclusives <gref_cli_checkexclusives>`
+  :ref:`ivy <gref_cli_ivy>`
+  :ref:`jvm <gref_cli_jvm>`
+
+
+
+.. _gref_phase_binary:
+
+binary
+-----------------------------------------------------------------------------
+
+Create a jvm binary jar.
+
+
+* Implemented by ``pants.backend.jvm.tasks.binary_create.BinaryCreate``
+
+
+  Creates a runnable monolithic binary deploy jar.
+
+
+
+.. _gref_cli_binarydup:
+
+*
+  **binary:dup**
+  Implemented by ``pants.backend.jvm.tasks.detect_duplicates.DuplicateDetector``
+
+
+  Detect classes and resources with the same qualified name on the classpath.
+
+  * | ``--binary-dup-fail-fast/--no-binary-dup-fail-fast``
+    |
+      Fail fast if duplicate classes/resources are found.
+
+  * | ``--binary-dup-excludes``
+      ``string``
+      (Default: ``dependencies,license,notice,.DS_Store,notice.txt,cmdline.arg.info.txt.1,license.txt``)
+    |
+      A comma separated list of files to exclude from duplicate check, defaults to:
+
+
+
+.. _gref_cli_binarypythonbinarycreate:
+
+*
+  **binary:python-binary-create**
+  Implemented by ``pants.backend.python.tasks.python_binary_create.PythonBinaryCreate``
+
+
+
+  * | ``--binary-python-binary-create-timeout``
+      ``int``
+    |
+      Number of seconds to wait for http connections.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+  :ref:`gen:thrift <gref_cli_genthrift>`
+  :ref:`gen:scrooge <gref_cli_genscrooge>`
+  :ref:`gen:protoc <gref_cli_genprotoc>`
+  :ref:`check-exclusives <gref_cli_checkexclusives>`
+  :ref:`ivy <gref_cli_ivy>`
+  :ref:`jvm <gref_cli_jvm>`
+
+
+
+.. _gref_phase_bootstrap:
+
+bootstrap
+-----------------------------------------------------------------------------
+
+Bootstrap tools needed for building.
+
+
+* Implemented by ``pants.backend.jvm.tasks.bootstrap_jvm_tools.BootstrapJvmTools``
+
+
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+
+
+
+.. _gref_phase_builddict:
+
+builddict
+-----------------------------------------------------------------------------
+
+
+
+* Implemented by ``pants.backend.core.tasks.builddictionary.BuildBuildDictionary``
+
+
+  Generate documentation for the Sphinx site.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+
+
+
+.. _gref_phase_buildlint:
+
+buildlint
+-----------------------------------------------------------------------------
+
+
+
+.. _gref_cli_buildlint:
+
+*
+  **buildlint**
+  Implemented by ``pants.backend.core.tasks.build_lint.BuildLint``
+
+
+
+  * | ``--buildlint-transitive/--no-buildlint-transitive``
+    |
+      apply lint rules transitively to all dependency buildfiles.
+
+  * | ``--buildlint-include-intransitive-deps/--no-buildlint-include-intransitive-deps``
+    |
+      correct both simple missing dependencies and intransitive missing deps
+
+  * | ``--buildlint-action``
+      ``choice``
+    |
+      diff=print out diffs, rewrite=apply changes to BUILD files directly.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+  :ref:`gen:thrift <gref_cli_genthrift>`
+  :ref:`gen:scrooge <gref_cli_genscrooge>`
+  :ref:`gen:protoc <gref_cli_genprotoc>`
+  :ref:`check-exclusives <gref_cli_checkexclusives>`
+  :ref:`ivy <gref_cli_ivy>`
+  :ref:`jvm <gref_cli_jvm>`
+
+
+
+.. _gref_phase_bundle:
+
+bundle
+-----------------------------------------------------------------------------
+
+Create an application bundle from binary targets.
+
+
+.. _gref_cli_bundle:
+
+*
+  **bundle**
+  Implemented by ``pants.backend.jvm.tasks.bundle_create.BundleCreate``
+
+
+
+  * | ``--bundle-deployjar/--no-bundle-deployjar``
+    |
+      Expand 3rdparty jars into loose classfiles in the bundle's root dir. If unset, the root will contain internal classfilesonly, and 3rdparty jars will go into the bundle's libs dir.
+
+  * | ``--bundle-archive``
+      ``choice``
+    |
+      Create an archive from the bundle. Choose from ['tar', 'tbz2', 'tgz', 'zip']
+
+  * | ``--bundle-archive-prefix/--no-bundle-archive-prefix``
+    |
+      Used in conjunction with --bundle-archive this packs the archive with its basename as the path prefix.
+
+
+
+.. _gref_cli_bundledup:
+
+*
+  **bundle:dup**
+  Implemented by ``pants.backend.jvm.tasks.detect_duplicates.DuplicateDetector``
+
+
+  Detect classes and resources with the same qualified name on the classpath.
+
+  * | ``--bundle-dup-fail-fast/--no-bundle-dup-fail-fast``
+    |
+      Fail fast if duplicate classes/resources are found.
+
+  * | ``--bundle-dup-excludes``
+      ``string``
+      (Default: ``dependencies,license,notice,.DS_Store,notice.txt,cmdline.arg.info.txt.1,license.txt``)
+    |
+      A comma separated list of files to exclude from duplicate check, defaults to:
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+  :ref:`gen:thrift <gref_cli_genthrift>`
+  :ref:`gen:scrooge <gref_cli_genscrooge>`
+  :ref:`gen:protoc <gref_cli_genprotoc>`
+  :ref:`check-exclusives <gref_cli_checkexclusives>`
+  :ref:`ivy <gref_cli_ivy>`
+  :ref:`jvm <gref_cli_jvm>`
+
+
+
+.. _gref_phase_check-exclusives:
+
+check-exclusives
+-----------------------------------------------------------------------------
+
+Check for exclusivity violations.
+
+
+.. _gref_cli_checkexclusives:
+
+*
+  **check-exclusives**
+  Implemented by ``pants.backend.core.tasks.check_exclusives.CheckExclusives``
+
+
+  Computes transitive exclusive maps.
+  
+  This computes transitive exclusive tags for a dependency graph rooted
+  with a set of build targets specified by a user. If this process produces
+  any collisions where a single target contains multiple tag values for a single
+  exclusives key, then it generates an error and the compilation will fail.
+  
+  The syntax of the exclusives attribute is: ::
+  
+     exclusives = {"id": "value", ...}
+  
+  For example, suppose that we had two java targets, jliba and jlibb. jliba uses
+  slf4j, which includes in its jar package an implementation of log4j. jlibb uses
+  log4j directly. But the version of log4j that's packaged inside of slf4j is
+  different from the version used by jlibb. ::
+  
+     java_library(name='jliba',
+       depedencies = ['slf4j-with-log4j-2.4'])
+     java_library(name='jlibb',
+       dependencies=['log4j-1.9'])
+     java_binary(name='javabin', dependencies=[':jliba', ':jlibb'])
+  
+  In this case, the binary target 'javabin' depends on both slf4j with its
+  packaged log4j version 2.4, and on log4j-1.9.
+  Pants doesn't know that the slf4j and log4j jar_dependencies contain
+  incompatible versions of the same library, and so it can't detect the error.
+  
+  With exclusives, the jar_library target for the joda libraries would declare
+  exclusives tags: ::
+  
+     jar_library(name='slf4j-with-log4j-2.4', exclusives={'log4j': '2.4'})
+     jar_library(name='joda-2.1', exclusives={'log4j': '1.9'})
+  
+  With the exclusives declared, pants can recognize that 'javabin' has conflicting
+  dependencies, and can generate an appropriate error message.
+  
+  Data about exclusives is provided to other tasks via data build products.
+  If the build data product 'exclusives_groups' is required, then an
+  ExclusivesMapping object will be created.
+
+  * | ``--check-exclusives-error_on_collision/--no-check-exclusives-error_on_collision``
+      (Default: ``True``)
+    |
+      Signal an error and abort the build if an exclusives collision is detected
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+  :ref:`gen:thrift <gref_cli_genthrift>`
+  :ref:`gen:scrooge <gref_cli_genscrooge>`
+  :ref:`gen:protoc <gref_cli_genprotoc>`
+
+
+
+.. _gref_phase_check_published_deps:
+
+check_published_deps
+-----------------------------------------------------------------------------
+
+Find references to outdated artifacts.
+
+
+.. _gref_cli_checkpublisheddeps:
+
+*
+  **check_published_deps**
+  Implemented by ``pants.backend.jvm.tasks.check_published_deps.CheckPublishedDeps``
+
+
+
+  * | ``--check_published_deps-sep``
+      ``string``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+  * | ``--check_published_deps-print-uptodate/--no-check_published_deps-print-uptodate``
+    |
+      Also print up-to-date dependencies.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+
+
+
+.. _gref_phase_clean-all:
+
+clean-all
+-----------------------------------------------------------------------------
+
+Clean all build output.
+
+
+.. _gref_cli_cleanall:
+
+*
+  **clean-all**
+  Implemented by ``pants.backend.core.tasks.clean.Cleaner``
+
+
+  Clean all current build products.
+
+  * | ``--clean-all-sep``
+      ``string``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+  :ref:`ng-killall <gref_cli_ngkillall>`
+  :ref:`invalidate <gref_cli_invalidate>`
+
+
+
+.. _gref_phase_clean-all-async:
+
+clean-all-async
+-----------------------------------------------------------------------------
+
+Clean all build output in a background process.
+
+
+.. _gref_cli_cleanallasync:
+
+*
+  **clean-all-async**
+  Implemented by ``pants.backend.core.tasks.clean.AsyncCleaner``
+
+
+  Clean all current build products in a background process.
+
+  * | ``--clean-all-async-sep``
+      ``string``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+  :ref:`ng-killall <gref_cli_ngkillall>`
+  :ref:`invalidate <gref_cli_invalidate>`
+
+
+
+.. _gref_phase_compile:
+
+compile
+-----------------------------------------------------------------------------
+
+Compile source code.
+
+
+.. _gref_cli_jvm:
+
+*
+  **jvm**
+  Implemented by ``pants.backend.core.tasks.group_task.SingletonGroupTask``
+
+
+
+  * | ``--compile-scala-warnings/--no-compile-scala-warnings``
+      (Default: ``True``)
+    |
+      Compile with all configured warnings enabled.
+
+  * | ``--compile-scala-partition-size-hint``
+      ``int``
+      (Default: ``-1``)
+    |
+      Roughly how many source files to attempt to compile together. Set to a large number to compile all sources together. Set this to 0 to compile target-by-target. Default is set in pants.ini.
+
+  * | ``--compile-scala-missing-deps``
+      ``choice``
+      (Default: ``warn``)
+    |
+      One of off, warn, fatal. Check for missing dependencies in scalacode. Reports actual dependencies A -> B where there is no transitive BUILD file dependency path from A to B.If fatal, missing deps are treated as a build error.
+
+  * | ``--compile-scala-missing-direct-deps``
+      ``choice``
+      (Default: ``off``)
+    |
+      One of off, warn, fatal. Check for missing direct dependencies in scala code. Reports actual dependencies A -> B where there is no direct BUILD file dependency path from A to B. This is a very strict check, as in practice it is common to rely on transitive, non-direct dependencies, e.g., due to type inference or when the main target in a BUILD file is modified to depend on other targets in the same BUILD file as an implementation detail. It may still be useful to set it to fatal temorarily, to detect these.
+
+  * | ``--compile-scala-unnecessary-deps``
+      ``choice``
+      (Default: ``off``)
+    |
+      One of off, warn, fatal. Check for declared dependencies in scala code that are not needed. This is a very strict check. For example, generated code will often legitimately have BUILD dependencies that are unused in practice.
+
+  * | ``--compile-scala-delete-scratch/--no-compile-scala-delete-scratch``
+      (Default: ``True``)
+    |
+      Leave intermediate scratch files around, for debugging build problems.
+
+  * | ``--compile-scala-plugins``
+      ``string``
+    |
+      Use these scalac plugins. Default is set in pants.ini.
+
+  * | ``--compile-apt-warnings/--no-compile-apt-warnings``
+      (Default: ``True``)
+    |
+      Compile with all configured warnings enabled.
+
+  * | ``--compile-apt-partition-size-hint``
+      ``int``
+      (Default: ``-1``)
+    |
+      Roughly how many source files to attempt to compile together. Set to a large number to compile all sources together. Set this to 0 to compile target-by-target. Default is set in pants.ini.
+
+  * | ``--compile-apt-missing-deps``
+      ``choice``
+      (Default: ``warn``)
+    |
+      One of off, warn, fatal. Check for missing dependencies in javacode. Reports actual dependencies A -> B where there is no transitive BUILD file dependency path from A to B.If fatal, missing deps are treated as a build error.
+
+  * | ``--compile-apt-missing-direct-deps``
+      ``choice``
+      (Default: ``off``)
+    |
+      One of off, warn, fatal. Check for missing direct dependencies in java code. Reports actual dependencies A -> B where there is no direct BUILD file dependency path from A to B. This is a very strict check, as in practice it is common to rely on transitive, non-direct dependencies, e.g., due to type inference or when the main target in a BUILD file is modified to depend on other targets in the same BUILD file as an implementation detail. It may still be useful to set it to fatal temorarily, to detect these.
+
+  * | ``--compile-apt-unnecessary-deps``
+      ``choice``
+      (Default: ``off``)
+    |
+      One of off, warn, fatal. Check for declared dependencies in java code that are not needed. This is a very strict check. For example, generated code will often legitimately have BUILD dependencies that are unused in practice.
+
+  * | ``--compile-apt-delete-scratch/--no-compile-apt-delete-scratch``
+      (Default: ``True``)
+    |
+      Leave intermediate scratch files around, for debugging build problems.
+
+  * | ``--compile-apt-args``
+      ``string``
+    |
+      Pass these extra args to javac.
+
+  * | ``--compile-java-warnings/--no-compile-java-warnings``
+      (Default: ``True``)
+    |
+      Compile with all configured warnings enabled.
+
+  * | ``--compile-java-partition-size-hint``
+      ``int``
+      (Default: ``-1``)
+    |
+      Roughly how many source files to attempt to compile together. Set to a large number to compile all sources together. Set this to 0 to compile target-by-target. Default is set in pants.ini.
+
+  * | ``--compile-java-missing-deps``
+      ``choice``
+      (Default: ``warn``)
+    |
+      One of off, warn, fatal. Check for missing dependencies in javacode. Reports actual dependencies A -> B where there is no transitive BUILD file dependency path from A to B.If fatal, missing deps are treated as a build error.
+
+  * | ``--compile-java-missing-direct-deps``
+      ``choice``
+      (Default: ``off``)
+    |
+      One of off, warn, fatal. Check for missing direct dependencies in java code. Reports actual dependencies A -> B where there is no direct BUILD file dependency path from A to B. This is a very strict check, as in practice it is common to rely on transitive, non-direct dependencies, e.g., due to type inference or when the main target in a BUILD file is modified to depend on other targets in the same BUILD file as an implementation detail. It may still be useful to set it to fatal temorarily, to detect these.
+
+  * | ``--compile-java-unnecessary-deps``
+      ``choice``
+      (Default: ``off``)
+    |
+      One of off, warn, fatal. Check for declared dependencies in java code that are not needed. This is a very strict check. For example, generated code will often legitimately have BUILD dependencies that are unused in practice.
+
+  * | ``--compile-java-delete-scratch/--no-compile-java-delete-scratch``
+      (Default: ``True``)
+    |
+      Leave intermediate scratch files around, for debugging build problems.
+
+  * | ``--compile-java-args``
+      ``string``
+    |
+      Pass these extra args to javac.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+  :ref:`gen:thrift <gref_cli_genthrift>`
+  :ref:`gen:scrooge <gref_cli_genscrooge>`
+  :ref:`gen:protoc <gref_cli_genprotoc>`
+  :ref:`check-exclusives <gref_cli_checkexclusives>`
+  :ref:`ivy <gref_cli_ivy>`
+
+
+
+.. _gref_phase_dependees:
+
+dependees
+-----------------------------------------------------------------------------
+
+Print the target's dependees.
+
+
+.. _gref_cli_dependees:
+
+*
+  **dependees**
+  Implemented by ``pants.backend.core.tasks.dependees.ReverseDepmap``
+
+
+  Outputs all targets whose dependencies include at least one of the input targets.
+
+  * | ``--dependees-sep``
+      ``string``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+  * | ``--dependees-transitive/--no-dependees-transitive``
+    |
+      List transitive dependees.
+
+  * | ``--dependees-closed/--no-dependees-closed``
+    |
+      Include the input targets in the output along with the dependees.
+
+  * | ``--dependees-type``
+      ``string``
+    |
+      Identifies target types to include. Multiple type inclusions can be specified at once in a comma separated list or else by using multiple instances of this flag.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+
+
+
+.. _gref_phase_dependencies:
+
+dependencies
+-----------------------------------------------------------------------------
+
+Print the target's dependencies.
+
+
+.. _gref_cli_dependencies:
+
+*
+  **dependencies**
+  Implemented by ``pants.backend.jvm.tasks.dependencies.Dependencies``
+
+
+  Generates a textual list (using the target format) for the dependency set of a target.
+
+  * | ``--dependencies-sep``
+      ``string``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+  * | ``--dependencies-internal-only``
+    |
+      Specifies that only internal dependencies should be included in the graph output (no external jars).
+
+  * | ``--dependencies-external-only``
+    |
+      Specifies that only external dependencies should be included in the graph output (only external jars).
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+
+
+
+.. _gref_phase_depmap:
+
+depmap
+-----------------------------------------------------------------------------
+
+Depict the target's dependencies.
+
+
+.. _gref_cli_depmap:
+
+*
+  **depmap**
+  Implemented by ``pants.backend.jvm.tasks.depmap.Depmap``
+
+
+  Generates either a textual dependency tree or a graphviz digraph dot file for the dependency
+  set of a target.
+
+  * | ``--depmap-sep``
+      ``string``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+  * | ``--depmap-internal-only``
+    |
+      Specifies that only internal dependencies should be included in the graph output (no external jars).
+
+  * | ``--depmap-external-only``
+    |
+      Specifies that only external dependencies should be included in the graph output (only external jars).
+
+  * | ``--depmap-minimal``
+    |
+      For a textual dependency tree, only prints a dependency the 1st time it is encountered.  For graph output this does nothing.
+
+  * | ``--depmap-separator``
+      ``string``
+      (Default: ``-``)
+    |
+      Specifies the separator to use between the org/name/rev components of a dependency's fully qualified name.
+
+  * | ``--depmap-graph``
+    |
+      Specifies the internal dependency graph should be output in the dot digraph format
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+
+
+
+.. _gref_phase_detect-duplicates:
+
+detect-duplicates
+-----------------------------------------------------------------------------
+
+Detect duplicate classes and resources on the classpath.
+
+
+.. _gref_cli_detectduplicates:
+
+*
+  **detect-duplicates**
+  Implemented by ``pants.backend.jvm.tasks.detect_duplicates.DuplicateDetector``
+
+
+  Detect classes and resources with the same qualified name on the classpath.
+
+  * | ``--detect-duplicates-fail-fast/--no-detect-duplicates-fail-fast``
+    |
+      Fail fast if duplicate classes/resources are found.
+
+  * | ``--detect-duplicates-excludes``
+      ``string``
+      (Default: ``dependencies,license,notice,.DS_Store,notice.txt,cmdline.arg.info.txt.1,license.txt``)
+    |
+      A comma separated list of files to exclude from duplicate check, defaults to:
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+  :ref:`gen:thrift <gref_cli_genthrift>`
+  :ref:`gen:scrooge <gref_cli_genscrooge>`
+  :ref:`gen:protoc <gref_cli_genprotoc>`
+  :ref:`check-exclusives <gref_cli_checkexclusives>`
+  :ref:`ivy <gref_cli_ivy>`
+  :ref:`jvm <gref_cli_jvm>`
+  :ref:`jar <gref_cli_jar>`
+
+
+
+.. _gref_phase_doc:
+
+doc
+-----------------------------------------------------------------------------
+
+Create documentation.
+
+
+.. _gref_cli_docjavadoc:
+
+*
+  **doc:javadoc**
+  Implemented by ``pants.backend.jvm.tasks.javadoc_gen.JavadocGen``
+
+
+
+  * | ``--doc-javadoc-include-codegen/--no-doc-javadoc-include-codegen``
+    |
+      Create javadoc for generated code.
+
+  * | ``--doc-javadoc-transitive/--no-doc-javadoc-transitive``
+      (Default: ``True``)
+    |
+      Create javadoc for the transitive closure of internal targets reachable from the roots specified on the command line.
+
+  * | ``--doc-javadoc-combined/--no-doc-javadoc-combined``
+    |
+      Generate javadoc for all targets combined instead of each target individually.
+
+  * | ``--doc-javadoc-open/--no-doc-javadoc-open``
+    |
+      Attempt to open the generated javadoc in a browser (implies --doc-javadoc-combined).
+
+  * | ``--doc-javadoc-ignore-failure/--no-doc-javadoc-ignore-failure``
+    |
+      Specifies that javadoc errors should not cause build errors
+
+
+
+.. _gref_cli_docscaladoc:
+
+*
+  **doc:scaladoc**
+  Implemented by ``pants.backend.jvm.tasks.scaladoc_gen.ScaladocGen``
+
+
+
+  * | ``--doc-scaladoc-include-codegen/--no-doc-scaladoc-include-codegen``
+    |
+      Create scaladoc for generated code.
+
+  * | ``--doc-scaladoc-transitive/--no-doc-scaladoc-transitive``
+      (Default: ``True``)
+    |
+      Create scaladoc for the transitive closure of internal targets reachable from the roots specified on the command line.
+
+  * | ``--doc-scaladoc-combined/--no-doc-scaladoc-combined``
+    |
+      Generate scaladoc for all targets combined instead of each target individually.
+
+  * | ``--doc-scaladoc-open/--no-doc-scaladoc-open``
+    |
+      Attempt to open the generated scaladoc in a browser (implies --doc-scaladoc-combined).
+
+  * | ``--doc-scaladoc-ignore-failure/--no-doc-scaladoc-ignore-failure``
+    |
+      Specifies that scaladoc errors should not cause build errors
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+  :ref:`gen:thrift <gref_cli_genthrift>`
+  :ref:`gen:scrooge <gref_cli_genscrooge>`
+  :ref:`gen:protoc <gref_cli_genprotoc>`
+  :ref:`check-exclusives <gref_cli_checkexclusives>`
+  :ref:`ivy <gref_cli_ivy>`
+  :ref:`jvm <gref_cli_jvm>`
+
+
+
+.. _gref_phase_eclipse:
+
+eclipse
+-----------------------------------------------------------------------------
+
+Create an Eclipse project from the given targets.
+
+
+.. _gref_cli_eclipse:
+
+*
+  **eclipse**
+  Implemented by ``pants.backend.jvm.tasks.eclipse_gen.EclipseGen``
+
+
+
+  * | ``--eclipse-project-name``
+      ``string``
+      (Default: ``project``)
+    |
+      Specifies the name to use for the generated project.
+
+  * | ``--eclipse-project-dir``
+      ``string``
+    |
+      Specifies the directory to output the generated project files to.
+
+  * | ``--eclipse-project-cwd``
+      ``string``
+    |
+      Specifies the directory the generated project should use as the cwd for processes it launches.  Note that specifying this trumps --eclipse-project-dir and not all project related files will be stored there.
+
+  * | ``--eclipse-intransitive``
+    |
+      Limits the sources included in the generated project to just those owned by the targets specified on the command line
+
+  * | ``--eclipse-python/--no-eclipse-python``
+    |
+      Adds python support to the generated project configuration.
+
+  * | ``--eclipse-java/--no-eclipse-java``
+      (Default: ``True``)
+    |
+      Includes java sources in the project; otherwise compiles them and adds them to the project classpath.
+
+  * | ``--eclipse-java-language-level``
+      ``int``
+      (Default: ``6``)
+    |
+      Sets the java language and jdk used to compile the project's java sources.
+
+  * | ``--eclipse-java-jdk-name``
+      ``string``
+    |
+      Sets the jdk used to compile the project's java sources. If unset the default jdk name for the --eclipse-java-language-level is used.
+
+  * | ``--eclipse-scala/--no-eclipse-scala``
+      (Default: ``True``)
+    |
+      Includes scala sources in the project; otherwise compiles them and adds them to the project classpath.
+
+  * | ``--eclipse-eclipse-version``
+      ``choice``
+      (Default: ``3.6``)
+    |
+      The Eclipse version the project configuration should be generated for; can be one of: [u'3.5', u'3.6', u'3.7']
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+  :ref:`gen:thrift <gref_cli_genthrift>`
+  :ref:`gen:scrooge <gref_cli_genscrooge>`
+  :ref:`gen:protoc <gref_cli_genprotoc>`
+  :ref:`check-exclusives <gref_cli_checkexclusives>`
+  :ref:`ivy <gref_cli_ivy>`
+  :ref:`jvm <gref_cli_jvm>`
+  :ref:`jar <gref_cli_jar>`
+
+
+
+.. _gref_phase_filedeps:
+
+filedeps
+-----------------------------------------------------------------------------
+
+Print out the source and BUILD files the target depends on.
+
+
+.. _gref_cli_filedeps:
+
+*
+  **filedeps**
+  Implemented by ``pants.backend.jvm.tasks.filedeps.FileDeps``
+
+
+
+  * | ``--filedeps-sep``
+      ``string``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+
+
+
+.. _gref_phase_filemap:
+
+filemap
+-----------------------------------------------------------------------------
+
+Outputs a mapping from source file to owning target.
+
+
+.. _gref_cli_filemap:
+
+*
+  **filemap**
+  Implemented by ``pants.backend.core.tasks.filemap.Filemap``
+
+
+  Outputs a mapping from source file to the target that owns the source file.
+
+  * | ``--filemap-sep``
+      ``string``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+
+
+
+.. _gref_phase_filter:
+
+filter
+-----------------------------------------------------------------------------
+
+Filter the input targets based on various criteria.
+
+
+.. _gref_cli_filter:
+
+*
+  **filter**
+  Implemented by ``pants.backend.core.tasks.filter.Filter``
+
+
+  Filters targets based on various criteria.
+
+  * | ``--filter-sep``
+      ``string``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+  * | ``--filter-type``
+      ``string``
+    |
+      Identifies target types to include (optional '+' prefix) or exclude ('-' prefix).  Multiple type inclusions or exclusions can be specified at once in a comma separated list or else by using multiple instances of this flag.
+
+  * | ``--filter-target``
+      ``string``
+    |
+      Identifies specific targets to include (optional '+' prefix) or exclude ('-' prefix).  Multiple target inclusions or exclusions can be specified at once in a comma separated list or else by using multiple instances of this flag.
+
+  * | ``--filter-ancestor``
+      ``string``
+    |
+      Identifies ancestor targets (containing targets) that make a select child (contained) targets to include (optional '+' prefix) or exclude ('-' prefix).  Multiple ancestor inclusions or exclusions can be specified at once in a comma separated list or else by using multiple instances of this flag.
+
+  * | ``--filter-regex``
+      ``string``
+    |
+      Identifies regexes of target addresses to include (optional '+' prefix) or exclude ('-' prefix).  Multiple target inclusions or exclusions can be specified at once in a comma separated list or else by using multiple instances of this flag.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+
+
+
+.. _gref_phase_gen:
+
+gen
+-----------------------------------------------------------------------------
+
+Generate code.
+
+
+* Implemented by ``pants.backend.codegen.tasks.antlr_gen.AntlrGen``
+
+
+
+
+
+* Implemented by ``pants.backend.codegen.tasks.jaxb_gen.JaxbGen``
+
+
+  Generates java source files from jaxb schema (.xsd).
+
+
+
+.. _gref_cli_genprotoc:
+
+*
+  **gen:protoc**
+  Implemented by ``pants.backend.codegen.tasks.protobuf_gen.ProtobufGen``
+
+
+
+  * | ``--gen-protoc-lang``
+      ``choice``
+    |
+      Force generation of protobuf code for these languages.
+
+
+
+.. _gref_cli_genscrooge:
+
+*
+  **gen:scrooge**
+  Implemented by ``pants.backend.codegen.tasks.scrooge_gen.ScroogeGen``
+
+
+
+  * | ``--gen-scrooge-quiet``
+    |
+      Suppress output, overrides verbose flag in pants.ini.
+
+
+
+.. _gref_cli_genthrift:
+
+*
+  **gen:thrift**
+  Implemented by ``pants.backend.codegen.tasks.apache_thrift_gen.ApacheThriftGen``
+
+
+
+  * | ``--gen-thrift-version``
+      ``string``
+    |
+      Thrift compiler version.
+
+  * | ``--gen-thrift-lang``
+      ``choice``
+    |
+      Force generation of thrift code for these languages.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+
+
+
+.. _gref_phase_goals:
+
+goals
+-----------------------------------------------------------------------------
+
+List all documented goals.
+
+
+.. _gref_cli_goals:
+
+*
+  **goals**
+  Implemented by ``pants.backend.core.tasks.list_goals.ListGoals``
+
+
+
+  * | ``--goals-sep``
+      ``string``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+  * | ``--goals-all``
+    |
+      List all goals even if no description is available.
+
+  * | ``--goals-graph``
+    |
+      Generate a graphviz graph of installed goals.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+
+
+
+.. _gref_phase_idea:
+
+idea
+-----------------------------------------------------------------------------
+
+Create an IntelliJ IDEA project from the given targets.
+
+
+.. _gref_cli_idea:
+
+*
+  **idea**
+  Implemented by ``pants.backend.jvm.tasks.idea_gen.IdeaGen``
+
+
+
+  * | ``--idea-project-name``
+      ``string``
+      (Default: ``project``)
+    |
+      Specifies the name to use for the generated project.
+
+  * | ``--idea-project-dir``
+      ``string``
+    |
+      Specifies the directory to output the generated project files to.
+
+  * | ``--idea-project-cwd``
+      ``string``
+    |
+      Specifies the directory the generated project should use as the cwd for processes it launches.  Note that specifying this trumps --idea-project-dir and not all project related files will be stored there.
+
+  * | ``--idea-intransitive``
+    |
+      Limits the sources included in the generated project to just those owned by the targets specified on the command line
+
+  * | ``--idea-python/--no-idea-python``
+    |
+      Adds python support to the generated project configuration.
+
+  * | ``--idea-java/--no-idea-java``
+      (Default: ``True``)
+    |
+      Includes java sources in the project; otherwise compiles them and adds them to the project classpath.
+
+  * | ``--idea-java-language-level``
+      ``int``
+      (Default: ``6``)
+    |
+      Sets the java language and jdk used to compile the project's java sources.
+
+  * | ``--idea-java-jdk-name``
+      ``string``
+    |
+      Sets the jdk used to compile the project's java sources. If unset the default jdk name for the --idea-java-language-level is used.
+
+  * | ``--idea-scala/--no-idea-scala``
+      (Default: ``True``)
+    |
+      Includes scala sources in the project; otherwise compiles them and adds them to the project classpath.
+
+  * | ``--idea-idea-version``
+      ``choice``
+      (Default: ``11``)
+    |
+      The IntelliJ IDEA version the project configuration should be generated for; can be one of: [u'10', u'11', u'12', u'9']
+
+  * | ``--idea-merge/--no-idea-merge``
+      (Default: ``True``)
+    |
+      Merge any manual customizations in existing Intellij IDEA configuration. If False, manual customizations will be over-written.
+
+  * | ``--idea-open/--no-idea-open``
+      (Default: ``True``)
+    |
+      Attempts top open the generated project in IDEA.
+
+  * | ``--idea-bash/--no-idea-bash``
+    |
+      Adds a bash facet to the generated project configuration.
+
+  * | ``--idea-scala-language-level``
+      ``choice``
+      (Default: ``2.9``)
+    |
+      Set the scala language level used for IDEA linting.
+
+  * | ``--idea-scala-maximum-heap-size``
+      ``string``
+    |
+      Sets the maximum heap size (in megabytes) for scalac.
+
+  * | ``--idea-fsc/--no-idea-fsc``
+    |
+      If the project contains any scala targets this specifies the fsc compiler should be enabled.
+
+  * | ``--idea-java-encoding``
+      ``string``
+      (Default: ``UTF-8``)
+    |
+      Sets the file encoding for java files in this project.
+
+  * | ``--idea-java-maximum-heap-size``
+      ``string``
+    |
+      Sets the maximum heap size (in megabytes) for javac.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+  :ref:`gen:thrift <gref_cli_genthrift>`
+  :ref:`gen:scrooge <gref_cli_genscrooge>`
+  :ref:`gen:protoc <gref_cli_genprotoc>`
+  :ref:`check-exclusives <gref_cli_checkexclusives>`
+  :ref:`ivy <gref_cli_ivy>`
+  :ref:`jvm <gref_cli_jvm>`
+  :ref:`jar <gref_cli_jar>`
+
+
+
+.. _gref_phase_invalidate:
+
+invalidate
+-----------------------------------------------------------------------------
+
+Invalidate all targets.
+
+
+.. _gref_cli_invalidate:
+
+*
+  **invalidate**
+  Implemented by ``pants.backend.core.tasks.clean.Invalidator``
+
+
+  Invalidate the entire build.
+
+  * | ``--invalidate-sep``
+      ``string``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+  :ref:`ng-killall <gref_cli_ngkillall>`
+
+
+
+.. _gref_phase_jar:
+
+jar
+-----------------------------------------------------------------------------
+
+
+
+.. _gref_cli_jar:
+
+*
+  **jar**
+  Implemented by ``pants.backend.jvm.tasks.jar_create.JarCreate``
+
+
+  Jars jvm libraries and optionally their sources and their docs.
+
+  * | ``--jar-compressed/--no-jar-compressed``
+      (Default: ``True``)
+    |
+      Create compressed jars.
+
+  * | ``--jar-classes/--no-jar-classes``
+      (Default: ``True``)
+    |
+      Create class jars.
+
+  * | ``--jar-sources/--no-jar-sources``
+    |
+      Create source jars.
+
+  * | ``--jar-javadoc/--no-jar-javadoc``
+    |
+      Create javadoc jars.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+  :ref:`gen:thrift <gref_cli_genthrift>`
+  :ref:`gen:scrooge <gref_cli_genscrooge>`
+  :ref:`gen:protoc <gref_cli_genprotoc>`
+  :ref:`check-exclusives <gref_cli_checkexclusives>`
+  :ref:`ivy <gref_cli_ivy>`
+  :ref:`jvm <gref_cli_jvm>`
+
+
+
+.. _gref_phase_killserver:
+
+killserver
+-----------------------------------------------------------------------------
+
+Kill the reporting server.
+
+
+.. _gref_cli_killserver:
+
+*
+  **killserver**
+  Implemented by ``pants.backend.core.tasks.reporting_server.KillServer``
+
+
+  Kills the reporting server.
+
+  * | ``--killserver-sep``
+      ``string``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+
+
+
+.. _gref_phase_list:
+
+list
+-----------------------------------------------------------------------------
+
+List available BUILD targets.
+
+
+.. _gref_cli_list:
+
+*
+  **list**
+  Implemented by ``pants.backend.core.tasks.listtargets.ListTargets``
+
+
+  Lists all targets matching the target specs.
+  
+  If no targets are specified, lists all targets in the workspace.
+
+  * | ``--list-sep``
+      ``string``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+  * | ``--list-provides``
+    |
+      Specifies only targets that provide an artifact should be listed. The output will be 2 columns in this case: [target address] [artifact id]
+
+  * | ``--list-provides-columns``
+      ``string``
+      (Default: ``address,artifact_id``)
+    |
+      Specifies the columns to include in listing output when restricting the listing to targets that provide an artifact. Available columns are: address, artifact_id, repo_name, repo_url and repo_db
+
+  * | ``--list-documented``
+    |
+      Prints only targets that are documented with a description.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+
+
+
+.. _gref_phase_markdown:
+
+markdown
+-----------------------------------------------------------------------------
+
+Generate html from markdown docs.
+
+
+.. _gref_cli_markdown:
+
+*
+  **markdown**
+  Implemented by ``pants.backend.core.tasks.markdown_to_html.MarkdownToHtml``
+
+
+
+  * | ``--markdown-code-style``
+      ``choice``
+    |
+      Selects the stylesheet to use for code highlights, one of: monokai manni perldoc borland colorful default murphy vs trac tango fruity autumn bw emacs vim pastie friendly native.
+
+  * | ``--markdown-open/--no-markdown-open``
+    |
+      Open the generated documents in a browser.
+
+  * | ``--markdown-fragment/--no-markdown-fragment``
+    |
+      Generate a fragment of html to embed in a page.
+
+  * | ``--markdown-extension``
+      ``string``
+    |
+      Override the default markdown extensions and process pages whose source have these extensions instead.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+
+
+
+.. _gref_phase_minimize:
+
+minimize
+-----------------------------------------------------------------------------
+
+Print the minimal cover of the given targets.
+
+
+.. _gref_cli_minimize:
+
+*
+  **minimize**
+  Implemented by ``pants.backend.core.tasks.minimal_cover.MinimalCover``
+
+
+  Outputs a minimal covering set of targets.
+  
+  For a given set of input targets, the output targets transitive dependency set will include all
+  the input targets without gaps.
+
+  * | ``--minimize-sep``
+      ``string``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+
+
+
+.. _gref_phase_ng-killall:
+
+ng-killall
+-----------------------------------------------------------------------------
+
+Kill running nailgun servers.
+
+
+.. _gref_cli_ngkillall:
+
+*
+  **ng-killall**
+  Implemented by ``pants.backend.jvm.tasks.nailgun_task.NailgunKillall``
+
+
+  A task to manually kill nailguns.
+
+  * | ``--ng-killall-sep``
+      ``string``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+  * | ``--ng-killall-everywhere``
+    |
+      Kill all nailguns servers launched by pants for all workspaces on the system.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+
+
+
+.. _gref_phase_path:
+
+path
+-----------------------------------------------------------------------------
+
+Find a dependency path from one target to another.
+
+
+.. _gref_cli_path:
+
+*
+  **path**
+  Implemented by ``pants.backend.core.tasks.paths.Path``
+
+
+
+  * | ``--path-sep``
+      ``string``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+
+
+
+.. _gref_phase_pathdeps:
+
+pathdeps
+-----------------------------------------------------------------------------
+
+Print out all paths containing BUILD files the target depends on.
+
+
+.. _gref_cli_pathdeps:
+
+*
+  **pathdeps**
+  Implemented by ``pants.backend.core.tasks.pathdeps.PathDeps``
+
+
+
+  * | ``--pathdeps-sep``
+      ``string``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+
+
+
+.. _gref_phase_paths:
+
+paths
+-----------------------------------------------------------------------------
+
+Find all dependency paths from one target to another.
+
+
+.. _gref_cli_paths:
+
+*
+  **paths**
+  Implemented by ``pants.backend.core.tasks.paths.Paths``
+
+
+
+  * | ``--paths-sep``
+      ``string``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+
+
+
+.. _gref_phase_provides:
+
+provides
+-----------------------------------------------------------------------------
+
+Print the symbols provided by the given targets.
+
+
+.. _gref_cli_provides:
+
+*
+  **provides**
+  Implemented by ``pants.backend.jvm.tasks.provides.Provides``
+
+
+
+  * | ``--provides-transitive``
+    |
+      Shows the symbols provided not just by the specified targets but by all their transitive dependencies.
+
+  * | ``--provides-also-write-to-stdout``
+    |
+      If set, also outputs the provides information to stdout.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+  :ref:`gen:thrift <gref_cli_genthrift>`
+  :ref:`gen:scrooge <gref_cli_genscrooge>`
+  :ref:`gen:protoc <gref_cli_genprotoc>`
+  :ref:`check-exclusives <gref_cli_checkexclusives>`
+  :ref:`ivy <gref_cli_ivy>`
+  :ref:`jvm <gref_cli_jvm>`
+  :ref:`jar <gref_cli_jar>`
+
+
+
+.. _gref_phase_publish:
+
+publish
+-----------------------------------------------------------------------------
+
+Publish artifacts.
+
+
+.. _gref_cli_publishjarcreatepublish:
+
+*
+  **publish:jar_create_publish**
+  Implemented by ``pants.backend.jvm.tasks.jar_create.JarCreate``
+
+
+  Jars jvm libraries and optionally their sources and their docs.
+
+  * | ``--publish-jar_create_publish-compressed/--no-publish-jar_create_publish-compressed``
+      (Default: ``True``)
+    |
+      Create compressed jars.
+
+  * | ``--publish-jar_create_publish-classes/--no-publish-jar_create_publish-classes``
+      (Default: ``True``)
+    |
+      Create class jars.
+
+  * | ``--publish-jar_create_publish-sources/--no-publish-jar_create_publish-sources``
+    |
+      Create source jars.
+
+  * | ``--publish-jar_create_publish-javadoc/--no-publish-jar_create_publish-javadoc``
+      (Default: ``True``)
+    |
+      Create javadoc jars.
+
+
+
+.. _gref_cli_publishjavadocpublish:
+
+*
+  **publish:javadoc_publish**
+  Implemented by ``pants.backend.jvm.register.JavadocJarShim``
+
+
+
+  * | ``--publish-javadoc_publish-include-codegen/--no-publish-javadoc_publish-include-codegen``
+    |
+      Create javadoc for generated code.
+
+  * | ``--publish-javadoc_publish-transitive/--no-publish-javadoc_publish-transitive``
+      (Default: ``True``)
+    |
+      Create javadoc for the transitive closure of internal targets reachable from the roots specified on the command line.
+
+  * | ``--publish-javadoc_publish-combined/--no-publish-javadoc_publish-combined``
+    |
+      Generate javadoc for all targets combined instead of each target individually.
+
+  * | ``--publish-javadoc_publish-open/--no-publish-javadoc_publish-open``
+    |
+      Attempt to open the generated javadoc in a browser (implies --publish-javadoc_publish-combined).
+
+  * | ``--publish-javadoc_publish-ignore-failure/--no-publish-javadoc_publish-ignore-failure``
+    |
+      Specifies that javadoc errors should not cause build errors
+
+
+
+.. _gref_cli_publish:
+
+*
+  **publish**
+  Implemented by ``pants.backend.jvm.tasks.jar_publish.JarPublish``
+
+
+  Publish jars to a maven repository.
+  
+  At a high-level, pants uses `Apache Ivy <http://ant.apache.org/ivy/>`_ to
+  publish artifacts to Maven-style repositories. Pants performs prerequisite
+  tasks like compiling, creating jars, and generating ``pom.xml`` files then
+  invokes Ivy to actually publish the artifacts, so publishing is largely
+  configured in ``ivysettings.xml``. ``BUILD`` and ``pants.ini`` files
+  primarily provide linkage between publishable targets and the
+  Ivy ``resolvers`` used to publish them.
+  
+  The following target types are publishable: :ref:`bdict_java_library`,
+  :ref:`bdict_scala_library`, :ref:`bdict_java_thrift_library`,
+  :ref:`bdict_annotation_processor`.
+  Targets to publish and their dependencies must be publishable target
+  types and specify the ``provides`` argument. One exception is
+  :ref:`bdict_jar`\s - pants will generate a pom file that
+  depends on the already-published jar.
+  
+  Example usage: ::
+  
+     # By default pants will perform a dry-run.
+     ./pants goal clean-all publish src/java/com/twitter/mybird
+  
+     # Actually publish.
+     ./pants goal clean-all publish src/java/com/twitter/mybird --no-publish-dryrun
+  
+  Please see ``./pants goal publish -h`` for a detailed description of all
+  publishing options.
+  
+  Publishing can be configured in ``pants.ini`` as follows.
+  
+  ``jar-publish`` section:
+  
+  * ``repos`` - Required dictionary of settings for repos that may be pushed to.
+  * ``ivy_jvmargs`` - Optional list of JVM command-line args when invoking Ivy.
+  * ``restrict_push_branches`` - Optional list of branches to restrict publishing to.
+  
+  Example pants.ini jar-publish repos dictionary: ::
+  
+     repos = {
+       # repository target name is paired with this key
+       'myrepo': {
+         # ivysettings.xml resolver to use for publishing
+         'resolver': 'maven.twttr.com',
+         # ivy configurations to publish
+         'confs': ['default', 'sources', 'javadoc'],
+         # address of a Credentials target to use when publishing
+         'auth': 'address/of/credentials/BUILD:target',
+         # help message if unable to initialize the Credentials target.
+         'help': 'Please check your credentials and try again.',
+       },
+     }
+  
+  Additionally the ``ivy`` section ``ivy_settings`` property specifies which
+  Ivy settings file to use when publishing is required.
+
+  * | ``--publish-dryrun/--no-publish-dryrun``
+      (Default: ``True``)
+    |
+      Runs through a push without actually pushing artifacts, editing publish dbs or otherwise writing data
+
+  * | ``--no-publish-commit``
+      (Default: ``True``)
+    |
+      Turns off commits of the push db for local testing.
+
+  * | ``--publish-local``
+      ``string``
+    |
+      Publishes jars to a maven repository on the local filesystem at the specified path.
+
+  * | ``--publish-local-snapshot/--no-publish-local-snapshot``
+      (Default: ``True``)
+    |
+      If --publish-local is specified, publishes jars with '-SNAPSHOT' revisions.
+
+  * | ``--publish-transitive/--no-publish-transitive``
+      (Default: ``True``)
+    |
+      Publishes the specified targets and all their internal dependencies transitively.
+
+  * | ``--publish-force/--no-publish-force``
+    |
+      Forces pushing jars even if there have been no changes since the last push.
+
+  * | ``--publish-override``
+      ``string``
+    |
+      Specifies a published jar revision override in the form:
+      ([org]#[name]|[target spec])=[new revision]
+      
+      For example, to specify 2 overrides:
+      --publish-override=com.twitter.common#quantity=0.1.2 \
+      --publish-override=src/java/com/twitter/common/base=1.0.0 \
+
+  * | ``--publish-restart-at``
+      ``string``
+    |
+      Restart a fail push at the given jar.  Jars can be identified by
+      maven coordinate [org]#[name] or target.
+      
+      For example:
+      --publish-restart-at=com.twitter.common#quantity
+      
+      Or:
+      --publish-restart-at=src/java/com/twitter/common/base
+
+
+
+.. _gref_cli_publishscaladocpublish:
+
+*
+  **publish:scaladoc_publish**
+  Implemented by ``pants.backend.jvm.register.ScaladocJarShim``
+
+
+
+  * | ``--publish-scaladoc_publish-include-codegen/--no-publish-scaladoc_publish-include-codegen``
+    |
+      Create scaladoc for generated code.
+
+  * | ``--publish-scaladoc_publish-transitive/--no-publish-scaladoc_publish-transitive``
+      (Default: ``True``)
+    |
+      Create scaladoc for the transitive closure of internal targets reachable from the roots specified on the command line.
+
+  * | ``--publish-scaladoc_publish-combined/--no-publish-scaladoc_publish-combined``
+    |
+      Generate scaladoc for all targets combined instead of each target individually.
+
+  * | ``--publish-scaladoc_publish-open/--no-publish-scaladoc_publish-open``
+    |
+      Attempt to open the generated scaladoc in a browser (implies --publish-scaladoc_publish-combined).
+
+  * | ``--publish-scaladoc_publish-ignore-failure/--no-publish-scaladoc_publish-ignore-failure``
+    |
+      Specifies that scaladoc errors should not cause build errors
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+  :ref:`gen:thrift <gref_cli_genthrift>`
+  :ref:`gen:scrooge <gref_cli_genscrooge>`
+  :ref:`gen:protoc <gref_cli_genprotoc>`
+  :ref:`check-exclusives <gref_cli_checkexclusives>`
+  :ref:`ivy <gref_cli_ivy>`
+  :ref:`jvm <gref_cli_jvm>`
+
+
+
+.. _gref_phase_repl:
+
+repl
+-----------------------------------------------------------------------------
+
+Run a REPL.
+
+
+.. _gref_cli_replpythonrepl:
+
+*
+  **repl:python-repl**
+  Implemented by ``pants.backend.python.tasks.python_repl.PythonRepl``
+
+
+
+  * | ``--repl-python-repl-timeout``
+      ``int``
+    |
+      Number of seconds to wait for http connections.
+
+  * | ``--repl-python-repl-ipython``
+    |
+      Run an IPython REPL instead of the standard python one.
+
+
+
+.. _gref_cli_replscalarepl:
+
+*
+  **repl:scala-repl**
+  Implemented by ``pants.backend.jvm.tasks.scala_repl.ScalaRepl``
+
+
+
+  * | ``--repl-scala-repl-jvmargs``
+      ``string``
+    |
+      Run the repl in a jvm with these extra jvm args.
+
+  * | ``--repl-scala-repl-args``
+      ``string``
+    |
+      run the repl in a jvm with extra args.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+  :ref:`gen:thrift <gref_cli_genthrift>`
+  :ref:`gen:scrooge <gref_cli_genscrooge>`
+  :ref:`gen:protoc <gref_cli_genprotoc>`
+  :ref:`check-exclusives <gref_cli_checkexclusives>`
+  :ref:`ivy <gref_cli_ivy>`
+  :ref:`jvm <gref_cli_jvm>`
+
+
+
+.. _gref_phase_repl-dirty:
+
+repl-dirty
+-----------------------------------------------------------------------------
+
+Run a REPL, skipping compilation.
+
+
+.. _gref_cli_scalarepldirty:
+
+*
+  **scala-repl-dirty**
+  Implemented by ``pants.backend.jvm.tasks.scala_repl.ScalaRepl``
+
+
+
+  * | ``--scala-repl-dirty-jvmargs``
+      ``string``
+    |
+      Run the repl in a jvm with these extra jvm args.
+
+  * | ``--scala-repl-dirty-args``
+      ``string``
+    |
+      run the repl in a jvm with extra args.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+
+
+
+.. _gref_phase_resolve:
+
+resolve
+-----------------------------------------------------------------------------
+
+Resolve dependencies and produce dependency reports.
+
+
+.. _gref_cli_ivy:
+
+*
+  **ivy**
+  Implemented by ``pants.backend.jvm.tasks.ivy_resolve.IvyResolve``
+
+
+
+  * | ``--ivy-override``
+      ``string``
+    |
+      Specifies a jar dependency override in the form:
+      [org]#[name]=(revision|url)
+      
+      For example, to specify 2 overrides:
+      --ivy-override=com.foo#bar=0.1.2 \
+      --ivy-override=com.baz#spam=file:///tmp/spam.jar
+
+  * | ``--ivy-report/--no-ivy-report``
+    |
+      Generate an ivy resolve html report
+
+  * | ``--ivy-open/--no-ivy-open``
+    |
+      Attempt to open the generated ivy resolve report in a browser (implies --ivy-report).
+
+  * | ``--ivy-outdir``
+      ``string``
+    |
+      Emit ivy report outputs in to this directory.
+
+  * | ``--ivy-args``
+      ``string``
+    |
+      Pass these extra args to ivy.
+
+  * | ``--ivy-mutable-pattern``
+      ``string``
+    |
+      If specified, all artifact revisions matching this pattern will be treated as mutable unless a matching artifact explicitly marks mutable as False.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+  :ref:`gen:thrift <gref_cli_genthrift>`
+  :ref:`gen:scrooge <gref_cli_genscrooge>`
+  :ref:`gen:protoc <gref_cli_genprotoc>`
+  :ref:`check-exclusives <gref_cli_checkexclusives>`
+
+
+
+.. _gref_phase_resources:
+
+resources
+-----------------------------------------------------------------------------
+
+
+
+* Implemented by ``pants.backend.core.tasks.prepare_resources.PrepareResources``
+
+
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+
+
+
+.. _gref_phase_roots:
+
+roots
+-----------------------------------------------------------------------------
+
+Print the workspace's source roots and associated target types.
+
+
+.. _gref_cli_roots:
+
+*
+  **roots**
+  Implemented by ``pants.backend.core.tasks.roots.ListRoots``
+
+
+  List the registered source roots of the repo.
+
+  * | ``--roots-sep``
+      ``string``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+
+
+
+.. _gref_phase_run:
+
+run
+-----------------------------------------------------------------------------
+
+Run a binary target.
+
+
+.. _gref_cli_runjvmrun:
+
+*
+  **run:jvm-run**
+  Implemented by ``pants.backend.jvm.tasks.jvm_run.JvmRun``
+
+
+
+  * | ``--run-jvm-run-jvmargs``
+      ``string``
+    |
+      Run binary in a jvm with these extra jvm args.
+
+  * | ``--run-jvm-run-args``
+      ``string``
+    |
+      Run binary with these main() args.
+
+  * | ``--run-jvm-run-debug/--no-run-jvm-run-debug``
+    |
+      Run binary with a debugger
+
+  * | ``--run-jvm-run-only-write-cmd-line``
+      ``string``
+    |
+      Instead of running, just write the cmd line to this file
+
+
+
+.. _gref_cli_runpythonrun:
+
+*
+  **run:python-run**
+  Implemented by ``pants.backend.python.tasks.python_run.PythonRun``
+
+
+
+  * | ``--run-python-run-timeout``
+      ``int``
+    |
+      Number of seconds to wait for http connections.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+  :ref:`gen:thrift <gref_cli_genthrift>`
+  :ref:`gen:scrooge <gref_cli_genscrooge>`
+  :ref:`gen:protoc <gref_cli_genprotoc>`
+  :ref:`check-exclusives <gref_cli_checkexclusives>`
+  :ref:`ivy <gref_cli_ivy>`
+  :ref:`jvm <gref_cli_jvm>`
+
+
+
+.. _gref_phase_run-dirty:
+
+run-dirty
+-----------------------------------------------------------------------------
+
+Run a binary target, skipping compilation.
+
+
+.. _gref_cli_jvmrundirty:
+
+*
+  **jvm-run-dirty**
+  Implemented by ``pants.backend.jvm.tasks.jvm_run.JvmRun``
+
+
+
+  * | ``--jvm-run-dirty-jvmargs``
+      ``string``
+    |
+      Run binary in a jvm with these extra jvm args.
+
+  * | ``--jvm-run-dirty-args``
+      ``string``
+    |
+      Run binary with these main() args.
+
+  * | ``--jvm-run-dirty-debug/--no-jvm-run-dirty-debug``
+    |
+      Run binary with a debugger
+
+  * | ``--jvm-run-dirty-only-write-cmd-line``
+      ``string``
+    |
+      Instead of running, just write the cmd line to this file
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+
+
+
+.. _gref_phase_server:
+
+server
+-----------------------------------------------------------------------------
+
+Run the pants reporting server.
+
+
+.. _gref_cli_server:
+
+*
+  **server**
+  Implemented by ``pants.backend.core.tasks.reporting_server.RunServer``
+
+
+  Runs the reporting server.
+
+  * | ``--server-sep``
+      ``string``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+  * | ``--server-port``
+      ``int``
+    |
+      Serve on this port. Leave unset to choose a free port automatically (recommended if using pants concurrently in multiple workspaces on the same host).
+
+  * | ``--server-allowed-clients``
+      ``string``
+      (Default: ``[u'127.0.0.1']``)
+    |
+      Only requests from these IPs may access this server. Useful for temporarily showing build results to a colleague. The special value ALL means any client may connect. Use with caution, as your source code is exposed to all allowed clients!
+
+  * | ``--server-open/--no-server-open``
+    |
+      Attempt to open the server web ui in a browser.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+
+
+
+.. _gref_phase_setup:
+
+setup
+-----------------------------------------------------------------------------
+
+Setup the target's build environment.
+
+
+.. _gref_cli_pythonsetup:
+
+*
+  **python-setup**
+  Implemented by ``pants.backend.python.tasks.setup_python_environment.SetupPythonEnvironment``
+
+
+  Establishes the python intepreter(s) for downstream Python tasks e.g. Resolve, Run, PytestRun.
+  
+  Populates the product namespace (for typename = 'python'):
+    'intepreters': ordered list of PythonInterpreter objects
+
+  * | ``--python-setup-force``
+    |
+      Force clean and install.
+
+  * | ``--python-setup-path``
+      ``string``
+    |
+      Add a path to search for interpreters, by default PATH.
+
+  * | ``--python-setup-interpreter``
+      ``string``
+    |
+      Constrain what Python interpreters to use.  Uses Requirement format from pkg_resources, e.g. 'CPython>=2.6,<3' or 'PyPy'. By default, no constraints are used.  Multiple constraints may be added.  They will be ORed together.
+
+  * | ``--python-setup-multi``
+    |
+      Allow multiple interpreters to be bound to an upstream chroot.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+
+
+
+.. _gref_phase_sort:
+
+sort
+-----------------------------------------------------------------------------
+
+Topologically sort the targets.
+
+
+.. _gref_cli_sort:
+
+*
+  **sort**
+  Implemented by ``pants.backend.core.tasks.sorttargets.SortTargets``
+
+
+
+  * | ``--sort-sep``
+      ``string``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+  * | ``--sort-reverse/--no-sort-reverse``
+    |
+      Sort least dependent to most.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+
+
+
+.. _gref_phase_targets:
+
+targets
+-----------------------------------------------------------------------------
+
+List all target types.
+
+
+.. _gref_cli_targets:
+
+*
+  **targets**
+  Implemented by ``pants.backend.core.tasks.targets_help.TargetsHelp``
+
+
+  Provides online help for installed targets.
+  
+  This task provides online help modes for installed targets. Without args,
+  all installed targets are listed with their one-line description.
+  An optional flag allows users to specify a target they want detailed
+  help about.
+
+  * | ``--targets-sep``
+      ``string``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+  * | ``--targets-details``
+      ``string``
+    |
+      Display detailed information about the specific target type.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+
+
+
+.. _gref_phase_test:
+
+test
+-----------------------------------------------------------------------------
+
+Test compiled code.
+
+
+.. _gref_cli_testjunit:
+
+*
+  **test:junit**
+  Implemented by ``pants.backend.jvm.tasks.junit_run.JUnitRun``
+
+
+
+  * | ``--test-junit-coverage-patterns``
+      ``string``
+    |
+      By default all non-test code depended on by the selected tests is measured for coverage during the test run.  By specifying coverage patterns you can select which classes and packages should be counted.  Values should be class name prefixes in dotted form with ? and * wildcard support. If preceded with a - the pattern is excluded. For example, to include all code in com.twitter.raven except claws and the eye you would use: --test-junit-coverage-patterns=com.twitter.raven.* --test-junit-coverage-patterns=-com.twitter.raven.claw --test-junit-coverage-patterns=-com.twitter.raven.EyeThis option can be specified multiple times.
+
+  * | ``--test-junit-coverage-console/--no-test-junit-coverage-console``
+      (Default: ``True``)
+    |
+      Outputs a simple coverage report to the console.
+
+  * | ``--test-junit-coverage-xml/--no-test-junit-coverage-xml``
+    |
+      [%%default] Produces an xml coverage report.
+
+  * | ``--test-junit-coverage-html/--no-test-junit-coverage-html``
+    |
+      [%%default] Produces an html coverage report.
+
+  * | ``--test-junit-coverage-html-open/--no-test-junit-coverage-html-open``
+    |
+      Tries to open the generated html coverage report, implies --test-junit-coverage-html.
+
+  * | ``--test-junit-skip/--no-test-junit-skip``
+    |
+      Skip running tests
+
+  * | ``--test-junit-debug/--no-test-junit-debug``
+    |
+      Run junit tests with a debugger
+
+  * | ``--test-junit-fail-fast/--no-test-junit-fail-fast``
+    |
+      Fail fast on the first test failure in a suite
+
+  * | ``--test-junit-batch-size``
+      ``int``
+      (Default: ``9223372036854775807``)
+    |
+      [ALL] Runs at most this many tests in a single test process.
+
+  * | ``--test-junit-jvmargs``
+      ``string``
+    |
+      Runs junit tests in a jvm with these extra jvm args.
+
+  * | ``--test-junit-test``
+      ``string``
+    |
+      Force running of just these tests.  Tests can be specified using any of: [classname], [classname]#[methodname], [filename] or [filename]#[methodname]
+
+  * | ``--test-junit-xmlreport/--no-test-junit-xmlreport``
+    |
+      Causes an xml report to be output for each test class that is run.
+
+  * | ``--test-junit-per-test-timer/--no-test-junit-per-test-timer``
+    |
+      Shows progress and timer for each test class that is run.
+
+  * | ``--test-junit-default-parallel/--no-test-junit-default-parallel``
+    |
+      Whether to run classes without @TestParallel or @TestSerial annotations in parallel.
+
+  * | ``--test-junit-parallel-threads``
+      ``int``
+    |
+      Number of threads to run tests in parallel. 0 for autoset.
+
+  * | ``--test-junit-test-shard``
+      ``string``
+    |
+      Subset of tests to run, in the form M/N, 0 <= M < N.For example, 1/3 means run tests number 2, 5, 8, 11, ...
+
+  * | ``--test-junit-suppress-output/--no-test-junit-suppress-output``
+      (Default: ``True``)
+    |
+      Redirects test output to files (in .pants.d/test/junit).  Implied by --test-junit-xmlreport
+
+  * | ``--test-junit-arg``
+      ``string``
+    |
+      An arbitrary argument to pass directly to the test runner. This option can be specified multiple times.
+
+  * | ``--test-junit-coverage/--no-test-junit-coverage``
+    |
+      Collects code coverage data
+
+  * | ``--test-junit-coverage-processor``
+      ``string``
+      (Default: ``emma``)
+    |
+      Which coverage subsystem to use
+
+
+
+.. _gref_cli_testpytest:
+
+*
+  **test:pytest**
+  Implemented by ``pants.backend.python.tasks.pytest_run.PytestRun``
+
+
+
+  * | ``--test-pytest-timeout``
+      ``int``
+    |
+      Number of seconds to wait for http connections.
+
+  * | ``--test-pytest-fast/--no-test-pytest-fast``
+      (Default: ``True``)
+    |
+      Run all tests in a single chroot. If set to false, each test target will create a new chroot, which will be much slower.
+
+  * | ``--test-pytest-options``
+      ``string``
+    |
+      options to pass to the underlying pytest runner.
+
+
+
+.. _gref_cli_testspecs:
+
+*
+  **test:specs**
+  Implemented by ``pants.backend.jvm.tasks.specs_run.SpecsRun``
+
+
+
+  * | ``--test-specs-skip/--no-test-specs-skip``
+    |
+      Skip running specs
+
+  * | ``--test-specs-debug/--no-test-specs-debug``
+    |
+      Run specs with a debugger
+
+  * | ``--test-specs-jvmargs``
+      ``string``
+    |
+      Runs specs in a jvm with these extra jvm options.
+
+  * | ``--test-specs-test``
+      ``string``
+    |
+      Force running of just these specs.  Tests can be specified either by fully qualified classname or full file path.
+
+  * | ``--test-specs-color/--no-test-specs-color``
+      (Default: ``True``)
+    |
+      Emit test result with ANSI terminal color codes.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+  :ref:`gen:thrift <gref_cli_genthrift>`
+  :ref:`gen:scrooge <gref_cli_genscrooge>`
+  :ref:`gen:protoc <gref_cli_genprotoc>`
+  :ref:`check-exclusives <gref_cli_checkexclusives>`
+  :ref:`ivy <gref_cli_ivy>`
+  :ref:`jvm <gref_cli_jvm>`
+
+
+
+
+Common
+-----------------------------------------------------------------------------
+
+These command-line flags are available with all Pants goals.
+
+  ``-h/--help``
+  Show this help message.
+
+  ``-t/--timeout``
+  Number of seconds to wait for http connections.
+
+  ``-x/--time``
+  Times goal phases and outputs a report.
+
+  ``-e/--explain``
+  Explain the execution of goals.
+
+  ``-k/--kill-nailguns``
+  Kill nailguns before exiting
+
+  ``-d/--logdir``
+  Write logs to files under this directory.
+
+  ``-l/--level``
+  Set the logging level [debug, info, warn].
+
+  ``-q/--quiet``
+  Squelches all console output apart from errors.
+
+  ``-i/--interpreter``
+  Constrain what Python interpreters to use.  Uses Requirement format from pkg_resources, e.g. 'CPython&gt;=2.6,&lt;3' or 'PyPy'. By default, no constraints are used.  Multiple constraints may be added.  They will be ORed together.
+
+  ``--no-colors``
+  Do not colorize log messages.
+
+  ``--no-lock``
+  Don't attempt to grab the global lock. This lock prevents two concurrent pants instances from stomping on each others data, so only use this if you know what you're doing.
+
+  ``--read-from-artifact-cache/--no-read-from-artifact-cache``
+  Read build artifacts from cache, if available.
+
+  ``--write-to-artifact-cache/--no-write-to-artifact-cache``
+  Write build artifacts to cache, if possible.
+

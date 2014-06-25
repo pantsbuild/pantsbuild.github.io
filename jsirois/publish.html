@@ -1,0 +1,754 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Publishing Artifacts &mdash; pants 0.1 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/pants-logo.ico"/>
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'./',
+        VERSION:'0.1',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+    <link rel="top" title="pants 0.1 documentation" href="index.html"/>
+        <link rel="next" title="Using Pants with IntelliJ IDEA" href="with_intellij.html"/>
+        <link rel="prev" title="Using Pants with Thrift Dependencies" href="ThriftDeps.html"/>
+ 
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-39101739-2']);
+  _gaq.push(['_trackPageview']);
+</script>
+<script type="text/javascript">
+  // In a plain template, we'd put this in the footer block.
+  // In the read-the-docs template, there is no footer. So use jQuery ready:
+  $(document).ready(function() {
+    // Ping Google analytics
+    var ga = document.createElement('script');
+    ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ?
+              'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    ga.setAttribute('async', 'true');
+    $(document).append(ga);
+
+    // Show the travis-ci status graphic
+    $('.wy-breadcrumbs').append(
+      '<div style="float: right;">' +
+      '<a href="https://travis-ci.org/pantsbuild/pants">' +
+      '<img src="https://travis-ci.org/pantsbuild/pants.png?branch=master">' +
+      '</a></div>');
+  });
+</script>
+<style type="text/css">
+/* Shoehorn in pants logo */
+body .icon-home:before {
+   content: "";
+}
+
+body .icon-home{
+  background: transparent url(./_static/pants-logo.ico) center left no-repeat;
+  background-position-x: 5px;
+  padding-left: 40px;
+  padding-right: 35px;
+  line-height: 40px;
+}
+
+body a.icon-home:hover{
+  background: #3d8cbf url(./_static/pants-logo.ico) center left no-repeat;
+  background-position-x: 5px;
+}
+
+</style>
+
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" class="icon icon-home"> pants</a>
+        <form class="wy-form" action="search.html" method="get">
+  <input type="text" name="q" placeholder="Search docs" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="first_concepts.html">Pants Conceptual Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="first_concepts.html#goals-and-targets">Goals and Targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="first_concepts.html#target-types">Target Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="first_concepts.html#what-pants-does">What Pants Does</a></li>
+<li class="toctree-l2"><a class="reference internal" href="first_concepts.html#next-step">Next Step</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="first_tutorial.html">First Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="first_tutorial.html#invoking-pants">Invoking Pants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="first_tutorial.html#build-files">BUILD Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="first_tutorial.html#the-usual-commands">The Usual Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="first_tutorial.html#next">Next</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="target_addresses.html">Target Addresses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="JVMProjects.html">JVM Projects with Pants</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="JVMProjects.html#relevant-goals-and-targets">Relevant Goals and Targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="JVMProjects.html#build-for-a-simple-binary">BUILD for a Simple Binary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="JVMProjects.html#the-usual-commands-jvm">The Usual Commands: JVM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="JVMProjects.html#toolchain">Toolchain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="JVMProjects.html#java7-vs-java6-which-java">Java7 vs Java6, Which Java</a></li>
+<li class="toctree-l2"><a class="reference internal" href="JVMProjects.html#bundles-deploy-able-runnable-file-trees">Bundles: Deploy-able Runnable File Trees</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="python-readme.html">Using Pants for Python development</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="python-readme.html#why-use-pants-for-python-development">Why use Pants for Python development?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="python-readme.html#getting-started">Getting started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="python-readme.html#tl-dr-hello-world-with-pants-python">TL;DR - &#8216;Hello world!&#8217; with Pants Python</a></li>
+<li class="toctree-l2"><a class="reference internal" href="python-readme.html#describing-python-environments-in-pants">Describing Python environments in Pants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="python-readme.html#building-your-first-pex">Building your first PEX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="python-readme.html#environment-manipulation-with-pants-py">Environment manipulation with <cite>pants py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="python-readme.html#id1">Python Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="python-readme.html#manipulating-pex-behavior-with-environment-variables">Manipulating PEX behavior with environment variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="python-readme.html#how-pex-files-work">How PEX files work</a></li>
+<li class="toctree-l2"><a class="reference internal" href="python-readme.html#advanced-pants-pex-features">Advanced Pants/PEX features</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="build_files.html">BUILD files</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="build_files.html#debugging-a-build-file">Debugging a BUILD File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_files.html#default-target">Default Target</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_files.html#the-1-1-1-rule">The 1:1:1 Rule</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_files.html#avoid-rglobs">Avoid rglobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_files.html#define-separate-targets-for-interface-and-implementation">Define Separate Targets for Interface and Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_files.html#depend-on-api-in-library-targets-implementation-in-binary-targets">Depend on API in Library Targets, Implementation in Binary Targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_files.html#which-build-files-are-executed-and-how">Which <tt class="docutils literal"><span class="pre">BUILD</span></tt> Files are &#8220;Executed&#8221;? (and how?)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_files.html#id1">BUILD.* files</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="invoking.html">Invoking Pants Build</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="invoking.html#rc-files">rc files</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tshoot.html">Troubleshooting</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tshoot.html#maximum-verbosity">Maximum Verbosity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tshoot.html#scrub-the-environment">Scrub the Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tshoot.html#nailgun-5-seconds">Nailgun 5 seconds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tshoot.html#questions-issues-bug-reports">Questions, Issues, Bug Reports</a></li>
+</ul>
+</li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="3rdparty.html">Third-Party Dependencies</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="3rdparty_jvm.html">JVM 3rdparty Pattern</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3rdparty_py.html">Python 3rdparty Pattern</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ThriftDeps.html">Using Pants with Thrift Dependencies</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ThriftDeps.html#generating-code">Generating Code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ThriftDeps.html#thrift-example">Thrift Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ThriftDeps.html#publishing">Publishing</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Publishing Artifacts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#life-of-a-publish">Life of a Publish</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-to">How To</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#restricting-to-release-branch">Restricting to &#8220;Release Branch&#8221;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#authenticating-to-the-artifact-repository">Authenticating to the Artifact Repository</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#want-to-publish-something-publish-many-things">Want to Publish Something? Publish Many Things</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#test-with-a-fake-local-publish">Test with a Fake Local &#8220;Publish&#8221;</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="with_intellij.html">Using Pants with IntelliJ IDEA</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="with_intellij.html#pants-build-plugin-for-intellij">Pants Build Plugin for IntelliJ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="setup_repo.html">Set up Your Source Tree for Pants</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="setup_repo.html#configuring-with-pants-ini">Configuring with <tt class="docutils literal"><span class="pre">pants.ini</span></tt></a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup_repo.html#configure-code-layout-with-source-root">Configure Code Layout with <cite>source_root</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup_repo.html#top-level-build-for-tree-global-config">Top-level <cite>BUILD.*</cite> for tree-global config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup_repo.html#build-in-the-source-tree-for-special-targets">BUILD.* in the source tree for special targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup_repo.html#restricting-publish-to-release-branch">Restricting Publish to &#8220;Release Branch&#8221;</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installing Pants</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="install.html#pex-based-installation">PEX-based Installation</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="build_dictionary.html">BUILD Dictionary</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#file">__file__</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#amount">Amount</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#annotation-processor">annotation_processor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#artifact">artifact</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#benchmark">benchmark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#bundle">bundle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#credentials">credentials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#dependencies">dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#egg">egg</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#exclude">exclude</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#globs">globs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#goal">goal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jar">jar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jar-library">jar_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-agent">java_agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-antlr-library">java_antlr_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-library">java_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-protobuf-library">java_protobuf_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-tests">java_tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-thrift-library">java_thrift_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jaxb-library">jaxb_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#junit-tests">junit_tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jvm-app">jvm_app</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jvm-binary">jvm_binary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#maven-layout">maven_layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#page">page</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#pants">pants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#phase">phase</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-antlr-library">python_antlr_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-binary">python_binary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-library">python_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-requirement">python_requirement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-requirement-library">python_requirement_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-test-suite">python_test_suite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-tests">python_tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-thrift-library">python_thrift_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#repo">repo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#resources">resources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#rglobs">rglobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#root-dir">ROOT_DIR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#scala-library">scala_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#scala-specs">scala_specs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#scala-tests">scala_tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#scalac-plugin">scalac_plugin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#setup-py">setup_py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#source-root">source_root</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#time">Time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#wiki">wiki</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#wiki-artifact">wiki_artifact</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="goals_reference.html">Goals Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#bench">bench</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#binary">binary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#bootstrap">bootstrap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#builddict">builddict</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#buildlint">buildlint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#bundle">bundle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#check-exclusives">check-exclusives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#check-published-deps">check_published_deps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#clean-all">clean-all</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#clean-all-async">clean-all-async</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#compile">compile</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#dependees">dependees</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#dependencies">dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#depmap">depmap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#detect-duplicates">detect-duplicates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#doc">doc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#eclipse">eclipse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#filedeps">filedeps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#filemap">filemap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#filter">filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#gen">gen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#goals">goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#gref-phase-idea">idea</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#invalidate">invalidate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#jar">jar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#killserver">killserver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#list">list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#markdown">markdown</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#minimize">minimize</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#ng-killall">ng-killall</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#path">path</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#pathdeps">pathdeps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#paths">paths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#provides">provides</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#publish">publish</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#repl">repl</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#repl-dirty">repl-dirty</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#resolve">resolve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#resources">resources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#roots">roots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#run">run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#run-dirty">run-dirty</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#server">server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#setup">setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#sort">sort</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#targets">targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#test">test</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#common">Common</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pants_ini_reference.html">pants.ini Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pants_ini_reference.html#default-section">DEFAULT section</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pants_ini_reference.html#configref-section-idea">idea section</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="dev.html">Pants Developer Center</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="howto_contribute.html">Pants Contributors Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto_ask.html">How To Ask</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto_develop.html">Pants Developers Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev_tasks.html">Task Developer&#8217;s Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intellij.html">Pants Development with IntelliJ IDEA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="internals.html">Pants Internals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targets.html">Targets Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tasks.html">Tasks Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base.html">Base Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release.html">Release Process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs.html">About the documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="credits.html">Credits</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top">
+        <i data-toggle="wy-nav-top" class="icon icon-reorder"></i>
+        <a href="/">pants</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <ul class="wy-breadcrumbs">
+  <li><a href="index.html">Docs</a> &raquo;</li>
+  <li><a href="">Publishing Artifacts</a></li>
+  
+</ul>
+<hr/>
+
+          
+  <div class="section" id="publishing-artifacts">
+<h1>Publishing Artifacts<a class="headerlink" href="#publishing-artifacts" title="Permalink to this headline">¶</a></h1>
+<p>A library owner/maintainer can <em>publish</em> versioned artifacts that
+folks elsewhere can fetch and import. In the JVM world, these are jars
+(with poms)
+on a server that Maven (or Ivy) looks for. (In the Python world, these are
+eggs; but as of early 2014, Pants doesn&#8217;t help publish these.)</p>
+<p>This page talks about publishing artifacts. We assume you already know enough
+about Pants to <em>build</em> the library that underlies an artifact.
+To <em>use</em> an artifact that has already been published from some other
+source tree, see <a class="reference internal" href="3rdparty.html"><em>Third-Party Dependencies</em></a>. (To use a artifact that has been
+published from <em>your own</em> source tree... don&#8217;t do that. Instead, depend on
+the <tt class="docutils literal"><span class="pre">*_library</span></tt> build target.)</p>
+<p>It&#8217;s tricky to keep track of versions, label artifacts with versions, and
+upload those artifacts. Pants eases these tasks.</p>
+<p>A library&#8217;s build target specifies where to publish it.
+For example, a <a class="reference internal" href="build_dictionary.html#bdict-java-library"><em>java_library</em></a> build target can have a <tt class="docutils literal"><span class="pre">provides</span></tt>
+parameter of type <a class="reference internal" href="build_dictionary.html#bdict-artifact"><em>artifact</em></a>. The <tt class="docutils literal"><span class="pre">artifact</span></tt> specifies an
+&#8220;address&#8221; similar to what you might see in <tt class="docutils literal"><span class="pre">3rdparty</span></tt> <tt class="docutils literal"><span class="pre">BUILD</span></tt> files:
+an artifact&#8217;s location. It does <em>not</em> specify a version; that changes
+each time you publish.</p>
+<p>Pants&#8217; <tt class="docutils literal"><span class="pre">publish</span></tt> goal builds the library, bumps the library&#8217;s version
+number, and uploads the library to its repository. Actually, it does
+quite a bit more than that.</p>
+<p>It uses <a class="reference external" href="http://semver.org/">Semantic Versioning (&#8220;semver&#8221;)</a> for versioning.
+Versions are dotted number triads (e.g., 2.5.6); when Pants bumps a version,
+it specifically bumps the patch number part. Thus, if the current version is
+2.5.6, Pants bumps to 2.5.7. To publish a minor or major version instead of
+a patch, you override the version number on the command line.</p>
+<p><strong>The pushdb:</strong> To &#8220;remember&#8221; version numbers, Pants uses the pushdb.
+The pushdb is a text file under source control. It lists artifacts with
+their current version numbers and SHAs. When you publish artifacts,
+pants edits this file and pushes it to the origin.</p>
+<div class="section" id="life-of-a-publish">
+<h2>Life of a Publish<a class="headerlink" href="#life-of-a-publish" title="Permalink to this headline">¶</a></h2>
+<p>To publish a library&#8217;s artifact, Pants bumps the version number and uploads
+the artifact to a repository. When things go smoothly, that&#8217;s all
+you need to know. When things go wrong, it&#8217;s good to know details.</p>
+<ul>
+<li><p class="first">Pants decides the version number to use based on pushdb&#8217;s state.</p>
+<p>You can override the version number[s] to use via a command-line flag.
+Pants does some sanity-checking: If you specify an override version less
+than or equal to the last-published version (as noted in the pushdb),
+Pants balks.</p>
+</li>
+<li><p class="first">For each artifact to be published, it prompts you for confirmation.
+(This is a chance for you to notice that you want to, e.g.,
+bump an artifact&#8217;s minor revision instead of patch revision.)</p>
+</li>
+<li><p class="first">Invokes a tool to upload the artifact to a repository.
+(For JVM artifacts, this tool is Ivy.)</p>
+</li>
+<li><p class="first">Commits pushdb.</p>
+</li>
+</ul>
+<p>Things can go wrong; you can recover:</p>
+<ul>
+<li><p class="first">Uploading the artifact can fail for reasons you might expect for an upload:
+authentication problems, transient connection problems, etc.</p>
+</li>
+<li><p class="first">Uploading the artifact can fail for another reason: that artifact+version
+already exists on the server. <em>In theory</em>, this shouldn&#8217;t happen: Pants
+bumps the version it found in the pushdb. But in practice, this can happen.</p>
+<div class="highlight-python"><div class="highlight"><pre>Exception in thread &quot;main&quot; java.io.IOException: destination file exists and overwrite == false
+...
+FAILURE: java -jar .../ivy/lib/ivy-2.2.0.jar ... exited non-zero (1) &#39;failed to push com.twitter#archimedes_common;0.0.42&#39;
+</pre></div>
+</div>
+<p>This is usually a sign that something strange happened in a <em>previous</em>
+publish.
+Perhaps someone published an artifact &#8220;by hand&#8221; instead of using Pants.
+Perhaps someone used Pants to publish an artifact but it failed to update
+the pushdb in source control. E.g., merge conflicts can happen, and folks
+don&#8217;t always recover from them correctly.</p>
+<p>In this situation, you probably want to pass <tt class="docutils literal"><span class="pre">--publish-override</span></tt> to
+specify a version to use instead of the automatically-computed
+already-existing version. Choose a version that&#8217;s not already on the server.
+Pants records this version in the pushdb, so hopefully the next
+publisher won&#8217;t have the same problem.</p>
+<p>Perhaps you are &#8220;racing&#8221; a colleague and just lost the race:
+they published an artifact with that name+version.</p>
+<p>In this situation, you probably want to refresh your source tree
+(<tt class="docutils literal"><span class="pre">git</span> <span class="pre">pull</span></tt> or equivalent) to get the latest version of the pushdb
+and try again.</p>
+</li>
+<li><p class="first">Pushing the pushdb to origin can fail, even though artifact-uploading succeeded.
+Perhaps you
+were publishing at about the same time someone else was; you might get a
+merge conflict when trying to push.</p>
+<p>(There&#8217;s a temptation to ignore this error: the artifact uploaded OK; nobody
+expects a git merge conflict when publishing.
+Alas, ignoring the error now means
+that your <em>next</em> publish will probably fail, since Pants has lost track of
+the current version number.)</p>
+<p>See: <a class="reference internal" href="#publish-pushdb-push"><em>Troubleshoot a Failed Push to Origin</em></a></p>
+</li>
+</ul>
+</div>
+<div class="section" id="how-to">
+<h2>How To<a class="headerlink" href="#how-to" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Does your organization enforce a special branch for publishing? (E.g., perhaps
+publishing is only allowed on the <tt class="docutils literal"><span class="pre">master</span></tt> branch.) If so, be on that branch
+with no changes.</li>
+<li>Consider trying a local publish first. This lets you test the to-be-published
+artifact. See <a class="reference internal" href="#publish-local-test"><em>Test with a Fake Local &#8220;Publish&#8221;</em></a>.</li>
+<li>Start the publish: <tt class="docutils literal"><span class="pre">./pants</span> <span class="pre">goal</span> <span class="pre">publish</span> <span class="pre">--no-publish-dryrun</span> <span class="pre">[target]</span></tt>
+Don&#8217;t wander off; Pants will ask for confirmation as it goes
+(making sure you aren&#8217;t publishing artifact[s] you didn&#8217;t mean to).</li>
+</ul>
+</div>
+<div class="section" id="restricting-to-release-branch">
+<h2>Restricting to &#8220;Release Branch&#8221;<a class="headerlink" href="#restricting-to-release-branch" title="Permalink to this headline">¶</a></h2>
+<p>Your organization might have a notion of a special &#8220;release branch&#8221;: you want
+all publishing to happen on this source control branch, which you maintain
+extra-carefully. You can
+<a class="reference internal" href="setup_repo.html#setup-publish-restrict-branch"><em>configure your repo</em></a>
+so the <tt class="docutils literal"><span class="pre">publish</span></tt> goal only allows <tt class="docutils literal"><span class="pre">publish</span></tt>-ing from this special branch.</p>
+</div>
+<div class="section" id="authenticating-to-the-artifact-repository">
+<h2>Authenticating to the Artifact Repository<a class="headerlink" href="#authenticating-to-the-artifact-repository" title="Permalink to this headline">¶</a></h2>
+<p>Your artifact repository probably doesn&#8217;t accept anonymous uploads; you probably
+need to authenticate (prove that you are really you). Depending on how
+the artifact repository set up, Pants might need to interact the authentication
+system. (Or it might not. E.g., if your system uses Kerberos, when Pants invokes
+artifact-upload commands, Kerberos tickets should work automatically.)</p>
+<p>If Pants needs to provide your username and password, you can enable this
+via Pants&#8217; <tt class="docutils literal"><span class="pre">.netrc</span></tt> support. Pants can parse
+<a class="reference external" href="http://www.gnu.org/software/inetutils/manual/html_node/The-_002enetrc-File.html">.netrc files</a>
+to get a user&#8217;s username and password on an artifact repository machine.
+To make this work:</p>
+<ul>
+<li><p class="first">Each user needs a <tt class="docutils literal"><span class="pre">~/.netrc</span></tt> file with a section that looks like</p>
+<div class="highlight-python"><div class="highlight"><pre>machine our-artifacts.archimedes.org
+  login sandy
+  password myamazingpa$sword
+</pre></div>
+</div>
+</li>
+<li><p class="first">One of your top-level <tt class="docutils literal"><span class="pre">BUILD</span></tt> files needs a target that represents
+<tt class="docutils literal"><span class="pre">netrc</span></tt> auth:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">pants.authentication.netrc</span> <span class="kn">import</span> <span class="n">Netrc</span>
+<span class="n">netrc</span> <span class="o">=</span> <span class="n">Netrc</span><span class="p">()</span>
+
+<span class="n">credentials</span><span class="p">(</span>
+  <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;netrc&#39;</span><span class="p">,</span>
+  <span class="n">username</span><span class="o">=</span><span class="n">netrc</span><span class="o">.</span><span class="n">getusername</span><span class="p">,</span>
+  <span class="n">password</span><span class="o">=</span><span class="n">netrc</span><span class="o">.</span><span class="n">getpassword</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Your <tt class="docutils literal"><span class="pre">pants.ini</span></tt> file&#8217;s <tt class="docutils literal"><span class="pre">'auth'</span></tt> section for that repository should
+refer to that target:</p>
+<div class="highlight-python"><div class="highlight"><pre>[jar-publish]
+workdir: %(pants_workdir)s/publish
+repos: {
+    &#39;external&#39;: {
+      &#39;resolver&#39;: &#39;art.archimedes.org&#39;,
+      &#39;confs&#39;: [&#39;default&#39;, &#39;sources&#39;, &#39;docs&#39;, &#39;changelog&#39;],
+      &#39;auth&#39;: &#39;BUILD.archimedes:netrc&#39;,
+      &#39;help&#39;: &#39;Configure your ~/.netrc for artifact repo access!&#39;
+    },
+}
+</pre></div>
+</div>
+</li>
+</ul>
+<p>If you need to implement some other kind of authentication,
+you might look at <a class="reference external" href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/authentication/netrc_util.py">the Netrc implementation</a>
+and the <a class="reference internal" href="build_dictionary.html#bdict-credentials"><em>credentials</em></a> target type for inspiration.</p>
+</div>
+<div class="section" id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline">¶</a></h2>
+<p>Sometimes publishing doesn&#8217;t do what you want. The fix usually involves
+publishing again, perhaps passing
+<tt class="docutils literal"><span class="pre">--publish-override</span></tt> (override the version number to use),
+<tt class="docutils literal"><span class="pre">--publish-force</span></tt>, and/or <tt class="docutils literal"><span class="pre">--publish-restart-at</span></tt>. The following
+are some usual symptoms/questions:</p>
+<div class="section" id="versioned-artifact-already-exists">
+<span id="publish-version-exists"></span><h3>Versioned Artifact Already Exists<a class="headerlink" href="#versioned-artifact-already-exists" title="Permalink to this headline">¶</a></h3>
+<p>Pants attempted to compute the new version number to use based on the
+contents of the pushdb; but apparently, someone previously published
+that version of the artifact without updating the pushdb.</p>
+<p>Examine the publish repo to find out what version number you actually
+want to use. E.g., if you notice that versions up to 2.5.7 exist and
+you want to bump the patch version, you want to override the default
+version number and use 2.5.8 instead.</p>
+<p>Try publishing again, but pass <tt class="docutils literal"><span class="pre">--publish-override</span></tt> to specify the
+version number to use instead of incrementing the version number from
+the pushdb. Be sure to use a version number that has not
+already been published this time. For example, to override the default
+publish version number for the org.archie buoyancy artifact, you might
+pass <tt class="docutils literal"><span class="pre">--publish-override=org.archie#buoyancy=2.5.8</span></tt>.</p>
+</div>
+<div class="section" id="failed-to-push-to-origin">
+<span id="publish-pushdb-push"></span><h3>Failed to Push to Origin<a class="headerlink" href="#failed-to-push-to-origin" title="Permalink to this headline">¶</a></h3>
+<p>You might successfully publish your artifact but then fail to push
+your pushdb change to origin:</p>
+<div class="highlight-python"><div class="highlight"><pre>To https://git.archimedes.org/owls
+ ! [rejected]        master -&gt; master (non-fast-forward)
+error: failed to push some refs to &#39;https://git.archimedes.org/owls&#39;
+hint: Updates were rejected because the tip of your current branch is behind
+hint: its remote counterpart. Merge the remote changes (e.g. &#39;git pull&#39;)
+hint: before pushing again.
+hint: See the &#39;Note about fast-forwards&#39; in &#39;git push --help&#39; for details.
+</pre></div>
+</div>
+<p>For some reason, git couldn&#8217;t merge your branch (with the pushdb change)
+to the branch on origin.
+This might happen, for example, if you were &#8220;racing&#8221; someone else; they
+perhaps pushed their change to master&#8217;s pushdb before you could.
+But it can also happen for other reasons; any local change that can&#8217;t
+be merged to the branch on origin.</p>
+<p>You are now in a bad state: you&#8217;ve pushed some artifacts, but the pushdb
+doesn&#8217;t &#8220;remember&#8221; them.</p>
+<ul class="simple">
+<li>Look at the pushdb&#8217;s source control history to if someone made a conflicting
+publish. If so, contact them.
+(You&#8217;re about to try to fix the problem; if they also encountered
+problems, they are probably also about to fix the problem.
+You might want to coordinate and take turns.)</li>
+<li>Git couldn&#8217;t auto-merge your change to the pushdb; can you fix the merge
+&#8220;by hand&#8221;? If the problem is just a merge conflict in the pushdb, you can
+fix things by fixing the merge. (But if someone else was trying to publish
+a particular artifact at the same time you were, your changes may be too
+&#8220;entangled&#8221; to salvage this way.)</li>
+</ul>
+<p><strong>Depending on how &#8220;entangled&#8221; your state is,</strong> you either want to
+reset and start over or merge the pushdb by hand.</p>
+<p><strong>To reset and start over</strong> In git, this might mean:</p>
+<div class="highlight-python"><div class="highlight"><pre>git reset origin/master # (if ``master`` is your release branch)
+git pull
+./pants goal clean-all &amp;&amp; ./pants goal publish &lt;your previous args&gt;
+</pre></div>
+</div>
+<p>Since you uploaded new versions artifacts but the reset pushdb doesn&#8217;t
+&#8220;remember&#8221; that, you might  get
+&#8220;Versioned Artifact Already Exists&#8221;
+errors.
+Use <tt class="docutils literal"><span class="pre">--publish_override</span></tt> to set version numbers to avoid these.</p>
+<p><strong>To merge the pushdb by hand</strong> In git, this might mean</p>
+<ul>
+<li><p class="first">Use <tt class="docutils literal"><span class="pre">git</span> <span class="pre">status</span></tt> to check your change.</p>
+</li>
+<li><p class="first">Commit it with <tt class="docutils literal"><span class="pre">git</span> <span class="pre">commit</span></tt>.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">git</span> <span class="pre">commit</span> <span class="pre">-a</span> <span class="pre">-m</span> <span class="pre">&quot;pants</span> <span class="pre">build</span> <span class="pre">committing</span> <span class="pre">publish</span> <span class="pre">data</span> <span class="pre">for</span> <span class="pre">push</span> <span class="pre">of</span> <span class="pre">org#artifact;version&quot;</span></tt></p>
+</li>
+<li><p class="first">as fast as you can, execute the following steps:</p>
+<div class="highlight-python"><div class="highlight"><pre>git fetch origin master
+git rebase origin/master
+git push origin master
+</pre></div>
+</div>
+</li>
+<li><p class="first">If that worked, great; if it didn&#8217;t work, you might try repeating that
+last set of steps <em>or</em> (if it keeps on not working) giving up, resetting,
+and starting over.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="does-not-provide-an-artifact">
+<span id="publish-no-provides"></span><h3>Does not provide an artifact<a class="headerlink" href="#does-not-provide-an-artifact" title="Permalink to this headline">¶</a></h3>
+<p>A published artifact lives at a set of coordinates. For Pants to publish an
+artifact, it needs to know the artifact&#8217;s coordinates.
+Pants gets the coordinates from the target&#8217;s
+<tt class="docutils literal"><span class="pre">provides</span></tt> parameter. Thus, if you try to publish a target
+that depends on a target
+that has no <tt class="docutils literal"><span class="pre">provides</span></tt>,
+Pants doesn&#8217;t know what to do. It stops:</p>
+<div class="highlight-python"><div class="highlight"><pre>FAILURE: The following errors must be resolved to publish.
+  Cannot publish src/java/com/twitter/common/base/BUILD:base due to:
+    src/java/com/twitter/common/quantity/BUILD:quantity - Does not provide an artifact.
+</pre></div>
+</div>
+<p>The solution is to add a <tt class="docutils literal"><span class="pre">provides</span></tt> to the target that lacks one.</p>
+<p>Remember, to publish a target, the target&#8217;s dependencies must also be published.
+If any of those dependencies have changed since their last publish, Pants
+tries to publish them before publishing the target you specify. Thus, you
+might need to add a <tt class="docutils literal"><span class="pre">provides</span></tt> to one or more of these.</p>
+</div>
+<div class="section" id="silently-does-not-publish">
+<h3>Silently does not publish<a class="headerlink" href="#silently-does-not-publish" title="Permalink to this headline">¶</a></h3>
+<p>A published artifact lives at a set of coordinates. For Pants to publish an
+artifact, it needs to know the artifact&#8217;s coordinates.
+Pants gets the coordinates from the target&#8217;s
+<tt class="docutils literal"><span class="pre">provides</span></tt> parameter. Thus, if you try to publish a target
+that has no <tt class="docutils literal"><span class="pre">provides</span></tt>,
+Pants doesn&#8217;t try. If the target depends on <em>other</em>
+targets that <em>do</em> provide artifacts, Pants might publish those.
+This is a case of <a class="reference internal" href="first_tutorial.html#tut-goal-target-mismatch"><em>goal-target mismatch</em></a>.
+To fix this, set <tt class="docutils literal"><span class="pre">provides</span></tt> correctly.</p>
+</div>
+</div>
+<div class="section" id="want-to-publish-something-publish-many-things">
+<h2>Want to Publish Something? Publish Many Things<a class="headerlink" href="#want-to-publish-something-publish-many-things" title="Permalink to this headline">¶</a></h2>
+<p>If you publish a library that depends on others, you want to
+publish them together.
+Conversely, if you publish a low-level library that other libraries depend upon,
+you want to publish those together, too.
+Thus, if you want to publish one thing, you may find you should publish
+many things.
+Pants eases <em>part</em> of this: if you publish a library, it automatically
+prompts you to also publish depended-upon libraries whose source code changed.
+However, Pants does <em>not</em>
+automatically publish dependees of a depended-upon library.
+If you know you&#8217;re about to publish a low-level library
+(perhaps via a &#8220;dry run&#8221; publish),
+you can use Pants&#8217; <tt class="docutils literal"><span class="pre">goal</span> <span class="pre">dependees</span></tt> to find other things to publish.</p>
+<p>For example, suppose your new library <tt class="docutils literal"><span class="pre">high-level</span></tt> depends on another
+library, <tt class="docutils literal"><span class="pre">util</span></tt>.
+If you tested <tt class="docutils literal"><span class="pre">high-level</span></tt> with <tt class="docutils literal"><span class="pre">util</span></tt> version 1.2, you want <tt class="docutils literal"><span class="pre">util</span></tt>
+1.2 published and available to <tt class="docutils literal"><span class="pre">high-level</span></tt> consumers.
+Once you publish <tt class="docutils literal"><span class="pre">util</span></tt> version 1.2, people might use it.
+If you previously published your <tt class="docutils literal"><span class="pre">another-high-level</span></tt> library
+library depending on <tt class="docutils literal"><span class="pre">util</span></tt> version 1.1, <tt class="docutils literal"><span class="pre">another-high-level</span></tt> consumers
+(who might also consume <tt class="docutils literal"><span class="pre">high-level</span></tt>) might pick up version 1.2 and be sad
+to find out that <tt class="docutils literal"><span class="pre">other-high-level</span></tt> doesn&#8217;t work with the new <tt class="docutils literal"><span class="pre">util</span></tt>.</p>
+<p>In this example, when you publish <tt class="docutils literal"><span class="pre">high-level</span></tt>, Pants knows to also publish
+<tt class="docutils literal"><span class="pre">util</span></tt>.
+If Pants publishes <tt class="docutils literal"><span class="pre">util</span></tt>, it does <em>not</em> automatically try to publish
+<tt class="docutils literal"><span class="pre">high-level</span></tt> or <tt class="docutils literal"><span class="pre">other-high-level</span></tt>.</p>
+</div>
+<div class="section" id="test-with-a-fake-local-publish">
+<span id="publish-local-test"></span><h2>Test with a Fake Local &#8220;Publish&#8221;<a class="headerlink" href="#test-with-a-fake-local-publish" title="Permalink to this headline">¶</a></h2>
+<p>The whole reason you publish an artifact so that other codebases can use it.
+Before you really publish, you might want to fake-publish an artifact:
+generate it and put it someplace a place in your development machine;
+then use that artifact from another codebase.</p>
+<p>For example, your other codebase might use
+Maven to build, perhaps with Maven configured to use <tt class="docutils literal"><span class="pre">~/.m2/repository</span></tt>
+as a local repo.
+You can make pants publish to that local repo with</p>
+<div class="highlight-python"><div class="highlight"><pre>./pants goal publish --no-publish-dryrun --publish-local=~/.m2/repository
+</pre></div>
+</div>
+<p>In the other codebase, change the dependencies to pull in the new artifact.</p>
+<p>If your other codebase <em>also</em> uses Pants build, you can depend on the
+locally-published artifact. If the artifact is a jar, then in the
+3rdparty
+<a class="reference internal" href="build_dictionary.html#bdict-jar"><em>jar target</em></a>,
+set <tt class="docutils literal"><span class="pre">mutable=True</span></tt> and change the version number.</p>
+</div>
+</div>
+
+
+          <footer>
+  
+    <div class="rst-footer-buttons">
+      
+        <a href="with_intellij.html" class="btn btn-neutral float-right" title="Using Pants with IntelliJ IDEA"/>Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="ThriftDeps.html" class="btn btn-neutral" title="Using Pants with Thrift Dependencies"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <p>
+      &copy; Copyright 2014, Pants project contributors.
+  </p>
+
+  <a href="https://www.github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="http://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+</body>
+</html>
