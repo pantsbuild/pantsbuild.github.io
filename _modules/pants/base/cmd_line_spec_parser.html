@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pants.base.address &mdash; pants 0.1 documentation</title>
+  <title>pants.base.cmd_line_spec_parser &mdash; pants 0.1 documentation</title>
   
 
   
@@ -375,13 +375,13 @@ body a.icon-home:hover{
         <div class="rst-content">
           <ul class="wy-breadcrumbs">
   <li><a href="../../../index.html">Docs</a> &raquo;</li>
-  <li><a href="">pants.base.address</a></li>
+  <li><a href="">pants.base.cmd_line_spec_parser</a></li>
   
 </ul>
 <hr/>
 
           
-  <h1>Source code for pants.base.address</h1><div class="highlight"><pre>
+  <h1>Source code for pants.base.cmd_line_spec_parser</h1><div class="highlight"><pre>
 <span class="c"># coding=utf-8</span>
 <span class="c"># Copyright 2014 Pants project contributors (see CONTRIBUTORS.md).</span>
 <span class="c"># Licensed under the Apache License, Version 2.0 (see LICENSE).</span>
@@ -391,187 +391,58 @@ body a.icon-home:hover{
 
 <span class="kn">import</span> <span class="nn">os</span>
 
-<span class="kn">from</span> <span class="nn">twitter.common.lang</span> <span class="kn">import</span> <span class="n">AbstractClass</span>
+<span class="kn">from</span> <span class="nn">pants.base.address</span> <span class="kn">import</span> <span class="n">BuildFileAddress</span><span class="p">,</span> <span class="n">parse_spec</span>
+<span class="kn">from</span> <span class="nn">pants.base.build_file</span> <span class="kn">import</span> <span class="n">BuildFile</span>
 
 
-<div class="viewcode-block" id="parse_spec"><a class="viewcode-back" href="../../../base.html#pants.base.address.parse_spec">[docs]</a><span class="k">def</span> <span class="nf">parse_spec</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">relative_to</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;Parses a target address spec and returns the path from the root of the repo to this Target</span>
-<span class="sd">  and Target name.</span>
+<div class="viewcode-block" id="CmdLineSpecParser"><a class="viewcode-back" href="../../../base.html#pants.base.cmd_line_spec_parser.CmdLineSpecParser">[docs]</a><span class="k">class</span> <span class="nc">CmdLineSpecParser</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Parses target address specs as passed from the command line.</span>
 
-<span class="sd">  :param string spec: Target address spec.</span>
-<span class="sd">  :param string relative_to: For sibling specs, ie: &#39;:another_in_same_build_family&#39;, interprets</span>
-<span class="sd">    the missing spec_path part as `relative_to`.</span>
+<span class="sd">  Supports simple target addresses as well as sibling (:) and descendant (::) selector forms.</span>
+<span class="sd">  Also supports some flexibility in the path portion of the spec to allow for more natural command</span>
+<span class="sd">  line use cases like tab completion leaving a trailing / for directories and relative paths, ie::</span>
 
-<span class="sd">  For Example::</span>
+<span class="sd">    ./src/::</span>
 
-<span class="sd">    some_target(name=&#39;mytarget&#39;,</span>
-<span class="sd">      dependencies=[&#39;path/to/buildfile:targetname&#39;]</span>
-<span class="sd">    )</span>
+<span class="sd">  Is a valid command line spec even though its not a valid BUILD file spec.  Its normalized to::</span>
 
-<span class="sd">  Where ``path/to/buildfile:targetname`` is the dependent target address spec</span>
-
-<span class="sd">  In case the target name is empty it returns the last component of the path as target name, ie::</span>
-
-<span class="sd">    spec_path, target_name = parse_spec(&#39;path/to/buildfile/foo&#39;)</span>
-
-<span class="sd">  Will return spec_path as &#39;path/to/buildfile/foo&#39; and target_name as &#39;foo&#39;.</span>
-
-<span class="sd">  Optionally, specs can be prefixed with &#39;//&#39; to denote an absolute spec path.  This is normally</span>
-<span class="sd">  not significant except when a spec referring to a root level target is needed from deeper in</span>
-<span class="sd">  the tree.  For example, in ``path/to/buildfile/BUILD``::</span>
-
-<span class="sd">    some_target(name=&#39;mytarget&#39;,</span>
-<span class="sd">      dependencies=[&#39;:targetname&#39;]</span>
-<span class="sd">    )</span>
-
-<span class="sd">  The ``targetname`` spec refers to a target defined in ``path/to/buildfile/BUILD*``.  If instead</span>
-<span class="sd">  you want to reference ``targetname`` in a root level BUILD file, use the absolute form.</span>
-<span class="sd">  For example::</span>
-
-<span class="sd">    some_target(name=&#39;mytarget&#39;,</span>
-<span class="sd">      dependencies=[&#39;//:targetname&#39;]</span>
-<span class="sd">    )</span>
-<span class="sd">  &quot;&quot;&quot;</span>
-  <span class="k">def</span> <span class="nf">normalize_absolute_refs</span><span class="p">(</span><span class="n">ref</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">ref</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s">&#39;//&#39;</span><span class="p">)</span>
-
-  <span class="k">def</span> <span class="nf">check_path</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-    <span class="c"># A root or relative spec is OK</span>
-    <span class="k">if</span> <span class="n">path</span> <span class="o">==</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
-      <span class="k">return</span>
-
-    <span class="n">normpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-    <span class="n">components</span> <span class="o">=</span> <span class="n">normpath</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">components</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">,</span> <span class="s">&#39;..&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">normpath</span> <span class="o">!=</span> <span class="n">path</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Spec {spec} has un-normalized path &#39;</span>
-                       <span class="s">&#39;part {path}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">spec</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">))</span>
-    <span class="k">if</span> <span class="n">components</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;BUILD&#39;</span><span class="p">):</span>
-      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Spec {spec} has {trailing} as the last path part and BUILD is &#39;</span>
-                       <span class="s">&#39;reserved files&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">spec</span><span class="p">,</span> <span class="n">trailing</span><span class="o">=</span><span class="n">components</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
-
-  <span class="k">def</span> <span class="nf">check_target_name</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Spec {spec} has no name part&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">spec</span><span class="p">))</span>
-
-  <span class="n">spec_parts</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-  <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">spec_parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-    <span class="n">spec_path</span> <span class="o">=</span> <span class="n">normalize_absolute_refs</span><span class="p">(</span><span class="n">spec_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="n">target_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">spec_path</span><span class="p">)</span>
-  <span class="k">else</span><span class="p">:</span>
-    <span class="n">spec_path</span><span class="p">,</span> <span class="n">target_name</span> <span class="o">=</span> <span class="n">spec_parts</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">spec_path</span> <span class="ow">and</span> <span class="n">relative_to</span><span class="p">:</span>
-      <span class="n">spec_path</span> <span class="o">=</span> <span class="n">relative_to</span>
-    <span class="n">spec_path</span> <span class="o">=</span> <span class="n">normalize_absolute_refs</span><span class="p">(</span><span class="n">spec_path</span><span class="p">)</span>
-
-  <span class="n">check_path</span><span class="p">(</span><span class="n">spec_path</span><span class="p">)</span>
-  <span class="n">check_target_name</span><span class="p">(</span><span class="n">target_name</span><span class="p">)</span>
-  <span class="k">return</span> <span class="n">spec_path</span><span class="p">,</span> <span class="n">target_name</span>
-
-</div>
-<div class="viewcode-block" id="Address"><a class="viewcode-back" href="../../../base.html#pants.base.address.Address">[docs]</a><span class="k">class</span> <span class="nc">Address</span><span class="p">(</span><span class="n">AbstractClass</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;A target address.</span>
-
-<span class="sd">  An address is a unique name representing a</span>
-<span class="sd">  :class:`pants.base.target.Target`. It&#39;s composed of the</span>
-<span class="sd">  path from the root of the repo to the Target plus the target name.</span>
-
-<span class="sd">  While not their only use, a noteworthy use of addresses is specifying</span>
-<span class="sd">  target dependencies. For example:</span>
-
-<span class="sd">  ::</span>
-
-<span class="sd">    some_target(name=&#39;mytarget&#39;,</span>
-<span class="sd">      dependencies=[&#39;path/to/buildfile:targetname&#39;]</span>
-<span class="sd">    )</span>
-
-<span class="sd">  Where ``path/to/buildfile:targetname`` is the dependent target address.</span>
+<span class="sd">    src::</span>
 <span class="sd">  &quot;&quot;&quot;</span>
 
-  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec_path</span><span class="p">,</span> <span class="n">target_name</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    :param string spec_path: The path from the root of the repo to this Target.</span>
-<span class="sd">    :param string target_name: The name of a target this Address refers to.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># TODO(John Sirois): AbstractClass / Interface should probably have this feature built in.</span>
-    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="n">Address</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;Cannot instantiate abstract class Address&#39;</span><span class="p">)</span>
-    <span class="n">norm_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">spec_path</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">spec_path</span> <span class="o">=</span> <span class="n">norm_path</span> <span class="k">if</span> <span class="n">norm_path</span> <span class="o">!=</span> <span class="s">&#39;.&#39;</span> <span class="k">else</span> <span class="s">&#39;&#39;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">target_name</span> <span class="o">=</span> <span class="n">target_name</span>
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root_dir</span><span class="p">,</span> <span class="n">build_file_parser</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_root_dir</span> <span class="o">=</span> <span class="n">root_dir</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_build_file_parser</span> <span class="o">=</span> <span class="n">build_file_parser</span>
 
-  <span class="nd">@property</span>
-  <span class="k">def</span> <span class="nf">spec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="s">&#39;{spec_path}:{target_name}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">spec_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_path</span><span class="p">,</span>
-                                              <span class="n">target_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">target_name</span><span class="p">)</span>
+  <span class="k">def</span> <span class="nf">parse_addresses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">normalize_spec_path</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+      <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_root_dir</span><span class="p">,</span> <span class="n">path</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s">&#39;//&#39;</span><span class="p">))</span>
+      <span class="n">normalized</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_root_dir</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">normalized</span> <span class="o">==</span> <span class="s">&#39;.&#39;</span><span class="p">:</span>
+        <span class="n">normalized</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+      <span class="k">return</span> <span class="n">normalized</span>
 
-  <span class="nd">@property</span>
-  <span class="k">def</span> <span class="nf">path_safe_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="p">(</span><span class="s">&#39;{safe_spec_path}.{target_name}&#39;</span>
-            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">safe_spec_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">,</span> <span class="s">&#39;.&#39;</span><span class="p">),</span>
-                    <span class="n">target_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">target_name</span><span class="p">))</span>
-
-  <span class="nd">@property</span>
-  <span class="k">def</span> <span class="nf">relative_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="s">&#39;:{target_name}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">target_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">target_name</span><span class="p">)</span>
-
-  <span class="nd">@property</span>
-  <span class="k">def</span> <span class="nf">is_synthetic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">False</span>
-
-<div class="viewcode-block" id="Address.reference"><a class="viewcode-back" href="../../../base.html#pants.base.address.Address.reference">[docs]</a>  <span class="k">def</span> <span class="nf">reference</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">referencing_path</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;How to reference this address in a BUILD file.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">referencing_path</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec_path</span> <span class="o">==</span> <span class="n">referencing_path</span><span class="p">:</span>
-      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">relative_spec</span>
-    <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_path</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_name</span><span class="p">:</span>
-      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span>
+    <span class="k">if</span> <span class="n">spec</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;::&#39;</span><span class="p">):</span>
+      <span class="n">spec_path</span> <span class="o">=</span> <span class="n">spec</span><span class="p">[:</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="s">&#39;::&#39;</span><span class="p">)]</span>
+      <span class="n">spec_dir</span> <span class="o">=</span> <span class="n">normalize_spec_path</span><span class="p">(</span><span class="n">spec_path</span><span class="p">)</span>
+      <span class="k">for</span> <span class="n">build_file</span> <span class="ow">in</span> <span class="n">BuildFile</span><span class="o">.</span><span class="n">scan_buildfiles</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_root_dir</span><span class="p">,</span> <span class="n">spec_dir</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_build_file_parser</span><span class="o">.</span><span class="n">parse_build_file</span><span class="p">(</span><span class="n">build_file</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">address</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_file_parser</span><span class="o">.</span><span class="n">addresses_by_build_file</span><span class="p">[</span><span class="n">build_file</span><span class="p">]:</span>
+          <span class="k">yield</span> <span class="n">address</span>
+    <span class="k">elif</span> <span class="n">spec</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">):</span>
+      <span class="n">spec_path</span> <span class="o">=</span> <span class="n">spec</span><span class="p">[:</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">)]</span>
+      <span class="n">spec_dir</span> <span class="o">=</span> <span class="n">normalize_spec_path</span><span class="p">(</span><span class="n">spec_path</span><span class="p">)</span>
+      <span class="k">for</span> <span class="n">build_file</span> <span class="ow">in</span> <span class="n">BuildFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_root_dir</span><span class="p">,</span> <span class="n">spec_dir</span><span class="p">)</span><span class="o">.</span><span class="n">family</span><span class="p">():</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_build_file_parser</span><span class="o">.</span><span class="n">parse_build_file</span><span class="p">(</span><span class="n">build_file</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">address</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_file_parser</span><span class="o">.</span><span class="n">addresses_by_build_file</span><span class="p">[</span><span class="n">build_file</span><span class="p">]:</span>
+          <span class="k">yield</span> <span class="n">address</span>
     <span class="k">else</span><span class="p">:</span>
-      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec_path</span>
-</div>
-  <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">other</span> <span class="ow">and</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">spec_path</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">spec_path</span> <span class="ow">and</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">target_name</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">target_name</span><span class="p">)</span>
+      <span class="n">spec_parts</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+      <span class="n">spec_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">normalize_spec_path</span><span class="p">(</span><span class="n">spec_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+      <span class="n">spec_path</span><span class="p">,</span> <span class="n">target_name</span> <span class="o">=</span> <span class="n">parse_spec</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">spec_parts</span><span class="p">))</span>
 
-  <span class="k">def</span> <span class="nf">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_name</span><span class="p">))</span>
-
-  <span class="k">def</span> <span class="nf">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-    <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
-
-  <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span>
-
-  <span class="k">def</span> <span class="nf">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-    <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_name</span><span class="p">)</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">spec_path</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">target_name</span><span class="p">)</span>
-
-</div>
-<span class="k">class</span> <span class="nc">BuildFileAddress</span><span class="p">(</span><span class="n">Address</span><span class="p">):</span>
-  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">build_file</span><span class="p">,</span> <span class="n">target_name</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">build_file</span> <span class="o">=</span> <span class="n">build_file</span>
-    <span class="n">spec_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">build_file</span><span class="o">.</span><span class="n">relpath</span><span class="p">)</span>
-    <span class="n">default_target_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">spec_path</span><span class="p">)</span>
-    <span class="nb">super</span><span class="p">(</span><span class="n">BuildFileAddress</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">spec_path</span><span class="o">=</span><span class="n">spec_path</span><span class="p">,</span>
-                                           <span class="n">target_name</span><span class="o">=</span><span class="n">target_name</span> <span class="ow">or</span> <span class="n">default_target_name</span><span class="p">)</span>
-
-  <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="p">(</span><span class="s">&quot;BuildFileAddress({build_file}, {target_name})&quot;</span>
-            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">build_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">build_file</span><span class="p">,</span>
-                    <span class="n">target_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">target_name</span><span class="p">))</span>
-
-
-<span class="k">class</span> <span class="nc">SyntheticAddress</span><span class="p">(</span><span class="n">Address</span><span class="p">):</span>
-  <span class="nd">@classmethod</span>
-  <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">relative_to</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
-    <span class="n">spec_path</span><span class="p">,</span> <span class="n">target_name</span> <span class="o">=</span> <span class="n">parse_spec</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">relative_to</span><span class="o">=</span><span class="n">relative_to</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">cls</span><span class="p">(</span><span class="n">spec_path</span><span class="p">,</span> <span class="n">target_name</span><span class="p">)</span>
-
-  <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="s">&quot;SyntheticAddress({spec})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">)</span>
-
-  <span class="nd">@property</span>
-  <span class="k">def</span> <span class="nf">is_synthetic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">True</span>
-</pre></div>
+      <span class="n">build_file</span> <span class="o">=</span> <span class="n">BuildFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_root_dir</span><span class="p">,</span> <span class="n">spec_path</span><span class="p">)</span>
+      <span class="k">yield</span> <span class="n">BuildFileAddress</span><span class="p">(</span><span class="n">build_file</span><span class="p">,</span> <span class="n">target_name</span><span class="p">)</span>
+</pre></div></div>
 
           <footer>
   

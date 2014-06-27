@@ -395,55 +395,85 @@ perform the given actions on.</p>
 <tt class="docutils literal"><span class="pre">BUILD</span></tt> targets, while others are useful when invoking pants on the
 command-line. Most specify a single target, but globs are available too.</p>
 <p>The following target addresses all specify the same single target.</p>
-<div class="highlight-python"><div class="highlight"><pre># Fully qualified target address is the BUILD file path plus target name.
-$ ./pants goal list src/java/com/pants/examples/hello/main/BUILD:main
-src/java/com/pants/examples/hello/main/BUILD:main
-
-# Specify the default target, which matches the parent directory name
-$ ./pants goal list src/java/com/pants/examples/hello/main/BUILD
-src/java/com/pants/examples/hello/main/BUILD:main
-
-# The BUILD file name is optional.
-$ ./pants goal list src/java/com/pants/examples/hello/main
-src/java/com/pants/examples/hello/main/BUILD:main
-
-# Trailing forward slashes are ignored to accommodate command-line completion.
-$ ./pants goal list src/java/com/pants/examples/hello/main/
-src/java/com/pants/examples/hello/main/BUILD:main
-
-# Targets can be referenced relatively within the same BUILD file.
-java_library(name=&#39;application&#39;, ...)
-java_library(name=&#39;mybird&#39;,
-  dependencies=[pants(&#39;:application&#39;)],
-)
+<ul>
+<li><p class="first">Fully qualified target address is the BUILD file path plus target name:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ ./pants goal list src/java/com/pants/examples/hello/main:main
+src/java/com/pants/examples/hello/main:main
 </pre></div>
 </div>
+</li>
+<li><p class="first">Specify the default target, which matches the parent directory name:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ ./pants goal list src/java/com/pants/examples/hello/main
+src/java/com/pants/examples/hello/main:main
+</pre></div>
+</div>
+</li>
+<li><p class="first">Relative paths and trailing forward slashes are ignored on the command-line to accommodate tab
+completion:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ ./pants goal list ./src/java/com/pants/examples/hello/main/
+src/java/com/pants/examples/hello/main:main
+</pre></div>
+</div>
+<p><em>NB: Neither the `./` or any other relative path form nor the trailing slash are not allowed in
+target addresses written down in BUILD files - these affordances are just for ease of command
+line specification of target addresses.</em></p>
+</li>
+</ul>
+<p>As a convenience, targets can be referenced relatively within the same BUILD file:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;application&#39;</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+<span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;mybird&#39;</span><span class="p">,</span>
+  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="n">pants</span><span class="p">(</span><span class="s">&#39;:application&#39;</span><span class="p">)],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>To refer to a target in a top-level BUILD file, prefix the target name with <tt class="docutils literal"><span class="pre">//:</span></tt>. (You can
+prefix any absolute path with //, but it&#8217;s mainly useful for top-level targets since &#8221;:target&#8221;
+is relative.)</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;application&#39;</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+<span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;mybird&#39;</span><span class="p">,</span>
+  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="n">pants</span><span class="p">(</span><span class="s">&#39;//:application&#39;</span><span class="p">)],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Here <cite>//:application</cite> refers to the <cite>application</cite> target in the root level BUILD file and <em>not</em>
+to the <cite>application</cite> target defined just above <cite>mybird</cite>.  On the command line you could reference
+the root level <cite>application</cite> target with either of:</p>
+<ul>
+<li><div class="first highlight-python"><div class="highlight"><pre>$ ./pants goal list :application
+</pre></div>
+</div>
+</li>
+<li><div class="first highlight-python"><div class="highlight"><pre>$ ./pants goal list //:application
+</pre></div>
+</div>
+</li>
+</ul>
 <p>Pants supports two globbing target selectors. These globbing selectors are
 provided as a convenience on the command-line. For target dependencies,
 explicit target names are used.</p>
-<p>A trailing single colon specifies a glob of targets at the specified location.</p>
+<p>A trailing single colon specifies a glob of targets at the specified location:</p>
 <div class="highlight-python"><div class="highlight"><pre>$ ./pants goal list tests/python/pants_test/:
-tests/python/pants_test/BUILD:base-test
-tests/python/pants_test/BUILD:test_maven_layout
-tests/python/pants_test/BUILD:test_thrift_util
-tests/python/pants_test/BUILD:all
+tests/python/pants_test:base-test
+tests/python/pants_test:test_maven_layout
+tests/python/pants_test:test_thrift_util
+tests/python/pants_test:all
 </pre></div>
 </div>
 <p>A trailing double colon specifies a recursive glob of targets at the specified
-location.</p>
+location:</p>
 <div class="highlight-python"><div class="highlight"><pre>$ ./pants goal list tests/python/pants_test/::
-tests/python/pants_test/BUILD:base-test
-tests/python/pants_test/BUILD:test_maven_layout
+tests/python/pants_test:base-test
+tests/python/pants_test:test_maven_layout
 tests/python/pants_test/BUILD:test_thrift_util
-tests/python/pants_test/BUILD:all
-tests/python/pants_test/base/BUILD:base-test
-tests/python/pants_test/base/BUILD:all
-tests/python/pants_test/base/BUILD:base
+tests/python/pants_test:all
+tests/python/pants_test/base:base-test
+tests/python/pants_test/base:all
+tests/python/pants_test/base:base
 ...
-tests/python/pants_test/tasks/BUILD:sorttargets
-tests/python/pants_test/tasks/BUILD:targets_help
-tests/python/pants_test/tasks/BUILD:what_changed
-tests/python/pants_test/testutils/BUILD:testutils
+tests/python/pants_test/tasks:sorttargets
+tests/python/pants_test/tasks:targets_help
+tests/python/pants_test/tasks:what_changed
+tests/python/pants_test/testutils:testutils
 </pre></div>
 </div>
 </div>

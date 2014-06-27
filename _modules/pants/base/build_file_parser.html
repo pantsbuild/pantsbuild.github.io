@@ -646,6 +646,17 @@ body a.icon-home:hover{
       <span class="n">target</span> <span class="o">=</span> <span class="n">target_proxy</span><span class="o">.</span><span class="n">to_target</span><span class="p">(</span><span class="n">build_graph</span><span class="p">)</span>
       <span class="n">build_graph</span><span class="o">.</span><span class="n">inject_target</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
 
+  <span class="k">def</span> <span class="nf">parse_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">relative_to</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">parse_spec</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">relative_to</span><span class="o">=</span><span class="n">relative_to</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">context</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Invalid spec {spec} found while &#39;</span>
+               <span class="s">&#39;parsing {context}: {exc}&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">spec</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">,</span> <span class="n">exc</span><span class="o">=</span><span class="n">e</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Invalid spec {spec}: {exc}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">spec</span><span class="p">,</span> <span class="n">exc</span><span class="o">=</span><span class="n">e</span><span class="p">)</span>
+      <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">InvalidTargetException</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
   <span class="k">def</span> <span class="nf">inject_address_closure_into_build_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                                               <span class="n">address</span><span class="p">,</span>
                                               <span class="n">build_graph</span><span class="p">,</span>
@@ -668,7 +679,9 @@ body a.icon-home:hover{
       <span class="n">build_graph</span><span class="o">.</span><span class="n">inject_target</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">dependencies</span><span class="o">=</span><span class="n">target_proxy</span><span class="o">.</span><span class="n">dependency_addresses</span><span class="p">)</span>
 
       <span class="k">for</span> <span class="n">traversable_spec</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">traversable_dependency_specs</span><span class="p">:</span>
-        <span class="n">spec_path</span><span class="p">,</span> <span class="n">target_name</span> <span class="o">=</span> <span class="n">parse_spec</span><span class="p">(</span><span class="n">traversable_spec</span><span class="p">,</span> <span class="n">relative_to</span><span class="o">=</span><span class="n">address</span><span class="o">.</span><span class="n">spec_path</span><span class="p">)</span>
+        <span class="n">spec_path</span><span class="p">,</span> <span class="n">target_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_spec</span><span class="p">(</span><span class="n">traversable_spec</span><span class="p">,</span>
+                                                 <span class="n">relative_to</span><span class="o">=</span><span class="n">address</span><span class="o">.</span><span class="n">spec_path</span><span class="p">,</span>
+                                                 <span class="n">context</span><span class="o">=</span><span class="s">&#39;dependencies of {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">address</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_inject_spec_closure_into_build_graph</span><span class="p">(</span><span class="n">spec_path</span><span class="p">,</span>
                                                    <span class="n">target_name</span><span class="p">,</span>
                                                    <span class="n">build_graph</span><span class="p">,</span>
@@ -680,7 +693,9 @@ body a.icon-home:hover{
           <span class="n">target</span><span class="o">.</span><span class="n">mark_transitive_invalidation_hash_dirty</span><span class="p">()</span>
 
       <span class="k">for</span> <span class="n">traversable_spec</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">traversable_specs</span><span class="p">:</span>
-        <span class="n">spec_path</span><span class="p">,</span> <span class="n">target_name</span> <span class="o">=</span> <span class="n">parse_spec</span><span class="p">(</span><span class="n">traversable_spec</span><span class="p">,</span> <span class="n">relative_to</span><span class="o">=</span><span class="n">address</span><span class="o">.</span><span class="n">spec_path</span><span class="p">)</span>
+        <span class="n">spec_path</span><span class="p">,</span> <span class="n">target_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_spec</span><span class="p">(</span><span class="n">traversable_spec</span><span class="p">,</span>
+                                                 <span class="n">relative_to</span><span class="o">=</span><span class="n">address</span><span class="o">.</span><span class="n">spec_path</span><span class="p">,</span>
+                                                 <span class="n">context</span><span class="o">=</span><span class="s">&#39;traversable specs of {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">address</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_inject_spec_closure_into_build_graph</span><span class="p">(</span><span class="n">spec_path</span><span class="p">,</span>
                                                    <span class="n">target_name</span><span class="p">,</span>
                                                    <span class="n">build_graph</span><span class="p">,</span>
@@ -688,7 +703,7 @@ body a.icon-home:hover{
         <span class="n">target</span><span class="o">.</span><span class="n">mark_transitive_invalidation_hash_dirty</span><span class="p">()</span>
 
   <span class="k">def</span> <span class="nf">inject_spec_closure_into_build_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">build_graph</span><span class="p">,</span> <span class="n">addresses_already_closed</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-    <span class="n">spec_path</span><span class="p">,</span> <span class="n">target_name</span> <span class="o">=</span> <span class="n">parse_spec</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+    <span class="n">spec_path</span><span class="p">,</span> <span class="n">target_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_spec</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_inject_spec_closure_into_build_graph</span><span class="p">(</span><span class="n">spec_path</span><span class="p">,</span>
                                                <span class="n">target_name</span><span class="p">,</span>
                                                <span class="n">build_graph</span><span class="p">,</span>
