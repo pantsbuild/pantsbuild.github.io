@@ -50,21 +50,17 @@
         <link rel="prev" title="Installing Pants" href="install.html"/>
  
 <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-39101739-2']);
-  _gaq.push(['_trackPageview']);
-</script>
-<script type="text/javascript">
   // In a plain template, we'd put this in the footer block.
   // In the read-the-docs template, there is no footer. So use jQuery ready:
   $(document).ready(function() {
     // Ping Google analytics
-    var ga = document.createElement('script');
-    ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ?
-              'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    ga.setAttribute('async', 'true');
-    $(document).append(ga);
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-39101739-2', 'auto');
+    ga('send', 'pageview');
 
     // Show the travis-ci status graphic
     $('.wy-breadcrumbs').append(
@@ -143,17 +139,16 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="JVMProjects.html#bundles-deploy-able-runnable-file-trees">Bundles: Deploy-able Runnable File Trees</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="python-readme.html">Using Pants for Python development</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="python-readme.html#why-use-pants-for-python-development">Why use Pants for Python development?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="python-readme.html#getting-started">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python-readme.html">Python Projects with Pants</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="python-readme.html#tl-dr-hello-world-with-pants-python">TL;DR - &#8216;Hello world!&#8217; with Pants Python</a></li>
 <li class="toctree-l2"><a class="reference internal" href="python-readme.html#describing-python-environments-in-pants">Describing Python environments in Pants</a></li>
-<li class="toctree-l2"><a class="reference internal" href="python-readme.html#building-your-first-pex">Building your first PEX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="python-readme.html#handling-python-requirement">Handling <tt class="docutils literal"><span class="pre">python_requirement</span></tt></a></li>
+<li class="toctree-l2"><a class="reference internal" href="python-readme.html#python-thrift-library"><tt class="docutils literal"><span class="pre">python_thrift_library</span></tt></a></li>
+<li class="toctree-l2"><a class="reference internal" href="python-readme.html#building-a-pex">Building a PEX</a></li>
 <li class="toctree-l2"><a class="reference internal" href="python-readme.html#environment-manipulation-with-pants-py">Environment manipulation with <cite>pants py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="python-readme.html#id1">Python Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="python-readme.html#python-binary-entry-point">python_binary entry_point</a></li>
+<li class="toctree-l2"><a class="reference internal" href="python-readme.html#python-tests">Python Tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="python-readme.html#manipulating-pex-behavior-with-environment-variables">Manipulating PEX behavior with environment variables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="python-readme.html#how-pex-files-work">How PEX files work</a></li>
-<li class="toctree-l2"><a class="reference internal" href="python-readme.html#advanced-pants-pex-features">Advanced Pants/PEX features</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="page.html">README Files and Markdown</a><ul>
@@ -233,6 +228,8 @@ body a.icon-home:hover{
 <li class="toctree-l1 current"><a class="current reference internal" href="">BUILD Dictionary</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#file">__file__</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#amount">Amount</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#android-binary">android_binary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#android-resources">android_resources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#annotation-processor">annotation_processor</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#artifact">artifact</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#benchmark">benchmark</a></li>
@@ -326,7 +323,6 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#run">run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#run-dirty">run-dirty</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#server">server</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#setup">setup</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#sort">sort</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#targets">targets</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#test">test</a></li>
@@ -393,6 +389,8 @@ targets; some are handy utilities.</p>
 <p><strong>All The Things</strong> |
 <a class="reference internal" href="#file">__file__</a> |
 <a class="reference internal" href="#amount">Amount</a> |
+<a class="reference internal" href="#android_binary">android_binary</a> |
+<a class="reference internal" href="#android_resources">android_resources</a> |
 <a class="reference internal" href="#annotation_processor">annotation_processor</a> |
 <a class="reference internal" href="#artifact">artifact</a> |
 <a class="reference internal" href="#benchmark">benchmark</a> |
@@ -488,6 +486,96 @@ targets; some are handy utilities.</p>
 <div><a class="reference external" href="https://github.com/twitter/commons/blob/master/src/python/twitter/common/quantity/__init__.py">Amount from twitter.commons.quantity</a>
 E.g., <tt class="docutils literal"><span class="pre">Amount(2,</span> <span class="pre">Time.MINUTES)</span></tt>.</div></blockquote>
 </div>
+<div class="section" id="android-binary">
+<span id="bdict-android-binary"></span><h2>android_binary<a class="headerlink" href="#android-binary" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="android_binary">
+<tt class="descname">android_binary</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#android_binary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produces an Android binary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
+build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
+<li><strong>sources</strong> (<tt class="docutils literal"><span class="pre">Fileset</span></tt> or list of strings.) &#8211; Source code files to compile. Paths are relative to the
+BUILD file&#8217;s directory.</li>
+<li><strong>excludes</strong> &#8211; List of <a class="reference internal" href="#bdict-exclude"><em>exclude</em></a>s
+to filter this target&#8217;s transitive dependencies against.</li>
+<li><strong>package</strong> (<em>string</em>) &#8211; Package name of app, e.g. &#8216;com.pants.examples.hello&#8217;</li>
+<li><strong>resources</strong> &#8211; name of directory containing the android resources. Set as &#8216;res&#8217; by default.</li>
+<li><strong>build_tools_version</strong> &#8211; API for the Build Tools (separate from SDK version).
+Defaults to the latest full release.</li>
+<li><strong>target_sdk_version</strong> &#8211; Version of the Android SDK the android target is built for</li>
+<li><strong>min_sdk_version</strong> &#8211; Earliest supported SDK by the android target</li>
+<li><strong>release_type</strong> &#8211; Which keystore is used to sign target: &#8216;debug&#8217; or &#8216;release&#8217;.
+Set as &#8216;debug&#8217; by default.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Implemented by <tt class="docutils literal"><span class="pre">pants.backend.android.targets.android_binary.AndroidBinary</span></tt></p>
+</dd></dl>
+
+<p><strong>Methods:</strong></p>
+<blockquote>
+<div><dl class="method">
+<dt id="with_description">
+<tt class="descname">with_description</tt><big>(</big><em>description</em><big>)</big><a class="headerlink" href="#with_description" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set a human-readable description of this target.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>description</strong> &#8211; Descriptive string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div></blockquote>
+</div>
+<div class="section" id="android-resources">
+<span id="bdict-android-resources"></span><h2>android_resources<a class="headerlink" href="#android-resources" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="android_resources">
+<tt class="descname">android_resources</tt><big>(</big><em>package=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#android_resources" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes android resources to generate R.java</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>package</strong> &#8211; java package (com.company.package) in which to generate the output java files.</li>
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Implemented by <tt class="docutils literal"><span class="pre">pants.backend.android.targets.android_resources.AndroidResources</span></tt></p>
+</dd></dl>
+
+<p><strong>Methods:</strong></p>
+<blockquote>
+<div><dl class="method">
+<dt>
+<tt class="descname">with_description</tt><big>(</big><em>description</em><big>)</big></dt>
+<dd><p>Set a human-readable description of this target.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>description</strong> &#8211; Descriptive string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div></blockquote>
+</div>
 <div class="section" id="annotation-processor">
 <span id="bdict-annotation-processor"></span><h2>annotation_processor<a class="headerlink" href="#annotation-processor" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
@@ -526,8 +614,8 @@ annotation processors this library exports.</li>
 <p><strong>Methods:</strong></p>
 <blockquote>
 <div><dl class="method">
-<dt id="with_description">
-<tt class="descname">with_description</tt><big>(</big><em>description</em><big>)</big><a class="headerlink" href="#with_description" title="Permalink to this definition">¶</a></dt>
+<dt>
+<tt class="descname">with_description</tt><big>(</big><em>description</em><big>)</big></dt>
 <dd><p>Set a human-readable description of this target.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1192,7 +1280,7 @@ to filter this target&#8217;s transitive dependencies against.</li>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
-build file defines the target <a class="reference internal" href="base.html#pants.base.address.Address" title="pants.base.address.Address"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.address.Address</span></tt></a>.</li>
+build file defines the target:class:<cite>pants.base.address.Address</cite>.</li>
 <li><strong>sources</strong> (<em>list of strings</em>) &#8211; A list of filenames representing the source code
 this library is compiled from.</li>
 <li><strong>provides</strong> (<em>Artifact</em>) &#8211; The <tt class="xref py py-class docutils literal"><span class="pre">pants.targets.artifact.Artifact</span></tt>
@@ -1617,8 +1705,11 @@ running the target. For more information about pex files see
 If None specified, drops into an interpreter by default.</li>
 <li><strong>dependencies</strong> (<em>list of targets</em>) &#8211; List of <a class="reference internal" href="base.html#pants.base.target.Target" title="pants.base.target.Target"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.target.Target</span></tt></a> instances
 this target depends on.</li>
-<li><strong>entry_point</strong> &#8211; the default entry point for this binary.  if None, drops into the entry
-point that is defined by source</li>
+<li><strong>entry_point</strong> (<em>string</em>) &#8211; the default entry point for this binary.  if None, drops into the entry
+point that is defined by source. Something like
+&#8220;pants.bin.pants_exe:main&#8221;, where &#8220;pants.bin.pants_exe&#8221; is the package
+name and &#8220;main&#8221; is the function name (if ommitted, the module is
+executed directly, presuming it has a <tt class="docutils literal"><span class="pre">__main.py__</span></tt>).</li>
 <li><strong>inherit_path</strong> &#8211; inherit the sys.path of the environment that this binary runs in</li>
 <li><strong>zip_safe</strong> &#8211; whether or not this binary is safe to run in compacted (zip-file) form</li>
 <li><strong>always_write_cache</strong> &#8211; whether or not the .deps cache of this PEX file should always
@@ -1675,7 +1766,11 @@ library is compiled from.</li>
 (it is
 recommended that your application uses the pkgutil package to access these
 resources in a .zip-module friendly way.)</li>
-<li><strong>dependencies</strong> &#8211; List of target specs.</li>
+<li><strong>dependencies</strong> (<em>List of target specs.</em>) &#8211; Other targets that this target depends on.
+These dependencies may
+be other <tt class="docutils literal"><span class="pre">python_library</span></tt>-like targets (<tt class="docutils literal"><span class="pre">python_library</span></tt>,
+<tt class="docutils literal"><span class="pre">python_thrift_library</span></tt>, <tt class="docutils literal"><span class="pre">python_antlr_library</span></tt> and so forth) or
+<tt class="docutils literal"><span class="pre">python_requirement_library</span></tt> targets.</li>
 <li><strong>provides</strong> &#8211; The <a class="reference internal" href="#bdict-setup-py"><em>setup_py</em></a> to publish that represents this
 target outside the repo.</li>
 <li><strong>compatibility</strong> &#8211; either a string or list of strings that represents
@@ -1716,6 +1811,21 @@ for details.</li>
 <dt id="python_requirement">
 <tt class="descname">python_requirement</tt><big>(</big><em>requirement</em>, <em>name=None</em>, <em>repository=None</em>, <em>version_filter=None</em>, <em>use_2to3=False</em>, <em>compatibility=None</em><big>)</big><a class="headerlink" href="#python_requirement" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pants wrapper around pkg_resources.Requirement</p>
+<p>Describes an external dependency as understood by <tt class="docutils literal"><span class="pre">easy_install</span></tt> or
+<tt class="docutils literal"><span class="pre">pip</span></tt>. It takes
+a single non-keyword argument of the <cite>Requirement</cite>-style string, e.g.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">python_requirement</span><span class="p">(</span><span class="s">&#39;django-celery&#39;</span><span class="p">)</span>
+<span class="n">python_requirement</span><span class="p">(</span><span class="s">&#39;tornado==2.2&#39;</span><span class="p">)</span>
+<span class="n">python_requirement</span><span class="p">(</span><span class="s">&#39;kombu&gt;=2.1.1,&lt;3.0&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Pants resolves the dependency <em>and its transitive closure</em>.
+For example, <cite>django-celery</cite> pulls also pulls down its
+dependencies: <cite>celery&gt;=2.5.1</cite>, <cite>django-picklefield&gt;=0.2.0</cite>, <cite>ordereddict</cite>,
+<cite>python-dateutil</cite>,
+<cite>kombu&gt;=2.1.1,&lt;3.0</cite>, <cite>anyjson&gt;=0.3.1</cite>, <cite>importlib</cite>, and <cite>amqplib&gt;=1.0</cite>.</p>
+<p>To let other Targets depend on this <tt class="docutils literal"><span class="pre">python_requirement</span></tt>, put it in a
+<a class="reference internal" href="#bdict-python-requirement-library"><em>python_requirement_library</em></a>.</p>
 <p>Implemented by <tt class="docutils literal"><span class="pre">pants.backend.python.python_requirement.PythonRequirement</span></tt></p>
 </dd></dl>
 

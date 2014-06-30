@@ -11,6 +11,8 @@ targets; some are handy utilities.
 **All The Things** |
 `__file__`_ |
 `Amount`_ |
+`android_binary`_ |
+`android_resources`_ |
 `annotation_processor`_ |
 `artifact`_ |
 `benchmark`_ |
@@ -123,6 +125,67 @@ Amount
 
 
 
+
+.. _bdict_android_binary:
+
+android_binary
+-------------------------------------------------------------------------------
+
+.. py:function:: android_binary(*args, **kwargs)
+
+ Produces an Android binary.
+
+
+ :param string name: The name of this target, which combined with this
+   build file defines the :doc:`target address <target_addresses>`.
+ :param sources: Source code files to compile. Paths are relative to the
+   BUILD file's directory.
+ :type sources: ``Fileset`` or list of strings.
+ :param excludes: List of :ref:`exclude <bdict_exclude>`\s
+   to filter this target's transitive dependencies against.
+ :param package: Package name of app, e.g. 'com.pants.examples.hello'
+ :type package: string
+ :param resources: name of directory containing the android resources. Set as 'res' by default.
+ :param build_tools_version: API for the Build Tools (separate from SDK version).
+   Defaults to the latest full release.
+ :param target_sdk_version: Version of the Android SDK the android target is built for
+ :param min_sdk_version:  Earliest supported SDK by the android target
+ :param release_type: Which keystore is used to sign target: 'debug' or 'release'.
+   Set as 'debug' by default.
+
+ Implemented by ``pants.backend.android.targets.android_binary.AndroidBinary``
+
+**Methods:**
+
+ .. py:method:: with_description(description)
+
+  Set a human-readable description of this target.
+  
+  :param description: Descriptive string
+
+.. _bdict_android_resources:
+
+android_resources
+-------------------------------------------------------------------------------
+
+.. py:function:: android_resources(package=None, **kwargs)
+
+ Processes android resources to generate R.java
+
+
+ :param package:  java package (com.company.package) in which to generate the output java files.
+ :param dependencies: Other targets that this target depends on.
+ :type dependencies: list of target specs
+
+ Implemented by ``pants.backend.android.targets.android_resources.AndroidResources``
+
+**Methods:**
+
+ .. py:method:: with_description(description)
+
+  Set a human-readable description of this target.
+  
+  :param description: Descriptive string
 
 .. _bdict_annotation_processor:
 
@@ -673,7 +736,7 @@ java_thrift_library
 
 
  :param string name: The name of this target, which combined with this
-   build file defines the target :class:`pants.base.address.Address`.
+   build file defines the target:class:`pants.base.address.Address`.
  :param sources: A list of filenames representing the source code
    this library is compiled from.
  :type sources: list of strings
@@ -1015,8 +1078,11 @@ python_binary
  :param dependencies: List of :class:`pants.base.target.Target` instances
    this target depends on.
  :type dependencies: list of targets
- :param entry_point: the default entry point for this binary.  if None, drops into the entry
-   point that is defined by source
+ :param string entry_point: the default entry point for this binary.  if None, drops into the entry
+   point that is defined by source. Something like
+   "pants.bin.pants_exe:main", where "pants.bin.pants_exe" is the package
+   name and "main" is the function name (if ommitted, the module is
+   executed directly, presuming it has a ``__main.py__``).
  :param inherit_path: inherit the sys.path of the environment that this binary runs in
  :param zip_safe: whether or not this binary is safe to run in compacted (zip-file) form
  :param always_write_cache: whether or not the .deps cache of this PEX file should always
@@ -1056,7 +1122,12 @@ python_library
     (it is
     recommended that your application uses the pkgutil package to access these
     resources in a .zip-module friendly way.)
- :param dependencies: List of target specs.
+ :param dependencies: Other targets that this target depends on.
+    These dependencies may
+    be other ``python_library``-like targets (``python_library``,
+    ``python_thrift_library``, ``python_antlr_library`` and so forth) or
+    ``python_requirement_library`` targets.
+ :type dependencies: List of target specs.
  :param provides:
    The :ref:`setup_py <bdict_setup_py>` to publish that represents this
    target outside the repo.
@@ -1087,6 +1158,23 @@ python_requirement
 .. py:function:: python_requirement(requirement, name=None, repository=None, version_filter=None, use_2to3=False, compatibility=None)
 
  Pants wrapper around pkg_resources.Requirement
+ 
+ Describes an external dependency as understood by ``easy_install`` or
+ ``pip``. It takes
+ a single non-keyword argument of the `Requirement`-style string, e.g. ::
+ 
+     python_requirement('django-celery')
+     python_requirement('tornado==2.2')
+     python_requirement('kombu>=2.1.1,<3.0')
+ 
+ Pants resolves the dependency *and its transitive closure*.
+ For example, `django-celery` pulls also pulls down its
+ dependencies: `celery>=2.5.1`, `django-picklefield>=0.2.0`, `ordereddict`,
+ `python-dateutil`,
+ `kombu>=2.1.1,<3.0`, `anyjson>=0.3.1`, `importlib`, and `amqplib>=1.0`.
+ 
+ To let other Targets depend on this ``python_requirement``, put it in a
+ :ref:`python_requirement_library <bdict_python_requirement_library>`.
 
 
 
