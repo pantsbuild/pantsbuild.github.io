@@ -588,14 +588,13 @@ Set as &#8216;debug&#8217; by default.</li>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
-build file defines the target <a class="reference internal" href="base.html#pants.base.address.Address" title="pants.base.address.Address"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.address.Address</span></tt></a>.</li>
-<li><strong>sources</strong> (<em>list of strings</em>) &#8211; A list of filenames representing the source code
-this library is compiled from.</li>
-<li><strong>provides</strong> (<em>Artifact</em>) &#8211; The <tt class="xref py py-class docutils literal"><span class="pre">pants.targets.artifact.Artifact</span></tt>
+build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
+<li><strong>sources</strong> (<tt class="docutils literal"><span class="pre">Fileset</span></tt> or list of strings) &#8211; Source code files to compile. Paths are relative to the
+BUILD file&#8217;s directory.</li>
+<li><strong>provides</strong> &#8211; The <tt class="docutils literal"><span class="pre">artifact</span></tt>
 to publish that represents this target outside the repo.</li>
-<li><strong>dependencies</strong> (<em>list of targets</em>) &#8211; List of <a class="reference internal" href="base.html#pants.base.target.Target" title="pants.base.target.Target"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.target.Target</span></tt></a> instances
-this target depends on.</li>
-<li><strong>excludes</strong> &#8211; List of <tt class="xref py py-class docutils literal"><span class="pre">pants.targets.exclude.Exclude</span></tt> instances
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
+<li><strong>excludes</strong> &#8211; List of <a class="reference internal" href="#bdict-exclude"><em>exclude</em></a>s
 to filter this target&#8217;s transitive dependencies against.</li>
 <li><strong>resources</strong> &#8211; An optional list of file paths (DEPRECATED) or
 <tt class="docutils literal"><span class="pre">resources</span></tt> targets (which in turn point to file paths). The paths
@@ -643,8 +642,7 @@ annotation processors this library exports.</li>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>org</strong> (<em>string</em>) &#8211; Organization of this artifact, or groupId in maven parlance.</li>
 <li><strong>name</strong> (<em>string</em>) &#8211; Name of the artifact, or artifactId in maven parlance.</li>
-<li><strong>repo</strong> &#8211; <tt class="xref py py-class docutils literal"><span class="pre">pants.targets.repository.Repository</span></tt>
-this artifact is published to.</li>
+<li><strong>repo</strong> &#8211; The <tt class="docutils literal"><span class="pre">repo</span></tt> this artifact is published to.</li>
 <li><strong>description</strong> (<em>string</em>) &#8211; Description of this artifact.</li>
 </ul>
 </td>
@@ -668,12 +666,11 @@ this artifact is published to.</li>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
-build file defines the target <a class="reference internal" href="base.html#pants.base.address.Address" title="pants.base.address.Address"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.address.Address</span></tt></a>.</li>
-<li><strong>sources</strong> (<em>list of strings</em>) &#8211; A list of filenames representing the source code
-this library is compiled from.</li>
-<li><strong>dependencies</strong> (<em>list of targets</em>) &#8211; List of <a class="reference internal" href="base.html#pants.base.target.Target" title="pants.base.target.Target"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.target.Target</span></tt></a> instances
-this target depends on.</li>
-<li><strong>excludes</strong> &#8211; One or more <tt class="xref py py-class docutils literal"><span class="pre">pants.targets.exclude.Exclude</span></tt> instances
+build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
+<li><strong>sources</strong> (<tt class="docutils literal"><span class="pre">Fileset</span></tt> or list of strings) &#8211; Source code files to compile. Paths are relative to the
+BUILD file&#8217;s directory.</li>
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
+<li><strong>excludes</strong> &#8211; List of <a class="reference internal" href="#bdict-exclude"><em>exclude</em></a>s
 to filter this target&#8217;s transitive dependencies against.</li>
 <li><strong>configurations</strong> (<em>tuple of strings</em>) &#8211; One or more ivy configurations to resolve for this target.
 This parameter is not intended for general use.</li>
@@ -813,9 +810,9 @@ as if depending upon the set of dependencies directly.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> &#8211; The name of this target, which combined with this
-build file defines the target <a class="reference internal" href="base.html#pants.base.address.Address" title="pants.base.address.Address"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.address.Address</span></tt></a>.</li>
-<li><strong>dependencies</strong> &#8211; List of target specs.</li>
+<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
+build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
 <li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See CheckExclusives
 for details.</li>
 </ul>
@@ -1013,12 +1010,8 @@ that can use source jars (as of 2013, just eclipse and idea goals).</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
-build file defines the target <a class="reference internal" href="base.html#pants.base.address.Address" title="pants.base.address.Address"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.address.Address</span></tt></a>.</li>
-<li><strong>jars</strong> &#8211; List of <a class="reference internal" href="base.html#pants.base.target.Target" title="pants.base.target.Target"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.target.Target</span></tt></a> instances
-this target depends on.</li>
-<li><strong>overrides</strong> &#8211; List of strings, each of which will be recursively resolved to
-any targets that provide artifacts. Those artifacts will override corresponding
-direct/transitive dependencies in the dependencies list.</li>
+build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
+<li><strong>jars</strong> &#8211; List of <a class="reference internal" href="#bdict-jar"><em>jar</em></a>s to depend upon.</li>
 <li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See CheckExclusives for details.</li>
 </ul>
 </td>
@@ -1058,12 +1051,11 @@ direct/transitive dependencies in the dependencies list.</li>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
-build file defines the target <a class="reference internal" href="base.html#pants.base.address.Address" title="pants.base.address.Address"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.address.Address</span></tt></a>.</li>
-<li><strong>sources</strong> (<em>list of strings</em>) &#8211; A list of filenames representing the source code
-this library is compiled from.</li>
-<li><strong>dependencies</strong> (<em>list of targets</em>) &#8211; List of <a class="reference internal" href="base.html#pants.base.target.Target" title="pants.base.target.Target"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.target.Target</span></tt></a> instances
-this target depends on.</li>
-<li><strong>excludes</strong> &#8211; List of <tt class="xref py py-class docutils literal"><span class="pre">pants.targets.exclude.Exclude</span></tt> instances
+build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
+<li><strong>sources</strong> (<tt class="docutils literal"><span class="pre">Fileset</span></tt> or list of strings) &#8211; Source code files to compile. Paths are relative to the
+BUILD file&#8217;s directory.</li>
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
+<li><strong>excludes</strong> &#8211; List of <a class="reference internal" href="#bdict-exclude"><em>exclude</em></a>s
 to filter this target&#8217;s transitive dependencies against.</li>
 <li><strong>resources</strong> &#8211; An optional list of file paths (DEPRECATED) or
 <tt class="docutils literal"><span class="pre">resources</span></tt> targets (which in turn point to file paths). The paths
@@ -1118,14 +1110,13 @@ is needed by this agent; <cite>False</cite> by default.</li>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
-build file defines the target <a class="reference internal" href="base.html#pants.base.address.Address" title="pants.base.address.Address"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.address.Address</span></tt></a>.</li>
-<li><strong>sources</strong> (<em>list of strings</em>) &#8211; A list of filenames representing the source code
-this library is compiled from.</li>
-<li><strong>provides</strong> (<em>Artifact</em>) &#8211; The <tt class="xref py py-class docutils literal"><span class="pre">pants.targets.artifact.Artifact</span></tt>
+build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
+<li><strong>sources</strong> (<tt class="docutils literal"><span class="pre">Fileset</span></tt> or list of strings) &#8211; Source code files to compile. Paths are relative to the
+BUILD file&#8217;s directory.</li>
+<li><strong>provides</strong> &#8211; The <tt class="docutils literal"><span class="pre">artifact</span></tt>
 to publish that represents this target outside the repo.</li>
-<li><strong>dependencies</strong> (<em>list of targets</em>) &#8211; List of <a class="reference internal" href="base.html#pants.base.target.Target" title="pants.base.target.Target"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.target.Target</span></tt></a> instances
-this target depends on.</li>
-<li><strong>excludes</strong> &#8211; List of <tt class="xref py py-class docutils literal"><span class="pre">pants.targets.exclude.Exclude</span></tt> instances
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
+<li><strong>excludes</strong> &#8211; List of <a class="reference internal" href="#bdict-exclude"><em>exclude</em></a>s
 to filter this target&#8217;s transitive dependencies against.</li>
 <li><strong>compiler</strong> &#8211; The name of the compiler used to compile the ANTLR files.
 Currently only supports &#8216;antlr3&#8217; and &#8216;antlr4&#8217;</li>
@@ -1175,14 +1166,14 @@ more sensible thing to bundle.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
-build file defines the target <a class="reference internal" href="base.html#pants.base.address.Address" title="pants.base.address.Address"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.address.Address</span></tt></a>.</li>
-<li><strong>sources</strong> (<em>list of strings</em>) &#8211; A list of filenames representing the source code
-this library is compiled from.</li>
-<li><strong>provides</strong> (<em>Artifact</em>) &#8211; The <tt class="xref py py-class docutils literal"><span class="pre">pants.targets.artifact.Artifact</span></tt>
+build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
+<li><strong>sources</strong> (<tt class="docutils literal"><span class="pre">Fileset</span></tt> or list of strings) &#8211; Source code files to compile. Paths are relative to the
+BUILD file&#8217;s directory.</li>
+<li><strong>provides</strong> &#8211; The <tt class="docutils literal"><span class="pre">artifact</span></tt>
 to publish that represents this target outside the repo.</li>
-<li><strong>dependencies</strong> (<em>list of targets</em>) &#8211; List of <a class="reference internal" href="base.html#pants.base.target.Target" title="pants.base.target.Target"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.target.Target</span></tt></a> instances
-this target depends on.</li>
-<li><strong>excludes</strong> &#8211; List of <tt class="xref py py-class docutils literal"><span class="pre">pants.targets.exclude.Exclude</span></tt> instances
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on. If your
+code <tt class="docutils literal"><span class="pre">import</span></tt>s code from other places, it depends on them.</li>
+<li><strong>excludes</strong> &#8211; List of <a class="reference internal" href="#bdict-exclude"><em>exclude</em></a>s
 to filter this target&#8217;s transitive dependencies against.</li>
 <li><strong>resources</strong> &#8211; An optional list of file paths (DEPRECATED) or
 <tt class="docutils literal"><span class="pre">resources</span></tt> targets (which in turn point to file paths). The paths
@@ -1226,14 +1217,13 @@ indicate text file resources to place in this module&#8217;s jar.</li>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
-build file defines the target <a class="reference internal" href="base.html#pants.base.address.Address" title="pants.base.address.Address"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.address.Address</span></tt></a>.</li>
-<li><strong>sources</strong> (<em>list of strings</em>) &#8211; A list of filenames representing the source code
-this library is compiled from.</li>
-<li><strong>provides</strong> (<em>Artifact</em>) &#8211; The <tt class="xref py py-class docutils literal"><span class="pre">pants.targets.artifact.Artifact</span></tt>
+build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
+<li><strong>sources</strong> (<tt class="docutils literal"><span class="pre">Fileset</span></tt> or list of strings) &#8211; Source code files to compile. Paths are relative to the
+BUILD file&#8217;s directory.</li>
+<li><strong>provides</strong> &#8211; The <tt class="docutils literal"><span class="pre">artifact</span></tt>
 to publish that represents this target outside the repo.</li>
-<li><strong>dependencies</strong> (<em>list of targets</em>) &#8211; List of <a class="reference internal" href="base.html#pants.base.target.Target" title="pants.base.target.Target"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.target.Target</span></tt></a> instances
-this target depends on.</li>
-<li><strong>excludes</strong> &#8211; List of <tt class="xref py py-class docutils literal"><span class="pre">pants.targets.exclude.Exclude</span></tt> instances
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
+<li><strong>excludes</strong> &#8211; List of <a class="reference internal" href="#bdict-exclude"><em>exclude</em></a>s
 to filter this target&#8217;s transitive dependencies against.</li>
 <li><strong>buildflags</strong> &#8211; Unused, and will be removed in a future release.</li>
 <li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See CheckExclusives for details.</li>
@@ -1280,14 +1270,13 @@ to filter this target&#8217;s transitive dependencies against.</li>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
-build file defines the target:class:<cite>pants.base.address.Address</cite>.</li>
-<li><strong>sources</strong> (<em>list of strings</em>) &#8211; A list of filenames representing the source code
-this library is compiled from.</li>
-<li><strong>provides</strong> (<em>Artifact</em>) &#8211; The <tt class="xref py py-class docutils literal"><span class="pre">pants.targets.artifact.Artifact</span></tt>
+build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
+<li><strong>sources</strong> (<tt class="docutils literal"><span class="pre">Fileset</span></tt> or list of strings) &#8211; Source code files to compile. Paths are relative to the
+BUILD file&#8217;s directory.</li>
+<li><strong>provides</strong> &#8211; The <tt class="docutils literal"><span class="pre">artifact</span></tt>
 to publish that represents this target outside the repo.</li>
-<li><strong>dependencies</strong> (<em>list of targets</em>) &#8211; List of <a class="reference internal" href="base.html#pants.base.target.Target" title="pants.base.target.Target"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.target.Target</span></tt></a> instances
-this target depends on.</li>
-<li><strong>excludes</strong> &#8211; List of <tt class="xref py py-class docutils literal"><span class="pre">pants.targets.exclude.Exclude</span></tt> instances
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
+<li><strong>excludes</strong> &#8211; List of <a class="reference internal" href="#bdict-exclude"><em>exclude</em></a>s
 to filter this target&#8217;s transitive dependencies against.</li>
 <li><strong>compiler</strong> &#8211; The compiler used to compile the thrift files; default is &#8216;thrift&#8217;
 (The apache thrift compiler).</li>
@@ -1327,24 +1316,23 @@ to filter this target&#8217;s transitive dependencies against.</li>
 <dt id="jaxb_library">
 <tt class="descname">jaxb_library</tt><big>(</big><em>package=None</em>, <em>language=u'java'</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#jaxb_library" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates a stub Java library from jaxb xsd files.</p>
-<p>Initialize the JaxbLibrary target, currently with a lot of copypasta for the payload.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>package</strong> &#8211; java package (com.company.package) in which to generate the output java files.
-If left unspecified, pants will attempt to guess it from the file path leading to the schema
-(xsd) file. This will only be accurate if the .xsd file is in the format
-.../com/company/package/schema.xsd; it is recommended that the package be manually defined in
-the BUILD file for robustness.</li>
-<li><strong>language</strong> &#8211; currently, anything other than &#8216;java&#8217; is unsupported (this is the default)</li>
-<li><strong>buildflags</strong> &#8211; currently unused Parameters inherited from JvmTarget.</li>
-<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this build file defines the
-target <a class="reference internal" href="base.html#pants.base.address.Address" title="pants.base.address.Address"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.address.Address</span></tt></a>.</li>
+If unspecified, Pants guesses it from the file path leading to the schema
+(xsd) file. This guess is accurate only if the .xsd file is in a path like
+<tt class="docutils literal"><span class="pre">.../com/company/package/schema.xsd</span></tt>. This guess is probably less
+accurate than setting the package explicitly in the <tt class="docutils literal"><span class="pre">BUILD</span></tt> file.</li>
+<li><strong>language</strong> (<em>string</em>) &#8211; only &#8216;java&#8217; is supported. Default: &#8216;java&#8217;</li>
+<li><strong>buildflags</strong> &#8211; (currently unused)</li>
+<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
+build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
 <li><strong>sources</strong> (<tt class="docutils literal"><span class="pre">FileSet</span></tt> or list of strings.) &#8211; A list of filenames representing the source code this library is compiled from.</li>
 <li><strong>dependencies</strong> (<em>List of target specs.</em>) &#8211; Other targets that this target depends on.</li>
-<li><strong>excludes</strong> &#8211; One or more <tt class="xref py py-class docutils literal"><span class="pre">pants.targets.exclude.Exclude</span></tt> instances to filter this
+<li><strong>excludes</strong> &#8211; List of <tt class="docutils literal"><span class="pre">exclude</span></tt>s to filter this
 target&#8217;s transitive dependencies against.</li>
 <li><strong>configurations</strong> (<em>tuple of strings</em>) &#8211; One or more ivy configurations to resolve for this target. This parameter
 is not intended for general use.</li>
@@ -1386,14 +1374,13 @@ is not intended for general use.</li>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
-build file defines the target <a class="reference internal" href="base.html#pants.base.address.Address" title="pants.base.address.Address"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.address.Address</span></tt></a>.</li>
-<li><strong>sources</strong> (<em>list of strings</em>) &#8211; A list of filenames representing the source code
-this library is compiled from.</li>
-<li><strong>provides</strong> (<em>Artifact</em>) &#8211; The <tt class="xref py py-class docutils literal"><span class="pre">pants.targets.artifact.Artifact</span></tt>
+build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
+<li><strong>sources</strong> (<tt class="docutils literal"><span class="pre">Fileset</span></tt> or list of strings) &#8211; Source code files to compile. Paths are relative to the
+BUILD file&#8217;s directory.</li>
+<li><strong>provides</strong> &#8211; The <tt class="docutils literal"><span class="pre">artifact</span></tt>
 to publish that represents this target outside the repo.</li>
-<li><strong>dependencies</strong> (<em>list of targets</em>) &#8211; List of <a class="reference internal" href="base.html#pants.base.target.Target" title="pants.base.target.Target"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.target.Target</span></tt></a> instances
-this target depends on.</li>
-<li><strong>excludes</strong> &#8211; List of <tt class="xref py py-class docutils literal"><span class="pre">pants.targets.exclude.Exclude</span></tt> instances
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
+<li><strong>excludes</strong> &#8211; List of <a class="reference internal" href="#bdict-exclude"><em>exclude</em></a>s
 to filter this target&#8217;s transitive dependencies against.</li>
 <li><strong>resources</strong> &#8211; An optional list of <tt class="docutils literal"><span class="pre">resources</span></tt> targets containing text
 file resources to place in this module&#8217;s jar.</li>
@@ -1440,10 +1427,10 @@ extra files like config files, startup scripts, etc.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
-build file defines the target <a class="reference internal" href="base.html#pants.base.address.Address" title="pants.base.address.Address"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.address.Address</span></tt></a>.</li>
-<li><strong>binary</strong> &#8211; A pointer to the <tt class="xref py py-class docutils literal"><span class="pre">pants.targets.jvm_binary.JvmBinary</span></tt>. that contains the
+build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
+<li><strong>binary</strong> (<em>string</em>) &#8211; Target spec of the <tt class="docutils literal"><span class="pre">jvm_binary</span></tt> that contains the
 app main.</li>
-<li><strong>bundles</strong> &#8211; One or more <tt class="xref py py-class docutils literal"><span class="pre">pants.targets.jvm_binary.Bundle</span></tt>&#8216;s
+<li><strong>bundles</strong> &#8211; One or more <tt class="docutils literal"><span class="pre">bundle</span></tt>s
 describing &#8220;extra files&#8221; that should be included with this app
 (e.g.: config files, startup scripts).</li>
 <li><strong>basename</strong> (<em>string</em>) &#8211; Name of this application, if different from the
@@ -1495,7 +1482,7 @@ this means the jar has a manifest specifying the main class.</li>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
-build file defines the target <a class="reference internal" href="base.html#pants.base.address.Address" title="pants.base.address.Address"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.address.Address</span></tt></a>.</li>
+build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
 <li><strong>main</strong> (<em>string</em>) &#8211; The name of the <tt class="docutils literal"><span class="pre">main</span></tt> class, e.g.,
 <tt class="docutils literal"><span class="pre">'com.pants.examples.hello.main.HelloMain'</span></tt>. This class may be
 present as the source of this target or depended-upon library.</li>
@@ -1504,16 +1491,17 @@ present as the source of this target or depended-upon library.</li>
 <li><strong>source</strong> (<em>string</em>) &#8211; Name of one <tt class="docutils literal"><span class="pre">.java</span></tt> or <tt class="docutils literal"><span class="pre">.scala</span></tt> file (a good
 place for a <tt class="docutils literal"><span class="pre">main</span></tt>).</li>
 <li><strong>resources</strong> &#8211; List of <tt class="docutils literal"><span class="pre">resource</span></tt>s to include in bundle.</li>
-<li><strong>dependencies</strong> &#8211; List of targets (probably <tt class="docutils literal"><span class="pre">java_library</span></tt> and
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Targets (probably <tt class="docutils literal"><span class="pre">java_library</span></tt> and
 <tt class="docutils literal"><span class="pre">scala_library</span></tt> targets) to &#8220;link&#8221; in.</li>
-<li><strong>excludes</strong> &#8211; List of <tt class="docutils literal"><span class="pre">exclude</span></tt>s to filter this target&#8217;s transitive
-dependencies against.</li>
-<li><strong>deploy_excludes</strong> &#8211; List of <tt class="docutils literal"><span class="pre">excludes</span></tt> to apply at deploy time.
+<li><strong>excludes</strong> &#8211; List of <a class="reference internal" href="#bdict-exclude"><em>exclude</em></a>s
+to filter this target&#8217;s transitive dependencies against.</li>
+<li><strong>deploy_excludes</strong> &#8211; List of <a class="reference internal" href="#bdict-exclude"><em>exclude</em></a>s to apply
+at deploy time.
 If you, for example, deploy a java servlet that has one version of
 <tt class="docutils literal"><span class="pre">servlet.jar</span></tt> onto a Tomcat environment that provides another version,
 they might conflict. <tt class="docutils literal"><span class="pre">deploy_excludes</span></tt> gives you a way to build your
 code but exclude the conflicting <tt class="docutils literal"><span class="pre">jar</span></tt> when deploying.</li>
-<li><strong>deploy_jar_rules</strong> (A <tt class="xref py py-class docutils literal"><span class="pre">twitter.pants.targets.JarRules</span></tt> specification.) &#8211; Rules for packaging this binary in a deploy jar.</li>
+<li><strong>deploy_jar_rules</strong> (<em>A JarRules specification.</em>) &#8211; Rules for packaging this binary in a deploy jar.</li>
 <li><strong>configurations</strong> (<em>tuple of strings</em>) &#8211; Ivy configurations to resolve for this target.
 This parameter is not intended for general use.</li>
 </ul>
@@ -1584,18 +1572,17 @@ wiki:</p>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>Multiple <tt class="xref py py-class docutils literal"><span class="pre">pants.backend.core.targets.WikiArtifact</span></tt> objects can be provided, to bind a page
-to multiple wikis.</p>
+<p>A <tt class="docutils literal"><span class="pre">page</span></tt> can have more than one <tt class="docutils literal"><span class="pre">wiki_artifact</span></tt> in its <tt class="docutils literal"><span class="pre">provides</span></tt>
+(there might be more than one place to publish it).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
-build file defines the target <a class="reference internal" href="base.html#pants.base.address.Address" title="pants.base.address.Address"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.address.Address</span></tt></a>.</li>
+build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
 <li><strong>source</strong> &#8211; Source of the page in markdown format.</li>
-<li><strong>dependencies</strong> (<em>list of targets</em>) &#8211; List of <a class="reference internal" href="base.html#pants.base.target.Target" title="pants.base.target.Target"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.target.Target</span></tt></a> instances
-this target depends on.</li>
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
 <li><strong>resources</strong> &#8211; An optional list of Resources objects.</li>
 </ul>
 </td>
@@ -1651,13 +1638,12 @@ this target depends on.</li>
 <li><strong>name</strong> &#8211; Name of library</li>
 <li><strong>module</strong> &#8211; everything beneath module is relative to this module name, None if root namespace</li>
 <li><strong>antlr_version</strong> &#8211; </li>
-<li><strong>sources</strong> (<em>list of strings</em>) &#8211; A list of filenames representing the source code
-this library is compiled from.</li>
+<li><strong>sources</strong> (<tt class="docutils literal"><span class="pre">Fileset</span></tt> or list of strings) &#8211; Source code files to compile. Paths are relative to the
+BUILD file&#8217;s directory.</li>
 <li><strong>resources</strong> &#8211; non-Python resources, e.g. templates, keys, other data (it is
 recommended that your application uses the pkgutil package to access these
 resources in a .zip-module friendly way.)</li>
-<li><strong>dependencies</strong> (<em>list of targets</em>) &#8211; List of <a class="reference internal" href="base.html#pants.base.target.Target" title="pants.base.target.Target"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.target.Target</span></tt></a> instances
-this target depends on.</li>
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
 <li><strong>exclusives</strong> (<em>dict</em>) &#8211; An optional dict of exclusives tags. See CheckExclusives for details.</li>
 </ul>
 </td>
@@ -1703,8 +1689,7 @@ running the target. For more information about pex files see
 <li><strong>name</strong> &#8211; target name</li>
 <li><strong>source</strong> &#8211; the python source file that becomes this binary&#8217;s __main__.
 If None specified, drops into an interpreter by default.</li>
-<li><strong>dependencies</strong> (<em>list of targets</em>) &#8211; List of <a class="reference internal" href="base.html#pants.base.target.Target" title="pants.base.target.Target"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.target.Target</span></tt></a> instances
-this target depends on.</li>
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
 <li><strong>entry_point</strong> (<em>string</em>) &#8211; the default entry point for this binary.  if None, drops into the entry
 point that is defined by source. Something like
 &#8220;pants.bin.pants_exe:main&#8221;, where &#8220;pants.bin.pants_exe&#8221; is the package
@@ -1761,12 +1746,13 @@ e.g. <tt class="docutils literal"><span class="pre">'CPython&gt;=3',</span> <spa
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>name</strong> &#8211; Name of library</li>
 <li><strong>sources</strong> &#8211; A list of filenames representing the source code this
-library is compiled from.</li>
+library is compiled from. Paths are relative to the
+BUILD file&#8217;s directory.</li>
 <li><strong>resources</strong> &#8211; non-Python resources, e.g. templates, keys, other data
 (it is
 recommended that your application uses the pkgutil package to access these
 resources in a .zip-module friendly way.)</li>
-<li><strong>dependencies</strong> (<em>List of target specs.</em>) &#8211; Other targets that this target depends on.
+<li><strong>dependencies</strong> (<em>List of target specs</em>) &#8211; Other targets that this target depends on.
 These dependencies may
 be other <tt class="docutils literal"><span class="pre">python_library</span></tt>-like targets (<tt class="docutils literal"><span class="pre">python_library</span></tt>,
 <tt class="docutils literal"><span class="pre">python_thrift_library</span></tt>, <tt class="docutils literal"><span class="pre">python_antlr_library</span></tt> and so forth) or
@@ -1873,11 +1859,10 @@ dependencies: <cite>celery&gt;=2.5.1</cite>, <cite>django-picklefield&gt;=0.2.0<
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>name</strong> &#8211; See PythonLibrary target</li>
-<li><strong>sources</strong> (<em>list of strings</em>) &#8211; A list of filenames representing the source code
-this library is compiled from.</li>
+<li><strong>sources</strong> (<tt class="docutils literal"><span class="pre">Fileset</span></tt> or list of strings) &#8211; Source code files to compile. Paths are relative to the
+BUILD file&#8217;s directory.</li>
 <li><strong>resources</strong> &#8211; See PythonLibrary target</li>
-<li><strong>dependencies</strong> (<em>list of targets</em>) &#8211; List of <a class="reference internal" href="base.html#pants.base.target.Target" title="pants.base.target.Target"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.target.Target</span></tt></a> instances
-this target depends on.</li>
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
 <li><strong>coverage</strong> &#8211; the module(s) whose coverage should be generated, e.g.
 &#8216;twitter.common.log&#8217; or [&#8216;twitter.common.log&#8217;, &#8216;twitter.common.http&#8217;]</li>
 <li><strong>exclusives</strong> (<em>dict</em>) &#8211; An optional dict of exclusives tags. See CheckExclusives for details.</li>
@@ -1919,13 +1904,13 @@ this target depends on.</li>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>name</strong> &#8211; Name of library</li>
-<li><strong>sources</strong> &#8211; thrift source files (If more than one tries to use the same
+<li><strong>sources</strong> (<tt class="docutils literal"><span class="pre">Fileset</span></tt> or list of strings. Paths are relative to the
+BUILD file&#8217;s directory.) &#8211; thrift source files (If more than one tries to use the same
 namespace, beware <a class="reference external" href="https://issues.apache.org/jira/browse/THRIFT-515">https://issues.apache.org/jira/browse/THRIFT-515</a>)</li>
 <li><strong>resources</strong> &#8211; non-Python resources, e.g. templates, keys, other data (it is
 recommended that your application uses the pkgutil package to access these
 resources in a .zip-module friendly way.)</li>
-<li><strong>dependencies</strong> (<em>list of targets</em>) &#8211; List of <a class="reference internal" href="base.html#pants.base.target.Target" title="pants.base.target.Target"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.target.Target</span></tt></a> instances
-this target depends on.</li>
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
 <li><strong>exclusives</strong> (<em>dict</em>) &#8211; An optional dict of exclusives tags. See CheckExclusives for details.</li>
 </ul>
 </td>
@@ -2008,9 +1993,9 @@ and friends API. In the <tt class="docutils literal"><span class="pre">jar</span
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
-build file defines the target <a class="reference internal" href="base.html#pants.base.address.Address" title="pants.base.address.Address"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.address.Address</span></tt></a>.</li>
-<li><strong>sources</strong> &#8211; A list of filenames representing the resources
-this library provides.</li>
+build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
+<li><strong>sources</strong> (<tt class="docutils literal"><span class="pre">Fileset</span></tt> or list of strings) &#8211; Files to &#8220;include&#8221;. Paths are relative to the
+BUILD file&#8217;s directory.</li>
 </ul>
 </td>
 </tr>
@@ -2075,17 +2060,20 @@ more sensible thing to bundle.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
-build file defines the target <a class="reference internal" href="base.html#pants.base.address.Address" title="pants.base.address.Address"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.address.Address</span></tt></a>.</li>
-<li><strong>sources</strong> (<em>list of strings</em>) &#8211; A list of filenames representing the source code
-this library is compiled from.</li>
-<li><strong>java_sources</strong> &#8211; <tt class="xref py py-class docutils literal"><span class="pre">pants.targets.java_library.JavaLibrary</span></tt> or list of
-JavaLibrary targets this library has a circular dependency on.
-Prefer using dependencies to express non-circular dependencies.</li>
-<li><strong>provides</strong> (<em>Artifact</em>) &#8211; The <tt class="xref py py-class docutils literal"><span class="pre">pants.targets.artifact.Artifact</span></tt>
+build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
+<li><strong>sources</strong> (<tt class="docutils literal"><span class="pre">Fileset</span></tt> or list of strings) &#8211; Source code files to compile. Paths are relative to the
+BUILD file&#8217;s directory.</li>
+<li><strong>java_sources</strong> (<em>target spec or list of target specs</em>) &#8211; Java libraries this library has a <em>circular</em>
+dependency on.
+If you don&#8217;t have the particular problem of circular dependencies
+forced by splitting interdependent java and scala into multiple targets,
+don&#8217;t use this at all.
+Prefer using <tt class="docutils literal"><span class="pre">dependencies</span></tt> to express non-circular dependencies.</li>
+<li><strong>provides</strong> &#8211; The <tt class="docutils literal"><span class="pre">artifact</span></tt>
 to publish that represents this target outside the repo.</li>
-<li><strong>dependencies</strong> (<em>list of targets</em>) &#8211; List of <a class="reference internal" href="base.html#pants.base.target.Target" title="pants.base.target.Target"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.target.Target</span></tt></a> instances
-this target depends on.</li>
-<li><strong>excludes</strong> &#8211; List of <tt class="xref py py-class docutils literal"><span class="pre">pants.targets.exclude.Exclude</span></tt> instances
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on. If your
+code <tt class="docutils literal"><span class="pre">import</span></tt>s code from other places, it depends on them.</li>
+<li><strong>excludes</strong> &#8211; List of <a class="reference internal" href="#bdict-exclude"><em>exclude</em></a>s
 to filter this target&#8217;s transitive dependencies against.</li>
 <li><strong>resources</strong> &#8211; An optional list of paths (DEPRECATED) or <tt class="docutils literal"><span class="pre">resources</span></tt>
 targets containing resources that belong on this library&#8217;s classpath.</li>
@@ -2129,16 +2117,15 @@ targets containing resources that belong on this library&#8217;s classpath.</li>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>name</strong> &#8211; The name of this module target, addressable via pants via the portion of the spec
 following the colon</li>
-<li><strong>sources</strong> (<em>list of strings</em>) &#8211; A list of filenames representing the source code
-this library is compiled from.</li>
-<li><strong>java_sources</strong> &#8211; <tt class="xref py py-class docutils literal"><span class="pre">pants.targets.java_library.JavaLibrary</span></tt> or list of
-JavaLibrary targets this library has a circular dependency on.
-Prefer using dependencies to express non-circular dependencies.</li>
-<li><strong>provides</strong> (<em>Artifact</em>) &#8211; The <tt class="xref py py-class docutils literal"><span class="pre">pants.targets.artifact.Artifact</span></tt>
+<li><strong>sources</strong> (<tt class="docutils literal"><span class="pre">Fileset</span></tt> or list of strings) &#8211; Source code files to compile. Paths are relative to the
+BUILD file&#8217;s directory.</li>
+<li><strong>java_sources</strong> (<em>target spec or list of target specs</em>) &#8211; Java libraries this library has a <em>circular</em>
+dependency on.
+Prefer using <tt class="docutils literal"><span class="pre">dependencies</span></tt> to express non-circular dependencies.</li>
+<li><strong>provides</strong> &#8211; The <tt class="docutils literal"><span class="pre">artifact</span></tt>
 to publish that represents this target outside the repo.</li>
-<li><strong>dependencies</strong> (<em>list of targets</em>) &#8211; List of <a class="reference internal" href="base.html#pants.base.target.Target" title="pants.base.target.Target"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.target.Target</span></tt></a> instances
-this target depends on.</li>
-<li><strong>excludes</strong> &#8211; List of <tt class="xref py py-class docutils literal"><span class="pre">pants.targets.exclude.Exclude</span></tt> instances
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
+<li><strong>excludes</strong> &#8211; List of <a class="reference internal" href="#bdict-exclude"><em>exclude</em></a>s
 to filter this target&#8217;s transitive dependencies against.</li>
 <li><strong>resources</strong> &#8211; An optional list of Resources that should be in this target&#8217;s classpath.</li>
 <li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See CheckExclusives for details.</li>
@@ -2188,17 +2175,16 @@ to filter this target&#8217;s transitive dependencies against.</li>
 spec following the colon - required.</li>
 <li><strong>classname</strong> &#8211; The fully qualified plugin class name - required.</li>
 <li><strong>plugin</strong> &#8211; The name of the plugin which defaults to name if not supplied.</li>
-<li><strong>sources</strong> (<em>list of strings</em>) &#8211; A list of filenames representing the source code
-this library is compiled from.</li>
-<li><strong>java_sources</strong> &#8211; <tt class="xref py py-class docutils literal"><span class="pre">pants.targets.java_library.JavaLibrary</span></tt> or list of
-JavaLibrary targets this library has a circular dependency on.
-Prefer using dependencies to express non-circular dependencies.</li>
-<li><strong>provides</strong> (<em>Artifact</em>) &#8211; The <tt class="xref py py-class docutils literal"><span class="pre">pants.targets.artifact.Artifact</span></tt>
+<li><strong>sources</strong> (<tt class="docutils literal"><span class="pre">Fileset</span></tt> or list of strings) &#8211; Source code files to compile. Paths are relative to the
+BUILD file&#8217;s directory.</li>
+<li><strong>java_sources</strong> (<em>target spec or list of target specs</em>) &#8211; Java libraries this library has a <em>circular</em>
+dependency on.
+Prefer using <tt class="docutils literal"><span class="pre">dependencies</span></tt> to express non-circular dependencies.</li>
+<li><strong>provides</strong> &#8211; The <tt class="docutils literal"><span class="pre">artifact</span></tt>
 to publish that represents this target outside the repo.</li>
-<li><strong>dependencies</strong> (<em>list of targets</em>) &#8211; List of <a class="reference internal" href="base.html#pants.base.target.Target" title="pants.base.target.Target"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.target.Target</span></tt></a> instances
-this target depends on.</li>
-<li><strong>excludes</strong> &#8211; List of <tt class="xref py py-class docutils literal"><span class="pre">pants.targets.exclude.Exclude</span></tt> instances
-to filter this target&#8217;s transitive dependencies against</li>
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
+<li><strong>excludes</strong> &#8211; List of <a class="reference internal" href="#bdict-exclude"><em>exclude</em></a>s
+to filter this target&#8217;s transitive dependencies against.</li>
 <li><strong>resources</strong> &#8211; An optional list of paths (DEPRECATED) or <tt class="docutils literal"><span class="pre">resources</span></tt>
 targets containing resources that belong on this library&#8217;s classpath.</li>
 <li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See CheckExclusives for details.</li>
@@ -2297,7 +2283,7 @@ E.g., <tt class="docutils literal"><span class="pre">Amount(2,</span> <span clas
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
-build file defines the target <a class="reference internal" href="base.html#pants.base.address.Address" title="pants.base.address.Address"><tt class="xref py py-class docutils literal"><span class="pre">pants.base.address.Address</span></tt></a>.</li>
+build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
 <li><strong>url_builder</strong> &#8211; Function that accepts a page target and an optional wiki config dict.</li>
 </ul>
 </td>
