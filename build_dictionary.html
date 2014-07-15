@@ -261,6 +261,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="#python-library">python_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#python-requirement">python_requirement</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#python-requirement-library">python_requirement_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#python-requirements">python_requirements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#python-test-suite">python_test_suite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#python-tests">python_tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#python-thrift-library">python_thrift_library</a></li>
@@ -303,6 +304,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#gen">gen</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#goals">goals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#gref-phase-idea">idea</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#imports">imports</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#invalidate">invalidate</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#jar">jar</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#killserver">killserver</a></li>
@@ -422,6 +424,7 @@ targets; some are handy utilities.</p>
 <a class="reference internal" href="#python_library">python_library</a> |
 <a class="reference internal" href="#python_requirement">python_requirement</a> |
 <a class="reference internal" href="#python_requirement_library">python_requirement_library</a> |
+<a class="reference internal" href="#python_requirements">python_requirements</a> |
 <a class="reference internal" href="#python-test-suite">python_test_suite</a> |
 <a class="reference internal" href="#python_tests">python_tests</a> |
 <a class="reference internal" href="#python_thrift_library">python_thrift_library</a> |
@@ -503,12 +506,10 @@ build file defines the <a class="reference internal" href="target_addresses.html
 BUILD file&#8217;s directory.</li>
 <li><strong>excludes</strong> &#8211; List of <a class="reference internal" href="#bdict-exclude"><em>exclude</em></a>s
 to filter this target&#8217;s transitive dependencies against.</li>
-<li><strong>package</strong> (<em>string</em>) &#8211; Package name of app, e.g. &#8216;com.pants.examples.hello&#8217;</li>
-<li><strong>resources</strong> &#8211; name of directory containing the android resources. Set as &#8216;res&#8217; by default.</li>
 <li><strong>build_tools_version</strong> &#8211; API for the Build Tools (separate from SDK version).
 Defaults to the latest full release.</li>
-<li><strong>target_sdk_version</strong> &#8211; Version of the Android SDK the android target is built for</li>
-<li><strong>min_sdk_version</strong> &#8211; Earliest supported SDK by the android target</li>
+<li><strong>manifest</strong> &#8211; path/to/file of &#8216;AndroidManifest.xml&#8217; (required name). Paths are relative
+to the BUILD file&#8217;s directory.</li>
 <li><strong>release_type</strong> &#8211; Which keystore is used to sign target: &#8216;debug&#8217; or &#8216;release&#8217;.
 Set as &#8216;debug&#8217; by default.</li>
 </ul>
@@ -541,14 +542,15 @@ Set as &#8216;debug&#8217; by default.</li>
 <span id="bdict-android-resources"></span><h2>android_resources<a class="headerlink" href="#android-resources" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="android_resources">
-<tt class="descname">android_resources</tt><big>(</big><em>package=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#android_resources" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">android_resources</tt><big>(</big><em>address=None</em>, <em>resource_dir=u'res'</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#android_resources" title="Permalink to this definition">¶</a></dt>
 <dd><p>Processes android resources to generate R.java</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>package</strong> &#8211; java package (com.company.package) in which to generate the output java files.</li>
+<li><strong>resource_dir</strong> (<em>string.</em>) &#8211; path/to/directory containing Android target&#8217;s resource files.
+Set to &#8216;res&#8217; by default.</li>
 <li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
 </ul>
 </td>
@@ -704,7 +706,7 @@ This parameter is not intended for general use.</li>
 <span id="bdict-bundle"></span><h2>bundle<a class="headerlink" href="#bundle" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt>
-<tt class="descname">bundle</tt><big>(</big><em>rel_path=None</em>, <em>mapper=None</em>, <em>relative_to=None</em><big>)</big></dt>
+<tt class="descname">bundle</tt><big>(</big><em>parse_context</em><big>)</big></dt>
 <dd><p>A set of files to include in an application bundle.</p>
 <p>To learn about application bundles, see <a class="reference internal" href="JVMProjects.html#jvm-bundles"><em>Bundles: Deploy-able Runnable File Trees</em></a>.
 Looking for Java-style resources accessible via the <tt class="docutils literal"><span class="pre">Class.getResource</span></tt> API?
@@ -725,23 +727,6 @@ in the bundle.</p>
 <span class="p">]</span>
 </pre></div>
 </div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>rel_path</strong> &#8211; Base path of the &#8220;source&#8221; file paths. By default, path of the
-BUILD file. Useful for assets that don&#8217;t live in the source code repo.</li>
-<li><strong>mapper</strong> &#8211; Function that takes a path string and returns a path string. Takes a path in
-the source tree, returns a path to use in the resulting bundle. By default, an identity
-mapper.</li>
-<li><strong>relative_to</strong> (<em>string</em>) &#8211; Set up a simple mapping from source path to bundle path.
-E.g., <tt class="docutils literal"><span class="pre">relative_to='common'</span></tt> removes that prefix from all files in the application bundle.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
 <p>Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.targets.jvm_binary.Bundle</span></tt></p>
 </dd></dl>
 
@@ -1209,7 +1194,7 @@ indicate text file resources to place in this module&#8217;s jar.</li>
 <span id="bdict-java-protobuf-library"></span><h2>java_protobuf_library<a class="headerlink" href="#java-protobuf-library" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="java_protobuf_library">
-<tt class="descname">java_protobuf_library</tt><big>(</big><em>buildflags=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#java_protobuf_library" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">java_protobuf_library</tt><big>(</big><em>buildflags=None</em>, <em>imports=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#java_protobuf_library" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates a stub Java library from protobuf IDL files.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1226,6 +1211,9 @@ to publish that represents this target outside the repo.</li>
 <li><strong>excludes</strong> &#8211; List of <a class="reference internal" href="#bdict-exclude"><em>exclude</em></a>s
 to filter this target&#8217;s transitive dependencies against.</li>
 <li><strong>buildflags</strong> &#8211; Unused, and will be removed in a future release.</li>
+<li><strong>imports</strong> &#8211; List of external <tt class="xref py py-class docutils literal"><span class="pre">pants.backend.jvm.targets.jar_dependency.JarDependency</span></tt>
+objects and addresses of <tt class="xref py py-class docutils literal"><span class="pre">pants.backend.jvm.targets.jar_library.JarLibrary</span></tt> targets
+which contain .proto definitions.</li>
 <li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See CheckExclusives for details.</li>
 </ul>
 </td>
@@ -1534,7 +1522,7 @@ This parameter is not intended for general use.</li>
 <span id="bdict-maven-layout"></span><h2>maven_layout<a class="headerlink" href="#maven-layout" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="maven_layout">
-<tt class="descname">maven_layout</tt><big>(</big><em>basedir=u''</em>, <em>rel_path=None</em><big>)</big><a class="headerlink" href="#maven_layout" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">maven_layout</tt><big>(</big><em>parse_context</em>, <em>basedir=u''</em><big>)</big><a class="headerlink" href="#maven_layout" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets up typical maven project source roots for all built-in pants target types.</p>
 <p>Shortcut for <tt class="docutils literal"><span class="pre">source_root('src/main/java',</span> <span class="pre">*java</span> <span class="pre">targets*)</span></tt>,
 <tt class="docutils literal"><span class="pre">source_root('src/main/python',</span> <span class="pre">*python</span> <span class="pre">targets*)</span></tt>, ...</p>
@@ -1821,7 +1809,20 @@ dependencies: <cite>celery&gt;=2.5.1</cite>, <cite>django-picklefield&gt;=0.2.0<
 <dl class="function">
 <dt id="python_requirement_library">
 <tt class="descname">python_requirement_library</tt><big>(</big><em>requirements=None</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#python_requirement_library" title="Permalink to this definition">¶</a></dt>
-<dd><p>Implemented by <tt class="docutils literal"><span class="pre">pants.backend.python.targets.python_requirement_library.PythonRequirementLibrary</span></tt></p>
+<dd><p>Named target for some pip requirements.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<em>string</em>) &#8211; The target name.</li>
+<li><strong>requirements</strong> (List of <a class="reference internal" href="#bdict-python-requirement"><em>python_requirement</em></a>s) &#8211; pip requirements</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Implemented by <tt class="docutils literal"><span class="pre">pants.backend.python.targets.python_requirement_library.PythonRequirementLibrary</span></tt></p>
 </dd></dl>
 
 <p><strong>Methods:</strong></p>
@@ -1841,6 +1842,43 @@ dependencies: <cite>celery&gt;=2.5.1</cite>, <cite>django-picklefield&gt;=0.2.0<
 </dd></dl>
 
 </div></blockquote>
+</div>
+<div class="section" id="python-requirements">
+<span id="bdict-python-requirements"></span><h2>python_requirements<a class="headerlink" href="#python-requirements" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="python_requirements">
+<tt class="descname">python_requirements</tt><big>(</big><em>parse_context</em>, <em>requirements_relpath=u'requirements.txt'</em><big>)</big><a class="headerlink" href="#python_requirements" title="Permalink to this definition">¶</a></dt>
+<dd><p>Translates a pip requirements file into an equivalent set of python_requirements</p>
+<p>If the <tt class="docutils literal"><span class="pre">requirements.txt</span></tt> file has lines <tt class="docutils literal"><span class="pre">foo&gt;=3.14</span></tt> and <tt class="docutils literal"><span class="pre">bar&gt;=2.7</span></tt>,
+then this is roughly like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">python_requirement_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="n">requirements</span><span class="o">=</span><span class="p">[</span>
+  <span class="n">python_requirement</span><span class="p">(</span><span class="s">&quot;foo&gt;=3.14&quot;</span><span class="p">),</span>
+<span class="p">])</span>
+<span class="n">python_requirement_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;bar&quot;</span><span class="p">,</span> <span class="n">requirements</span><span class="o">=</span><span class="p">[</span>
+  <span class="n">python_requirement</span><span class="p">(</span><span class="s">&quot;bar&gt;=2.7&quot;</span><span class="p">),</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+<p>NB some requirements files can&#8217;t be unambiguously translated; ie: multiple
+find links.  For these files a ValueError will be raised that points out the issue.</p>
+<p>See the requirements file spec here: <a class="reference external" href="http://www.pip-installer.org/en/1.1/requirements.html">http://www.pip-installer.org/en/1.1/requirements.html</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>parse_context</strong> &#8211; (Don&#8217;t specify this in a BUILD file; it&#8217;s set automatically)</li>
+<li><strong>requirements_relpath</strong> (<em>string</em>) &#8211; The relative path from the parent dir of the BUILD file using
+this function to the requirements file.  By default a <cite>requirements.txt</cite> file sibling to the
+BUILD file is assumed.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Implemented by <tt class="docutils literal"><span class="pre">pants.backend.python.python_requirements.python_requirements</span></tt></p>
+</dd></dl>
+
 </div>
 <div class="section" id="python-test-suite">
 <span id="bdict-python-test-suite"></span><h2>python_test_suite<a class="headerlink" href="#python-test-suite" title="Permalink to this headline">¶</a></h2>
@@ -2252,7 +2290,7 @@ with_binaries({&#8216;my-command&#8217;: pants(...)})</p>
 <span id="bdict-source-root"></span><h2>source_root<a class="headerlink" href="#source-root" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="source_root">
-<tt class="descname">source_root</tt><big>(</big><em>rel_path</em><big>)</big><a class="headerlink" href="#source_root" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">source_root</tt><big>(</big><em>parse_context</em><big>)</big><a class="headerlink" href="#source_root" title="Permalink to this definition">¶</a></dt>
 <dd><p>Allows registration of a source root for a set of targets.</p>
 <p>A source root is the base path sources for a particular language are found relative to.
 Generally compilers or interpreters for the source will expect sources relative to a base path

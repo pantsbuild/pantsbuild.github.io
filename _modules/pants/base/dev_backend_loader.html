@@ -260,6 +260,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-library">python_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-requirement">python_requirement</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-requirement-library">python_requirement_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-requirements">python_requirements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-test-suite">python_test_suite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-tests">python_tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-thrift-library">python_thrift_library</a></li>
@@ -302,6 +303,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#gen">gen</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#goals">goals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#gref-phase-idea">idea</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#imports">imports</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#invalidate">invalidate</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#jar">jar</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#killserver">killserver</a></li>
@@ -387,54 +389,69 @@ body a.icon-home:hover{
 
 <span class="kn">from</span> <span class="nn">twitter.common.collections</span> <span class="kn">import</span> <span class="n">OrderedSet</span>
 
+<span class="kn">from</span> <span class="nn">pants.base.build_configuration</span> <span class="kn">import</span> <span class="n">BuildConfiguration</span>
+<span class="kn">from</span> <span class="nn">pants.base.exceptions</span> <span class="kn">import</span> <span class="n">BackendConfigurationError</span>
 
-<div class="viewcode-block" id="load_backends_from_source"><a class="viewcode-back" href="../../../base.html#pants.base.dev_backend_loader.load_backends_from_source">[docs]</a><span class="k">def</span> <span class="nf">load_backends_from_source</span><span class="p">(</span><span class="n">build_file_parser</span><span class="p">,</span> <span class="n">additional_backends</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+<div class="viewcode-block" id="load_build_configuration_from_source"><a class="viewcode-back" href="../../../base.html#pants.base.dev_backend_loader.load_build_configuration_from_source">[docs]</a><span class="k">def</span> <span class="nf">load_build_configuration_from_source</span><span class="p">(</span><span class="n">additional_backends</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Installs pants backend packages to provide targets and helper functions to BUILD files and</span>
 <span class="sd">  goals to the cli.</span>
 
-<span class="sd">  :param build_file_parser: The parser to populate with target aliases and helper functions from</span>
-<span class="sd">    the backends.</span>
 <span class="sd">  :param additional_backends: An optional list of additional packages to load backends from.</span>
+<span class="sd">  :returns: a new :class:``pants.base.build_configuration.BuildConfiguration``.</span>
+<span class="sd">  :raises: :class:``pants.base.exceptions.BuildConfigurationError`` if there is a problem loading</span>
+<span class="sd">    the build configuration.</span>
 <span class="sd">  &quot;&quot;&quot;</span>
-  <span class="n">backend_packages</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s">&#39;pants.backend.core&#39;</span><span class="p">,</span>
-    <span class="s">&#39;pants.backend.python&#39;</span><span class="p">,</span>
-    <span class="s">&#39;pants.backend.jvm&#39;</span><span class="p">,</span>
-    <span class="s">&#39;pants.backend.codegen&#39;</span><span class="p">,</span>
-    <span class="s">&#39;pants.backend.maven_layout&#39;</span><span class="p">,</span>
-    <span class="s">&#39;pants.backend.android&#39;</span><span class="p">,</span>
-  <span class="p">]</span>
+  <span class="n">build_configuration</span> <span class="o">=</span> <span class="n">BuildConfiguration</span><span class="p">()</span>
+  <span class="n">backend_packages</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;pants.backend.core&#39;</span><span class="p">,</span>
+                      <span class="s">&#39;pants.backend.python&#39;</span><span class="p">,</span>
+                      <span class="s">&#39;pants.backend.jvm&#39;</span><span class="p">,</span>
+                      <span class="s">&#39;pants.backend.codegen&#39;</span><span class="p">,</span>
+                      <span class="s">&#39;pants.backend.maven_layout&#39;</span><span class="p">,</span>
+                      <span class="s">&#39;pants.backend.android&#39;</span><span class="p">]</span>
+
   <span class="k">for</span> <span class="n">backend_package</span> <span class="ow">in</span> <span class="n">OrderedSet</span><span class="p">(</span><span class="n">backend_packages</span> <span class="o">+</span> <span class="p">(</span><span class="n">additional_backends</span> <span class="ow">or</span> <span class="p">[])):</span>
-    <span class="n">module</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="n">backend_package</span> <span class="o">+</span> <span class="s">&#39;.register&#39;</span><span class="p">,</span>
+    <span class="n">load_backend</span><span class="p">(</span><span class="n">build_configuration</span><span class="p">,</span> <span class="n">backend_package</span><span class="p">)</span>
+
+  <span class="k">return</span> <span class="n">build_configuration</span>
+
+</div>
+<div class="viewcode-block" id="load_backend"><a class="viewcode-back" href="../../../base.html#pants.base.dev_backend_loader.load_backend">[docs]</a><span class="k">def</span> <span class="nf">load_backend</span><span class="p">(</span><span class="n">build_configuration</span><span class="p">,</span> <span class="n">backend_package</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Installs the given backend package into the build configuration.</span>
+
+<span class="sd">  :param build_configuration the :class:``pants.base.build_configuration.BuildConfiguration`` to</span>
+<span class="sd">    install the backend plugin into.</span>
+<span class="sd">  :param string backend_package: the package name containing the backend plugin register module that</span>
+<span class="sd">    provides the plugin entrypoints.</span>
+<span class="sd">  :raises: :class:``pants.base.exceptions.BuildConfigurationError`` if there is a problem loading</span>
+<span class="sd">    the build configuration.&quot;&quot;&quot;</span>
+  <span class="n">backend_module</span> <span class="o">=</span> <span class="n">backend_package</span> <span class="o">+</span> <span class="s">&#39;.register&#39;</span>
+  <span class="k">try</span><span class="p">:</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="n">backend_module</span><span class="p">,</span>
                         <span class="p">{},</span>  <span class="c"># globals</span>
                         <span class="p">{},</span>  <span class="c"># locals</span>
-                        <span class="p">[</span>
-                          <span class="s">&#39;target_aliases&#39;</span><span class="p">,</span>
-                          <span class="s">&#39;object_aliases&#39;</span><span class="p">,</span>
-                          <span class="s">&#39;applicative_path_relative_util_aliases&#39;</span><span class="p">,</span>
-                          <span class="s">&#39;partial_path_relative_util_aliases&#39;</span><span class="p">,</span>
-                          <span class="s">&#39;target_creation_utils&#39;</span><span class="p">,</span>
-                          <span class="s">&#39;commands&#39;</span><span class="p">,</span>
-                          <span class="s">&#39;goals&#39;</span><span class="p">,</span>
-                        <span class="p">])</span>
-    <span class="c">#TODO (tdesai) ISSUE-191 Consolidate all the 5 in two extension points.</span>
-    <span class="k">for</span> <span class="n">alias</span><span class="p">,</span> <span class="n">target_type</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">target_aliases</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-      <span class="n">build_file_parser</span><span class="o">.</span><span class="n">register_target_alias</span><span class="p">(</span><span class="n">alias</span><span class="p">,</span> <span class="n">target_type</span><span class="p">)</span>
+                        <span class="p">[</span><span class="s">&#39;build_file_aliases&#39;</span><span class="p">,</span>
+                         <span class="s">&#39;register_commands&#39;</span><span class="p">,</span>
+                         <span class="s">&#39;register_goals&#39;</span><span class="p">])</span>
+  <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="n">BackendConfigurationError</span><span class="p">(</span><span class="s">&#39;Failed to load the {backend} backend: {error}&#39;</span>
+                                    <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">backend</span><span class="o">=</span><span class="n">backend_module</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">e</span><span class="p">))</span>
 
-    <span class="k">for</span> <span class="n">alias</span><span class="p">,</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">object_aliases</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-      <span class="n">build_file_parser</span><span class="o">.</span><span class="n">register_exposed_object</span><span class="p">(</span><span class="n">alias</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span>
+  <span class="k">def</span> <span class="nf">invoke_entrypoint</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="n">entrypoint</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="bp">None</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">entrypoint</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="n">BackendConfigurationError</span><span class="p">(</span>
+          <span class="s">&#39;Entrypoint {entrypoint} in {backend} must be a zero-arg callable: {error}&#39;</span>
+          <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">entrypoint</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend_module</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">e</span><span class="p">))</span>
 
-    <span class="k">for</span> <span class="n">alias</span><span class="p">,</span> <span class="n">util</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">applicative_path_relative_util_aliases</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-      <span class="n">build_file_parser</span><span class="o">.</span><span class="n">register_applicative_path_relative_util</span><span class="p">(</span><span class="n">alias</span><span class="p">,</span> <span class="n">util</span><span class="p">)</span>
+  <span class="n">build_file_aliases</span> <span class="o">=</span> <span class="n">invoke_entrypoint</span><span class="p">(</span><span class="s">&#39;build_file_aliases&#39;</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">build_file_aliases</span><span class="p">:</span>
+    <span class="n">build_configuration</span><span class="o">.</span><span class="n">register_aliases</span><span class="p">(</span><span class="n">build_file_aliases</span><span class="p">)</span>
 
-    <span class="k">for</span> <span class="n">alias</span><span class="p">,</span> <span class="n">util</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">partial_path_relative_util_aliases</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-      <span class="n">build_file_parser</span><span class="o">.</span><span class="n">register_partial_path_relative_util</span><span class="p">(</span><span class="n">alias</span><span class="p">,</span> <span class="n">util</span><span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">alias</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">target_creation_utils</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-      <span class="n">build_file_parser</span><span class="o">.</span><span class="n">register_target_creation_utils</span><span class="p">(</span><span class="n">alias</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span>
-
-    <span class="n">module</span><span class="o">.</span><span class="n">register_commands</span><span class="p">()</span>
-    <span class="n">module</span><span class="o">.</span><span class="n">register_goals</span><span class="p">()</span></div>
+  <span class="n">invoke_entrypoint</span><span class="p">(</span><span class="s">&#39;register_commands&#39;</span><span class="p">)</span>
+  <span class="n">invoke_entrypoint</span><span class="p">(</span><span class="s">&#39;register_goals&#39;</span><span class="p">)</span></div>
 </pre></div>
 
           <footer>

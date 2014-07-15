@@ -260,6 +260,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-library">python_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-requirement">python_requirement</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-requirement-library">python_requirement_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-requirements">python_requirements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-test-suite">python_test_suite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-tests">python_tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-thrift-library">python_thrift_library</a></li>
@@ -302,6 +303,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#gen">gen</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#goals">goals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#gref-phase-idea">idea</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#imports">imports</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#invalidate">invalidate</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#jar">jar</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#killserver">killserver</a></li>
@@ -387,6 +389,8 @@ body a.icon-home:hover{
 
 <span class="kn">import</span> <span class="nn">os</span>
 
+<span class="kn">from</span> <span class="nn">twitter.common.collections</span> <span class="kn">import</span> <span class="n">OrderedSet</span>
+
 <span class="kn">from</span> <span class="nn">pants.base.address</span> <span class="kn">import</span> <span class="n">BuildFileAddress</span><span class="p">,</span> <span class="n">parse_spec</span>
 <span class="kn">from</span> <span class="nn">pants.base.build_file</span> <span class="kn">import</span> <span class="n">BuildFile</span>
 
@@ -403,13 +407,44 @@ body a.icon-home:hover{
 <span class="sd">  Is a valid command line spec even though its not a valid BUILD file spec.  Its normalized to::</span>
 
 <span class="sd">    src::</span>
+
+<span class="sd">  If you have a list of specs to consume, you can also indicate that some targets should be</span>
+<span class="sd">  subtracted from the set as follows::</span>
+
+<span class="sd">     src::  ^src/broken:test</span>
+
+<span class="sd">  The above expression would choose every target under src except for src/broken:test</span>
 <span class="sd">  &quot;&quot;&quot;</span>
 
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root_dir</span><span class="p">,</span> <span class="n">build_file_parser</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_root_dir</span> <span class="o">=</span> <span class="n">root_dir</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_build_file_parser</span> <span class="o">=</span> <span class="n">build_file_parser</span>
 
-  <span class="k">def</span> <span class="nf">parse_addresses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">):</span>
+<div class="viewcode-block" id="CmdLineSpecParser.parse_addresses"><a class="viewcode-back" href="../../../base.html#pants.base.cmd_line_spec_parser.CmdLineSpecParser.parse_addresses">[docs]</a>  <span class="k">def</span> <span class="nf">parse_addresses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">specs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Process a list of command line specs and perform expansion.  This method can expand a list</span>
+<span class="sd">    of command line specs, some of which may be subtracted from the  return value if they include</span>
+<span class="sd">    the prefix &#39;^&#39;</span>
+<span class="sd">    :param spec_list: either a single spec string or a list of spec strings.</span>
+<span class="sd">    :return: a generator of specs parsed into addresses.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">specs</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
+      <span class="n">specs</span> <span class="o">=</span> <span class="p">[</span> <span class="n">specs</span> <span class="p">]</span>
+
+    <span class="n">addresses</span> <span class="o">=</span> <span class="n">OrderedSet</span><span class="p">()</span>
+    <span class="n">addresses_to_remove</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">specs</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">spec</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;^&#39;</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">address</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_spec</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s">&#39;^&#39;</span><span class="p">)):</span>
+          <span class="n">addresses_to_remove</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">address</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">address</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_spec</span><span class="p">(</span><span class="n">spec</span><span class="p">):</span>
+          <span class="n">addresses</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">address</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">addresses</span> <span class="o">-</span> <span class="n">addresses_to_remove</span><span class="p">:</span>
+      <span class="k">yield</span> <span class="n">result</span>
+</div>
+  <span class="k">def</span> <span class="nf">_parse_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">normalize_spec_path</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
       <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_root_dir</span><span class="p">,</span> <span class="n">path</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s">&#39;//&#39;</span><span class="p">))</span>
       <span class="n">normalized</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_root_dir</span><span class="p">)</span>

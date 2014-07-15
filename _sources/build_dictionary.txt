@@ -44,6 +44,7 @@ targets; some are handy utilities.
 `python_library`_ |
 `python_requirement`_ |
 `python_requirement_library`_ |
+`python_requirements`_ |
 `python_test_suite`_ |
 `python_tests`_ |
 `python_thrift_library`_ |
@@ -143,13 +144,10 @@ android_binary
  :type sources: ``Fileset`` or list of strings.
  :param excludes: List of :ref:`exclude <bdict_exclude>`\s
    to filter this target's transitive dependencies against.
- :param package: Package name of app, e.g. 'com.pants.examples.hello'
- :type package: string
- :param resources: name of directory containing the android resources. Set as 'res' by default.
  :param build_tools_version: API for the Build Tools (separate from SDK version).
    Defaults to the latest full release.
- :param target_sdk_version: Version of the Android SDK the android target is built for
- :param min_sdk_version:  Earliest supported SDK by the android target
+ :param manifest: path/to/file of 'AndroidManifest.xml' (required name). Paths are relative
+   to the BUILD file's directory.
  :param release_type: Which keystore is used to sign target: 'debug' or 'release'.
    Set as 'debug' by default.
 
@@ -168,12 +166,14 @@ android_binary
 android_resources
 -------------------------------------------------------------------------------
 
-.. py:function:: android_resources(package=None, **kwargs)
+.. py:function:: android_resources(address=None, resource_dir=u'res', **kwargs)
 
  Processes android resources to generate R.java
 
 
- :param package:  java package (com.company.package) in which to generate the output java files.
+ :param resource_dir: path/to/directory containing Android target's resource files.
+   Set to 'res' by default.
+ :type resource_dir: string.
  :param dependencies: Other targets that this target depends on.
  :type dependencies: list of target specs
 
@@ -285,7 +285,7 @@ benchmark
 bundle
 -------------------------------------------------------------------------------
 
-.. py:function:: bundle(rel_path=None, mapper=None, relative_to=None)
+.. py:function:: bundle(parse_context)
 
  A set of files to include in an application bundle.
  
@@ -310,13 +310,6 @@ bundle
    ]
 
 
- :param rel_path: Base path of the "source" file paths. By default, path of the
-   BUILD file. Useful for assets that don't live in the source code repo.
- :param mapper: Function that takes a path string and returns a path string. Takes a path in
-   the source tree, returns a path to use in the resulting bundle. By default, an identity
-   mapper.
- :param string relative_to: Set up a simple mapping from source path to bundle path.
-   E.g., ``relative_to='common'`` removes that prefix from all files in the application bundle.
 
  Implemented by ``pants.backend.jvm.targets.jvm_binary.Bundle``
 
@@ -671,7 +664,7 @@ java_library
 java_protobuf_library
 -------------------------------------------------------------------------------
 
-.. py:function:: java_protobuf_library(buildflags=None, **kwargs)
+.. py:function:: java_protobuf_library(buildflags=None, imports=None, **kwargs)
 
  Generates a stub Java library from protobuf IDL files.
 
@@ -688,6 +681,9 @@ java_protobuf_library
  :param excludes: List of :ref:`exclude <bdict_exclude>`\s
    to filter this target's transitive dependencies against.
  :param buildflags: Unused, and will be removed in a future release.
+ :param imports: List of external :class:`pants.backend.jvm.targets.jar_dependency.JarDependency`
+   objects and addresses of :class:`pants.backend.jvm.targets.jar_library.JarLibrary` targets
+   which contain .proto definitions.
  :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
 
  Implemented by ``pants.backend.codegen.targets.java_protobuf_library.JavaProtobufLibrary``
@@ -920,7 +916,7 @@ jvm_binary
 maven_layout
 -------------------------------------------------------------------------------
 
-.. py:function:: maven_layout(basedir=u'', rel_path=None)
+.. py:function:: maven_layout(parse_context, basedir=u'')
 
 
 
@@ -1169,8 +1165,12 @@ python_requirement_library
 
 .. py:function:: python_requirement_library(requirements=None, *args, **kwargs)
 
+ Named target for some pip requirements.
 
 
+ :param string name: The target name.
+ :param requirements: pip requirements
+ :type requirements: List of :ref:`python_requirement <bdict_python_requirement>`\s
 
  Implemented by ``pants.backend.python.targets.python_requirement_library.PythonRequirementLibrary``
 
@@ -1181,6 +1181,40 @@ python_requirement_library
   Set a human-readable description of this target.
   
   :param description: Descriptive string
+
+.. _bdict_python_requirements:
+
+python_requirements
+-------------------------------------------------------------------------------
+
+.. py:function:: python_requirements(parse_context, requirements_relpath=u'requirements.txt')
+
+
+
+ Translates a pip requirements file into an equivalent set of python_requirements
+ 
+ If the ``requirements.txt`` file has lines ``foo>=3.14`` and ``bar>=2.7``,
+ then this is roughly like::
+ 
+   python_requirement_library(name="foo", requirements=[
+     python_requirement("foo>=3.14"),
+   ])
+   python_requirement_library(name="bar", requirements=[
+     python_requirement("bar>=2.7"),
+   ])
+ 
+ NB some requirements files can't be unambiguously translated; ie: multiple
+ find links.  For these files a ValueError will be raised that points out the issue.
+ 
+ See the requirements file spec here: http://www.pip-installer.org/en/1.1/requirements.html
+ 
+ :param parse_context: (Don't specify this in a BUILD file; it's set automatically)
+ :param string requirements_relpath: The relative path from the parent dir of the BUILD file using
+     this function to the requirements file.  By default a `requirements.txt` file sibling to the
+     BUILD file is assumed.
+
+ Implemented by ``pants.backend.python.python_requirements.python_requirements``
+
 
 .. _bdict_python_test_suite:
 
@@ -1526,7 +1560,7 @@ setup_py
 source_root
 -------------------------------------------------------------------------------
 
-.. py:function:: source_root(rel_path)
+.. py:function:: source_root(parse_context)
 
  Allows registration of a source root for a set of targets.
  

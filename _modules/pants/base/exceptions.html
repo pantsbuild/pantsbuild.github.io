@@ -260,6 +260,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-library">python_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-requirement">python_requirement</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-requirement-library">python_requirement_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-requirements">python_requirements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-test-suite">python_test_suite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-tests">python_tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../build_dictionary.html#python-thrift-library">python_thrift_library</a></li>
@@ -302,6 +303,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#gen">gen</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#goals">goals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#gref-phase-idea">idea</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#imports">imports</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#invalidate">invalidate</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#jar">jar</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../goals_reference.html#killserver">killserver</a></li>
@@ -390,12 +392,10 @@ body a.icon-home:hover{
 
 <span class="nd">@manual.builddict</span><span class="p">()</span>
 <div class="viewcode-block" id="TaskError"><a class="viewcode-back" href="../../../base.html#pants.base.exceptions.TaskError">[docs]</a><span class="k">class</span> <span class="nc">TaskError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Raised to indicate a task has failed.</span>
+  <span class="sd">&quot;&quot;&quot;Indicates a task has failed.&quot;&quot;&quot;</span>
 
-<span class="sd">    :param int exit_code: an optional exit code (1, by default)</span>
-<span class="sd">  &quot;&quot;&quot;</span>
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;:param int exit_code: an optional exit code (1, by default)&quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_exit_code</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;exit_code&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
     <span class="nb">super</span><span class="p">(</span><span class="n">TaskError</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -406,10 +406,24 @@ body a.icon-home:hover{
 </div>
 <span class="nd">@manual.builddict</span><span class="p">()</span>
 <div class="viewcode-block" id="TargetDefinitionException"><a class="viewcode-back" href="../../../base.html#pants.base.exceptions.TargetDefinitionException">[docs]</a><span class="k">class</span> <span class="nc">TargetDefinitionException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;Thrown on errors in target definitions.&quot;&quot;&quot;</span>
+  <span class="sd">&quot;&quot;&quot;Indicates an invalid target definition.&quot;&quot;&quot;</span>
 
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
-    <span class="nb">super</span><span class="p">(</span><span class="ne">Exception</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="s">&#39;Error with </span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">msg</span><span class="p">))</span></div>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :param target: the target in question</span>
+<span class="sd">    :param string msg: a description of the target misconfiguration</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">super</span><span class="p">(</span><span class="ne">Exception</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="s">&#39;Invalid target </span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">msg</span><span class="p">))</span>
+
+</div>
+<span class="nd">@manual.builddict</span><span class="p">()</span>
+<div class="viewcode-block" id="BuildConfigurationError"><a class="viewcode-back" href="../../../base.html#pants.base.exceptions.BuildConfigurationError">[docs]</a><span class="k">class</span> <span class="nc">BuildConfigurationError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Indicates an error in a pants installation&#39;s configuration.&quot;&quot;&quot;</span>
+
+</div>
+<span class="nd">@manual.builddict</span><span class="p">()</span>
+<div class="viewcode-block" id="BackendConfigurationError"><a class="viewcode-back" href="../../../base.html#pants.base.exceptions.BackendConfigurationError">[docs]</a><span class="k">class</span> <span class="nc">BackendConfigurationError</span><span class="p">(</span><span class="n">BuildConfigurationError</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Indicates a plugin backend with a missing or malformed register module.&quot;&quot;&quot;</span></div>
 </pre></div>
 
           <footer>
