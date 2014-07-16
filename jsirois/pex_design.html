@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Release Process &mdash; pants 0.1 documentation</title>
+  <title>PEX Design &mdash; pants 0.1 documentation</title>
   
 
   
@@ -46,9 +46,9 @@
 
   
     <link rel="top" title="pants 0.1 documentation" href="index.html"/>
-        <link rel="up" title="Pants Developer Center" href="dev.html"/>
-        <link rel="next" title="About the documentation" href="docs.html"/>
-        <link rel="prev" title="Base Reference" href="base.html"/>
+        <link rel="up" title="Python Projects with Pants" href="python-readme.html"/>
+        <link rel="next" title="Using Pants for Python development, 2014 and Earlier" href="python_old.html"/>
+        <link rel="prev" title="Python Projects with Pants" href="python-readme.html"/>
  
 <script type="text/javascript">
   // In a plain template, we'd put this in the footer block.
@@ -115,7 +115,7 @@ body a.icon-home:hover{
       <div class="wy-menu wy-menu-vertical" data-spy="affix">
         
         
-            <ul>
+            <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="first_concepts.html">Pants Conceptual Overview</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="first_concepts.html#goals-and-targets">Goals and Targets</a></li>
 <li class="toctree-l2"><a class="reference internal" href="first_concepts.html#target-types">Target Types</a></li>
@@ -140,7 +140,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="JVMProjects.html#bundles-deploy-able-runnable-file-trees">Bundles: Deploy-able Runnable File Trees</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="python-readme.html">Python Projects with Pants</a><ul>
+<li class="toctree-l1 current"><a class="reference internal" href="python-readme.html">Python Projects with Pants</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="python-readme.html#tl-dr-hello-world-with-pants-python">TL;DR - &#8216;Hello world!&#8217; with Pants Python</a></li>
 <li class="toctree-l2"><a class="reference internal" href="python-readme.html#describing-python-environments-in-pants">Describing Python environments in Pants</a></li>
 <li class="toctree-l2"><a class="reference internal" href="python-readme.html#handling-python-requirement">Handling <tt class="docutils literal"><span class="pre">python_requirement</span></tt></a></li>
@@ -149,7 +149,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="python-readme.html#environment-manipulation-with-pants-py">Environment manipulation with <cite>pants py</cite></a></li>
 <li class="toctree-l2"><a class="reference internal" href="python-readme.html#python-binary-entry-point">python_binary entry_point</a></li>
 <li class="toctree-l2"><a class="reference internal" href="python-readme.html#python-tests">Python Tests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="python-readme.html#manipulating-pex-behavior-with-environment-variables">Manipulating PEX behavior with environment variables</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="python-readme.html#manipulating-pex-behavior-with-environment-variables">Manipulating PEX behavior with environment variables</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="page.html">README Files and Markdown</a><ul>
@@ -338,8 +338,8 @@ body a.icon-home:hover{
 </ul>
 </li>
 </ul>
-<ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="dev.html">Pants Developer Center</a><ul class="current">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="dev.html">Pants Developer Center</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="howto_contribute.html">Pants Contributors Guide</a></li>
 <li class="toctree-l2"><a class="reference internal" href="howto_ask.html">How To Ask</a></li>
 <li class="toctree-l2"><a class="reference internal" href="howto_develop.html">Pants Developers Guide</a></li>
@@ -349,7 +349,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="targets.html">Targets Reference</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tasks.html">Tasks Reference</a></li>
 <li class="toctree-l2"><a class="reference internal" href="base.html">Base Reference</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="">Release Process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release.html">Release Process</a></li>
 <li class="toctree-l2"><a class="reference internal" href="docs.html">About the documentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="credits.html">Credits</a></li>
 </ul>
@@ -375,77 +375,143 @@ body a.icon-home:hover{
         <div class="rst-content">
           <ul class="wy-breadcrumbs">
   <li><a href="index.html">Docs</a> &raquo;</li>
-  <li><a href="">Release Process</a></li>
+  <li><a href="">PEX Design</a></li>
   
 </ul>
 <hr/>
 
           
-  <div class="section" id="release-process">
-<h1>Release Process<a class="headerlink" href="#release-process" title="Permalink to this headline">¶</a></h1>
-<p>This page describes how to make a versioned release of Pants.</p>
-<p>At a high level, releasing pants involves:</p>
-<ul class="simple">
-<li>Deciding what/when to release. At present this is ad-hoc, typically when
-a change has been made and the author wants to use a version incorporating
-that change. Things are likely to remain this way pre 1.0.0.</li>
-<li>Preparing the release.</li>
-<li>Testing the release.</li>
-<li>Publishing the release to PyPi.</li>
-<li>Announce the release on <cite>pants-devel</cite>.</li>
-</ul>
-<div class="section" id="prepare-release">
-<h2>Prepare Release<a class="headerlink" href="#prepare-release" title="Permalink to this headline">¶</a></h2>
-<p>Pants and the common libraries are published to the
-<a class="reference external" href="https://pypi.python.org/pypi">Python Package Index</a> per the Python
-community convention.</p>
-<p>Although the build and publish are automated, the version bumping is not. You&#8217;ll need to edit the
-version number in <a class="reference external" href="https://github.com/pantsbuild/pants/tree/master/src/python/pants/version.py">src/python/pants/version.py</a> and then send this
-out for review.</p>
+  <div class="section" id="pex-design">
+<h1>PEX Design<a class="headerlink" href="#pex-design" title="Permalink to this headline">¶</a></h1>
+<p>But why another system?</p>
+<div class="section" id="alternatives">
+<h2>Alternatives<a class="headerlink" href="#alternatives" title="Permalink to this headline">¶</a></h2>
+<p>There are several solutions for package management in Python.  Almost
+everyone is familiar with running <cite>sudo easy_install PackageXYZ</cite>.  This
+leaves a lot to be desired.  Over time, your Python installation will
+collect dozens of packages, become annoyingly slow or even broken, and
+reinstalling it will invariably break a number of the applications
+that you were using.</p>
+<p>A marked improvement over the <cite>sudo easy_install</cite> model is <a class="reference external" href="http://www.virtualenv.org">virtualenv</a>
+to isolate Python environments on a project by project basis.  This is
+useful for development but does not directly solve any problems
+related to deployment, whether it be to a production environment or to
+your peers.  It is also challenging to explain to a Python non-expert.</p>
+<p>A different solution altogether, <a class="reference external" href="http://www.buildout.org/">zc.buildout</a> attempts to provide a
+framework and recipes for many common development environments.  It
+has arguably gone the farthest for automating environment
+reproducibility amongst the popular tools, but shares the same
+complexity problems as all the other abovementioned solutions.</p>
+<p>Most solutions leave deployment as an afterthought.  Why not make the
+development and deployment environments the same by taking the
+environment along with you?</p>
 </div>
-<div class="section" id="test-release">
-<h2>Test Release<a class="headerlink" href="#test-release" title="Permalink to this headline">¶</a></h2>
-<p>In order to publish the prepared release you&#8217;ll need to be a pantsbuild.pants package owner;
-otherwise you&#8217;ll need to hand off to someone who is.  The list is on the
-<a class="reference external" href="https://pypi.python.org/pypi/pantsbuild.pants">pantsbuild.pants package index page</a> in the
-<cite>Package Index Owner</cite> field:</p>
-<div class="highlight-python"><div class="highlight"><pre>curl -s https://pypi.python.org/pypi/pantsbuild.pants | grep -A1 &quot;Owner&quot;
-&lt;strong&gt;Package Index Owner:&lt;/strong&gt;
-&lt;span&gt;john.sirois, benjyw, traviscrawford, ericzundel&lt;/span&gt;
+<div class="section" id="pants-and-pex">
+<h2>Pants and PEX<a class="headerlink" href="#pants-and-pex" title="Permalink to this headline">¶</a></h2>
+<p>The lingua franca of Pants is the PEX file (PEX itself does not stand for
+anything in particular, though in spirit you can think of it as a &#8220;Python
+EXecutable&#8221;.)</p>
+<p><strong>PEX files are single-file lightweight virtual Python environments.</strong></p>
+<p>The only difference is no virtualenv setup instructions or
+<cite>pip install foo bar baz</cite>.  PEX files are self-bootstrapping Python
+environments with no strings attached and no side-effects.  Just a simple
+mechanism that unifies both your development and your deployment.</p>
+<div class="section" id="how-pex-files-work">
+<h3>How PEX files work<a class="headerlink" href="#how-pex-files-work" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<div class="section" id="the-utility-of-zipimport-and-main-py">
+<h2>the utility of zipimport and <cite>__main__.py</cite><a class="headerlink" href="#the-utility-of-zipimport-and-main-py" title="Permalink to this headline">¶</a></h2>
+<p>As an aside, in Python, you may not know that you can import code from directories:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>mkdir -p foo
+<span class="nv">$ </span>touch foo/__init__.py
+<span class="nv">$ </span><span class="nb">echo</span> <span class="s2">&quot;print &#39;spam&#39;&quot;</span> &gt; foo/bar.py
+<span class="nv">$ </span>python -c <span class="s1">&#39;import foo.bar&#39;</span>
+spam
 </pre></div>
 </div>
-<p>Releases should only be published from master, so get on master and ensure your version number
-and CHANGELOG commit is present. After confirming this, publish locally and verify the release.</p>
-<div class="highlight-python"><div class="highlight"><pre>PANTS_DEV=1 ./pants setup_py --recursive src/python/pants:pants-packaged
-VENV_DIR=$(mktemp -d -t pants.XXXXX)
-./build-support/virtualenv $VENV_DIR
-source $VENV_DIR/bin/activate
-pip install --find-links=file://$(pwd)/dist \
-  pantsbuild.pants==$(PANTS_DEV=1 ./pants --version 2&gt;/dev/null)
-pants goal list :: &amp;&amp; pants --version
-deactivate
+<p>All that is necessary is the presence of <cite>__init__.py</cite> to signal to the importer that we
+are dealing with a package.  Similarly, a directory can be made &#8220;executable&#8221;:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span><span class="nb">echo</span> <span class="s2">&quot;print &#39;i like flowers&#39;&quot;</span> &gt; foo/__main__.py
+<span class="nv">$ </span>python foo
+i like flowers
 </pre></div>
 </div>
-<p>You should get a listing of targets in the repo and finally the version number you expect to be
-releasing, for example:</p>
-<div class="highlight-python"><div class="highlight"><pre>...
-tests/python/pants_test/testutils:testutils
-tests/scala/com/pants/example/hello/welcome:welcome
-0.0.18
+<p>And because the <cite>zipimport</cite> module now provides a default import hook for
+Pythons &gt;= 2.4, if the Python import framework sees a zip file, with the
+inclusion of a proper <cite>__init__.py</cite>, it can be treated similarly to a
+directory.  But since a directory can be executable, if we just drop a
+<cite>__main__.py</cite> into a zip file, it suddenly becomes executable:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span><span class="nb">pushd </span>foo <span class="o">&amp;&amp;</span> zip /tmp/flower.zip __main__.py <span class="o">&amp;&amp;</span> <span class="nb">popd</span>
+/tmp/foo /tmp
+  adding: __main__.py <span class="o">(</span>stored 0%<span class="o">)</span>
+/tmp
+<span class="nv">$ </span>python flower.zip
+i like flowers
+</pre></div>
+</div>
+<p>And since zip files don&#8217;t actually start until the zip magic number, you can
+embed arbitrary strings at the beginning of them and they&#8217;re still valid
+zips.  Hence simple PEX files are born:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span><span class="nb">echo</span> <span class="s1">&#39;#!/usr/bin/env python2.6&#39;</span> &gt; flower.pex <span class="o">&amp;&amp;</span> cat flower.zip &gt;&gt; flower.pex
+<span class="nv">$ </span>chmod +x flower.pex
+<span class="nv">$ </span>./flower.pex
+i like flowers
+</pre></div>
+</div>
+<p>Remember <cite>pants.pex</cite>?</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>unzip -l pants.pex | tail -2
+warning <span class="o">[</span>pants.pex<span class="o">]</span>:  25 extra bytes at beginning or within zipfile
+  <span class="o">(</span>attempting to process anyway<span class="o">)</span>
+ --------                   -------
+  7900812                   543 files
+
+<span class="nv">$ </span>head -c 25 pants.pex
+<span class="c">#!/usr/bin/env python2.6</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="publish-to-pypi">
-<h2>Publish to PyPi<a class="headerlink" href="#publish-to-pypi" title="Permalink to this headline">¶</a></h2>
-<p>Now that we&#8217;ve smoke-tested this release, we can publish to PyPi:</p>
-<div class="highlight-python"><div class="highlight"><pre>PANTS_DEV=1 ./pants setup_py --recursive --run=&#39;sdist upload&#39; \
-  src/python/pants:pants-packaged
+<div class="section" id="pex-main-py">
+<h2>PEX <cite>__main__.py</cite><a class="headerlink" href="#pex-main-py" title="Permalink to this headline">¶</a></h2>
+<p>The <cite>__main__.py</cite> in a real PEX file is somewhat special:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="n">__entry_point__</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="k">if</span> <span class="s">&#39;__file__&#39;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">()</span> <span class="ow">and</span> <span class="n">__file__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+  <span class="n">__entry_point__</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">)</span>
+<span class="k">elif</span> <span class="s">&#39;__loader__&#39;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">():</span>
+  <span class="kn">from</span> <span class="nn">pkgutil</span> <span class="kn">import</span> <span class="n">ImpLoader</span>
+  <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">__loader__</span><span class="p">,</span> <span class="s">&#39;archive&#39;</span><span class="p">):</span>
+    <span class="n">__entry_point__</span> <span class="o">=</span> <span class="n">__loader__</span><span class="o">.</span><span class="n">archive</span>
+  <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">__loader__</span><span class="p">,</span> <span class="n">ImpLoader</span><span class="p">):</span>
+    <span class="n">__entry_point__</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__loader__</span><span class="o">.</span><span class="n">get_filename</span><span class="p">())</span>
+
+<span class="k">if</span> <span class="n">__entry_point__</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+  <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;Could not launch python executable!</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+  <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">__entry_point__</span><span class="p">,</span> <span class="s">&#39;.bootstrap&#39;</span><span class="p">))</span>
+
+<span class="kn">from</span> <span class="nn">twitter.common.python.importer</span> <span class="kn">import</span> <span class="n">monkeypatch</span>
+<span class="n">monkeypatch</span><span class="p">()</span>
+<span class="k">del</span> <span class="n">monkeypatch</span>
+
+<span class="kn">from</span> <span class="nn">twitter.common.python.pex</span> <span class="kn">import</span> <span class="n">PEX</span>
+<span class="n">PEX</span><span class="p">(</span><span class="n">__entry_point__</span><span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="announce">
-<h2>Announce<a class="headerlink" href="#announce" title="Permalink to this headline">¶</a></h2>
-<p>Check PyPi to ensure everything looks good. Finally, announce the release to <cite>pants-devel</cite>.</p>
+<p><cite>PEX</cite> is just a class that manages requirements (often embedded within PEX
+files as egg distributions in the <cite>.deps</cite> directory) and autoimports them
+into the <cite>sys.path</cite>, then executes a prescribed entry point.</p>
+<p>If you read the code closely, you&#8217;ll notice that it relies upon monkeypatching <cite>zipimport</cite>.  Inside
+the <cite>twitter.common.python</cite> library we&#8217;ve provided a recursive zip importer derived from Google&#8217;s
+<a class="reference external" href="http://code.google.com/appengine/articles/django10_zipimport.html">pure Python zipimport</a> module
+that allows for depending upon eggs within eggs or zips (and so forth) so that PEX files need not
+extract egg dependencies to disk a priori.  This even extends to C extensions (.so and .dylib
+files) which are written to disk long enough to be dlopened before being unlinked.</p>
+<p>Strictly speaking this monkeypatching is not necessary and we may consider
+making that optional.</p>
 </div>
 </div>
 
@@ -454,10 +520,10 @@ tests/scala/com/pants/example/hello/welcome:welcome
   
     <div class="rst-footer-buttons">
       
-        <a href="docs.html" class="btn btn-neutral float-right" title="About the documentation"/>Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="python_old.html" class="btn btn-neutral float-right" title="Using Pants for Python development, 2014 and Earlier"/>Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="base.html" class="btn btn-neutral" title="Base Reference"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="python-readme.html" class="btn btn-neutral" title="Python Projects with Pants"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   

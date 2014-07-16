@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pants.base.build_root &mdash; pants 0.1 documentation</title>
+  <title>pants.base.build_file_aliases &mdash; pants 0.1 documentation</title>
   
 
   
@@ -373,13 +373,13 @@ body a.icon-home:hover{
         <div class="rst-content">
           <ul class="wy-breadcrumbs">
   <li><a href="../../../index.html">Docs</a> &raquo;</li>
-  <li><a href="">pants.base.build_root</a></li>
+  <li><a href="">pants.base.build_file_aliases</a></li>
   
 </ul>
 <hr/>
 
           
-  <h1>Source code for pants.base.build_root</h1><div class="highlight"><pre>
+  <h1>Source code for pants.base.build_file_aliases</h1><div class="highlight"><pre>
 <span class="c"># coding=utf-8</span>
 <span class="c"># Copyright 2014 Pants project contributors (see CONTRIBUTORS.md).</span>
 <span class="c"># Licensed under the Apache License, Version 2.0 (see LICENSE).</span>
@@ -387,69 +387,40 @@ body a.icon-home:hover{
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="p">(</span><span class="n">nested_scopes</span><span class="p">,</span> <span class="n">generators</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">with_statement</span><span class="p">,</span>
                         <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">)</span>
 
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
-
-<span class="kn">from</span> <span class="nn">twitter.common.lang</span> <span class="kn">import</span> <span class="n">Singleton</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
 
 
-<div class="viewcode-block" id="BuildRoot"><a class="viewcode-back" href="../../../base.html#pants.base.build_root.BuildRoot">[docs]</a><span class="k">class</span> <span class="nc">BuildRoot</span><span class="p">(</span><span class="n">Singleton</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;Represents the global workspace ROOT_DIR.</span>
+<div class="viewcode-block" id="BuildFileAliases"><a class="viewcode-back" href="../../../base.html#pants.base.build_file_aliases.BuildFileAliases">[docs]</a><span class="k">class</span> <span class="nc">BuildFileAliases</span><span class="p">(</span><span class="n">namedtuple</span><span class="p">(</span><span class="s">&#39;BuildFileAliases&#39;</span><span class="p">,</span>
+                                  <span class="p">[</span><span class="s">&#39;targets&#39;</span><span class="p">,</span> <span class="s">&#39;objects&#39;</span><span class="p">,</span> <span class="s">&#39;context_aware_object_factories&#39;</span><span class="p">])):</span>
+  <span class="sd">&quot;&quot;&quot;A structure containing set of symbols to be exposed in BUILD files.</span>
 
-<span class="sd">  By default a pants workspace is defined by a root directory where the workspace configuration</span>
-<span class="sd">  file - &#39;pants.ini&#39; - lives.  This can be overridden by exporting &#39;PANTS_BUILD_ROOT&#39; in the</span>
-<span class="sd">  environment with the path to the ROOT_DIR or manipulated through this interface.</span>
+<span class="sd">  There are three types of symbols that can be exposed:</span>
+
+<span class="sd">  - targets: These are Target subclasses.</span>
+<span class="sd">  - objects: These are any python object, from constants to types.</span>
+<span class="sd">  - context_aware_object_factories: These are object factories that are passed a ParseContext and</span>
+<span class="sd">    produce some object that uses data from the context to enable some feature or utility.  Common</span>
+<span class="sd">    uses include objects that must be aware of the current BUILD file path or functions that need</span>
+<span class="sd">    to be able to create targets or objects from within the BUILD file parse.</span>
 <span class="sd">  &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="BuildRoot.NotFoundError"><a class="viewcode-back" href="../../../base.html#pants.base.build_root.BuildRoot.NotFoundError">[docs]</a>  <span class="k">class</span> <span class="nc">NotFoundError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Raised when unable to find the current workspace ROOT_DIR.&quot;&quot;&quot;</span>
+  <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="BuildFileAliases.create"><a class="viewcode-back" href="../../../base.html#pants.base.build_file_aliases.BuildFileAliases.create">[docs]</a>  <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">objects</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">context_aware_object_factories</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A convenience constructor that can accept zero to all alias types.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="n">orig</span><span class="p">):</span>
+      <span class="k">return</span> <span class="n">orig</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">if</span> <span class="n">orig</span> <span class="k">else</span> <span class="p">{}</span>
+    <span class="k">return</span> <span class="n">cls</span><span class="p">(</span><span class="n">copy</span><span class="p">(</span><span class="n">targets</span><span class="p">),</span> <span class="n">copy</span><span class="p">(</span><span class="n">objects</span><span class="p">),</span> <span class="n">copy</span><span class="p">(</span><span class="n">context_aware_object_factories</span><span class="p">))</span>
 </div>
-  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_root_dir</span> <span class="o">=</span> <span class="bp">None</span>
+<div class="viewcode-block" id="BuildFileAliases.merge"><a class="viewcode-back" href="../../../base.html#pants.base.build_file_aliases.BuildFileAliases.merge">[docs]</a>  <span class="k">def</span> <span class="nf">merge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Merges a set of build file aliases and returns a new set of aliases containing both.</span>
 
-  <span class="nd">@property</span>
-  <span class="k">def</span> <span class="nf">path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns the ROOT_DIR for the current workspace.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_root_dir</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-      <span class="k">if</span> <span class="s">&#39;PANTS_BUILD_ROOT&#39;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_root_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&#39;PANTS_BUILD_ROOT&#39;</span><span class="p">]</span>
-      <span class="k">else</span><span class="p">:</span>
-        <span class="n">buildroot</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
-        <span class="k">while</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">buildroot</span><span class="p">,</span> <span class="s">&#39;pants.ini&#39;</span><span class="p">)):</span>
-          <span class="k">if</span> <span class="n">buildroot</span> <span class="o">!=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">buildroot</span><span class="p">):</span>
-            <span class="n">buildroot</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">buildroot</span><span class="p">)</span>
-          <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">NotFoundError</span><span class="p">(</span><span class="s">&#39;Could not find pants.ini!&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_root_dir</span> <span class="o">=</span> <span class="n">buildroot</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_root_dir</span>
-
-  <span class="nd">@path.setter</span>
-<div class="viewcode-block" id="BuildRoot.path"><a class="viewcode-back" href="../../../base.html#pants.base.build_root.BuildRoot.path">[docs]</a>  <span class="k">def</span> <span class="nf">path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root_dir</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Manually establishes the ROOT_DIR for the current workspace.&quot;&quot;&quot;</span>
-    <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">root_dir</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Build root does not exist: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">root_dir</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_root_dir</span> <span class="o">=</span> <span class="n">path</span>
-</div>
-<div class="viewcode-block" id="BuildRoot.reset"><a class="viewcode-back" href="../../../base.html#pants.base.build_root.BuildRoot.reset">[docs]</a>  <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Clears the last calculated ROOT_DIR for the current workspace.&quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_root_dir</span> <span class="o">=</span> <span class="bp">None</span>
-</div>
-  <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="s">&#39;BuildRoot(</span><span class="si">%s</span><span class="s">)&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_root_dir</span>
-
-  <span class="nd">@contextmanager</span>
-<div class="viewcode-block" id="BuildRoot.temporary"><a class="viewcode-back" href="../../../base.html#pants.base.build_root.BuildRoot.temporary">[docs]</a>  <span class="k">def</span> <span class="nf">temporary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A contextmanager that establishes a temporary ROOT_DIR, restoring the prior ROOT_DIR on</span>
-<span class="sd">    exit.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Can only temporarily establish a build root given a path.&#39;</span><span class="p">)</span>
-    <span class="n">prior</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_root_dir</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_root_dir</span> <span class="o">=</span> <span class="n">path</span>
-    <span class="k">try</span><span class="p">:</span>
-      <span class="k">yield</span>
-    <span class="k">finally</span><span class="p">:</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">_root_dir</span> <span class="o">=</span> <span class="n">prior</span></div></div>
+<span class="sd">    Any duplicate aliases from `other` will trump.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">BuildFileAliases</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;Can only merge other BuildFileAliases, given {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">other</span><span class="p">))</span>
+    <span class="n">all_aliases</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_asdict</span><span class="p">()</span>
+    <span class="n">all_aliases</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">_asdict</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">BuildFileAliases</span><span class="p">(</span><span class="o">**</span><span class="n">all_aliases</span><span class="p">)</span></div></div>
 </pre></div>
 
           <footer>

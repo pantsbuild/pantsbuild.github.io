@@ -39,6 +39,7 @@ goal.
   * :ref:`gref_phase_gen` - Generate code.
   * :ref:`gref_phase_goals` - List all documented goals.
   * :ref:`gref_phase_idea` - Create an IntelliJ IDEA project from the given targets.
+  * :ref:`gref_phase_imports` - None
   * :ref:`gref_phase_invalidate` - Invalidate all targets.
   * :ref:`gref_phase_jar` - None
   * :ref:`gref_phase_killserver` - Kill the reporting server.
@@ -59,7 +60,6 @@ goal.
   * :ref:`gref_phase_run` - Run a binary target.
   * :ref:`gref_phase_run-dirty` - Run a binary target, skipping compilation.
   * :ref:`gref_phase_server` - Run the pants reporting server.
-  * :ref:`gref_phase_setup` - Setup the target's build environment.
   * :ref:`gref_phase_sort` - Topologically sort the targets.
   * :ref:`gref_phase_targets` - List all target types.
   * :ref:`gref_phase_test` - Test compiled code.
@@ -145,7 +145,13 @@ Create a jvm binary jar.
       ``string``
       (Default: ``dependencies,license,notice,.DS_Store,notice.txt,cmdline.arg.info.txt.1,license.txt``)
     |
-      A comma separated list of files to exclude from duplicate check, defaults to:
+      A comma separated list of case insensitive filenames (without directory) to exclude from duplicate check, defaults to:
+
+  * | ``--binary-dup-max-dups``
+      ``string``
+      (Default: ``10``)
+    |
+      Maximum number of duplicate classes to display per artifactdefaults to:
 
 
 
@@ -310,7 +316,13 @@ Create an application bundle from binary targets.
       ``string``
       (Default: ``dependencies,license,notice,.DS_Store,notice.txt,cmdline.arg.info.txt.1,license.txt``)
     |
-      A comma separated list of files to exclude from duplicate check, defaults to:
+      A comma separated list of case insensitive filenames (without directory) to exclude from duplicate check, defaults to:
+
+  * | ``--bundle-dup-max-dups``
+      ``string``
+      (Default: ``10``)
+    |
+      Maximum number of duplicate classes to display per artifactdefaults to:
 
 
 
@@ -459,12 +471,48 @@ Clean all build output.
 
 
 
+.. _gref_cli_cleanallinvalidate:
+
+*
+  **clean-all:invalidate**
+  Implemented by ``pants.backend.core.tasks.clean.Invalidator``
+
+
+  Invalidate the entire build.
+
+  * | ``--clean-all-invalidate-sep``
+      ``string``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+
+
+.. _gref_cli_cleanallngkillall:
+
+*
+  **clean-all:ng-killall**
+  Implemented by ``pants.backend.jvm.tasks.nailgun_task.NailgunKillall``
+
+
+  A task to manually kill nailguns.
+
+  * | ``--clean-all-ng-killall-sep``
+      ``string``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+  * | ``--clean-all-ng-killall-everywhere``
+    |
+      Kill all nailguns servers launched by pants for all workspaces on the system.
+
+
+
 
 **Other command-line options:**
 
   `Common`_
-  :ref:`ng-killall <gref_cli_ngkillall>`
-  :ref:`invalidate <gref_cli_invalidate>`
 
 
 
@@ -493,12 +541,48 @@ Clean all build output in a background process.
 
 
 
+.. _gref_cli_cleanallasyncinvalidate:
+
+*
+  **clean-all-async:invalidate**
+  Implemented by ``pants.backend.core.tasks.clean.Invalidator``
+
+
+  Invalidate the entire build.
+
+  * | ``--clean-all-async-invalidate-sep``
+      ``string``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+
+
+.. _gref_cli_cleanallasyncngkillall:
+
+*
+  **clean-all-async:ng-killall**
+  Implemented by ``pants.backend.jvm.tasks.nailgun_task.NailgunKillall``
+
+
+  A task to manually kill nailguns.
+
+  * | ``--clean-all-async-ng-killall-sep``
+      ``string``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+  * | ``--clean-all-async-ng-killall-everywhere``
+    |
+      Kill all nailguns servers launched by pants for all workspaces on the system.
+
+
+
 
 **Other command-line options:**
 
   `Common`_
-  :ref:`ng-killall <gref_cli_ngkillall>`
-  :ref:`invalidate <gref_cli_invalidate>`
 
 
 
@@ -780,6 +864,15 @@ Depict the target's dependencies.
     |
       Specifies the internal dependency graph should be output in the dot digraph format
 
+  * | ``--depmap-project-info``
+    |
+      Produces a json object with info about the target, including source roots, dependencies, and paths to libraries for their targets and dependencies.
+
+  * | ``--depmap-project-info-formatted``
+      (Default: ``True``)
+    |
+      Causes project-info output to be a single line of JSON
+
 
 
 
@@ -814,7 +907,13 @@ Detect duplicate classes and resources on the classpath.
       ``string``
       (Default: ``dependencies,license,notice,.DS_Store,notice.txt,cmdline.arg.info.txt.1,license.txt``)
     |
-      A comma separated list of files to exclude from duplicate check, defaults to:
+      A comma separated list of case insensitive filenames (without directory) to exclude from duplicate check, defaults to:
+
+  * | ``--detect-duplicates-max-dups``
+      ``string``
+      (Default: ``10``)
+    |
+      Maximum number of duplicate classes to display per artifactdefaults to:
 
 
 
@@ -828,7 +927,6 @@ Detect duplicate classes and resources on the classpath.
   :ref:`check-exclusives <gref_cli_checkexclusives>`
   :ref:`ivy <gref_cli_ivy>`
   :ref:`jvm <gref_cli_jvm>`
-  :ref:`jar <gref_cli_jar>`
 
 
 
@@ -869,6 +967,10 @@ Create documentation.
     |
       Specifies that javadoc errors should not cause build errors
 
+  * | ``--doc-javadoc-skip/--no-doc-javadoc-skip``
+    |
+      Can be used to skip javadoc generation
+
 
 
 .. _gref_cli_docscaladoc:
@@ -899,6 +1001,10 @@ Create documentation.
   * | ``--doc-scaladoc-ignore-failure/--no-doc-scaladoc-ignore-failure``
     |
       Specifies that scaladoc errors should not cause build errors
+
+  * | ``--doc-scaladoc-skip/--no-doc-scaladoc-skip``
+    |
+      Can be used to skip scaladoc generation
 
 
 
@@ -1352,6 +1458,28 @@ Create an IntelliJ IDEA project from the given targets.
 
 
 
+.. _gref_phase_imports:
+
+imports
+-----------------------------------------------------------------------------
+
+
+
+* Implemented by ``pants.backend.jvm.tasks.ivy_imports.IvyImports``
+
+
+  Resolves a jar of .proto files for each target in the context which has imports (ie, for each
+  JavaProtobufLibrary target).
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+
+
+
 .. _gref_phase_invalidate:
 
 invalidate
@@ -1377,11 +1505,31 @@ Invalidate all targets.
 
 
 
+.. _gref_cli_invalidatengkillall:
+
+*
+  **invalidate:ng-killall**
+  Implemented by ``pants.backend.jvm.tasks.nailgun_task.NailgunKillall``
+
+
+  A task to manually kill nailguns.
+
+  * | ``--invalidate-ng-killall-sep``
+      ``string``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+  * | ``--invalidate-ng-killall-everywhere``
+    |
+      Kill all nailguns servers launched by pants for all workspaces on the system.
+
+
+
 
 **Other command-line options:**
 
   `Common`_
-  :ref:`ng-killall <gref_cli_ngkillall>`
 
 
 
@@ -1405,19 +1553,6 @@ jar
       (Default: ``True``)
     |
       Create compressed jars.
-
-  * | ``--jar-classes/--no-jar-classes``
-      (Default: ``True``)
-    |
-      Create class jars.
-
-  * | ``--jar-sources/--no-jar-sources``
-    |
-      Create source jars.
-
-  * | ``--jar-javadoc/--no-jar-javadoc``
-    |
-      Create javadoc jars.
 
 
 
@@ -1769,67 +1904,6 @@ publish
 Publish artifacts.
 
 
-.. _gref_cli_publishjarcreatepublish:
-
-*
-  **publish:jar_create_publish**
-  Implemented by ``pants.backend.jvm.tasks.jar_create.JarCreate``
-
-
-  Jars jvm libraries and optionally their sources and their docs.
-
-  * | ``--publish-jar_create_publish-compressed/--no-publish-jar_create_publish-compressed``
-      (Default: ``True``)
-    |
-      Create compressed jars.
-
-  * | ``--publish-jar_create_publish-classes/--no-publish-jar_create_publish-classes``
-      (Default: ``True``)
-    |
-      Create class jars.
-
-  * | ``--publish-jar_create_publish-sources/--no-publish-jar_create_publish-sources``
-    |
-      Create source jars.
-
-  * | ``--publish-jar_create_publish-javadoc/--no-publish-jar_create_publish-javadoc``
-      (Default: ``True``)
-    |
-      Create javadoc jars.
-
-
-
-.. _gref_cli_publishjavadocpublish:
-
-*
-  **publish:javadoc_publish**
-  Implemented by ``pants.backend.jvm.register.JavadocJarShim``
-
-
-
-  * | ``--publish-javadoc_publish-include-codegen/--no-publish-javadoc_publish-include-codegen``
-    |
-      Create javadoc for generated code.
-
-  * | ``--publish-javadoc_publish-transitive/--no-publish-javadoc_publish-transitive``
-      (Default: ``True``)
-    |
-      Create javadoc for the transitive closure of internal targets reachable from the roots specified on the command line.
-
-  * | ``--publish-javadoc_publish-combined/--no-publish-javadoc_publish-combined``
-    |
-      Generate javadoc for all targets combined instead of each target individually.
-
-  * | ``--publish-javadoc_publish-open/--no-publish-javadoc_publish-open``
-    |
-      Attempt to open the generated javadoc in a browser (implies --publish-javadoc_publish-combined).
-
-  * | ``--publish-javadoc_publish-ignore-failure/--no-publish-javadoc_publish-ignore-failure``
-    |
-      Specifies that javadoc errors should not cause build errors
-
-
-
 .. _gref_cli_publish:
 
 *
@@ -1946,37 +2020,6 @@ Publish artifacts.
 
 
 
-.. _gref_cli_publishscaladocpublish:
-
-*
-  **publish:scaladoc_publish**
-  Implemented by ``pants.backend.jvm.register.ScaladocJarShim``
-
-
-
-  * | ``--publish-scaladoc_publish-include-codegen/--no-publish-scaladoc_publish-include-codegen``
-    |
-      Create scaladoc for generated code.
-
-  * | ``--publish-scaladoc_publish-transitive/--no-publish-scaladoc_publish-transitive``
-      (Default: ``True``)
-    |
-      Create scaladoc for the transitive closure of internal targets reachable from the roots specified on the command line.
-
-  * | ``--publish-scaladoc_publish-combined/--no-publish-scaladoc_publish-combined``
-    |
-      Generate scaladoc for all targets combined instead of each target individually.
-
-  * | ``--publish-scaladoc_publish-open/--no-publish-scaladoc_publish-open``
-    |
-      Attempt to open the generated scaladoc in a browser (implies --publish-scaladoc_publish-combined).
-
-  * | ``--publish-scaladoc_publish-ignore-failure/--no-publish-scaladoc_publish-ignore-failure``
-    |
-      Specifies that scaladoc errors should not cause build errors
-
-
-
 
 **Other command-line options:**
 
@@ -1987,6 +2030,9 @@ Publish artifacts.
   :ref:`check-exclusives <gref_cli_checkexclusives>`
   :ref:`ivy <gref_cli_ivy>`
   :ref:`jvm <gref_cli_jvm>`
+  :ref:`jar <gref_cli_jar>`
+  :ref:`doc:javadoc <gref_cli_docjavadoc>`
+  :ref:`doc:scaladoc <gref_cli_docscaladoc>`
 
 
 
@@ -2345,53 +2391,6 @@ Run the pants reporting server.
   * | ``--server-open/--no-server-open``
     |
       Attempt to open the server web ui in a browser.
-
-
-
-
-**Other command-line options:**
-
-  `Common`_
-
-
-
-.. _gref_phase_setup:
-
-setup
------------------------------------------------------------------------------
-
-Setup the target's build environment.
-
-
-.. _gref_cli_pythonsetup:
-
-*
-  **python-setup**
-  Implemented by ``pants.backend.python.tasks.setup_python_environment.SetupPythonEnvironment``
-
-
-  Establishes the python intepreter(s) for downstream Python tasks e.g. Resolve, Run, PytestRun.
-  
-  Populates the product namespace (for typename = 'python'):
-    'intepreters': ordered list of PythonInterpreter objects
-
-  * | ``--python-setup-force``
-    |
-      Force clean and install.
-
-  * | ``--python-setup-path``
-      ``string``
-    |
-      Add a path to search for interpreters, by default PATH.
-
-  * | ``--python-setup-interpreter``
-      ``string``
-    |
-      Constrain what Python interpreters to use.  Uses Requirement format from pkg_resources, e.g. 'CPython>=2.6,<3' or 'PyPy'. By default, no constraints are used.  Multiple constraints may be added.  They will be ORed together.
-
-  * | ``--python-setup-multi``
-    |
-      Allow multiple interpreters to be bound to an upstream chroot.
 
 
 

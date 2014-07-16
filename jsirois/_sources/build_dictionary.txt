@@ -11,6 +11,8 @@ targets; some are handy utilities.
 **All The Things** |
 `__file__`_ |
 `Amount`_ |
+`android_binary`_ |
+`android_resources`_ |
 `annotation_processor`_ |
 `artifact`_ |
 `benchmark`_ |
@@ -42,6 +44,7 @@ targets; some are handy utilities.
 `python_library`_ |
 `python_requirement`_ |
 `python_requirement_library`_ |
+`python_requirements`_ |
 `python_test_suite`_ |
 `python_tests`_ |
 `python_thrift_library`_ |
@@ -87,7 +90,6 @@ targets; some are handy utilities.
 **Python** |
 `dependencies`_ |
 `egg`_ |
-`jar_library`_ |
 `pants`_ |
 `python_antlr_library`_ |
 `python_binary`_ |
@@ -125,6 +127,66 @@ Amount
 
 
 
+.. _bdict_android_binary:
+
+android_binary
+-------------------------------------------------------------------------------
+
+.. py:function:: android_binary(*args, **kwargs)
+
+ Produces an Android binary.
+
+
+ :param string name: The name of this target, which combined with this
+   build file defines the :doc:`target address <target_addresses>`.
+ :param sources: Source code files to compile. Paths are relative to the
+   BUILD file's directory.
+ :type sources: ``Fileset`` or list of strings.
+ :param excludes: List of :ref:`exclude <bdict_exclude>`\s
+   to filter this target's transitive dependencies against.
+ :param build_tools_version: API for the Build Tools (separate from SDK version).
+   Defaults to the latest full release.
+ :param manifest: path/to/file of 'AndroidManifest.xml' (required name). Paths are relative
+   to the BUILD file's directory.
+ :param release_type: Which keystore is used to sign target: 'debug' or 'release'.
+   Set as 'debug' by default.
+
+ Implemented by ``pants.backend.android.targets.android_binary.AndroidBinary``
+
+**Methods:**
+
+ .. py:method:: with_description(description)
+
+  Set a human-readable description of this target.
+  
+  :param description: Descriptive string
+
+.. _bdict_android_resources:
+
+android_resources
+-------------------------------------------------------------------------------
+
+.. py:function:: android_resources(address=None, resource_dir=u'res', **kwargs)
+
+ Processes android resources to generate R.java
+
+
+ :param resource_dir: path/to/directory containing Android target's resource files.
+   Set to 'res' by default.
+ :type resource_dir: string.
+ :param dependencies: Other targets that this target depends on.
+ :type dependencies: list of target specs
+
+ Implemented by ``pants.backend.android.targets.android_resources.AndroidResources``
+
+**Methods:**
+
+ .. py:method:: with_description(description)
+
+  Set a human-readable description of this target.
+  
+  :param description: Descriptive string
+
 .. _bdict_annotation_processor:
 
 annotation_processor
@@ -136,17 +198,15 @@ annotation_processor
 
 
  :param string name: The name of this target, which combined with this
-   build file defines the target :class:`pants.base.address.Address`.
- :param sources: A list of filenames representing the source code
-   this library is compiled from.
- :type sources: list of strings
- :param Artifact provides:
-   The :class:`pants.targets.artifact.Artifact`
+   build file defines the :doc:`target address <target_addresses>`.
+ :param sources: Source code files to compile. Paths are relative to the
+   BUILD file's directory.
+ :type sources: ``Fileset`` or list of strings
+ :param provides: The ``artifact``
    to publish that represents this target outside the repo.
- :param dependencies: List of :class:`pants.base.target.Target` instances
-   this target depends on.
- :type dependencies: list of targets
- :param excludes: List of :class:`pants.targets.exclude.Exclude` instances
+ :param dependencies: Other targets that this target depends on.
+ :type dependencies: list of target specs
+ :param excludes: List of :ref:`exclude <bdict_exclude>`\s
    to filter this target's transitive dependencies against.
  :param resources: An optional list of file paths (DEPRECATED) or
    ``resources`` targets (which in turn point to file paths). The paths
@@ -179,8 +239,7 @@ artifact
 
  :param string org: Organization of this artifact, or groupId in maven parlance.
  :param string name: Name of the artifact, or artifactId in maven parlance.
- :param repo: :class:`pants.targets.repository.Repository`
-   this artifact is published to.
+ :param repo: The ``repo`` this artifact is published to.
  :param string description: Description of this artifact.
 
  Implemented by ``pants.backend.jvm.targets.artifact.Artifact``
@@ -199,14 +258,13 @@ benchmark
 
 
  :param string name: The name of this target, which combined with this
-   build file defines the target :class:`pants.base.address.Address`.
- :param sources: A list of filenames representing the source code
-   this library is compiled from.
- :type sources: list of strings
- :param dependencies: List of :class:`pants.base.target.Target` instances
-   this target depends on.
- :type dependencies: list of targets
- :param excludes: One or more :class:`pants.targets.exclude.Exclude` instances
+   build file defines the :doc:`target address <target_addresses>`.
+ :param sources: Source code files to compile. Paths are relative to the
+   BUILD file's directory.
+ :type sources: ``Fileset`` or list of strings
+ :param dependencies: Other targets that this target depends on.
+ :type dependencies: list of target specs
+ :param excludes: List of :ref:`exclude <bdict_exclude>`\s
    to filter this target's transitive dependencies against.
  :param configurations: One or more ivy configurations to resolve for this target.
    This parameter is not intended for general use.
@@ -227,10 +285,11 @@ benchmark
 bundle
 -------------------------------------------------------------------------------
 
-.. py:function:: bundle(rel_path=None, mapper=None, relative_to=None)
+.. py:function:: bundle(parse_context)
 
  A set of files to include in an application bundle.
  
+ To learn about application bundles, see :ref:`jvm_bundles`.
  Looking for Java-style resources accessible via the ``Class.getResource`` API?
  Those are :ref:`bdict_resources`\ .
  
@@ -251,13 +310,6 @@ bundle
    ]
 
 
- :param rel_path: Base path of the "source" file paths. By default, path of the
-   BUILD file. Useful for assets that don't live in the source code repo.
- :param mapper: Function that takes a path string and returns a path string. Takes a path in
-   the source tree, returns a path to use in the resulting bundle. By default, an identity
-   mapper.
- :param string relative_to: Set up a simple mapping from source path to bundle path.
-   E.g., ``relative_to='common'`` removes that prefix from all files in the application bundle.
 
  Implemented by ``pants.backend.jvm.targets.jvm_binary.Bundle``
 
@@ -308,9 +360,10 @@ dependencies
  as if depending upon the set of dependencies directly.
 
 
- :param name: The name of this target, which combined with this
-   build file defines the target :class:`pants.base.address.Address`.
- :param dependencies: List of target specs.
+ :param string name: The name of this target, which combined with this
+   build file defines the :doc:`target address <target_addresses>`.
+ :param dependencies: Other targets that this target depends on.
+ :type dependencies: list of target specs
  :param exclusives: An optional map of exclusives tags. See CheckExclusives
    for details.
 
@@ -467,12 +520,8 @@ jar_library
 
 
  :param string name: The name of this target, which combined with this
-   build file defines the target :class:`pants.base.address.Address`.
- :param jars: List of :class:`pants.base.target.Target` instances
-   this target depends on.
- :param overrides: List of strings, each of which will be recursively resolved to
-   any targets that provide artifacts. Those artifacts will override corresponding
-   direct/transitive dependencies in the dependencies list.
+   build file defines the :doc:`target address <target_addresses>`.
+ :param jars: List of :ref:`jar <bdict_jar>`\s to depend upon.
  :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
 
  Implemented by ``pants.backend.jvm.targets.jar_library.JarLibrary``
@@ -496,14 +545,13 @@ java_agent
 
 
  :param string name: The name of this target, which combined with this
-   build file defines the target :class:`pants.base.address.Address`.
- :param sources: A list of filenames representing the source code
-   this library is compiled from.
- :type sources: list of strings
- :param dependencies: List of :class:`pants.base.target.Target` instances
-   this target depends on.
- :type dependencies: list of targets
- :param excludes: List of :class:`pants.targets.exclude.Exclude` instances
+   build file defines the :doc:`target address <target_addresses>`.
+ :param sources: Source code files to compile. Paths are relative to the
+   BUILD file's directory.
+ :type sources: ``Fileset`` or list of strings
+ :param dependencies: Other targets that this target depends on.
+ :type dependencies: list of target specs
+ :param excludes: List of :ref:`exclude <bdict_exclude>`\s
    to filter this target's transitive dependencies against.
  :param resources: An optional list of file paths (DEPRECATED) or
    ``resources`` targets (which in turn point to file paths). The paths
@@ -542,17 +590,15 @@ java_antlr_library
 
 
  :param string name: The name of this target, which combined with this
-   build file defines the target :class:`pants.base.address.Address`.
- :param sources: A list of filenames representing the source code
-   this library is compiled from.
- :type sources: list of strings
- :param Artifact provides:
-   The :class:`pants.targets.artifact.Artifact`
+   build file defines the :doc:`target address <target_addresses>`.
+ :param sources: Source code files to compile. Paths are relative to the
+   BUILD file's directory.
+ :type sources: ``Fileset`` or list of strings
+ :param provides: The ``artifact``
    to publish that represents this target outside the repo.
- :param dependencies: List of :class:`pants.base.target.Target` instances
-   this target depends on.
- :type dependencies: list of targets
- :param excludes: List of :class:`pants.targets.exclude.Exclude` instances
+ :param dependencies: Other targets that this target depends on.
+ :type dependencies: list of target specs
+ :param excludes: List of :ref:`exclude <bdict_exclude>`\s
    to filter this target's transitive dependencies against.
  :param compiler: The name of the compiler used to compile the ANTLR files.
      Currently only supports 'antlr3' and 'antlr4'
@@ -587,17 +633,16 @@ java_library
 
 
  :param string name: The name of this target, which combined with this
-   build file defines the target :class:`pants.base.address.Address`.
- :param sources: A list of filenames representing the source code
-   this library is compiled from.
- :type sources: list of strings
- :param Artifact provides:
-   The :class:`pants.targets.artifact.Artifact`
+   build file defines the :doc:`target address <target_addresses>`.
+ :param sources: Source code files to compile. Paths are relative to the
+   BUILD file's directory.
+ :type sources: ``Fileset`` or list of strings
+ :param provides: The ``artifact``
    to publish that represents this target outside the repo.
- :param dependencies: List of :class:`pants.base.target.Target` instances
-   this target depends on.
- :type dependencies: list of targets
- :param excludes: List of :class:`pants.targets.exclude.Exclude` instances
+ :param dependencies: Other targets that this target depends on. If your
+    code ``import``\s code from other places, it depends on them.
+ :type dependencies: list of target specs
+ :param excludes: List of :ref:`exclude <bdict_exclude>`\s
    to filter this target's transitive dependencies against.
  :param resources: An optional list of file paths (DEPRECATED) or
    ``resources`` targets (which in turn point to file paths). The paths
@@ -619,25 +664,26 @@ java_library
 java_protobuf_library
 -------------------------------------------------------------------------------
 
-.. py:function:: java_protobuf_library(buildflags=None, **kwargs)
+.. py:function:: java_protobuf_library(buildflags=None, imports=None, **kwargs)
 
  Generates a stub Java library from protobuf IDL files.
 
 
  :param string name: The name of this target, which combined with this
-   build file defines the target :class:`pants.base.address.Address`.
- :param sources: A list of filenames representing the source code
-   this library is compiled from.
- :type sources: list of strings
- :param Artifact provides:
-   The :class:`pants.targets.artifact.Artifact`
+   build file defines the :doc:`target address <target_addresses>`.
+ :param sources: Source code files to compile. Paths are relative to the
+   BUILD file's directory.
+ :type sources: ``Fileset`` or list of strings
+ :param provides: The ``artifact``
    to publish that represents this target outside the repo.
- :param dependencies: List of :class:`pants.base.target.Target` instances
-   this target depends on.
- :type dependencies: list of targets
- :param excludes: List of :class:`pants.targets.exclude.Exclude` instances
+ :param dependencies: Other targets that this target depends on.
+ :type dependencies: list of target specs
+ :param excludes: List of :ref:`exclude <bdict_exclude>`\s
    to filter this target's transitive dependencies against.
  :param buildflags: Unused, and will be removed in a future release.
+ :param imports: List of external :class:`pants.backend.jvm.targets.jar_dependency.JarDependency`
+   objects and addresses of :class:`pants.backend.jvm.targets.jar_library.JarLibrary` targets
+   which contain .proto definitions.
  :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
 
  Implemented by ``pants.backend.codegen.targets.java_protobuf_library.JavaProtobufLibrary``
@@ -673,17 +719,15 @@ java_thrift_library
 
 
  :param string name: The name of this target, which combined with this
-   build file defines the target :class:`pants.base.address.Address`.
- :param sources: A list of filenames representing the source code
-   this library is compiled from.
- :type sources: list of strings
- :param Artifact provides:
-   The :class:`pants.targets.artifact.Artifact`
+   build file defines the :doc:`target address <target_addresses>`.
+ :param sources: Source code files to compile. Paths are relative to the
+   BUILD file's directory.
+ :type sources: ``Fileset`` or list of strings
+ :param provides: The ``artifact``
    to publish that represents this target outside the repo.
- :param dependencies: List of :class:`pants.base.target.Target` instances
-   this target depends on.
- :type dependencies: list of targets
- :param excludes: List of :class:`pants.targets.exclude.Exclude` instances
+ :param dependencies: Other targets that this target depends on.
+ :type dependencies: list of target specs
+ :param excludes: List of :ref:`exclude <bdict_exclude>`\s
    to filter this target's transitive dependencies against.
  :param compiler: The compiler used to compile the thrift files; default is 'thrift'
    (The apache thrift compiler).
@@ -712,22 +756,20 @@ jaxb_library
  Generates a stub Java library from jaxb xsd files.
 
 
- Initialize the JaxbLibrary target, currently with a lot of copypasta for the payload.
- 
  :param package: java package (com.company.package) in which to generate the output java files.
-   If left unspecified, pants will attempt to guess it from the file path leading to the schema
-   (xsd) file. This will only be accurate if the .xsd file is in the format
-   .../com/company/package/schema.xsd; it is recommended that the package be manually defined in
-   the BUILD file for robustness.
- :param language: currently, anything other than 'java' is unsupported (this is the default)
- :param buildflags: currently unused Parameters inherited from JvmTarget.
- :param string name: The name of this target, which combined with this build file defines the
-   target :class:`pants.base.address.Address`.
+   If unspecified, Pants guesses it from the file path leading to the schema
+   (xsd) file. This guess is accurate only if the .xsd file is in a path like
+   ``.../com/company/package/schema.xsd``. This guess is probably less
+   accurate than setting the package explicitly in the ``BUILD`` file.
+ :param string language: only 'java' is supported. Default: 'java'
+ :param buildflags: (currently unused)
+ :param string name: The name of this target, which combined with this
+   build file defines the :doc:`target address <target_addresses>`.
  :param sources: A list of filenames representing the source code this library is compiled from.
  :type sources: ``FileSet`` or list of strings.
  :param dependencies: Other targets that this target depends on.
  :type dependencies: List of target specs.
- :param excludes: One or more :class:`pants.targets.exclude.Exclude` instances to filter this
+ :param excludes: List of ``exclude``\s to filter this
    target's transitive dependencies against.
  :param configurations: One or more ivy configurations to resolve for this target. This parameter
    is not intended for general use.
@@ -754,17 +796,15 @@ junit_tests
 
 
  :param string name: The name of this target, which combined with this
-   build file defines the target :class:`pants.base.address.Address`.
- :param sources: A list of filenames representing the source code
-   this library is compiled from.
- :type sources: list of strings
- :param Artifact provides:
-   The :class:`pants.targets.artifact.Artifact`
+   build file defines the :doc:`target address <target_addresses>`.
+ :param sources: Source code files to compile. Paths are relative to the
+   BUILD file's directory.
+ :type sources: ``Fileset`` or list of strings
+ :param provides: The ``artifact``
    to publish that represents this target outside the repo.
- :param dependencies: List of :class:`pants.base.target.Target` instances
-   this target depends on.
- :type dependencies: list of targets
- :param excludes: List of :class:`pants.targets.exclude.Exclude` instances
+ :param dependencies: Other targets that this target depends on.
+ :type dependencies: list of target specs
+ :param excludes: List of :ref:`exclude <bdict_exclude>`\s
    to filter this target's transitive dependencies against.
  :param resources: An optional list of ``resources`` targets containing text
    file resources to place in this module's jar.
@@ -796,10 +836,10 @@ jvm_app
 
 
  :param string name: The name of this target, which combined with this
-   build file defines the target :class:`pants.base.address.Address`.
- :param binary: A pointer to the :class:`pants.targets.jvm_binary.JvmBinary`. that contains the
+   build file defines the :doc:`target address <target_addresses>`.
+ :param string binary: Target spec of the ``jvm_binary`` that contains the
    app main.
- :param bundles: One or more :class:`pants.targets.jvm_binary.Bundle`'s
+ :param bundles: One or more ``bundle``\s
    describing "extra files" that should be included with this app
    (e.g.: config files, startup scripts).
  :param string basename: Name of this application, if different from the
@@ -835,7 +875,7 @@ jvm_binary
 
 
  :param string name: The name of this target, which combined with this
-   build file defines the target :class:`pants.base.address.Address`.
+   build file defines the :doc:`target address <target_addresses>`.
  :param string main: The name of the ``main`` class, e.g.,
    ``'com.pants.examples.hello.main.HelloMain'``. This class may be
    present as the source of this target or depended-upon library.
@@ -844,17 +884,19 @@ jvm_binary
  :param string source: Name of one ``.java`` or ``.scala`` file (a good
    place for a ``main``).
  :param resources: List of ``resource``\s to include in bundle.
- :param dependencies: List of targets (probably ``java_library`` and
+ :param dependencies: Targets (probably ``java_library`` and
   ``scala_library`` targets) to "link" in.
- :param excludes: List of ``exclude``\s to filter this target's transitive
-  dependencies against.
- :param deploy_excludes: List of ``excludes`` to apply at deploy time.
+ :type dependencies: list of target specs
+ :param excludes: List of :ref:`exclude <bdict_exclude>`\s
+   to filter this target's transitive dependencies against.
+ :param deploy_excludes: List of :ref:`exclude <bdict_exclude>`\s to apply
+   at deploy time.
    If you, for example, deploy a java servlet that has one version of
    ``servlet.jar`` onto a Tomcat environment that provides another version,
    they might conflict. ``deploy_excludes`` gives you a way to build your
    code but exclude the conflicting ``jar`` when deploying.
  :param deploy_jar_rules: Rules for packaging this binary in a deploy jar.
- :type deploy_jar_rules: A :class:`twitter.pants.targets.JarRules` specification.
+ :type deploy_jar_rules: A JarRules specification.
  :param configurations: Ivy configurations to resolve for this target.
    This parameter is not intended for general use.
  :type configurations: tuple of strings
@@ -874,7 +916,7 @@ jvm_binary
 maven_layout
 -------------------------------------------------------------------------------
 
-.. py:function:: maven_layout(basedir=u'', rel_path=None)
+.. py:function:: maven_layout(parse_context, basedir=u'')
 
 
 
@@ -913,16 +955,15 @@ page
       ],
     )
  
- Multiple :class:`pants.backend.core.targets.WikiArtifact` objects can be provided, to bind a page
- to multiple wikis.
+ A ``page`` can have more than one ``wiki_artifact`` in its ``provides``
+ (there might be more than one place to publish it).
 
 
  :param string name: The name of this target, which combined with this
-   build file defines the target :class:`pants.base.address.Address`.
+   build file defines the :doc:`target address <target_addresses>`.
  :param source: Source of the page in markdown format.
- :param dependencies: List of :class:`pants.base.target.Target` instances
-   this target depends on.
- :type dependencies: list of targets
+ :param dependencies: Other targets that this target depends on.
+ :type dependencies: list of target specs
  :param resources: An optional list of Resources objects.
 
  Implemented by ``pants.backend.core.targets.doc.Page``
@@ -973,15 +1014,14 @@ python_antlr_library
  :param name: Name of library
  :param module: everything beneath module is relative to this module name, None if root namespace
  :param antlr_version:
- :param sources: A list of filenames representing the source code
-   this library is compiled from.
- :type sources: list of strings
+ :param sources: Source code files to compile. Paths are relative to the
+   BUILD file's directory.
+ :type sources: ``Fileset`` or list of strings
  :param resources: non-Python resources, e.g. templates, keys, other data (it is
      recommended that your application uses the pkgutil package to access these
      resources in a .zip-module friendly way.)
- :param dependencies: List of :class:`pants.base.target.Target` instances
-   this target depends on.
- :type dependencies: list of targets
+ :param dependencies: Other targets that this target depends on.
+ :type dependencies: list of target specs
  :param dict exclusives: An optional dict of exclusives tags. See CheckExclusives for details.
 
  Implemented by ``pants.backend.codegen.targets.python_antlr_library.PythonAntlrLibrary``
@@ -1012,11 +1052,13 @@ python_binary
  :param name: target name
  :param source: the python source file that becomes this binary's __main__.
    If None specified, drops into an interpreter by default.
- :param dependencies: List of :class:`pants.base.target.Target` instances
-   this target depends on.
- :type dependencies: list of targets
- :param entry_point: the default entry point for this binary.  if None, drops into the entry
-   point that is defined by source
+ :param dependencies: Other targets that this target depends on.
+ :type dependencies: list of target specs
+ :param string entry_point: the default entry point for this binary.  if None, drops into the entry
+   point that is defined by source. Something like
+   "pants.bin.pants_exe:main", where "pants.bin.pants_exe" is the package
+   name and "main" is the function name (if ommitted, the module is
+   executed directly, presuming it has a ``__main.py__``).
  :param inherit_path: inherit the sys.path of the environment that this binary runs in
  :param zip_safe: whether or not this binary is safe to run in compacted (zip-file) form
  :param always_write_cache: whether or not the .deps cache of this PEX file should always
@@ -1051,12 +1093,18 @@ python_library
  
  :param name: Name of library
  :param sources: A list of filenames representing the source code this
-    library is compiled from.
+    library is compiled from. Paths are relative to the
+    BUILD file's directory.
  :param resources: non-Python resources, e.g. templates, keys, other data
     (it is
     recommended that your application uses the pkgutil package to access these
     resources in a .zip-module friendly way.)
- :param dependencies: List of target specs.
+ :param dependencies: Other targets that this target depends on.
+    These dependencies may
+    be other ``python_library``-like targets (``python_library``,
+    ``python_thrift_library``, ``python_antlr_library`` and so forth) or
+    ``python_requirement_library`` targets.
+ :type dependencies: List of target specs
  :param provides:
    The :ref:`setup_py <bdict_setup_py>` to publish that represents this
    target outside the repo.
@@ -1087,6 +1135,23 @@ python_requirement
 .. py:function:: python_requirement(requirement, name=None, repository=None, version_filter=None, use_2to3=False, compatibility=None)
 
  Pants wrapper around pkg_resources.Requirement
+ 
+ Describes an external dependency as understood by ``easy_install`` or
+ ``pip``. It takes
+ a single non-keyword argument of the `Requirement`-style string, e.g. ::
+ 
+     python_requirement('django-celery')
+     python_requirement('tornado==2.2')
+     python_requirement('kombu>=2.1.1,<3.0')
+ 
+ Pants resolves the dependency *and its transitive closure*.
+ For example, `django-celery` pulls also pulls down its
+ dependencies: `celery>=2.5.1`, `django-picklefield>=0.2.0`, `ordereddict`,
+ `python-dateutil`,
+ `kombu>=2.1.1,<3.0`, `anyjson>=0.3.1`, `importlib`, and `amqplib>=1.0`.
+ 
+ To let other Targets depend on this ``python_requirement``, put it in a
+ :ref:`python_requirement_library <bdict_python_requirement_library>`.
 
 
 
@@ -1100,8 +1165,12 @@ python_requirement_library
 
 .. py:function:: python_requirement_library(requirements=None, *args, **kwargs)
 
+ Named target for some pip requirements.
 
 
+ :param string name: The target name.
+ :param requirements: pip requirements
+ :type requirements: List of :ref:`python_requirement <bdict_python_requirement>`\s
 
  Implemented by ``pants.backend.python.targets.python_requirement_library.PythonRequirementLibrary``
 
@@ -1112,6 +1181,40 @@ python_requirement_library
   Set a human-readable description of this target.
   
   :param description: Descriptive string
+
+.. _bdict_python_requirements:
+
+python_requirements
+-------------------------------------------------------------------------------
+
+.. py:function:: python_requirements(parse_context, requirements_relpath=u'requirements.txt')
+
+
+
+ Translates a pip requirements file into an equivalent set of python_requirements
+ 
+ If the ``requirements.txt`` file has lines ``foo>=3.14`` and ``bar>=2.7``,
+ then this is roughly like::
+ 
+   python_requirement_library(name="foo", requirements=[
+     python_requirement("foo>=3.14"),
+   ])
+   python_requirement_library(name="bar", requirements=[
+     python_requirement("bar>=2.7"),
+   ])
+ 
+ NB some requirements files can't be unambiguously translated; ie: multiple
+ find links.  For these files a ValueError will be raised that points out the issue.
+ 
+ See the requirements file spec here: http://www.pip-installer.org/en/1.1/requirements.html
+ 
+ :param parse_context: (Don't specify this in a BUILD file; it's set automatically)
+ :param string requirements_relpath: The relative path from the parent dir of the BUILD file using
+     this function to the requirements file.  By default a `requirements.txt` file sibling to the
+     BUILD file is assumed.
+
+ Implemented by ``pants.backend.python.python_requirements.python_requirements``
+
 
 .. _bdict_python_test_suite:
 
@@ -1136,13 +1239,12 @@ python_tests
 
 
  :param name: See PythonLibrary target
- :param sources: A list of filenames representing the source code
-   this library is compiled from.
- :type sources: list of strings
+ :param sources: Source code files to compile. Paths are relative to the
+   BUILD file's directory.
+ :type sources: ``Fileset`` or list of strings
  :param resources: See PythonLibrary target
- :param dependencies: List of :class:`pants.base.target.Target` instances
-   this target depends on.
- :type dependencies: list of targets
+ :param dependencies: Other targets that this target depends on.
+ :type dependencies: list of target specs
  :param coverage: the module(s) whose coverage should be generated, e.g.
    'twitter.common.log' or ['twitter.common.log', 'twitter.common.http']
  :param dict exclusives: An optional dict of exclusives tags. See CheckExclusives for details.
@@ -1170,12 +1272,13 @@ python_thrift_library
  :param name: Name of library
  :param sources: thrift source files (If more than one tries to use the same
    namespace, beware https://issues.apache.org/jira/browse/THRIFT-515)
+ :type sources: ``Fileset`` or list of strings. Paths are relative to the
+   BUILD file's directory.
  :param resources: non-Python resources, e.g. templates, keys, other data (it is
    recommended that your application uses the pkgutil package to access these
    resources in a .zip-module friendly way.)
- :param dependencies: List of :class:`pants.base.target.Target` instances
-   this target depends on.
- :type dependencies: list of targets
+ :param dependencies: Other targets that this target depends on.
+ :type dependencies: list of target specs
  :param dict exclusives: An optional dict of exclusives tags. See CheckExclusives for details.
 
  Implemented by ``pants.backend.codegen.targets.python_thrift_library.PythonThriftLibrary``
@@ -1228,9 +1331,10 @@ resources
 
 
  :param string name: The name of this target, which combined with this
-   build file defines the target :class:`pants.base.address.Address`.
- :param sources: A list of filenames representing the resources
-   this library provides.
+   build file defines the :doc:`target address <target_addresses>`.
+ :param sources: Files to "include". Paths are relative to the
+   BUILD file's directory.
+ :type sources: ``Fileset`` or list of strings
 
  Implemented by ``pants.backend.core.targets.resources.Resources``
 
@@ -1292,21 +1396,23 @@ scala_library
 
 
  :param string name: The name of this target, which combined with this
-   build file defines the target :class:`pants.base.address.Address`.
- :param sources: A list of filenames representing the source code
-   this library is compiled from.
- :type sources: list of strings
- :param java_sources:
-   :class:`pants.targets.java_library.JavaLibrary` or list of
-   JavaLibrary targets this library has a circular dependency on.
-   Prefer using dependencies to express non-circular dependencies.
- :param Artifact provides:
-   The :class:`pants.targets.artifact.Artifact`
+   build file defines the :doc:`target address <target_addresses>`.
+ :param sources: Source code files to compile. Paths are relative to the
+   BUILD file's directory.
+ :type sources: ``Fileset`` or list of strings
+ :param java_sources: Java libraries this library has a *circular*
+   dependency on.
+   If you don't have the particular problem of circular dependencies
+   forced by splitting interdependent java and scala into multiple targets,
+   don't use this at all.
+   Prefer using ``dependencies`` to express non-circular dependencies.
+ :type java_sources: target spec or list of target specs
+ :param provides: The ``artifact``
    to publish that represents this target outside the repo.
- :param dependencies: List of :class:`pants.base.target.Target` instances
-   this target depends on.
- :type dependencies: list of targets
- :param excludes: List of :class:`pants.targets.exclude.Exclude` instances
+ :param dependencies: Other targets that this target depends on. If your
+    code ``import``\s code from other places, it depends on them.
+ :type dependencies: list of target specs
+ :param excludes: List of :ref:`exclude <bdict_exclude>`\s
    to filter this target's transitive dependencies against.
  :param resources: An optional list of paths (DEPRECATED) or ``resources``
    targets containing resources that belong on this library's classpath.
@@ -1334,20 +1440,18 @@ scala_specs
 
  :param name: The name of this module target, addressable via pants via the portion of the spec
    following the colon
- :param sources: A list of filenames representing the source code
-   this library is compiled from.
- :type sources: list of strings
- :param java_sources:
-   :class:`pants.targets.java_library.JavaLibrary` or list of
-   JavaLibrary targets this library has a circular dependency on.
-   Prefer using dependencies to express non-circular dependencies.
- :param Artifact provides:
-   The :class:`pants.targets.artifact.Artifact`
+ :param sources: Source code files to compile. Paths are relative to the
+   BUILD file's directory.
+ :type sources: ``Fileset`` or list of strings
+ :param java_sources: Java libraries this library has a *circular*
+   dependency on.
+   Prefer using ``dependencies`` to express non-circular dependencies.
+ :type java_sources: target spec or list of target specs
+ :param provides:  The ``artifact``
    to publish that represents this target outside the repo.
- :param dependencies: List of :class:`pants.base.target.Target` instances
-   this target depends on.
- :type dependencies: list of targets
- :param excludes: List of :class:`pants.targets.exclude.Exclude` instances
+ :param dependencies: Other targets that this target depends on.
+ :type dependencies: list of target specs
+ :param excludes: List of :ref:`exclude <bdict_exclude>`\s
    to filter this target's transitive dependencies against.
  :param resources: An optional list of Resources that should be in this target's classpath.
  :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
@@ -1388,21 +1492,19 @@ scalac_plugin
    spec following the colon - required.
  :param classname: The fully qualified plugin class name - required.
  :param plugin: The name of the plugin which defaults to name if not supplied.
- :param sources: A list of filenames representing the source code
-   this library is compiled from.
- :type sources: list of strings
- :param java_sources:
-   :class:`pants.targets.java_library.JavaLibrary` or list of
-   JavaLibrary targets this library has a circular dependency on.
-   Prefer using dependencies to express non-circular dependencies.
- :param Artifact provides:
-   The :class:`pants.targets.artifact.Artifact`
+ :param sources: Source code files to compile. Paths are relative to the
+   BUILD file's directory.
+ :type sources: ``Fileset`` or list of strings
+ :param java_sources: Java libraries this library has a *circular*
+   dependency on.
+   Prefer using ``dependencies`` to express non-circular dependencies.
+ :type java_sources: target spec or list of target specs
+ :param provides: The ``artifact``
    to publish that represents this target outside the repo.
- :param dependencies: List of :class:`pants.base.target.Target` instances
-   this target depends on.
- :type dependencies: list of targets
- :param excludes: List of :class:`pants.targets.exclude.Exclude` instances
-   to filter this target's transitive dependencies against
+ :param dependencies: Other targets that this target depends on.
+ :type dependencies: list of target specs
+ :param excludes: List of :ref:`exclude <bdict_exclude>`\s
+   to filter this target's transitive dependencies against.
  :param resources: An optional list of paths (DEPRECATED) or ``resources``
    targets containing resources that belong on this library's classpath.
  :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
@@ -1458,7 +1560,7 @@ setup_py
 source_root
 -------------------------------------------------------------------------------
 
-.. py:function:: source_root(rel_path)
+.. py:function:: source_root(parse_context)
 
  Allows registration of a source root for a set of targets.
  
@@ -1501,7 +1603,7 @@ wiki
 
 
  :param string name: The name of this target, which combined with this
-   build file defines the target :class:`pants.base.address.Address`.
+   build file defines the :doc:`target address <target_addresses>`.
  :param url_builder: Function that accepts a page target and an optional wiki config dict.
  :returns: A tuple of (alias, fully qualified url).
 
