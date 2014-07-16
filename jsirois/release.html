@@ -390,7 +390,7 @@ body a.icon-home:hover{
 a change has been made and the author wants to use a version incorporating
 that change. Things are likely to remain this way pre 1.0.0.</li>
 <li>Preparing the release.</li>
-<li>Testing the release.</li>
+<li>(optional) Perform a release dry run.</li>
 <li>Publishing the release to PyPi.</li>
 <li>Announce the release on <cite>pants-devel</cite>.</li>
 </ul>
@@ -403,8 +403,8 @@ community convention.</p>
 version number in <a class="reference external" href="https://github.com/pantsbuild/pants/tree/master/src/python/pants/version.py">src/python/pants/version.py</a> and then send this
 out for review.</p>
 </div>
-<div class="section" id="test-release">
-<h2>Test Release<a class="headerlink" href="#test-release" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="dry-run">
+<h2>Dry Run<a class="headerlink" href="#dry-run" title="Permalink to this headline">¶</a></h2>
 <p>In order to publish the prepared release you&#8217;ll need to be a pantsbuild.pants package owner;
 otherwise you&#8217;ll need to hand off to someone who is.  The list is on the
 <a class="reference external" href="https://pypi.python.org/pypi/pantsbuild.pants">pantsbuild.pants package index page</a> in the
@@ -415,37 +415,32 @@ otherwise you&#8217;ll need to hand off to someone who is.  The list is on the
 </pre></div>
 </div>
 <p>Releases should only be published from master, so get on master and ensure your version number
-and CHANGELOG commit is present. After confirming this, publish locally and verify the release.</p>
-<div class="highlight-python"><div class="highlight"><pre>PANTS_DEV=1 ./pants setup_py --recursive src/python/pants:pants-packaged
-VENV_DIR=$(mktemp -d -t pants.XXXXX)
-./build-support/virtualenv $VENV_DIR
-source $VENV_DIR/bin/activate
-pip install --find-links=file://$(pwd)/dist \
-  pantsbuild.pants==$(PANTS_DEV=1 ./pants --version 2&gt;/dev/null)
-pants goal list :: &amp;&amp; pants --version
-deactivate
+commit is present. After confirming this, publish locally and verify the release.</p>
+<div class="highlight-python"><div class="highlight"><pre>./build-support/bin/release.sh -n
 </pre></div>
 </div>
-<p>You should get a listing of targets in the repo and finally the version number you expect to be
-releasing, for example:</p>
-<div class="highlight-python"><div class="highlight"><pre>...
-tests/python/pants_test/testutils:testutils
-tests/scala/com/pants/example/hello/welcome:welcome
-0.0.18
-</pre></div>
-</div>
+<p>This will perform a dry run local build of the pantsbuild.pants sdist, install it in a virtualenv
+and then smoke test basic operation.</p>
+<p>Note that the release publish flow also performs a mandatory dry run so executing a dry run
+separately is not required.</p>
 </div>
 <div class="section" id="publish-to-pypi">
 <h2>Publish to PyPi<a class="headerlink" href="#publish-to-pypi" title="Permalink to this headline">¶</a></h2>
 <p>Now that we&#8217;ve smoke-tested this release, we can publish to PyPi:</p>
-<div class="highlight-python"><div class="highlight"><pre>PANTS_DEV=1 ./pants setup_py --recursive --run=&#39;sdist upload&#39; \
-  src/python/pants:pants-packaged
+<div class="highlight-python"><div class="highlight"><pre>./build-support/bin/release.sh
 </pre></div>
 </div>
+<p>This also performs a dry run and then proceeds to upload the smoke tested sdist to PyPi.</p>
 </div>
 <div class="section" id="announce">
 <h2>Announce<a class="headerlink" href="#announce" title="Permalink to this headline">¶</a></h2>
-<p>Check PyPi to ensure everything looks good. Finally, announce the release to <cite>pants-devel</cite>.</p>
+<p>Check PyPi to ensure everything looks good. The <a class="reference external" href="https://pypi.python.org/pypi/pantsbuild.pants">pantsbuild.pants package index page</a> should display the package version you just
+uploaded. To test the package is installable:</p>
+<div class="highlight-python"><div class="highlight"><pre>./build-support/bin/release.sh -t
+</pre></div>
+</div>
+<p>This will attempt to install the just-published package from pypi and then smoke test it.</p>
+<p>Finally, announce the release to <cite>pants-devel</cite>.</p>
 </div>
 </div>
 
