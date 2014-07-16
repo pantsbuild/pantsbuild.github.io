@@ -140,14 +140,13 @@ body a.icon-home:hover{
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Python Projects with Pants</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#tl-dr-hello-world-with-pants-python">TL;DR - &#8216;Hello world!&#8217; with Pants Python</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#describing-python-environments-in-pants">Describing Python environments in Pants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#relevant-goals-and-targets">Relevant Goals and Targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#build-for-a-simple-binary">BUILD for a Simple Binary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#handling-python-requirement">Handling <tt class="docutils literal"><span class="pre">python_requirement</span></tt></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#python-thrift-library"><tt class="docutils literal"><span class="pre">python_thrift_library</span></tt></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#building-a-pex">Building a PEX</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#environment-manipulation-with-pants-py">Environment manipulation with <cite>pants py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pex-contents">PEX Contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#repl-and-environment-manipulation-with-pants-py">REPL and environment manipulation with <cite>pants py</cite></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#python-binary-entry-point">python_binary entry_point</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#python-tests">Python Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#more-about-python-tests">More About Python Tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#manipulating-pex-behavior-with-environment-variables">Manipulating PEX behavior with environment variables</a></li>
 </ul>
 </li>
@@ -385,126 +384,164 @@ body a.icon-home:hover{
 <p>Pants makes the manipulation and distribution of hermetically sealed Python
 environments painless.
 You can organize your code in the <a class="reference internal" href="first_concepts.html"><em>Pants way</em></a>,
-with targets for binaries, libraries, and
-use it to build Python code into
-<a class="reference external" href="https://github.com/twitter/commons/blob/master/src/python/twitter/common/python/README.md">PEXes</a>
+with targets for binaries, libraries, and tests.
+Pants builds Python code into
+<a class="reference external" href="https://github.com/twitter/commons/blob/master/src/python/twitter/common/python/README.md">PEXes</a>.
 (A PEX is, roughly, an archive file containing a runnable Python environment.)
 Pants isn&#8217;t the only PEX-generation tool out there; but if you have some
-&#8220;common code&#8221; used by more than one PEX, Pants is a good way to get that
-working.</p>
+&#8220;common code&#8221; used by more than one PEX, Pants makes it easy to manage
+the dependencies.</p>
+<p>This page assumes that you&#8217;ve already read <a class="reference internal" href="first_tutorial.html"><em>First Tutorial</em></a>.</p>
 <p>Pants&#8217; Python support changed in 2014. Depending on how old your Pants is,
 Pants goals might not work with Python code. If you use older pants (e.g.,
 if you work in twitter/commons), please see <a class="reference internal" href="python_old.html"><em>Using Pants for Python development, 2014 and Earlier</em></a>.</p>
-<div class="section" id="tl-dr-hello-world-with-pants-python">
-<h2>TL;DR - &#8216;Hello world!&#8217; with Pants Python<a class="headerlink" href="#tl-dr-hello-world-with-pants-python" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>git clone git://github.com/twitter/commons
-<span class="nv">$ </span><span class="nb">cd </span>commons
-<span class="nv">$ </span>mkdir -p src/python/twitter/my_project
-<span class="nv">$ </span>vi src/python/twitter/my_project/BUILD
+<p>Pants&#8217; Python support is still changing. Depending on what you&#8217;re trying to
+do, your Pants command might start with <tt class="docutils literal"><span class="pre">goal</span></tt> or might start with something
+else.</p>
+<div class="section" id="relevant-goals-and-targets">
+<h2>Relevant Goals and Targets<a class="headerlink" href="#relevant-goals-and-targets" title="Permalink to this headline">¶</a></h2>
+<p><strong>Runnable Binary</strong></p>
+<blockquote>
+<div>Pants can generate PEXes, executables built from Python.
+Invoke the <a class="reference internal" href="goals_reference.html#gref-phase-binary"><em>binary goal</em></a>
+on a <a class="reference internal" href="build_dictionary.html#bdict-python-binary"><em>python_binary</em></a>
+target to generate a <tt class="docutils literal"><span class="pre">.pex</span></tt>. You can also invoke the
+<a class="reference internal" href="goals_reference.html#gref-phase-run"><em>run goal</em></a>
+on a <tt class="docutils literal"><span class="pre">python_binary</span></tt> to run its code &#8220;in place.&#8221;</div></blockquote>
+<p><strong>Importable Code</strong></p>
+<blockquote>
+<div><p><a class="reference internal" href="build_dictionary.html#bdict-python-library"><em>python_library</em></a> BUILD targets make Python code
+&#8220;import-able&#8221;.
+The rule of thumb is that each directory of <tt class="docutils literal"><span class="pre">.py</span></tt> files has a
+<tt class="docutils literal"><span class="pre">BUILD</span></tt> file with a <tt class="docutils literal"><span class="pre">python_library</span></tt> target. A Python target
+that has a <tt class="docutils literal"><span class="pre">python_library</span></tt> in its <tt class="docutils literal"><span class="pre">dependencies</span></tt> can import
+its code.</p>
+<p>To use code that&#8217;s not in your workspace, use a
+<a class="reference internal" href="build_dictionary.html#bdict-python-requirement-library"><em>python_requirement_library</em></a>
+and a <a class="reference internal" href="build_dictionary.html#bdict-python-requirement"><em>python_requirement</em></a> to
+refer to the code.
+To use several several of these via a <tt class="docutils literal"><span class="pre">pip</span></tt>-style
+<tt class="docutils literal"><span class="pre">requirements.txt</span></tt> file, use a
+<em class="xref std std-ref">python_requirements_library</em>.</p>
+</div></blockquote>
+<p><strong>Tests</strong></p>
+<blockquote>
+<div>A <a class="reference internal" href="build_dictionary.html#bdict-python-tests"><em>python_tests</em></a> BUILD target has some
+<tt class="docutils literal"><span class="pre">pytest</span></tt> tests. It normally
+depends on a <tt class="docutils literal"><span class="pre">python_library</span></tt> target so it can import and test
+the library&#8217;s code. Use the <a class="reference internal" href="goals_reference.html#gref-phase-test"><em>test goal</em></a>
+to run these tests.</div></blockquote>
+<p><strong>Generated Code</strong></p>
+<blockquote>
+<div>A <a class="reference internal" href="build_dictionary.html#bdict-python-thrift-library"><em>python_thrift_library</em></a>
+generates Python code from <tt class="docutils literal"><span class="pre">.thrift</span></tt> source;
+a Python target that has this target in its <tt class="docutils literal"><span class="pre">dependencies</span></tt> can <tt class="docutils literal"><span class="pre">import</span></tt>
+the generated Python code.</div></blockquote>
+</div>
+<div class="section" id="build-for-a-simple-binary">
+<h2>BUILD for a Simple Binary<a class="headerlink" href="#build-for-a-simple-binary" title="Permalink to this headline">¶</a></h2>
+<p>The pantsbuild/pants repo has a simple &#8220;hello world&#8221; sample Python binary.
+You can use <tt class="docutils literal"><span class="pre">goal</span> <span class="pre">binary</span></tt> to build a PEX from it.
+You can then run the PEX:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ ./pants goal binary src/python/example/hello/main
+     ...much output...
+$ ./dist/main.pex # run the generated PEX
+Hello, world!
+$
 </pre></div>
 </div>
-<p><cite>src/python/twitter/my_project/BUILD</cite>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">python_binary</span><span class="p">(</span>
-  <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;hello_world&#39;</span><span class="p">,</span>
-  <span class="n">source</span> <span class="o">=</span> <span class="s">&#39;hello_world.py&#39;</span>
+<p><tt class="docutils literal"><span class="pre">src/python/example/hello/main/BUILD</span></tt> defines a <tt class="docutils literal"><span class="pre">python_binary</span></tt> target,
+a build-able thing that configures a runnable program made from Python code:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">python_binary</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;main&#39;</span><span class="p">,</span>
+  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;src/python/example/hello/greet:greet&#39;</span><span class="p">),</span>
+  <span class="p">],</span>
+  <span class="n">source</span><span class="o">=</span><span class="s">&#39;main.py&#39;</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>vi src/python/twitter/my_project/hello_world.py
-</pre></div>
-</div>
-<p><cite>src/python/twitter/my_project/hello_world.py</cite> might have contents:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">print</span><span class="p">(</span><span class="s">&#39;Hello world!&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>To run directly:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>./pants py src/python/twitter/my_project:hello_world
-Build operating on target: PythonBinary<span class="o">(</span>src/python/twitter/my_project/BUILD:hello_world<span class="o">)</span>
-Hello world!
-</pre></div>
-</div>
-<p>To build:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>./pants src/python/twitter/my_project:hello_world
-Build operating on targets: OrderedSet<span class="o">([</span>PythonBinary<span class="o">(</span>src/python/twitter/my_project/BUILD:hello_world<span class="o">)])</span>
-Building PythonBinary PythonBinary<span class="o">(</span>src/python/twitter/my_project/BUILD:hello_world<span class="o">)</span>:
-Wrote /Users/wickman/clients/science-py-csl/dist/hello_world.pex
-</pre></div>
-</div>
-<p>and run separately:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>dist/hello_world.pex
-Hello world!
-</pre></div>
-</div>
-<p>NOTE: The first time you run <cite>./pants</cite>, it will be slow,
-as it bootstraps itself inside your directory.  Note, it never
-installs anything in a global site-packages.</p>
-</div>
-<div class="section" id="describing-python-environments-in-pants">
-<h2>Describing Python environments in Pants<a class="headerlink" href="#describing-python-environments-in-pants" title="Permalink to this headline">¶</a></h2>
-<p>Build dependencies in Pants are managed with <cite>BUILD</cite> files
-co-located with your source.
-In the usual <a class="reference internal" href="first_concepts.html"><em>Pants way</em></a>, these files
-define the &#8220;buildable things&#8221; in your code and the dependency
-relations between them. In the <a class="reference internal" href="first_tutorial.html"><em>Tutorial</em></a>,
-you saw <tt class="docutils literal"><span class="pre">BUILD</span></tt> targets useful for Java. Python <tt class="docutils literal"><span class="pre">BUILD</span></tt> targets
-will sound familiar:</p>
-<ul class="simple">
-<li><a class="reference internal" href="build_dictionary.html#bdict-python-library"><em>python_library</em></a>: an import-able piece of Python code.</li>
-<li><a class="reference internal" href="build_dictionary.html#bdict-python-binary"><em>python_binary</em></a>:  a single source (the executable)</li>
-<li><a class="reference internal" href="build_dictionary.html#bdict-python-requirement-library"><em>python_requirement_library</em></a>,
-<a class="reference internal" href="build_dictionary.html#bdict-python-requirement"><em>python_requirement</em></a>: external dependency, resolved by pypi.
-These tend to live in <a class="reference internal" href="3rdparty_py.html"><em>a 3rdparty area</em></a></li>
-<li><a class="reference internal" href="build_dictionary.html#bdict-python-tests"><em>python_tests</em></a>: collection of <tt class="docutils literal"><span class="pre">pytest</span></tt> tests</li>
-</ul>
-<p>Let&#8217;s look at the BUILD file in twitter/commons&#8217;
-<tt class="docutils literal"><span class="pre">src/python/twitter/tutorial/BUILD</span></tt>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">python_binary</span><span class="p">(</span>
-  <span class="n">name</span> <span class="o">=</span> <span class="s">&quot;hello_world&quot;</span><span class="p">,</span>
-  <span class="n">source</span> <span class="o">=</span> <span class="s">&quot;hello_world.py&quot;</span><span class="p">,</span>
-  <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">pants</span><span class="p">(</span><span class="s">&quot;src/python/twitter/common/app&quot;</span><span class="p">),</span>
-  <span class="p">]</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<p>This BUILD file names one target: <cite>hello_world</cite>, a <cite>python_binary</cite> target.
-The <cite>hello_world</cite> target
-contains one source file, <cite>hello_world.py</cite>, and depends upon one other
-target, the format of which will be described shortly.</p>
-<p>Sources are relative to the location of the BUILD
-file itself. E.g.,  <tt class="docutils literal"><span class="pre">hello_world.py</span></tt> in
-<tt class="docutils literal"><span class="pre">src/python/twitter/tutorial/BUILD</span></tt> refers to
-<cite>src/python/twitter/tutorial/hello_world.py</cite>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">twitter.common</span> <span class="kn">import</span> <span class="n">app</span>
+<p>This binary has a source file with its &#8220;main&#8221;. A Python binary&#8217;s &#8220;main&#8221; can be
+in a depended-upon <tt class="docutils literal"><span class="pre">python_library</span></tt> or in the <tt class="docutils literal"><span class="pre">python_binary</span></tt>&#8216;s
+<tt class="docutils literal"><span class="pre">source</span></tt>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="p">(</span><span class="n">nested_scopes</span><span class="p">,</span> <span class="n">generators</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">with_statement</span><span class="p">,</span>
+                        <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-  <span class="k">print</span><span class="p">(</span><span class="s">&#39;Hello world!&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">example.hello.greet.greet</span> <span class="kn">import</span> <span class="n">greet</span>
 
-<span class="n">app</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+  <span class="k">print</span><span class="p">(</span><span class="n">greet</span><span class="p">(</span><span class="s">&#39;world&#39;</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>Dependencies, on the other hand, are relative to the root of
-workspace, the location of the <cite>pants</cite> command.
-For more about specifying the addresses of dependencies
-(and addresses of other things), see <a class="reference internal" href="target_addresses.html"><em>Target Addresses</em></a>.</p>
-<p>The <tt class="docutils literal"><span class="pre">hello_world</span></tt> binary depends on a <tt class="docutils literal"><span class="pre">python_library</span></tt> target:</p>
-<p><tt class="docutils literal"><span class="pre">src/python/twitter/common/app/BUILD</span></tt>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">python_library</span><span class="p">(</span>
-  <span class="n">name</span> <span class="o">=</span> <span class="s">&quot;app&quot;</span><span class="p">,</span>
-  <span class="n">sources</span> <span class="o">=</span> <span class="n">globs</span><span class="p">(</span><span class="s">&#39;*.py&#39;</span><span class="p">),</span>
-  <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;src/python/twitter/common/dirutil&#39;</span><span class="p">),</span>
-    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;src/python/twitter/common/lang&#39;</span><span class="p">),</span>
-    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;src/python/twitter/common/options&#39;</span><span class="p">),</span>
-    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;src/python/twitter/common/util&#39;</span><span class="p">),</span>
-    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;src/python/twitter/common/app/modules&#39;</span><span class="p">),</span>
-  <span class="p">]</span>
+<p>This code imports code from another target.
+To make this work, the binary target has a dependency
+<tt class="docutils literal"><span class="pre">src/python/example/hello/greet</span></tt> and the Python
+code imports <tt class="docutils literal"><span class="pre">example/hello/greet</span></tt>.</p>
+<p>You remember that libraries configure &#8220;importable&#8221; code;
+<tt class="docutils literal"><span class="pre">example/hello/greet/BUILD</span></tt> has a <tt class="docutils literal"><span class="pre">python_library</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">python_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;greet&#39;</span><span class="p">,</span>
+  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;3rdparty/python:ansicolors&#39;</span><span class="p">),</span>
+  <span class="p">],</span>
+  <span class="n">sources</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s">&#39;*.py&#39;</span><span class="p">),</span>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>which in turn includes even more dependencies.
-Pants manages these transitive closure
-of all these dependencies and manipulates collections of these targets for you.</p>
+<p>This <tt class="docutils literal"><span class="pre">python_library</span></tt> pulls in <tt class="docutils literal"><span class="pre">greet.py</span></tt>&#8216;s Python code:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="p">(</span><span class="n">nested_scopes</span><span class="p">,</span> <span class="n">generators</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">with_statement</span><span class="p">,</span>
+                        <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">colors</span> <span class="kn">import</span> <span class="n">green</span>
+
+
+<span class="k">def</span> <span class="nf">greet</span><span class="p">(</span><span class="n">greetee</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Given the name, return a greeting for a person of that name.&quot;&quot;&quot;</span>
+  <span class="k">return</span> <span class="n">green</span><span class="p">(</span><span class="s">&#39;Hello, </span><span class="si">%s</span><span class="s">!&#39;</span> <span class="o">%</span> <span class="n">greetee</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To test the library&#8217;s code, we set up
+<tt class="docutils literal"><span class="pre">tests/python/example_test/hello/greet/BUILD</span></tt> with a <tt class="docutils literal"><span class="pre">python_tests</span></tt>
+target. It depends on the library:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="p">(</span><span class="n">nested_scopes</span><span class="p">,</span> <span class="n">generators</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">with_statement</span><span class="p">,</span>
+                        <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">unittest</span>
+
+<span class="kn">from</span> <span class="nn">example.hello.greet.greet</span> <span class="kn">import</span> <span class="n">greet</span>
+
+
+<span class="k">class</span> <span class="nc">GreetTest</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">test_greeting_mentions_addressee</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Fancy formatting should not omit the person we&#39;re greeting&quot;&quot;&quot;</span>
+    <span class="k">assert</span><span class="p">(</span><span class="s">&#39;foo&#39;</span> <span class="ow">in</span> <span class="n">greet</span><span class="p">(</span><span class="s">&#39;foo&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Use <tt class="docutils literal"><span class="pre">goal</span> <span class="pre">test</span></tt> to run the tests:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ ./pants goal test tests/python/example_test/hello/greet
+
+13:29:28 00:00 [main]
+               (To run a reporting server: ./pants goal server)
+13:29:28 00:00   [bootstrap]
+13:29:28 00:00   [setup]
+13:29:28 00:00     [parse]
+   ...
+13:29:29 00:01   [test]
+13:29:29 00:01     [pytest]
+13:29:29 00:01       [run]
+                     ============== test session starts ===============
+                     platform darwin -- Python 2.6.8 -- py-1.4.20 -- pytest-2.5.2
+                     plugins: cov, timeout
+                     collected 1 items
+
+                     tests/python/example_test/hello/greet/greet.py .
+
+                     ============ 1 passed in 0.02 seconds ============
+
+13:30:18 00:50     [junit]
+13:30:18 00:50     [specs]
+               SUCCESS
+$
+</pre></div>
+</div>
 </div>
 <div class="section" id="handling-python-requirement">
 <h2>Handling <tt class="docutils literal"><span class="pre">python_requirement</span></tt><a class="headerlink" href="#handling-python-requirement" title="Permalink to this headline">¶</a></h2>
@@ -516,267 +553,104 @@ targets wrapping
 It never installs anything globally.
 Instead, it builds the dependencies, caches them in <cite>.pants.d</cite>,
 and assembles them <em>a la carte</em> into an execution environment.</p>
-<p>The <cite>python_requirement</cite> for a particular dependency should appear
-only once in a BUILD file.  It creates a local target name which can
-then be included in other dependencies in the file.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">python_requirement</span><span class="p">(</span><span class="s">&#39;django-celery&#39;</span><span class="p">)</span>
-
-<span class="n">python_library</span><span class="p">(</span>
-  <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;mylib_1&#39;</span><span class="p">,</span>
-  <span class="n">sources</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s">&#39;mylib_1.py&#39;</span><span class="p">,</span>
-  <span class="p">],</span>
-  <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;:django-celery&#39;</span><span class="p">)</span>
-  <span class="p">]</span>
-<span class="p">)</span>
-
-<span class="n">python_library</span><span class="p">(</span>
-  <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;mylib_2&#39;</span><span class="p">,</span>
-  <span class="n">sources</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s">&#39;mylib_2.py&#39;</span><span class="p">,</span>
-  <span class="p">],</span>
-  <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;:django-celery&#39;</span><span class="p">)</span>
-  <span class="p">]</span>
-<span class="p">)</span>
-</pre></div>
 </div>
-</div>
-<div class="section" id="python-thrift-library">
-<h2><tt class="docutils literal"><span class="pre">python_thrift_library</span></tt><a class="headerlink" href="#python-thrift-library" title="Permalink to this headline">¶</a></h2>
-<p>A <cite>python_thrift_library</cite> target takes the same arguments as <cite>python_library</cite>
-arguments, except that files described
-in <cite>sources</cite> must be thrift files.
-If your library or binary depends upon this target type, Python bindings
-will be autogenerated and included within your environment.</p>
-</div>
-<div class="section" id="building-a-pex">
-<h2>Building a PEX<a class="headerlink" href="#building-a-pex" title="Permalink to this headline">¶</a></h2>
-<p>To build a PEX, invoke <tt class="docutils literal"><span class="pre">./pants</span> <span class="pre">goal</span> <span class="pre">binary</span></tt> on a
-<tt class="docutils literal"><span class="pre">python_binary</span></tt> target:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ PANTS_VERBOSE</span><span class="o">=</span>1 ./pants goal binary src/python/twitter/tutorial:hello_world
+<div class="section" id="pex-contents">
+<h2>PEX Contents<a class="headerlink" href="#pex-contents" title="Permalink to this headline">¶</a></h2>
+<p>To build a PEX, invoke <tt class="docutils literal"><span class="pre">./pants</span> <span class="pre">goal</span> <span class="pre">binary</span></tt> on a <tt class="docutils literal"><span class="pre">python_binary</span></tt> target:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>./pants goal binary src/python/example/hello/main
   ...
-Wrote /private/tmp/wickman-commons/dist/hello_world.pex
+                 SUCCESS
+<span class="nv">$ </span>./dist/main.pex
+  Hello, world!
 </pre></div>
 </div>
 <p>Though the binary itself specifies just one dependency, the transitive
-closure of <cite>hello_world</cite>&#8216;s dependencies pulled in all of
-<cite>src/python/twitter/common/app</cite> and its descendants.
-That&#8217;s because those library targets depend
-upon other library targets, that in turn depend on even more.
+closure of hello/main&#8217;s dependencies pulled in
+hello/greet and, in turn, hello/greet&#8217;s dependencies.
 Pants bundles up the closed set of all dependencies into
-into <cite>hello_world.pex</cite>.</p>
-<p>We can simply execute the PEX:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>dist/hello_world.pex
-Hello world!
-</pre></div>
+into the PEX.</p>
 </div>
-</div>
-<div class="section" id="environment-manipulation-with-pants-py">
-<h2>Environment manipulation with <cite>pants py</cite><a class="headerlink" href="#environment-manipulation-with-pants-py" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="repl-and-environment-manipulation-with-pants-py">
+<h2>REPL and environment manipulation with <cite>pants py</cite><a class="headerlink" href="#repl-and-environment-manipulation-with-pants-py" title="Permalink to this headline">¶</a></h2>
 <p>Pants has a &#8220;py&#8221; command that lets you manipulate the environments
 described by <cite>python_binary</cite> and <cite>python_library</cite> targets, such as drop into
 an interpreter with the environment set up for you.
 Note that&#8217;s &#8220;py&#8221;, <strong>not</strong> &#8220;goal py&#8221;.</p>
-<div class="section" id="pants-py-semantics">
-<h3><cite>pants py</cite> semantics<a class="headerlink" href="#pants-py-semantics" title="Permalink to this headline">¶</a></h3>
-<p>By default, <cite>pants py &lt;target&gt;</cite>...</p>
+<p><tt class="docutils literal"><span class="pre">pants</span> <span class="pre">py</span> <span class="pre">&lt;target&gt;</span></tt>...</p>
 <ol class="arabic simple">
-<li>For <cite>python_binary</cite> targets, builds the environment and executes the target</li>
+<li>For a <tt class="docutils literal"><span class="pre">python_binary</span></tt> target, builds the environment and executes the
+target.</li>
 <li>For <cite>python_library</cite> targets, builds the environment that is the transitive
 closure of all targets and drops into an interpreter.</li>
 <li>For a combination of <cite>python_binary</cite> and <cite>python_library</cite> targets, builds
 the transitive closure of all targets and executes the first binary target.</li>
 </ol>
-</div>
-<div class="section" id="external-dependencies">
-<h3>external dependencies<a class="headerlink" href="#external-dependencies" title="Permalink to this headline">¶</a></h3>
-<p>Let&#8217;s take <cite>src/python/twitter/tutorial/BUILD</cite> and split out the dependencies from
-our <cite>hello_world</cite> target into <cite>hello_world_lib</cite> and add dependencies upon
-Tornado and psutil.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">python_binary</span><span class="p">(</span>
-  <span class="n">name</span> <span class="o">=</span> <span class="s">&quot;hello_world&quot;</span><span class="p">,</span>
-  <span class="n">source</span> <span class="o">=</span> <span class="s">&quot;hello_world.py&quot;</span><span class="p">,</span>
-  <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">pants</span><span class="p">(</span><span class="s">&quot;:hello_world_lib&quot;</span><span class="p">)</span>
-  <span class="p">]</span>
-<span class="p">)</span>
-
-<span class="n">python_library</span><span class="p">(</span>
-  <span class="n">name</span> <span class="o">=</span> <span class="s">&quot;hello_world_lib&quot;</span><span class="p">,</span>
-  <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">pants</span><span class="p">(</span><span class="s">&quot;src/python/twitter/common/app&quot;</span><span class="p">),</span>
-    <span class="n">python_requirement</span><span class="p">(</span><span class="s">&quot;tornado&quot;</span><span class="p">),</span>
-    <span class="n">python_requirement</span><span class="p">(</span><span class="s">&quot;psutil&quot;</span><span class="p">),</span>
-  <span class="p">]</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<p>This uses the <tt class="docutils literal"><span class="pre">python_requirement</span></tt> target which can refer to any string
-in <tt class="docutils literal"><span class="pre">pkg_resources.Requirement</span></tt> format as
-recognized by tools such as <tt class="docutils literal"><span class="pre">easy_install</span></tt> and <tt class="docutils literal"><span class="pre">pip</span></tt> as described above.</p>
-<p>Now that we&#8217;ve created a library-only target <cite>src/python/twitter/tutorial:hello_world_lib</cite>, let&#8217;s drop
-into it using <cite>pants py</cite> with verbosity turned on so that we can see what&#8217;s
-going on in the background:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ PANTS_VERBOSE</span><span class="o">=</span>1 ./pants py src/python/twitter/tutorial:hello_world_lib
-Build operating on target: PythonLibrary<span class="o">(</span>src/python/twitter/tutorial/BUILD:hello_world_lib<span class="o">)</span>
-  Resolver: Calling environment <span class="nv">super</span> <span class="o">=</span>&gt; 0.019ms
-Building PythonBinary PythonLibrary<span class="o">(</span>src/python/twitter/tutorial/BUILD:hello_world_lib<span class="o">)</span>:
-  Dumping library: PythonLibrary<span class="o">(</span>src/python/twitter/tutorial/BUILD:hello_world_lib<span class="o">)</span> <span class="o">[</span>relative module: <span class="o">]</span>
-  Dumping library: PythonLibrary<span class="o">(</span>src/python/twitter/common/app/BUILD:app<span class="o">)</span> <span class="o">[</span>relative module: <span class="o">]</span>
-  Dumping library: PythonLibrary<span class="o">(</span>src/python/twitter/common/dirutil/BUILD:dirutil<span class="o">)</span> <span class="o">[</span>relative module: <span class="o">]</span>
-  Dumping library: PythonLibrary<span class="o">(</span>src/python/twitter/common/lang/BUILD:lang<span class="o">)</span> <span class="o">[</span>relative module: <span class="o">]</span>
-  Dumping library: PythonLibrary<span class="o">(</span>src/python/twitter/common/options/BUILD:options<span class="o">)</span> <span class="o">[</span>relative module: <span class="o">]</span>
-  Dumping library: PythonLibrary<span class="o">(</span>src/python/twitter/common/util/BUILD:util<span class="o">)</span> <span class="o">[</span>relative module: <span class="o">]</span>
-  Dumping library: PythonLibrary<span class="o">(</span>src/python/twitter/common/app/modules/BUILD:modules<span class="o">)</span> <span class="o">[</span>relative module: <span class="o">]</span>
-  Dumping requirement: tornado
-  Dumping requirement: psutil
-  Resolver: Calling environment <span class="nv">super</span> <span class="o">=</span>&gt; 0.029ms
-  Resolver: Activating cache /private/tmp/wickman-commons/3rdparty/python <span class="o">=</span>&gt; 356.432ms
-  Resolver: Resolved <span class="nv">tornado</span> <span class="o">=</span>&gt; 357.219ms
-  Resolver: Activating cache /private/tmp/wickman-commons/.pants.d/.python.install.cache <span class="o">=</span>&gt; 41.117ms
-  Resolver: Fetching <span class="nv">psutil</span> <span class="o">=</span>&gt; 10144.264ms
-  Resolver: Building <span class="nv">psutil</span> <span class="o">=</span>&gt; 1794.474ms
-  Resolver: Distilling <span class="nv">psutil</span> <span class="o">=</span>&gt; 224.896ms
-  Resolver: Constructing distribution <span class="nv">psutil</span> <span class="o">=</span>&gt; 2.855ms
-  Resolver: Resolved <span class="nv">psutil</span> <span class="o">=</span>&gt; 12210.066ms
-  Dumping distribution: .../tornado-2.2-py2.6.egg
-  Dumping distribution: .../psutil-0.4.1-py2.6-macosx-10.4-x86_64.egg
-Python 2.6.7 <span class="o">(</span>r267:88850, Aug 31 2011, 15:49:05<span class="o">)</span>
-<span class="o">[</span>GCC 4.2.1 <span class="o">(</span>Apple Inc. build 5664<span class="o">)]</span> on darwin
-Type <span class="s2">&quot;help&quot;</span>, <span class="s2">&quot;copyright&quot;</span>, <span class="s2">&quot;credits&quot;</span> or <span class="s2">&quot;license&quot;</span> <span class="k">for </span>more information.
-<span class="o">(</span>InteractiveConsole<span class="o">)</span>
+<p>Let&#8217;s drop into our library target <tt class="docutils literal"><span class="pre">src/python/example/hello/greet</span></tt>
+with verbosity turn on to see what&#8217;s going on in the background:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ PANTS_VERBOSE=1 ./pants py src/python/example/hello/greet
+/Users/lhosken/workspace/pants src/python/example/hello/greet
+Building chroot for [PythonLibrary(BuildFileAddress(/Users/lhosken/workspace/pants/src/python/example/hello/greet/BUILD, greet))]:
+  Dumping library: PythonLibrary(BuildFileAddress(/Users/lhosken/workspace/pants/src/python/example/hello/greet/BUILD, greet))
+  Dumping requirement: ansicolors==1.0.2
+  Dumping distribution: .../ansicolors-1.0.2-py2-none-any.whl
+Python 2.6.8 (unknown, Mar  9 2014, 22:16:00)
+[GCC 4.2.1 Compatible Apple LLVM 5.0 (clang-500.0.68)] on darwin
+Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.
+(InteractiveConsole)
 &gt;&gt;&gt;
 </pre></div>
 </div>
-<p>In the background, <cite>pants</cite> used cached version of <cite>tornado</cite> but fetched
-<cite>psutil</cite> from pypi and any necessary transitive dependencies (none in this
-case) and built a platform-specific version for us.</p>
+<p>Pants loads <tt class="docutils literal"><span class="pre">ansicolors</span></tt> (greet&#8217;s 3rdparty dependency). It would have fetched
+this dependency over the network if necessary. (It wasn&#8217;t necessary to download
+<tt class="docutils literal"><span class="pre">ansicolors</span></tt>; Pants already fetched it while &#8220;bootstrapping&#8221; itself.)</p>
 <p>You can convince yourself that the environment contains all the dependencies
 by inspecting <cite>sys.path</cite> and importing libraries as you desire:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">psutil</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">help</span><span class="p">(</span><span class="n">psutil</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">twitter.common</span> <span class="kn">import</span> <span class="n">app</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">help</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">example.hello.greet.greet</span> <span class="kn">import</span> <span class="n">greet</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">greet</span><span class="p">(</span><span class="s">&quot;escape codes&quot;</span><span class="p">)</span>
+<span class="go">u&#39;\x1b[32mHello, escape codes!\x1b[0m&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">colors</span> <span class="kn">import</span> <span class="n">red</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">red</span><span class="p">(</span><span class="s">&quot;other escape codes&quot;</span><span class="p">)</span>
+<span class="go">&#39;\x1b[31mother escape codes\x1b[0m&#39;</span>
 </pre></div>
 </div>
-<p>It should be stressed that <em>dependencies built by Pants are never installed globally</em>.
-These dependencies only exist for the duration of the Python interpreter forked by Pants.</p>
-</div>
-<div class="section" id="running-a-binary-with-pants-py">
-<h3>Running a binary with <tt class="docutils literal"><span class="pre">pants</span> <span class="pre">py</span></tt><a class="headerlink" href="#running-a-binary-with-pants-py" title="Permalink to this headline">¶</a></h3>
-<p>Let us turn our <cite>hello_world.py</cite> into a basic <cite>top</cite> application using <cite>tornado</cite>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">twitter.common</span> <span class="kn">import</span> <span class="n">app</span>
-
-<span class="kn">import</span> <span class="nn">psutil</span>
-<span class="kn">import</span> <span class="nn">tornado.ioloop</span>
-<span class="kn">import</span> <span class="nn">tornado.web</span>
-
-<span class="k">class</span> <span class="nc">MainHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
-  <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&lt;pre&gt;Running pids:</span><span class="se">\n</span><span class="si">%s</span><span class="s">&lt;/pre&gt;&#39;</span> <span class="o">%</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">psutil</span><span class="o">.</span><span class="n">get_pid_list</span><span class="p">())))</span>
-
-<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-  <span class="n">application</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">([</span>
-    <span class="p">(</span><span class="s">r&quot;/&quot;</span><span class="p">,</span> <span class="n">MainHandler</span><span class="p">)</span>
-  <span class="p">])</span>
-  <span class="n">application</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">8888</span><span class="p">)</span>
-  <span class="n">tornado</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">IOLoop</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-
-<span class="n">app</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
-</pre></div>
-</div>
-<p>We have now split our application into two parts: the <cite>hello_world</cite> binary
-target and the <cite>hello_world_lib</cite> library target.  If we run <cite>pants py
-src/python/twitter/tutorial:hello_world_lib</cite>, the default behavior is to
-drop into an interpreter.</p>
-<p>If we run <cite>pants py src/python/twitter/tutorial:hello_world</cite>, the default behavior is to run
-the binary target pointed to by <cite>hello_world</cite>:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>./pants py src/python/twitter/tutorial:hello_world
-</pre></div>
-</div>
-<p>Then point your browser to <a class="reference external" href="http://localhost:8888">http://localhost:8888</a></p>
-</div>
+<p><strong>Dependencies built by Pants are never installed globally</strong>.
+These dependencies only exist for the duration of the Python
+interpreter forked by Pants.</p>
 <div class="section" id="pants-py-pex">
 <h3><tt class="docutils literal"><span class="pre">pants</span> <span class="pre">py</span> <span class="pre">--pex</span></tt><a class="headerlink" href="#pants-py-pex" title="Permalink to this headline">¶</a></h3>
-<p>There is also a &#8211;pex option to pants py that allows you to build a PEX
-file from a union of python_library targets that does not necessarily have a
-<cite>python_binary</cite> target defined for it.  Since there is no entry point
-specified, the resulting .pex file just behaves like a Python interpreter,
+<p>You can use <tt class="docutils literal"><span class="pre">./pants</span> <span class="pre">py</span> <span class="pre">--pex</span></tt> to build a PEX
+file from <tt class="docutils literal"><span class="pre">python_library</span></tt> targets with no
+<cite>python_binary</cite> target.  Since there is no entry point
+specified, the resulting <tt class="docutils literal"><span class="pre">.pex</span></tt> file just behaves like a Python interpreter,
 but with the sys.path bootstrapped for you:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>./pants py --pex src/python/twitter/tutorial:hello_world_lib
-Build operating on target: PythonLibrary<span class="o">(</span>src/python/twitter/tutorial/BUILD:hello_world_lib<span class="o">)</span>
-Wrote /private/tmp/wickman-commons/dist/hello_world_lib.pex
-
-<span class="nv">$ </span>ls -la dist/hello_world_lib.pex
--rwxr-xr-x  1 wickman  wheel  1404174 Apr 10 13:00 dist/hello_world_lib.pex
+<div class="highlight-python"><div class="highlight"><pre>$ ./pants py --pex src/python/example/hello/greet
+/Users/lhosken/workspace/pants src/python/example/hello/greet
+Wrote /Users/lhosken/workspace/pants/dist/src.python.example.hello.greet.greet.pex
+$
 </pre></div>
 </div>
-<p>Now if you use dist/hello_world_lib.pex, since it has no entry point, it will drop you into an interpreter:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>dist/hello_world_lib.pex
-Python 2.6.7 <span class="o">(</span>r267:88850, Aug 31 2011, 15:49:05<span class="o">)</span>
-<span class="o">[</span>GCC 4.2.1 <span class="o">(</span>Apple Inc. build 5664<span class="o">)]</span> on darwin
-Type <span class="s2">&quot;help&quot;</span>, <span class="s2">&quot;copyright&quot;</span>, <span class="s2">&quot;credits&quot;</span> or <span class="s2">&quot;license&quot;</span> <span class="k">for </span>more information.
-<span class="o">(</span>InteractiveConsole<span class="o">)</span>
-&gt;&gt;&gt; import tornado
+<p>If you run <tt class="docutils literal"><span class="pre">dist/src.python.example.hello.greet.greet.pex</span></tt>, since it has
+no entry point, it drops you into an interpreter:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ ./dist/src.python.example.hello.greet.greet.pex
+Python 2.6.8 (unknown, Mar  9 2014, 22:16:00)
+[GCC 4.2.1 Compatible Apple LLVM 5.0 (clang-500.0.68)] on darwin
+Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.
+(InteractiveConsole)
+&gt;&gt;&gt; from example.hello.greet.greet import greet
+&gt;&gt;&gt; greet(&quot;pex&quot;)
+u&#39;\x1b[32mHello, pex!\x1b[0m&#39;
+&gt;&gt;&gt;
 </pre></div>
 </div>
-<p>As mentioned before, it&#8217;s like a single-file lightweight alternative to a
-virtualenv.  We can even use it to run our <cite>hello_world.py</cite> application:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>dist/hello_world_lib.pex src/python/twitter/tutorial/hello_world.py
+<p>It&#8217;s like a single-file lightweight alternative to a virtualenv.
+We can even use it to run our <cite>main.py</cite> application:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ dist/src.python.example.hello.greet.greet.pex src/python/example/hello/main/main.py
+Hello, world!
+$
 </pre></div>
 </div>
 <p>This can be an incredibly powerful and lightweight way to manage and deploy
 virtual environments without using <cite>virtualenv</cite>.</p>
-</div>
-<div class="section" id="pex-file-as-interpreter">
-<h3>PEX file as interpreter<a class="headerlink" href="#pex-file-as-interpreter" title="Permalink to this headline">¶</a></h3>
-<p>As mentioned above, PEX files without default entry points behave like Python interpreters that
-carry their dependencies with them.  For example, let&#8217;s create a target that
-provides a Fabric dependency within <cite>src/python/twitter/tutorial/BUILD</cite>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">python_library</span><span class="p">(</span>
-  <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;fabric&#39;</span><span class="p">,</span>
-  <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">python_requirement</span><span class="p">(</span><span class="s">&#39;Fabric&#39;</span><span class="p">)</span>
-  <span class="p">]</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<p>And let&#8217;s build a fabric PEX file:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>./pants py --pex src/python/twitter/tutorial:fabric
-Build operating on target: PythonLibrary<span class="o">(</span>src/python/twitter/tutorial/BUILD:fabric<span class="o">)</span>
-Wrote /private/tmp/wickman-commons/dist/fabric.pex
-</pre></div>
-</div>
-<p>By default it does nothing more than drop us into an interpreter:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>dist/fabric.pex
-Python 2.6.7 <span class="o">(</span>r267:88850, Aug 31 2011, 15:49:05<span class="o">)</span>
-<span class="o">[</span>GCC 4.2.1 <span class="o">(</span>Apple Inc. build 5664<span class="o">)]</span> on darwin
-Type <span class="s2">&quot;help&quot;</span>, <span class="s2">&quot;copyright&quot;</span>, <span class="s2">&quot;credits&quot;</span> or <span class="s2">&quot;license&quot;</span> <span class="k">for </span>more information.
-<span class="o">(</span>InteractiveConsole<span class="o">)</span>
-&gt;&gt;&gt;
-</pre></div>
-</div>
-<p>But suppose we have a local script that depends upon Fabric, <cite>fabric_hello_world.py</cite>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">fabric.api</span> <span class="kn">import</span> <span class="o">*</span>
-
-<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-  <span class="n">local</span><span class="p">(</span><span class="s">&#39;echo hello world&#39;</span><span class="p">)</span>
-
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
-  <span class="n">main</span><span class="p">()</span>
-</pre></div>
-</div>
-<p>We can now use <cite>fabric.pex</cite> as if it were a Python interpreter but with
-fabric available in its environment.  Note that fabric has never been
-installed globally in any site-packages anywhere.  It is just bundled inside
-of fabric.pex:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>dist/fabric.pex fabric_hello_world.py
-<span class="o">[</span>localhost<span class="o">]</span> <span class="nb">local</span>: <span class="nb">echo </span>hello world
-hello world
-</pre></div>
-</div>
 </div>
 </div>
 <div class="section" id="python-binary-entry-point">
@@ -787,16 +661,16 @@ if we wanted to build an a la carte <cite>fab</cite> wrapper for fabric:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">python_binary</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;fab&quot;</span><span class="p">,</span>
   <span class="n">entry_point</span> <span class="o">=</span> <span class="s">&quot;fabric.main:main&quot;</span><span class="p">,</span>
   <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">python_requirement</span><span class="p">(</span><span class="s">&quot;fabric&quot;</span><span class="p">),</span>
+    <span class="n">pants</span><span class="p">(</span><span class="s">&quot;3rdparty/python:fabric&quot;</span><span class="p">),</span>
   <span class="p">]</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 <p>We build:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>./pants src/python/twitter/tutorial:fab
-Build operating on targets: OrderedSet<span class="o">([</span>PythonBinary<span class="o">(</span>src/python/twitter/tutorial/BUILD:fab<span class="o">)])</span>
-Building PythonBinary PythonBinary<span class="o">(</span>src/python/twitter/tutorial/BUILD:fab<span class="o">)</span>:
-Wrote /private/tmp/wickman-commons/dist/fab.pex
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>./pants src/python/fabwrap:fab
+Build operating on targets: OrderedSet<span class="o">([</span>PythonBinary<span class="o">(</span>src/python/fabwrap/BUILD:fab<span class="o">)])</span>
+Building PythonBinary PythonBinary<span class="o">(</span>src/python/fabwrap/BUILD:fab<span class="o">)</span>:
+Wrote /private/tmp/wickman-pants/dist/fab.pex
 </pre></div>
 </div>
 <p>And now <cite>dist/fab.pex</cite> behaves like a standalone <cite>fab</cite> binary:</p>
@@ -819,103 +693,38 @@ Options:
   ...
 </pre></div>
 </div>
-<p>Pants also has excellent support for JVM-based builds and can do similar
-things like resolving external JARs and packaging them as standalone
-environments with default entry points.</p>
 </div>
-<div class="section" id="python-tests">
-<h2>Python Tests<a class="headerlink" href="#python-tests" title="Permalink to this headline">¶</a></h2>
-<p>By default Python tests are run via <cite>pytest</cite>. Any option that <cite>py.test</cite> has can be used since
-arguments are passed on by <cite>pants</cite>.</p>
-<div class="section" id="python-tests-targets">
-<h3><tt class="docutils literal"><span class="pre">python_tests</span></tt> Targets<a class="headerlink" href="#python-tests-targets" title="Permalink to this headline">¶</a></h3>
-<p>When setting up your test targets, the BUILD file will be something like:</p>
-<div class="highlight-python"><div class="highlight"><pre>python_tests(
-  name = &quot;your_tests&quot;,
-  sources = globs(&quot;*.py&quot;),
-  coverage = [&quot;twitter.your_namespace&quot;],
-  dependencies = [
-    pants(&quot;3rdparty/python:mock&quot;)
-    pants(&quot;src/python/twitter/your_namespace&quot;)
- ]
-)
-</pre></div>
-</div>
-<p>The above target is very similar to a <cite>python_library</cite> with the addition of the <cite>coverage</cite> argument.
-<cite>coverage</cite> allows you to retrict the namespaces for which code coverage data is generated.</p>
-</div>
-<div class="section" id="running-python-tests">
-<h3>Running Python Tests<a class="headerlink" href="#running-python-tests" title="Permalink to this headline">¶</a></h3>
-<p>To run your Python tests, invoke the <tt class="docutils literal"><span class="pre">test</span></tt> goal on <tt class="docutils literal"><span class="pre">python_tests</span></tt> targets:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ ./pants goal test tests/python/twitter/your_tests/BUILD:your_tests
-Build operating on targets: OrderedSet([PythonTests(tests/python/twitter/your_tests/BUILD:your_tests)])
-================================================== test session starts ===================================================
-platform darwin -- Python 2.6.7 -- pytest-2.3.5
-collected 15 items:
+<div class="section" id="more-about-python-tests">
+<h2>More About Python Tests<a class="headerlink" href="#more-about-python-tests" title="Permalink to this headline">¶</a></h2>
+<p>Pants runs Python tests with <tt class="docutils literal"><span class="pre">pytest</span></tt>. You can pass CLI options to <tt class="docutils literal"><span class="pre">pytest</span></tt>
+with <tt class="docutils literal"><span class="pre">--test-pytest-options</span></tt>. For example, to only run tests whose names
+match the pattern *foo*, you could run</p>
+<div class="highlight-python"><div class="highlight"><pre>$ ./pants goal test tests/python/example_test/hello/greet --test-pytest-options=&#39;-k foo&#39;
+...
+                 ============== test session starts ===============
+                 platform darwin -- Python 2.6.8 -- py-1.4.20 -- pytest-2.5.2
+                 plugins: cov, timeout
+                 collected 1 items
 
-tests/python/twitter/your_tests/module1_test.py ....
-tests/python/twitter/your_tests/module2_test.py ....
-tests/python/twitter/your_tests/module3_test.py ....
+                 ========= 1 tests deselected by &#39;-kfoo&#39; ==========
+                 ========== 1 deselected in 0.01 seconds ==========
 
-=============================================== 15 passed in 0.44 seconds ================================================
-tests.python.twitter.your_tests.your_tests                                    .....   SUCCESS
+13:34:28 00:02     [junit]
+13:34:28 00:02     [specs]
+           SUCCESS
 </pre></div>
-</div>
-<p>Sometimes you only want to run specific tests (or exclude them). The <cite>-k</cite> option controls the
-tests to run. <cite>-k</cite> will do substring matches on test method names and can also use keywords like
-<cite>not</cite> and <cite>or</cite> to refine results.</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>./pants tests/python/twitter/your_tests/BUILD:your_tests -k <span class="s1">&#39;module1_instantiation_test or module1_foo_test&#39;</span> -v
-Build operating on targets: OrderedSet<span class="o">([</span>PythonTests<span class="o">(</span>tests/python/twitter/your_tests/BUILD:your_tests<span class="o">)])</span>
-<span class="o">==================================================</span> <span class="nb">test </span>session <span class="nv">starts</span> <span class="o">===================================================</span>
-platform darwin -- Python 2.6.7 -- pytest-2.3.5
-collected 15 items:
-
-tests/python/twitter/your_tests/module1_test.py:3: Module1Test.module1_instantiation_test PASSED
-tests/python/twitter/your_tests/module1_test.py:21: Module1Test.module1_foo_test <span class="nv">PASSED</span>
-
-<span class="o">=======================</span> 13 tests deselected by <span class="s1">&#39;-kmodule1_instantiation_test or module1_foo_test&#39;</span> <span class="o">========================</span>
-<span class="o">================================================</span> 2 passed in 0.14 <span class="nv">seconds</span> <span class="o">================================================</span>
-tests.python.twitter.your_tests.your_tests                                    .....   SUCCESS
-</pre></div>
-</div>
-<p>You can also mark tests via a decorator:</p>
-<div class="highlight-python"><div class="highlight"><pre>@pytest.mark.module1
-def module1_instantiation_test():
-    # testing code here
-</pre></div>
-</div>
-<p>Using <cite>-m</cite> you can specify the marks of tests that you want to execute.</p>
 </div>
 <div class="section" id="code-coverage">
 <h3>Code Coverage<a class="headerlink" href="#code-coverage" title="Permalink to this headline">¶</a></h3>
 <p>To get code coverage data, set the <cite>PANTS_PY_COVERAGE</cite> environment variable:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ PANTS_PY_COVERAGE</span><span class="o">=</span>1 ./pants tests/python/twitter/your_tests/BUILD:your_tests
-Build operating on targets: OrderedSet<span class="o">([</span>PythonTests<span class="o">(</span>tests/python/twitter/your_tests/BUILD:your_tests<span class="o">)])</span>
-<span class="o">============================================================</span> <span class="nb">test </span>session <span class="nv">starts</span> <span class="o">============================================================</span>
-platform darwin -- Python 2.6.7 -- pytest-2.3.5
-collected 15 items:
-
-tests/python/twitter/your_tests/module1_test.py ....
-tests/python/twitter/your_tests/module2_test.py ....
-tests/python/twitter/your_tests/module3_test.py ....
----------------------------------------------- coverage: platform darwin, python 2.6.7-final-0 ----------------------------------------------
-Name                                                                                                     Stmts   Miss Branch BrMiss  Cover
-------------------------------------------------------------------------------------------------------------------------------------------
-/private/var/folders/p0/ztm93vq94qzfc1nyfkq_4l7r0000gn/T/tmp6BcJ1r/twitter/your_namespace/__init__           0      0      0      0   100%
-/private/var/folders/p0/ztm93vq94qzfc1nyfkq_4l7r0000gn/T/tmp6BcJ1r/twitter/your_namespace/module1           62     62      8      8     0%
-/private/var/folders/p0/ztm93vq94qzfc1nyfkq_4l7r0000gn/T/tmp6BcJ1r/twitter/your_namespace/module2           34      6      6      0    85%
-/private/var/folders/p0/ztm93vq94qzfc1nyfkq_4l7r0000gn/T/tmp6BcJ1r/twitter/your_namespace/module3          170    170     51     51     0%
-------------------------------------------------------------------------------------------------------------------------------------------
-TOTAL                                                                                                      266    238     57     59    11%
-Coverage HTML written to dir /Users/your_username/workspace/science/dist/coverage/tests/python/twitter/your_tests
-<span class="o">=========================================================</span> 15 passed in 2.07 <span class="nv">seconds</span> <span class="o">=========================================================</span>
-tests.python.twitter.your_tests.your_tests                                    .....   SUCCESS
+<div class="highlight-python"><div class="highlight"><pre>$ PANTS_PY_COVERAGE=1  ./pants tests/python/example_test/hello/greet:greet
 </pre></div>
 </div>
 </div>
-<div class="section" id="interactve-debugging-on-test-failure">
-<h3>Interactve Debugging on Test Failure<a class="headerlink" href="#interactve-debugging-on-test-failure" title="Permalink to this headline">¶</a></h3>
-<p>You can invoke the Python debugger on a test failure by passing <tt class="docutils literal"><span class="pre">--pdb</span></tt>.
+<div class="section" id="interactive-debugging-on-test-failure">
+<h3>Interactive Debugging on Test Failure<a class="headerlink" href="#interactive-debugging-on-test-failure" title="Permalink to this headline">¶</a></h3>
+<p>You can invoke the Python debugger on a test failure by
+leaving out the <tt class="docutils literal"><span class="pre">goal</span> <span class="pre">test</span></tt> and passing <tt class="docutils literal"><span class="pre">--pdb</span></tt>.
 This can be useful for
 inspecting the state of objects especially if you are mocking interfaces.</p>
 </div>
@@ -934,19 +743,20 @@ can. Set the <cite>entry_point</cite> keyword argument when calling python_tests
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>The <cite>entry_point</cite> should exit with a non-zero status if there are any test failures.</p>
+<p>The <cite>entry_point</cite> exits with a non-zero status if there are test failures.</p>
 <p>Keep in mind, however, that much of the above documentation assumes you are using <cite>pytest</cite>.</p>
 </div>
 </div>
 <div class="section" id="manipulating-pex-behavior-with-environment-variables">
 <h2>Manipulating PEX behavior with environment variables<a class="headerlink" href="#manipulating-pex-behavior-with-environment-variables" title="Permalink to this headline">¶</a></h2>
-<p>Given a PEX file, it is possible to alter its default behavior during invocation.</p>
+<p>You can alter a PEX file&#8217;s behavior during invocation
+by setting some environment variables.</p>
 <div class="section" id="pex-interpreter-1">
 <h3>PEX_INTERPRETER=1<a class="headerlink" href="#pex-interpreter-1" title="Permalink to this headline">¶</a></h3>
-<p>If you have a PEX file with a prescribed executable source or <cite>entry_point</cite> specified, it may still
-occasionally be useful to drop into an interpreter with the environment bootstrapped.  If you
-set <cite>PEX_INTERPRETER=1</cite> in your environment, the PEX bootstrapper will skip any execution and instead
-launch an interactive interpreter session.</p>
+<p>If you have a PEX file with a prescribed executable source or <tt class="docutils literal"><span class="pre">entry_point</span></tt>,
+you can still drop into an interpreter with the environment bootstrapped.
+Set <cite>PEX_INTERPRETER=1</cite> in your environment, and the PEX bootstrapper
+skips any execution and instead launches an interactive interpreter session.</p>
 </div>
 <div class="section" id="pex-verbose-1">
 <h3>PEX_VERBOSE=1<a class="headerlink" href="#pex-verbose-1" title="Permalink to this headline">¶</a></h3>
@@ -964,13 +774,13 @@ includes:</p>
 <div class="section" id="pex-module-entry-point">
 <h3>PEX_MODULE=entry_point<a class="headerlink" href="#pex-module-entry-point" title="Permalink to this headline">¶</a></h3>
 <p>If you have a PEX file without a prescribed entry point, or want to change
-the <cite>entry_point</cite> for the duration of a single invocation, you can set
-<cite>PEX_MODULE=entry_point</cite> using the same format as described in the
-<cite>python_binary</cite> Pants target.</p>
-<p>This can be a useful tool for bundling up a number of packages together and
-being able to use a single file to execute scripts from each of them.</p>
+the <tt class="docutils literal"><span class="pre">entry_point</span></tt> for a single invocation, you can set
+<tt class="docutils literal"><span class="pre">PEX_MODULE=entry_point</span></tt> using the same format as described in the
+<a class="reference internal" href="build_dictionary.html#bdict-python-binary"><em>python_binary</em></a> Pants target.</p>
+<p>This can be useful for bundling up some packages together and
+using that single file to execute scripts from each of them.</p>
 <p>Another common pattern is to link <cite>pytest</cite> into your PEX file, and run
-<cite>PEX_MODULE=pytest my_pex.pex tests/*.py</cite> to run your test suite in its
+<tt class="docutils literal"><span class="pre">PEX_MODULE=pytest</span> <span class="pre">my_pex.pex</span> <span class="pre">tests/*.py</span></tt> to run your test suite in its
 isolated environment.</p>
 </div>
 <div class="section" id="pex-coverage">
