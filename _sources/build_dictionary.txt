@@ -9,18 +9,21 @@ commands and values available. Many of these define ``BUILD``
 targets; some are handy utilities.
 
 **All The Things** |
-`__file__`_ |
 `Amount`_ |
 `android_binary`_ |
 `android_resources`_ |
 `annotation_processor`_ |
 `artifact`_ |
 `benchmark`_ |
+`buildfile_path`_ |
 `bundle`_ |
+`config`_ |
 `credentials`_ |
 `dependencies`_ |
 `egg`_ |
 `exclude`_ |
+`get_buildroot`_ |
+`get_scm`_ |
 `globs`_ |
 `goal`_ |
 `jar`_ |
@@ -39,6 +42,7 @@ targets; some are handy utilities.
 `netrc`_ |
 `page`_ |
 `pants`_ |
+`pants_version`_ |
 `phase`_ |
 `python_antlr_library`_ |
 `python_binary`_ |
@@ -52,24 +56,30 @@ targets; some are handy utilities.
 `repo`_ |
 `resources`_ |
 `rglobs`_ |
-`ROOT_DIR`_ |
 `scala_library`_ |
 `scala_specs`_ |
 `scala_tests`_ |
 `scalac_plugin`_ |
+`set_scm`_ |
 `setup_py`_ |
 `source_root`_ |
 `Time`_ |
 `wiki`_ |
 `wiki_artifact`_ |
+`zglobs`_ |
 
 **JVM** |
+`android_binary`_ |
+`android_resources`_ |
 `annotation_processor`_ |
 `artifact`_ |
 `benchmark`_ |
+`buildfile_path`_ |
 `bundle`_ |
+`credentials`_ |
 `dependencies`_ |
 `exclude`_ |
+`globs`_ |
 `jar`_ |
 `jar_library`_ |
 `java_agent`_ |
@@ -77,42 +87,36 @@ targets; some are handy utilities.
 `java_library`_ |
 `java_protobuf_library`_ |
 `java_thrift_library`_ |
-`jaxb_library`_ |
 `junit_tests`_ |
 `jvm_app`_ |
 `jvm_binary`_ |
-`pants`_ |
+`page`_ |
 `repo`_ |
 `resources`_ |
+`rglobs`_ |
 `scala_library`_ |
 `scala_specs`_ |
 `scalac_plugin`_ |
+`wiki`_ |
+`wiki_artifact`_ |
+`zglobs`_ |
 
 **Python** |
+`buildfile_path`_ |
 `dependencies`_ |
-`egg`_ |
-`pants`_ |
-`python_antlr_library`_ |
+`globs`_ |
+`page`_ |
 `python_binary`_ |
 `python_library`_ |
 `python_requirement`_ |
 `python_requirement_library`_ |
 `python_tests`_ |
-`python_thrift_library`_ |
 `resources`_ |
+`rglobs`_ |
 `setup_py`_ |
-
-
-.. _bdict___file__:
-
-__file__
--------------------------------------------------------------------------------
-
-
-
- Path to BUILD file (string).
-
-
+`wiki`_ |
+`wiki_artifact`_ |
+`zglobs`_ |
 
 
 .. _bdict_Amount:
@@ -122,8 +126,9 @@ Amount
 
 
 
- `Amount from twitter.commons.quantity <https://github.com/twitter/commons/blob/master/src/python/twitter/common/quantity/__init__.py>`_
- E.g., ``Amount(2, Time.MINUTES)``.
+ Used in some params,
+ e.g., ``Amount(2, Time.MINUTES)``.
+ From twitter.commons.
 
 
 
@@ -281,6 +286,20 @@ benchmark
   
   :param description: Descriptive string
 
+.. _bdict_buildfile_path:
+
+buildfile_path
+-------------------------------------------------------------------------------
+
+.. py:function:: buildfile_path(parse_context)
+
+ Returns path containing this ``BUILD`` file.
+
+
+
+ Implemented by ``pants.backend.core.register.BuildFilePath``
+
+
 .. _bdict_bundle:
 
 bundle
@@ -320,6 +339,22 @@ bundle
 
   Add files to the bundle, where ``filesets`` is a filename, ``globs``, or ``rglobs``.
   Note this is a variable length param and may be specified any number of times.
+
+.. _bdict_config:
+
+config
+-------------------------------------------------------------------------------
+
+.. py:function:: config(configparser)
+
+ Encapsulates ini-style config file loading and access additionally supporting recursive variable
+ substitution using standard python format strings, ie: %(var_name)s will be replaced with the
+ value of var_name.
+
+
+
+ Implemented by ``pants.base.config.Config``
+
 
 .. _bdict_credentials:
 
@@ -408,25 +443,48 @@ exclude
  Implemented by ``pants.backend.jvm.targets.exclude.Exclude``
 
 
+.. _bdict_get_buildroot:
+
+get_buildroot
+-------------------------------------------------------------------------------
+
+.. py:function:: get_buildroot()
+
+
+
+ Returns the pants ROOT_DIR, calculating it if needed.
+
+ Implemented by ``pants.base.build_environment.get_buildroot``
+
+
+.. _bdict_get_scm:
+
+get_scm
+-------------------------------------------------------------------------------
+
+.. py:function:: get_scm()
+
+
+
+ Returns the pants Scm if any.
+
+ Implemented by ``pants.base.build_environment.get_scm``
+
+
 .. _bdict_globs:
 
 globs
 -------------------------------------------------------------------------------
 
-.. py:function:: globs(cls, *globspecs, **kw)
+.. py:function:: globs(parse_context)
 
-
-
- Returns a Fileset that combines the lists of files returned by
- glob.glob for each globspec.  File names starting with '.' are not
- returned unless explicitly globbed.  For example, ".*" matches
- ".bashrc" but "*" does not, mirroring the semantics of 'ls' without
- '-a'.
+ Returns Fileset containing matching files in same directory as this BUILD file.
  
- Walks the current working directory by default, can be overrided with
- the 'root' keyword argument.
+ E.g., ``sources = globs('*java'),`` to get .java files in this directory.
 
- Implemented by ``twitter.common.dirutil.fileset.globs``
+
+
+ Implemented by ``pants.backend.core.wrapped_globs.Globs``
 
 
 .. _bdict_goal:
@@ -917,7 +975,7 @@ jvm_binary
 maven_layout
 -------------------------------------------------------------------------------
 
-.. py:function:: maven_layout(parse_context, basedir=u'')
+.. py:function:: maven_layout(ctx)
 
 
 
@@ -931,7 +989,7 @@ maven_layout
    expecting to find java files in ``src/main/java``, expect them in
    ``**basedir**/src/main/java``.
 
- Implemented by ``pants.backend.maven_layout.maven_layout.maven_layout``
+ Implemented by ``pants.base.build_file_aliases.&lt;lambda&gt;``
 
 
 .. _bdict_netrc:
@@ -998,9 +1056,24 @@ pants
 
 
 
- In old Pants versions, a reference to a Pants targets. (In new Pants versions, just use strings.)
+ In old Pants versions, a reference to a Pants targets.
+ (In new Pants versions, just use strings.)
 
 
+
+
+.. _bdict_pants_version:
+
+pants_version
+-------------------------------------------------------------------------------
+
+.. py:function:: pants_version()
+
+
+
+ Returns the pants semantic version number: http://semver.org/
+
+ Implemented by ``pants.base.build_environment.pants_version``
 
 
 .. _bdict_phase:
@@ -1202,7 +1275,7 @@ python_requirement_library
 python_requirements
 -------------------------------------------------------------------------------
 
-.. py:function:: python_requirements(parse_context, requirements_relpath=u'requirements.txt')
+.. py:function:: python_requirements(ctx)
 
 
 
@@ -1228,7 +1301,7 @@ python_requirements
      this function to the requirements file.  By default a `requirements.txt` file sibling to the
      BUILD file is assumed.
 
- Implemented by ``pants.backend.python.python_requirements.python_requirements``
+ Implemented by ``pants.base.build_file_aliases.&lt;lambda&gt;``
 
 
 .. _bdict_python_test_suite:
@@ -1366,32 +1439,16 @@ resources
 rglobs
 -------------------------------------------------------------------------------
 
-.. py:function:: rglobs(cls, *globspecs, **kw)
+.. py:function:: rglobs(parse_context)
 
-
-
- Returns a Fileset that contains the union of all files matched by the
- globspecs applied at each directory beneath the root.  By default the
- root is the current working directory, but can be overridden with the
- 'root' keyword argument.
+ Recursive ``globs``, returns Fileset matching files in this directory and its "children.
  
- File names starting with '.' are not returned unless explicitly globbed.
- For example, ".*" matches ".bashrc" but "*" does not, mirroring the
- semantics of 'ls' without '-a'.
-
- Implemented by ``twitter.common.dirutil.fileset.rglobs``
-
-
-.. _bdict_ROOT_DIR:
-
-ROOT_DIR
--------------------------------------------------------------------------------
+ E.g., ``bundle().add(rglobs('config/*')),`` to bundle up all files in
+ the config, config/foo, config/foo/bar directories.
 
 
 
- Root directory of source code (string).
-
-
+ Implemented by ``pants.backend.core.wrapped_globs.RGlobs``
 
 
 .. _bdict_scala_library:
@@ -1534,6 +1591,20 @@ scalac_plugin
   
   :param description: Descriptive string
 
+.. _bdict_set_scm:
+
+set_scm
+-------------------------------------------------------------------------------
+
+.. py:function:: set_scm(scm)
+
+
+
+ Sets the pants Scm.
+
+ Implemented by ``pants.base.build_environment.set_scm``
+
+
 .. _bdict_setup_py:
 
 setup_py
@@ -1601,8 +1672,9 @@ Time
 
 
 
- `Amount from twitter.commons.quantity <https://github.com/twitter/commons/blob/master/src/python/twitter/common/quantity/__init__.py>`_
- E.g., ``Amount(2, Time.MINUTES)``.
+ Used in some params,
+ e.g., ``Amount(2, Time.MINUTES)``.
+ From twitter.commons
 
 
 
@@ -1653,6 +1725,22 @@ wiki_artifact
  * `parent` -- The title of a wiki page that will denote this page as a child.
 
  Implemented by ``pants.backend.core.targets.doc.WikiArtifact``
+
+
+.. _bdict_zglobs:
+
+zglobs
+-------------------------------------------------------------------------------
+
+.. py:function:: zglobs(parse_context)
+
+ Returns a Fileset that matches zsh-style globs, including '**/' for recursive globbing.
+ 
+ Uses ``BUILD`` file's directory as the "working directory".
+
+
+
+ Implemented by ``pants.backend.core.wrapped_globs.ZGlobs``
 
 
 
