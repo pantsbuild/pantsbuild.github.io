@@ -20,6 +20,7 @@ targets; some are handy utilities.
 `config`_ |
 `credentials`_ |
 `dependencies`_ |
+`Duplicate`_ |
 `egg`_ |
 `exclude`_ |
 `get_buildroot`_ |
@@ -28,6 +29,7 @@ targets; some are handy utilities.
 `goal`_ |
 `jar`_ |
 `jar_library`_ |
+`jar_rules`_ |
 `java_agent`_ |
 `java_antlr_library`_ |
 `java_library`_ |
@@ -62,6 +64,7 @@ targets; some are handy utilities.
 `scalac_plugin`_ |
 `set_scm`_ |
 `setup_py`_ |
+`Skip`_ |
 `source_root`_ |
 `Time`_ |
 `wiki`_ |
@@ -78,10 +81,12 @@ targets; some are handy utilities.
 `bundle`_ |
 `credentials`_ |
 `dependencies`_ |
+`Duplicate`_ |
 `exclude`_ |
 `globs`_ |
 `jar`_ |
 `jar_library`_ |
+`jar_rules`_ |
 `java_agent`_ |
 `java_antlr_library`_ |
 `java_library`_ |
@@ -97,6 +102,7 @@ targets; some are handy utilities.
 `scala_library`_ |
 `scala_specs`_ |
 `scalac_plugin`_ |
+`Skip`_ |
 `wiki`_ |
 `wiki_artifact`_ |
 `zglobs`_ |
@@ -305,40 +311,14 @@ buildfile_path
 bundle
 -------------------------------------------------------------------------------
 
-.. py:function:: bundle(parse_context)
-
- A set of files to include in an application bundle.
- 
- To learn about application bundles, see :ref:`jvm_bundles`.
- Looking for Java-style resources accessible via the ``Class.getResource`` API?
- Those are :ref:`bdict_resources`\ .
- 
- Files added to the bundle will be included when bundling an application target.
- By default relative paths are preserved. For example, to include ``config``
- and ``scripts`` directories: ::
- 
-   bundles=[
-     bundle().add(rglobs('config/*', 'scripts/*')),
-   ]
- 
- To include files relative to some path component use the ``relative_to`` parameter.
- The following places the contents of ``common/config`` in a  ``config`` directory
- in the bundle. ::
- 
-   bundles=[
-     bundle(relative_to='common').add(globs('common/config/*'))
-   ]
+.. py:function:: bundle(cls, parse_context)
 
 
 
- Implemented by ``pants.backend.jvm.targets.jvm_binary.Bundle``
+ Return a factory method that can create bundles rooted at the parse context path.
 
-**Methods:**
+ Implemented by ``pants.backend.jvm.targets.jvm_binary.factory``
 
- .. py:method:: add(*filesets)
-
-  Add files to the bundle, where ``filesets`` is a filename, ``globs``, or ``rglobs``.
-  Note this is a variable length param and may be specified any number of times.
 
 .. _bdict_config:
 
@@ -412,6 +392,26 @@ dependencies
   Set a human-readable description of this target.
   
   :param description: Descriptive string
+
+.. _bdict_Duplicate:
+
+Duplicate
+-------------------------------------------------------------------------------
+
+.. py:function:: Duplicate(apply_pattern, action)
+
+ A rule that indicates how duplicate entries should be handled when building a jar.
+
+
+ Creates a rule for handling duplicate jar entries.
+ 
+ :param str apply_pattern: A regular expression that matches duplicate jar entries this rule
+   applies to.
+ :param action: An action to take to handle one or more duplicate entries.  Must be one of:
+   ``Duplicate.SKIP``, ``Duplicate.REPLACE``, ``Duplicate.CONCAT`` or ``Duplicate.FAIL``.
+
+ Implemented by ``pants.backend.jvm.targets.jvm_binary.Duplicate``
+
 
 .. _bdict_egg:
 
@@ -592,6 +592,41 @@ jar_library
   Set a human-readable description of this target.
   
   :param description: Descriptive string
+
+.. _bdict_jar_rules:
+
+jar_rules
+-------------------------------------------------------------------------------
+
+.. py:function:: jar_rules(rules=None, default_dup_action=&lt;object object at 0x7fb5b84136c0&gt;)
+
+ A set of rules for packaging up a deploy jar.
+ 
+ Deploy jars are executable jars with fully self-contained classpaths and as such, assembling them
+ presents problems given jar semantics.
+ 
+ One issue is signed jars that must be included on the
+ classpath.  These have a signature that depends on the jar contents and assembly of the deploy jar
+ changes the content of the jar, breaking the signatures.  For cases like these the signed jars
+ must be verified and then the signature information thrown away.  The :ref:`Skip <bdict_Skip>`
+ rule supports this sort of issue by allowing outright entry exclusion in the final deploy jar.
+ 
+ Another issue is duplicate jar entries.  Although the underlying zip format supports these, the
+ java jar tool and libraries do not.  As such some action must be taken for each duplicate entry
+ such that there are no duplicates in the final deploy jar.  The four
+ :ref:`Duplicate <bdict_Duplicate>` rules support resolution of these cases by allowing 1st wins,
+ last wins, concatenation of the duplicate entry contents or raising an exception.
+
+
+ Creates a new set of jar rules with the default duplicate action of ``Duplicate.SKIP``.
+ 
+ :param rules: One or more rules that will be applied in order to jar entries being packaged in
+   a deploy jar.
+ :param default_dup_action: The default action to take when a duplicate entry is encountered and
+   no explicit rules apply to the entry.
+
+ Implemented by ``pants.backend.jvm.targets.jvm_binary.JarRules``
+
 
 .. _bdict_java_agent:
 
@@ -954,8 +989,8 @@ jvm_binary
    ``servlet.jar`` onto a Tomcat environment that provides another version,
    they might conflict. ``deploy_excludes`` gives you a way to build your
    code but exclude the conflicting ``jar`` when deploying.
- :param deploy_jar_rules: Rules for packaging this binary in a deploy jar.
- :type deploy_jar_rules: A JarRules specification.
+ :param deploy_jar_rules: :ref:`Jar rules <bdict_jar_rules>` for packaging this binary in a
+   deploy jar.
  :param configurations: Ivy configurations to resolve for this target.
    This parameter is not intended for general use.
  :type configurations: tuple of strings
@@ -1640,6 +1675,20 @@ setup_py
   
   Also can take a dictionary, e.g.
   with_binaries({'my-command': pants(...)})
+
+.. _bdict_Skip:
+
+Skip
+-------------------------------------------------------------------------------
+
+.. py:function:: Skip(apply_pattern)
+
+ A rule that skips adding matched entries to a jar.
+
+
+
+ Implemented by ``pants.backend.jvm.targets.jvm_binary.Skip``
+
 
 .. _bdict_source_root:
 
