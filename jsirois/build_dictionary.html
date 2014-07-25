@@ -234,6 +234,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="#buildfile-path">buildfile_path</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#bundle">bundle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#config">config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#confluencepublish">ConfluencePublish</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#credentials">credentials</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#dependencies">dependencies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#duplicate">Duplicate</a></li>
@@ -250,6 +251,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="#java-antlr-library">java_antlr_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#java-library">java_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#java-protobuf-library">java_protobuf_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#java-ragel-library">java_ragel_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#java-tests">java_tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#java-thrift-library">java_thrift_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#jaxb-library">jaxb_library</a></li>
@@ -398,6 +400,7 @@ targets; some are handy utilities.</p>
 <a class="reference internal" href="#buildfile_path">buildfile_path</a> |
 <a class="reference internal" href="#bundle">bundle</a> |
 <a class="reference internal" href="#config">config</a> |
+<a class="reference internal" href="#confluencepublish">ConfluencePublish</a> |
 <a class="reference internal" href="#credentials">credentials</a> |
 <a class="reference internal" href="#dependencies">dependencies</a> |
 <a class="reference internal" href="#duplicate">Duplicate</a> |
@@ -414,6 +417,7 @@ targets; some are handy utilities.</p>
 <a class="reference internal" href="#java_antlr_library">java_antlr_library</a> |
 <a class="reference internal" href="#java_library">java_library</a> |
 <a class="reference internal" href="#java_protobuf_library">java_protobuf_library</a> |
+<a class="reference internal" href="#java_ragel_library">java_ragel_library</a> |
 <a class="reference internal" href="#java-tests">java_tests</a> |
 <a class="reference internal" href="#java_thrift_library">java_thrift_library</a> |
 <a class="reference internal" href="#jaxb_library">jaxb_library</a> |
@@ -458,6 +462,7 @@ targets; some are handy utilities.</p>
 <a class="reference internal" href="#benchmark">benchmark</a> |
 <a class="reference internal" href="#buildfile_path">buildfile_path</a> |
 <a class="reference internal" href="#bundle">bundle</a> |
+<a class="reference internal" href="#confluencepublish">ConfluencePublish</a> |
 <a class="reference internal" href="#credentials">credentials</a> |
 <a class="reference internal" href="#dependencies">dependencies</a> |
 <a class="reference internal" href="#duplicate">Duplicate</a> |
@@ -470,6 +475,7 @@ targets; some are handy utilities.</p>
 <a class="reference internal" href="#java_antlr_library">java_antlr_library</a> |
 <a class="reference internal" href="#java_library">java_library</a> |
 <a class="reference internal" href="#java_protobuf_library">java_protobuf_library</a> |
+<a class="reference internal" href="#java_ragel_library">java_ragel_library</a> |
 <a class="reference internal" href="#java_thrift_library">java_thrift_library</a> |
 <a class="reference internal" href="#junit_tests">junit_tests</a> |
 <a class="reference internal" href="#jvm_app">jvm_app</a> |
@@ -487,6 +493,7 @@ targets; some are handy utilities.</p>
 <a class="reference internal" href="#zglobs">zglobs</a> |</p>
 <p><strong>Python</strong> |
 <a class="reference internal" href="#buildfile_path">buildfile_path</a> |
+<a class="reference internal" href="#confluencepublish">ConfluencePublish</a> |
 <a class="reference internal" href="#dependencies">dependencies</a> |
 <a class="reference internal" href="#globs">globs</a> |
 <a class="reference internal" href="#page">page</a> |
@@ -561,15 +568,15 @@ Set as &#8216;debug&#8217; by default.</li>
 <span id="bdict-android-resources"></span><h2>android_resources<a class="headerlink" href="#android-resources" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="android_resources">
-<tt class="descname">android_resources</tt><big>(</big><em>address=None</em>, <em>resource_dir=u'res'</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#android_resources" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">android_resources</tt><big>(</big><em>resource_dir=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#android_resources" title="Permalink to this definition">¶</a></dt>
 <dd><p>Processes android resources to generate R.java</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>resource_dir</strong> (<em>string.</em>) &#8211; path/to/directory containing Android target&#8217;s resource files.
-Set to &#8216;res&#8217; by default.</li>
+<li><strong>resource_dir</strong> (<em>string</em>) &#8211; path/to/directory containing Android resource files,
+often named &#8216;res&#8217;.</li>
 <li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
 </ul>
 </td>
@@ -750,6 +757,15 @@ This parameter is not intended for general use.</li>
 substitution using standard python format strings, ie: %(var_name)s will be replaced with the
 value of var_name.</p>
 <p>Implemented by <tt class="docutils literal"><span class="pre">pants.base.config.Config</span></tt></p>
+</dd></dl>
+
+</div>
+<div class="section" id="confluencepublish">
+<span id="bdict-confluencepublish"></span><h2>ConfluencePublish<a class="headerlink" href="#confluencepublish" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="ConfluencePublish">
+<tt class="descname">ConfluencePublish</tt><big>(</big><em>context</em>, <em>workdir</em><big>)</big><a class="headerlink" href="#ConfluencePublish" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.tasks.confluence_publish.ConfluencePublish</span></tt></p>
 </dd></dl>
 
 </div>
@@ -943,7 +959,7 @@ the global lock. If true, the action will block until it can acquire the lock.</
 </tr>
 </tbody>
 </table>
-<p>Implemented by <tt class="docutils literal"><span class="pre">pants.goal.Goal</span></tt></p>
+<p>Implemented by <tt class="docutils literal"><span class="pre">pants.goal.goal.Goal</span></tt></p>
 </dd></dl>
 
 </div>
@@ -1080,7 +1096,7 @@ build file defines the <a class="reference internal" href="target_addresses.html
 <span id="bdict-jar-rules"></span><h2>jar_rules<a class="headerlink" href="#jar-rules" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="jar_rules">
-<tt class="descname">jar_rules</tt><big>(</big><em>rules=None</em>, <em>default_dup_action=&amp;lt;object object at 0x7f23202e46c0&amp;gt;</em><big>)</big><a class="headerlink" href="#jar_rules" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">jar_rules</tt><big>(</big><em>rules=None</em>, <em>default_dup_action=&amp;lt;object object at 0x7fa3fdc3a5d0&amp;gt;</em><big>)</big><a class="headerlink" href="#jar_rules" title="Permalink to this definition">¶</a></dt>
 <dd><p>A set of rules for packaging up a deploy jar.</p>
 <p>Deploy jars are executable jars with fully self-contained classpaths and as such, assembling them
 presents problems given jar semantics.</p>
@@ -1330,6 +1346,53 @@ which contain .proto definitions.</li>
 
 </div></blockquote>
 </div>
+<div class="section" id="java-ragel-library">
+<span id="bdict-java-ragel-library"></span><h2>java_ragel_library<a class="headerlink" href="#java-ragel-library" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="java_ragel_library">
+<tt class="descname">java_ragel_library</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#java_ragel_library" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a stub Java library from a Ragel file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
+build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
+<li><strong>sources</strong> (<tt class="docutils literal"><span class="pre">Fileset</span></tt> or list of strings) &#8211; Source code files to compile. Paths are relative to the
+BUILD file&#8217;s directory.</li>
+<li><strong>provides</strong> &#8211; The <tt class="docutils literal"><span class="pre">artifact</span></tt>
+to publish that represents this target outside the repo.</li>
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
+<li><strong>excludes</strong> &#8211; List of <a class="reference internal" href="#bdict-exclude"><em>exclude</em></a>s
+to filter this target&#8217;s transitive dependencies against.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See CheckExclusives for details.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Implemented by <tt class="docutils literal"><span class="pre">pants.backend.codegen.targets.java_ragel_library.JavaRagelLibrary</span></tt></p>
+</dd></dl>
+
+<p><strong>Methods:</strong></p>
+<blockquote>
+<div><dl class="method">
+<dt>
+<tt class="descname">with_description</tt><big>(</big><em>description</em><big>)</big></dt>
+<dd><p>Set a human-readable description of this target.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>description</strong> &#8211; Descriptive string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div></blockquote>
+</div>
 <div class="section" id="java-tests">
 <span id="bdict-java-tests"></span><h2>java_tests<a class="headerlink" href="#java-tests" title="Permalink to this headline">¶</a></h2>
 <blockquote>
@@ -1443,7 +1506,7 @@ is not intended for general use.</li>
 <span id="bdict-junit-tests"></span><h2>junit_tests<a class="headerlink" href="#junit-tests" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="junit_tests">
-<tt class="descname">junit_tests</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#junit_tests" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">junit_tests</tt><big>(</big><em>sources=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#junit_tests" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tests JVM sources with JUnit.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -2489,16 +2552,19 @@ wiki-specific parameters, such as the title, parent page, etc.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>wiki</strong> &#8211; target spec of a <tt class="docutils literal"><span class="pre">wiki</span></tt>.</li>
-<li><strong>kwargs</strong> &#8211; a dictionary that may contain configuration directives for your particular wiki.</li>
+<li><strong>kwargs</strong> &#8211; <p>a dictionary that may contain configuration directives for your particular wiki.
+For example, the following keys are supported for Atlassian&#8217;s Confluence:</p>
+<ul>
+<li><tt class="docutils literal"><span class="pre">space</span></tt> &#8211; A wiki space in which to place the page (used in Confluence)</li>
+<li><tt class="docutils literal"><span class="pre">title</span></tt> &#8211; A title for the wiki page</li>
+<li><tt class="docutils literal"><span class="pre">parent</span></tt> &#8211; The title of a wiki page that will denote this page as a child.</li>
+</ul>
+</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
-<p>For example, the following keys are supported for Atlassian&#8217;s Confluence:
-* <cite>space</cite> &#8211; A wiki space in which to place the page (used in Confluence)
-* <cite>title</cite> &#8211; A title for the wiki page
-* <cite>parent</cite> &#8211; The title of a wiki page that will denote this page as a child.</p>
 <p>Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.targets.doc.WikiArtifact</span></tt></p>
 </dd></dl>
 
@@ -2508,7 +2574,7 @@ wiki-specific parameters, such as the title, parent page, etc.</p>
 <dl class="function">
 <dt>
 <tt class="descname">zglobs</tt><big>(</big><em>parse_context</em><big>)</big></dt>
-<dd><p>Returns a Fileset that matches zsh-style globs, including &#8216;<a href="#id1"><span class="problematic" id="id2">**</span></a>/&#8217; for recursive globbing.</p>
+<dd><p>Returns a Fileset that matches zsh-style globs, including <tt class="docutils literal"><span class="pre">**/</span></tt> for recursive globbing.</p>
 <p>Uses <tt class="docutils literal"><span class="pre">BUILD</span></tt> file&#8217;s directory as the &#8220;working directory&#8221;.</p>
 <p>Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.wrapped_globs.ZGlobs</span></tt></p>
 </dd></dl>

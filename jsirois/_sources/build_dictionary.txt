@@ -18,6 +18,7 @@ targets; some are handy utilities.
 `buildfile_path`_ |
 `bundle`_ |
 `config`_ |
+`ConfluencePublish`_ |
 `credentials`_ |
 `dependencies`_ |
 `Duplicate`_ |
@@ -34,6 +35,7 @@ targets; some are handy utilities.
 `java_antlr_library`_ |
 `java_library`_ |
 `java_protobuf_library`_ |
+`java_ragel_library`_ |
 `java_tests`_ |
 `java_thrift_library`_ |
 `jaxb_library`_ |
@@ -79,6 +81,7 @@ targets; some are handy utilities.
 `benchmark`_ |
 `buildfile_path`_ |
 `bundle`_ |
+`ConfluencePublish`_ |
 `credentials`_ |
 `dependencies`_ |
 `Duplicate`_ |
@@ -91,6 +94,7 @@ targets; some are handy utilities.
 `java_antlr_library`_ |
 `java_library`_ |
 `java_protobuf_library`_ |
+`java_ragel_library`_ |
 `java_thrift_library`_ |
 `junit_tests`_ |
 `jvm_app`_ |
@@ -109,6 +113,7 @@ targets; some are handy utilities.
 
 **Python** |
 `buildfile_path`_ |
+`ConfluencePublish`_ |
 `dependencies`_ |
 `globs`_ |
 `page`_ |
@@ -178,14 +183,13 @@ android_binary
 android_resources
 -------------------------------------------------------------------------------
 
-.. py:function:: android_resources(address=None, resource_dir=u'res', **kwargs)
+.. py:function:: android_resources(resource_dir=None, **kwargs)
 
  Processes android resources to generate R.java
 
 
- :param resource_dir: path/to/directory containing Android target's resource files.
-   Set to 'res' by default.
- :type resource_dir: string.
+ :param string resource_dir: path/to/directory containing Android resource files,
+  often named 'res'.
  :param dependencies: Other targets that this target depends on.
  :type dependencies: list of target specs
 
@@ -334,6 +338,19 @@ config
 
 
  Implemented by ``pants.base.config.Config``
+
+
+.. _bdict_ConfluencePublish:
+
+ConfluencePublish
+-------------------------------------------------------------------------------
+
+.. py:function:: ConfluencePublish(context, workdir)
+
+
+
+
+ Implemented by ``pants.backend.core.tasks.confluence_publish.ConfluencePublish``
 
 
 .. _bdict_credentials:
@@ -502,7 +519,7 @@ goal
  :param serialize: a flag indicating whether or not the action to achieve this goal requires
    the global lock. If true, the action will block until it can acquire the lock.
 
- Implemented by ``pants.goal.Goal``
+ Implemented by ``pants.goal.goal.Goal``
 
 
 .. _bdict_jar:
@@ -598,7 +615,7 @@ jar_library
 jar_rules
 -------------------------------------------------------------------------------
 
-.. py:function:: jar_rules(rules=None, default_dup_action=&lt;object object at 0x7f23202e46c0&gt;)
+.. py:function:: jar_rules(rules=None, default_dup_action=&lt;object object at 0x7fa3fdc3a5d0&gt;)
 
  A set of rules for packaging up a deploy jar.
  
@@ -790,6 +807,39 @@ java_protobuf_library
   
   :param description: Descriptive string
 
+.. _bdict_java_ragel_library:
+
+java_ragel_library
+-------------------------------------------------------------------------------
+
+.. py:function:: java_ragel_library(**kwargs)
+
+ Generates a stub Java library from a Ragel file.
+
+
+ :param string name: The name of this target, which combined with this
+   build file defines the :doc:`target address <target_addresses>`.
+ :param sources: Source code files to compile. Paths are relative to the
+   BUILD file's directory.
+ :type sources: ``Fileset`` or list of strings
+ :param provides: The ``artifact``
+   to publish that represents this target outside the repo.
+ :param dependencies: Other targets that this target depends on.
+ :type dependencies: list of target specs
+ :param excludes: List of :ref:`exclude <bdict_exclude>`\s
+   to filter this target's transitive dependencies against.
+ :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
+
+ Implemented by ``pants.backend.codegen.targets.java_ragel_library.JavaRagelLibrary``
+
+**Methods:**
+
+ .. py:method:: with_description(description)
+
+  Set a human-readable description of this target.
+  
+  :param description: Descriptive string
+
 .. _bdict_java_tests:
 
 java_tests
@@ -884,7 +934,7 @@ jaxb_library
 junit_tests
 -------------------------------------------------------------------------------
 
-.. py:function:: junit_tests(**kwargs)
+.. py:function:: junit_tests(sources=None, **kwargs)
 
  Tests JVM sources with JUnit.
 
@@ -1768,10 +1818,11 @@ wiki_artifact
 
  :param wiki: target spec of a ``wiki``.
  :param kwargs: a dictionary that may contain configuration directives for your particular wiki.
- For example, the following keys are supported for Atlassian's Confluence:
- * `space` -- A wiki space in which to place the page (used in Confluence)
- * `title` -- A title for the wiki page
- * `parent` -- The title of a wiki page that will denote this page as a child.
+   For example, the following keys are supported for Atlassian's Confluence:
+ 
+   * ``space`` -- A wiki space in which to place the page (used in Confluence)
+   * ``title`` -- A title for the wiki page
+   * ``parent`` -- The title of a wiki page that will denote this page as a child.
 
  Implemented by ``pants.backend.core.targets.doc.WikiArtifact``
 
@@ -1783,7 +1834,7 @@ zglobs
 
 .. py:function:: zglobs(parse_context)
 
- Returns a Fileset that matches zsh-style globs, including '**/' for recursive globbing.
+ Returns a Fileset that matches zsh-style globs, including ``**/`` for recursive globbing.
  
  Uses ``BUILD`` file's directory as the "working directory".
 

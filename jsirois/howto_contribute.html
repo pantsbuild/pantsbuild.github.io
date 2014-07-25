@@ -235,6 +235,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#buildfile-path">buildfile_path</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#bundle">bundle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#config">config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#confluencepublish">ConfluencePublish</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#credentials">credentials</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#dependencies">dependencies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#duplicate">Duplicate</a></li>
@@ -251,6 +252,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-antlr-library">java_antlr_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-library">java_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-protobuf-library">java_protobuf_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-ragel-library">java_ragel_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-tests">java_tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-thrift-library">java_thrift_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jaxb-library">jaxb_library</a></li>
@@ -502,48 +504,22 @@ Press the web form&#8217;s Publish button.</p>
 <h3>Commit Your Change<a class="headerlink" href="#commit-your-change" title="Permalink to this headline">¶</a></h3>
 <p>At this point you&#8217;ve made a change, had it reviewed and are ready to
 complete things by getting your change in master. (If you&#8217;re not a committer,
-please ask one do do this section for you.)</p>
+please ask one to do this section for you.)</p>
 <div class="highlight-python"><div class="highlight"><pre>cd /path/to/pants/repo
 ./build-support/bin/ci.sh
 git checkout master
 git pull
-git merge --squash $FEATURE_BRANCH
-git commit -a
+./rbt patch -c &lt;RB_ID&gt;
 </pre></div>
 </div>
-<p>Here, fix up the commit message: replace <tt class="docutils literal"><span class="pre">git</span></tt>&#8216;s default message
-(&#8220;Squashed commit of the following... &lt;long list&gt;&#8221;) with a summary.
+<p>Here, ensure that the commit message generated from the review summary is
+accurate, and that the resulting commit contains the changes you expect.
 Finally,</p>
 <div class="highlight-python"><div class="highlight"><pre>git push origin master
 </pre></div>
 </div>
-<p>The very last step is closing the review. The change is now complete. Huzzah!</p>
-<p><strong>If you&#8217;re a committer committing someone else&#8217;s review,</strong> a handy way to
-patch a local branch is to follow the pattern</p>
-<div class="highlight-python"><div class="highlight"><pre>git checkout master
-git pull
-./rbt patch 123
-# eyeball the diff, make sure everything made it in
-(git add as necessary)
-git commit --author=&#39;Mateo Rodriguez &lt;mateorod9@gmail.com&gt;&#39; -F - &lt;&lt; EOF
-Erect megaphones.
-
-This paves support for turning the volume up to 11.
-
-Testing Done:
-tesselated the megaphones
-
-Bugs closed: 345
-
-Reviewed at https://rbcommons.com/s/twitter/r/123/
-EOF
-git push origin master
-</pre></div>
-</div>
-<p>(You might reasonably think you could <tt class="docutils literal"><span class="pre">./rbt</span> <span class="pre">patch</span> <span class="pre">-c</span> <span class="pre">&lt;RB_ID&gt;</span></tt>;
-but this
-<a class="reference external" href="https://code.google.com/p/reviewboard/issues/detail?id=3484">tickles a bug</a>
-if the change author is not in the &#8220;twitter&#8221; reviewboard group.)</p>
+<p>The very last step is closing the review as &#8220;Submitted&#8221;. The change is now
+complete. Huzzah!</p>
 </div>
 </div>
 </div>
