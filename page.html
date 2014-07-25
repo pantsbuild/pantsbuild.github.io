@@ -234,6 +234,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#buildfile-path">buildfile_path</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#bundle">bundle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#config">config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#confluencepublish">ConfluencePublish</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#credentials">credentials</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#dependencies">dependencies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#duplicate">Duplicate</a></li>
@@ -250,6 +251,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-antlr-library">java_antlr_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-library">java_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-protobuf-library">java_protobuf_library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-ragel-library">java_ragel_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-tests">java_tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-thrift-library">java_thrift_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jaxb-library">jaxb_library</a></li>
@@ -459,10 +461,10 @@ For example, if the goal was set up with the name &#8220;confluence&#8221;, you 
 </pre></div>
 </div>
 <p>To specify that a page should be published to a Confluence wiki page, set its
-<tt class="docutils literal"><span class="pre">provides</span></tt> like so:</p>
+<tt class="docutils literal"><span class="pre">provides</span></tt> to something like:</p>
 <div class="highlight-python"><div class="highlight"><pre>page(...
   provides=[
-    wiki_artifact(wiki=pants(&#39;BUILD:confluence&#39;),
+    wiki_artifact(wiki=pants(&#39;//:confluence&#39;),
       space=&#39;ENG&#39;,
       title=&#39;Pants Hello World Example&#39;,
       parent=&#39;Examples&#39;,
@@ -470,16 +472,19 @@ For example, if the goal was set up with the name &#8220;confluence&#8221;, you 
   ],)
 </pre></div>
 </div>
+<p>...assuming your workspace is set up with a wiki target named <tt class="docutils literal"><span class="pre">confluence</span></tt>
+in a top-level <tt class="docutils literal"><span class="pre">BUILD</span></tt> file (as described below).</p>
 <p id="page-setup-confluence"><strong>Setting up your workspace for Confluence publish</strong></p>
 <p>That <a class="reference internal" href="build_dictionary.html#bdict-wiki"><em>wiki</em></a> specifies some information about your wiki server.
 So far, the only kind of thing you can publish to is a Confluence wiki.
 You want to specify its target. Do this in one of the <tt class="docutils literal"><span class="pre">BUILD</span></tt> files
 that&#8217;s always processed (probably a top-directory <tt class="docutils literal"><span class="pre">BUILD</span></tt> file).
-The target probably looks something like:</p>
+If your Confluence server lived at wiki.archie.org, the target would
+probably look something like:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">urllib</span>
 
 <span class="k">def</span> <span class="nf">confluence_url_builder</span><span class="p">(</span><span class="n">page</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
-  <span class="k">return</span> <span class="n">config</span><span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">],</span> <span class="s">&#39;https://wiki.archie.org/display/</span><span class="si">%s%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span>
+  <span class="k">return</span> <span class="n">config</span><span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">],</span> <span class="s">&#39;https://wiki.archie.org/display/</span><span class="si">%s</span><span class="s">/</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span>
     <span class="n">config</span><span class="p">[</span><span class="s">&#39;space&#39;</span><span class="p">],</span>
     <span class="n">urllib</span><span class="o">.</span><span class="n">quote_plus</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">]))</span>
 
@@ -489,7 +494,7 @@ The target probably looks something like:</p>
 </pre></div>
 </div>
 <p>You need to install a goal to enable publishing a doc to confluence.
-It might look like:</p>
+It might look like</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">OurConfluence</span><span class="p">(</span><span class="n">ConfluencePublish</span><span class="p">):</span>
   <span class="k">def</span> <span class="nf">wiki</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">confluence</span> <span class="c"># wiki target defined above</span>
@@ -501,6 +506,12 @@ It might look like:</p>
   <span class="n">action</span><span class="o">=</span><span class="n">OurConfluence</span><span class="p">,</span>
   <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;markdown&#39;</span><span class="p">]</span>
 <span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">()</span><span class="o">.</span><span class="n">with_description</span><span class="p">(</span><span class="s">&#39;Publish one or more confluence pages.&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In your <tt class="docutils literal"><span class="pre">pants.ini</span></tt> file, add a section with the url of your wiki server.
+E.g., if your server is at wiki.archie.org, it would look like:</p>
+<div class="highlight-python"><div class="highlight"><pre>[confluence-publish]
+url: https://wiki.archie.org
 </pre></div>
 </div>
 </div>
