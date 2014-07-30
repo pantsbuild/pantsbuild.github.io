@@ -558,12 +558,31 @@ skipped by pants. To bring both jars in, use the <tt class="docutils literal"><s
 <a class="reference internal" href="build_dictionary.html#bdict-jar"><em>jar</em></a>. Using this method, the above example would be transformed into:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">jar_library</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&#39;stanford-corenlp&#39;</span><span class="p">,</span>
   <span class="n">jars</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">jar</span><span class="p">(</span><span class="n">org</span> <span class="o">=</span> <span class="s">&#39;edu.stanford.nlp&#39;</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;stanford-corenlp&#39;</span><span class="p">,</span> <span class="n">rev</span> <span class="o">=</span> <span class="s">&#39;3.3.1&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">with_sources</span><span class="p">()</span><span class="o">.</span><span class="n">with_artifact</span><span class="p">(</span><span class="n">classifier</span><span class="o">=</span><span class="s">&#39;models&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">with_artifact</span><span class="p">(</span><span class="n">classifier</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">),</span>
+    <span class="n">jar</span><span class="p">(</span><span class="n">org</span> <span class="o">=</span> <span class="s">&#39;edu.stanford.nlp&#39;</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;stanford-corenlp&#39;</span><span class="p">,</span> <span class="n">rev</span> <span class="o">=</span> <span class="s">&#39;3.3.1&#39;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">with_sources</span><span class="p">()</span><span class="o">.</span><span class="n">with_artifact</span><span class="p">(</span><span class="n">classifier</span><span class="o">=</span><span class="s">&#39;models&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">with_artifact</span><span class="p">(</span><span class="n">classifier</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">),</span>
   <span class="p">]</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 <p>And as a result, both jars will now be brought into the target&#8217;s classpath.</p>
+</div>
+<div class="section" id="using-a-snapshot-jvm-dependency">
+<h2>Using a SNAPSHOT JVM Dependency<a class="headerlink" href="#using-a-snapshot-jvm-dependency" title="Permalink to this headline">¶</a></h2>
+<p id="test-3rdparty-jvm-snapshot">Sometimes your code depends on a buggy external JVM dependency. You think you&#8217;ve fixed the
+external code, but want to test locally before uploading it to make sure.
+To do this, in the <tt class="docutils literal"><span class="pre">jar</span></tt> dependency for the artifact, specify the <tt class="docutils literal"><span class="pre">url</span></tt> attribute
+to point to the local file and change the <tt class="docutils literal"><span class="pre">rev</span></tt>. If you are actively making changes
+to the dependency, you can also use the <tt class="docutils literal"><span class="pre">mutable</span></tt> jar attribute to re-import the file
+each time pants is run (otherwise, pants will cache it):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">jar_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;checkstyle&#39;</span><span class="p">,</span>
+  <span class="n">jars</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">jar</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s">&#39;com.puppycrawl.tools&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;checkstyle&#39;</span><span class="p">,</span> <span class="n">rev</span><span class="o">=</span><span class="s">&#39;5.5-SNAPSHOT&#39;</span><span class="p">,</span>
+        <span class="n">url</span><span class="o">=</span><span class="s">&#39;file:///Users/pantsdev/Src/checkstyle/checkstyle.jar&#39;</span><span class="p">,</span>
+        <span class="n">mutable</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+  <span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
 </div>
 </div>
 
