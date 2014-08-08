@@ -225,7 +225,6 @@ body a.icon-home:hover{
 </ul>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="build_dictionary.html">BUILD Dictionary</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#amount">Amount</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#android-binary">android_binary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#android-resources">android_resources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#annotation-processor">annotation_processor</a></li>
@@ -284,7 +283,6 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#setup-py">setup_py</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#skip">Skip</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#source-root">source_root</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#time">Time</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#wiki">wiki</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#wiki-artifact">wiki_artifact</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#zglobs">zglobs</a></li>
@@ -308,6 +306,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="#detect-duplicates">detect-duplicates</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#doc">doc</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#eclipse">eclipse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ensime">ensime</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#filedeps">filedeps</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#filemap">filemap</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#filter">filter</a></li>
@@ -412,6 +411,7 @@ goal.</p>
 <li><a class="reference internal" href="#gref-phase-detect-duplicates"><em>detect-duplicates</em></a> - Detect duplicate classes and resources on the classpath.</li>
 <li><a class="reference internal" href="#gref-phase-doc"><em>doc</em></a> - Create documentation.</li>
 <li><a class="reference internal" href="#gref-phase-eclipse"><em>eclipse</em></a> - Create an Eclipse project from the given targets.</li>
+<li><a class="reference internal" href="#gref-phase-ensime"><em>ensime</em></a> - Create an Ensime project from the given targets.</li>
 <li><a class="reference internal" href="#gref-phase-filedeps"><em>filedeps</em></a> - Print out the source and BUILD files the target depends on.</li>
 <li><a class="reference internal" href="#gref-phase-filemap"><em>filemap</em></a> - Outputs a mapping from source file to owning target.</li>
 <li><a class="reference internal" href="#gref-phase-filter"><em>filter</em></a> - Filter the input targets based on various criteria.</li>
@@ -1310,6 +1310,96 @@ Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.
 <a class="reference internal" href="#gref-cli-jvm"><em>jvm</em></a>
 <a class="reference internal" href="#gref-cli-jar"><em>jar</em></a></div></blockquote>
 </div>
+<div class="section" id="ensime">
+<span id="gref-phase-ensime"></span><h2>ensime<a class="headerlink" href="#ensime" title="Permalink to this headline">¶</a></h2>
+<p>Create an Ensime project from the given targets.</p>
+<ul id="gref-cli-ensime">
+<li><p class="first"><strong>ensime</strong>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.tasks.ensime_gen.EnsimeGen</span></tt></p>
+<ul>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--ensime-project-name</span></tt>
+<tt class="docutils literal"><span class="pre">string</span></tt>
+(Default: <tt class="docutils literal"><span class="pre">project</span></tt>)</div>
+<div class="line">Specifies the name to use for the generated project.</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--ensime-project-dir</span></tt>
+<tt class="docutils literal"><span class="pre">string</span></tt></div>
+<div class="line">Specifies the directory to output the generated project files to.</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--ensime-project-cwd</span></tt>
+<tt class="docutils literal"><span class="pre">string</span></tt></div>
+<div class="line">Specifies the directory the generated project should use as the cwd for processes it launches.  Note that specifying this trumps &#8211;ensime-project-dir and not all project related files will be stored there.</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--ensime-intransitive</span></tt></div>
+<div class="line">Limits the sources included in the generated project to just those owned by the targets specified on the command line</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--ensime-python/--no-ensime-python</span></tt></div>
+<div class="line">Adds python support to the generated project configuration.</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--ensime-java/--no-ensime-java</span></tt>
+(Default: <tt class="docutils literal"><span class="pre">True</span></tt>)</div>
+<div class="line">Includes java sources in the project; otherwise compiles them and adds them to the project classpath.</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--ensime-java-language-level</span></tt>
+<tt class="docutils literal"><span class="pre">int</span></tt>
+(Default: <tt class="docutils literal"><span class="pre">7</span></tt>)</div>
+<div class="line">Sets the java language and jdk used to compile the project&#8217;s java sources.</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--ensime-java-jdk-name</span></tt>
+<tt class="docutils literal"><span class="pre">string</span></tt></div>
+<div class="line">Sets the jdk used to compile the project&#8217;s java sources. If unset the default jdk name for the &#8211;ensime-java-language-level is used.</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--ensime-scala/--no-ensime-scala</span></tt>
+(Default: <tt class="docutils literal"><span class="pre">True</span></tt>)</div>
+<div class="line">Includes scala sources in the project; otherwise compiles them and adds them to the project classpath.</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--ensime-scala-language-level</span></tt>
+<tt class="docutils literal"><span class="pre">choice</span></tt>
+(Default: <tt class="docutils literal"><span class="pre">2.10</span></tt>)</div>
+<div class="line">Set the scala language level used for Ensime linting.</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--ensime-java-encoding</span></tt>
+<tt class="docutils literal"><span class="pre">string</span></tt>
+(Default: <tt class="docutils literal"><span class="pre">UTF-8</span></tt>)</div>
+<div class="line">Sets the file encoding for java files in this project.</div>
+</div>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>Other command-line options:</strong></p>
+<blockquote>
+<div><a class="reference internal" href="#common">Common</a>
+<a class="reference internal" href="#gref-cli-genthrift"><em>gen:thrift</em></a>
+<a class="reference internal" href="#gref-cli-genscrooge"><em>gen:scrooge</em></a>
+<a class="reference internal" href="#gref-cli-genprotoc"><em>gen:protoc</em></a>
+<a class="reference internal" href="#gref-cli-genaapt"><em>gen:aapt</em></a>
+<a class="reference internal" href="#gref-cli-checkexclusives"><em>check-exclusives</em></a>
+<a class="reference internal" href="#gref-cli-ivy"><em>ivy</em></a>
+<a class="reference internal" href="#gref-cli-jvm"><em>jvm</em></a>
+<a class="reference internal" href="#gref-cli-jar"><em>jar</em></a></div></blockquote>
+</div>
 <div class="section" id="filedeps">
 <span id="gref-phase-filedeps"></span><h2>filedeps<a class="headerlink" href="#filedeps" title="Permalink to this headline">¶</a></h2>
 <p>Print out the source and BUILD files the target depends on.</p>
@@ -1416,7 +1506,7 @@ For right now, pants is only supporting &#8216;package&#8217;. More to come as w
 <li><div class="first line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">--gen-aapt-sdk-path</span></tt>
 <tt class="docutils literal"><span class="pre">string</span></tt></div>
-<div class="line">Specify a specific Android SDK to pass to tasks.</div>
+<div class="line">Specify a file location and force the Android SDK there to be used during Android tasks.</div>
 </div>
 </li>
 <li><div class="first line-block">

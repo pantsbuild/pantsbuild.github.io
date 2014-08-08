@@ -33,6 +33,7 @@ goal.
   * :ref:`gref_phase_detect-duplicates` - Detect duplicate classes and resources on the classpath.
   * :ref:`gref_phase_doc` - Create documentation.
   * :ref:`gref_phase_eclipse` - Create an Eclipse project from the given targets.
+  * :ref:`gref_phase_ensime` - Create an Ensime project from the given targets.
   * :ref:`gref_phase_filedeps` - Print out the source and BUILD files the target depends on.
   * :ref:`gref_phase_filemap` - Outputs a mapping from source file to owning target.
   * :ref:`gref_phase_filter` - Filter the input targets based on various criteria.
@@ -1061,6 +1062,96 @@ Create an Eclipse project from the given targets.
 
 
 
+.. _gref_phase_ensime:
+
+ensime
+-----------------------------------------------------------------------------
+
+Create an Ensime project from the given targets.
+
+
+.. _gref_cli_ensime:
+
+*
+  **ensime**
+  Implemented by ``pants.backend.jvm.tasks.ensime_gen.EnsimeGen``
+
+
+
+  * | ``--ensime-project-name``
+      ``string``
+      (Default: ``project``)
+    |
+      Specifies the name to use for the generated project.
+
+  * | ``--ensime-project-dir``
+      ``string``
+    |
+      Specifies the directory to output the generated project files to.
+
+  * | ``--ensime-project-cwd``
+      ``string``
+    |
+      Specifies the directory the generated project should use as the cwd for processes it launches.  Note that specifying this trumps --ensime-project-dir and not all project related files will be stored there.
+
+  * | ``--ensime-intransitive``
+    |
+      Limits the sources included in the generated project to just those owned by the targets specified on the command line
+
+  * | ``--ensime-python/--no-ensime-python``
+    |
+      Adds python support to the generated project configuration.
+
+  * | ``--ensime-java/--no-ensime-java``
+      (Default: ``True``)
+    |
+      Includes java sources in the project; otherwise compiles them and adds them to the project classpath.
+
+  * | ``--ensime-java-language-level``
+      ``int``
+      (Default: ``7``)
+    |
+      Sets the java language and jdk used to compile the project's java sources.
+
+  * | ``--ensime-java-jdk-name``
+      ``string``
+    |
+      Sets the jdk used to compile the project's java sources. If unset the default jdk name for the --ensime-java-language-level is used.
+
+  * | ``--ensime-scala/--no-ensime-scala``
+      (Default: ``True``)
+    |
+      Includes scala sources in the project; otherwise compiles them and adds them to the project classpath.
+
+  * | ``--ensime-scala-language-level``
+      ``choice``
+      (Default: ``2.10``)
+    |
+      Set the scala language level used for Ensime linting.
+
+  * | ``--ensime-java-encoding``
+      ``string``
+      (Default: ``UTF-8``)
+    |
+      Sets the file encoding for java files in this project.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+  :ref:`gen:thrift <gref_cli_genthrift>`
+  :ref:`gen:scrooge <gref_cli_genscrooge>`
+  :ref:`gen:protoc <gref_cli_genprotoc>`
+  :ref:`gen:aapt <gref_cli_genaapt>`
+  :ref:`check-exclusives <gref_cli_checkexclusives>`
+  :ref:`ivy <gref_cli_ivy>`
+  :ref:`jvm <gref_cli_jvm>`
+  :ref:`jar <gref_cli_jar>`
+
+
+
 .. _gref_phase_filedeps:
 
 filedeps
@@ -1204,7 +1295,7 @@ Generate code.
   * | ``--gen-aapt-sdk-path``
       ``string``
     |
-      Specify a specific Android SDK to pass to tasks.
+      Specify a file location and force the Android SDK there to be used during Android tasks.
 
   * | ``--gen-aapt-target-sdk``
       ``string``

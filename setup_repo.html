@@ -225,7 +225,6 @@ body a.icon-home:hover{
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="build_dictionary.html">BUILD Dictionary</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#amount">Amount</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#android-binary">android_binary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#android-resources">android_resources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#annotation-processor">annotation_processor</a></li>
@@ -284,7 +283,6 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#setup-py">setup_py</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#skip">Skip</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#source-root">source_root</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#time">Time</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#wiki">wiki</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#wiki-artifact">wiki_artifact</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#zglobs">zglobs</a></li>
@@ -308,6 +306,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#detect-duplicates">detect-duplicates</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#doc">doc</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#eclipse">eclipse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#ensime">ensime</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#filedeps">filedeps</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#filemap">filemap</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#filter">filter</a></li>
@@ -535,21 +534,7 @@ file and hold back this file when mirroring for the public repository.</p>
 <p>Your organization might have a notion of a special &#8220;release branch&#8221;: you want
 <a class="reference internal" href="publish.html"><em>artifact publishing</em></a>
 to happen on this source control branch, which you maintain
-extra-carefully. To configure this, set up a <tt class="docutils literal"><span class="pre">JarPublish</span></tt>
-subclass in an always-used <tt class="docutils literal"><span class="pre">BUILD</span></tt> file (in most repos, this
-means a <tt class="docutils literal"><span class="pre">BUILD</span></tt> file in the top directory). This <tt class="docutils literal"><span class="pre">JarPublish</span></tt>
-subclass should use <tt class="docutils literal"><span class="pre">restrict_push_branches</span></tt>. Set up your repo&#8217;s
-<tt class="docutils literal"><span class="pre">publish</span></tt> goal to use this class:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># ./BUILD.myorg</span>
-<span class="k">class</span> <span class="nc">MyorgJarPublish</span><span class="p">(</span><span class="n">JarPublish</span><span class="p">):</span>
-  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">workdir</span><span class="p">):</span>
-    <span class="nb">super</span><span class="p">(</span><span class="n">MyorgJarPublish</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">workdir</span><span class="p">,</span> <span class="n">restrict_push_branches</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;master&#39;</span><span class="p">])</span>
-
-<span class="n">goal</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;publish&#39;</span><span class="p">,</span>
-     <span class="n">action</span><span class="o">=</span><span class="n">MyorgJarPublish</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s">&#39;publish&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">with_description</span><span class="p">(</span><span class="s">&#39;Publish one or more artifacts.&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>If a user invokes <tt class="docutils literal"><span class="pre">goal</span> <span class="pre">publish</span></tt> from some other branch, Pants balks.</p>
+extra-carefully. You can set this branch using the restrict_push_branches option.</p>
 </div>
 </div>
 

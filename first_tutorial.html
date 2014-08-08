@@ -225,7 +225,6 @@ body a.icon-home:hover{
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="build_dictionary.html">BUILD Dictionary</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#amount">Amount</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#android-binary">android_binary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#android-resources">android_resources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#annotation-processor">annotation_processor</a></li>
@@ -284,7 +283,6 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#setup-py">setup_py</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#skip">Skip</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#source-root">source_root</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#time">Time</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#wiki">wiki</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#wiki-artifact">wiki_artifact</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#zglobs">zglobs</a></li>
@@ -308,6 +306,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#detect-duplicates">detect-duplicates</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#doc">doc</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#eclipse">eclipse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#ensime">ensime</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#filedeps">filedeps</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#filemap">filemap</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#filter">filter</a></li>
@@ -399,8 +398,8 @@ Pants &#8220;bootstrap&#8221; itself, downloading and compiling things it needs:
 <p>Now you&#8217;re ready to invoke pants for more useful things.</p>
 <p>You invoke pants with <em>goals</em> (like <tt class="docutils literal"><span class="pre">test</span></tt> or <tt class="docutils literal"><span class="pre">bundle</span></tt>) and the
 <em>build targets</em> to use (like
-<tt class="docutils literal"><span class="pre">tests/java/com/pants/examples/hello/greet/BUILD:greet</span></tt>). For example,</p>
-<div class="highlight-python"><div class="highlight"><pre>./pants goal test tests/java/com/pants/examples/hello/greet/BUILD:greet
+<tt class="docutils literal"><span class="pre">tests/java/com/pants/examples/hello/greet:greet</span></tt>). For example,</p>
+<div class="highlight-python"><div class="highlight"><pre>./pants goal test tests/java/com/pants/examples/hello/greet:greet
 </pre></div>
 </div>
 <p>Goals (the &#8220;verbs&#8221; of Pants) produce new files from Targets (the &#8220;nouns&#8221;).</p>
@@ -415,7 +414,7 @@ file defines the target[s] whose sources are files in that directory.</p>
 <p>Pants knows about goals (&#8220;verbs&#8221; like <tt class="docutils literal"><span class="pre">bundle</span></tt> and <tt class="docutils literal"><span class="pre">test</span></tt>) and targets
 (build-able things in your source code). A typical pants command-line
 invocation looks like</p>
-<div class="highlight-python"><div class="highlight"><pre>./pants goal test tests/java/com/pants/examples/hello/greet/BUILD:greet
+<div class="highlight-python"><div class="highlight"><pre>./pants goal test tests/java/com/pants/examples/hello/greet:greet
 </pre></div>
 </div>
 <p>Looking at the pieces of this we see</p>
@@ -445,7 +444,7 @@ before it run tests, it must compile the code.</p>
 <p class="last">You can specify more than one goal on a command line. E.g., to generate an
 Eclipse project <em>and</em> run tests, we could have said <tt class="docutils literal"><span class="pre">eclipse</span> <span class="pre">tests</span></tt>.</p>
 </dd>
-<dt><tt class="docutils literal"><span class="pre">tests/java/com/pants/examples/hello/greet/BUILD:greet</span></tt></dt>
+<dt><tt class="docutils literal"><span class="pre">tests/java/com/pants/examples/hello/greet:greet</span></tt></dt>
 <dd><p class="first">This is a <em>build target</em>, a &#8220;build-able&#8221; thing in your source code. To define
 these, you set up configuration files named <tt class="docutils literal"><span class="pre">BUILD</span></tt> in your source code file
 tree. (You&#8217;ll see more about these later.)</p>
@@ -534,6 +533,7 @@ the app we ran and the binary that contains its code.
 These targets are named <tt class="docutils literal"><span class="pre">main</span></tt> (of type <tt class="docutils literal"><span class="pre">jvm_app</span></tt>)
 and and <tt class="docutils literal"><span class="pre">main-bin</span></tt> (of type <tt class="docutils literal"><span class="pre">jvm_binary</span></tt>):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">jvm_app</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;main&#39;</span><span class="p">,</span>
+  <span class="n">basename</span> <span class="o">=</span> <span class="s">&#39;hello-example&#39;</span><span class="p">,</span>
   <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s">&#39;:main-bin&#39;</span>
   <span class="p">],</span>
@@ -553,6 +553,7 @@ and and <tt class="docutils literal"><span class="pre">main-bin</span></tt> (of 
   <span class="p">],</span>
   <span class="n">source</span> <span class="o">=</span> <span class="s">&#39;HelloMain.java&#39;</span><span class="p">,</span>
   <span class="n">main</span> <span class="o">=</span> <span class="s">&#39;com.pants.examples.hello.main.HelloMain&#39;</span><span class="p">,</span>
+  <span class="n">basename</span> <span class="o">=</span> <span class="s">&#39;hello-example&#39;</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -562,7 +563,7 @@ To build a runnable Java binary, we need to first compile its dependencies.
 The <tt class="docutils literal"><span class="pre">main-bin</span></tt> binary has two dependencies,
 <tt class="docutils literal"><span class="pre">pants('src/java/com/pants/examples/hello/greet')</span></tt>
 is the <em>address</em> of another target. Addresses look,
-roughly, like <tt class="docutils literal"><span class="pre">path/to/BUILD:targetname</span></tt>.
+roughly, like <tt class="docutils literal"><span class="pre">path/to/dir:targetname</span></tt>.
 We can see this build target in the <tt class="docutils literal"><span class="pre">.../hello/greet/BUILD</span></tt> file:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">java_library</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&#39;greet&#39;</span><span class="p">,</span>
   <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[],</span> <span class="c"># A more realistic example would depend on other libs,</span>

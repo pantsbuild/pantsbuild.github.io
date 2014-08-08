@@ -226,7 +226,6 @@ body a.icon-home:hover{
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="build_dictionary.html">BUILD Dictionary</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#amount">Amount</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#android-binary">android_binary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#android-resources">android_resources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#annotation-processor">annotation_processor</a></li>
@@ -285,7 +284,6 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#setup-py">setup_py</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#skip">Skip</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#source-root">source_root</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#time">Time</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#wiki">wiki</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#wiki-artifact">wiki_artifact</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#zglobs">zglobs</a></li>
@@ -309,6 +307,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#detect-duplicates">detect-duplicates</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#doc">doc</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#eclipse">eclipse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#ensime">ensime</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#filedeps">filedeps</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#filemap">filemap</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#filter">filter</a></li>
@@ -545,7 +544,7 @@ your task.</p>
 <h3>Task Installation<a class="headerlink" href="#task-installation" title="Permalink to this headline">¶</a></h3>
 <p>Tasks must be installed before they are available for use.
 Fortunately this is a simple process. They are installed
-in <tt class="docutils literal"><span class="pre">goal.py</span></tt> as follows:</p>
+in <tt class="docutils literal"><span class="pre">register.py</span></tt> as follows:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">pants.backend.core.tasks.pagerank</span> <span class="kn">import</span> <span class="n">PageRank</span>
 <span class="n">goal</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;pagerank&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">PageRank</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">()</span><span class="o">.</span><span class="n">with_description</span><span class="p">(</span><span class="s">&#39;PageRank the given targets.&#39;</span><span class="p">)</span>
 </pre></div>
@@ -591,8 +590,8 @@ condensed from the Scalastyle task provided by pants; please see its sources for
 example, including exemplary configuration and error handling (which your task will have too,
 right :)</p>
 <div class="highlight-python"><div class="highlight"><pre>class Scalastyle(NailgunTask):
-  def __init__(self, context, workdir):
-    super(Scalastyle, self).__init__(context, workdir)
+  def __init__(self, *args, **kwargs):
+    super(Scalastyle, self).__init__(*args, **kwargs)
     self._scalastyle_config = self.context.config.get_required(&#39;scalastyle, &#39;config&#39;)
     self._scalastyle_bootstrap_key = &#39;scalastyle&#39;
     self.register_jvm_tool(self._scalastyle_bootstrap_key, [&#39;:scalastyle&#39;])
