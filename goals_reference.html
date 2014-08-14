@@ -165,6 +165,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="build_files.html#depend-on-api-in-library-targets-implementation-in-binary-targets">Depend on API in Library Targets, Implementation in Binary Targets</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_files.html#which-build-files-are-executed-and-how">Which <tt class="docutils literal"><span class="pre">BUILD</span></tt> Files are &#8220;Executed&#8221;? (and how?)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_files.html#id1">BUILD.* files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_files.html#tag-incompatibilities-with-exclusives">Tag Incompatibilities with exclusives</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="invoking.html">Invoking Pants Build</a><ul>
@@ -203,6 +204,7 @@ body a.icon-home:hover{
 </li>
 </ul>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="with_emacs.html">Ensime With Pants</a></li>
 <li class="toctree-l1"><a class="reference internal" href="with_intellij.html">Using Pants with IntelliJ IDEA</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="with_intellij.html#pants-build-plugin-for-intellij">Pants Build Plugin for IntelliJ</a></li>
 <li class="toctree-l2"><a class="reference internal" href="with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
@@ -295,6 +297,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="#builddict">builddict</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#buildlint">buildlint</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#bundle">bundle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#changed">changed</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#check-exclusives">check-exclusives</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#check-published-deps">check_published_deps</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#clean-all">clean-all</a></li>
@@ -304,6 +307,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="#dependencies">dependencies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#depmap">depmap</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#detect-duplicates">detect-duplicates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dex">dex</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#doc">doc</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#eclipse">eclipse</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#ensime">ensime</a></li>
@@ -400,6 +404,7 @@ goal.</p>
 <li><a class="reference internal" href="#gref-phase-builddict"><em>builddict</em></a> - None</li>
 <li><a class="reference internal" href="#gref-phase-buildlint"><em>buildlint</em></a> - None</li>
 <li><a class="reference internal" href="#gref-phase-bundle"><em>bundle</em></a> - Create an application bundle from binary targets.</li>
+<li><a class="reference internal" href="#gref-phase-changed"><em>changed</em></a> - Print the targets changed since some prior commit.</li>
 <li><a class="reference internal" href="#gref-phase-check-exclusives"><em>check-exclusives</em></a> - Check for exclusivity violations.</li>
 <li><a class="reference internal" href="#gref-phase-check-published-deps"><em>check_published_deps</em></a> - Find references to outdated artifacts.</li>
 <li><a class="reference internal" href="#gref-phase-clean-all"><em>clean-all</em></a> - Clean all build output.</li>
@@ -409,6 +414,7 @@ goal.</p>
 <li><a class="reference internal" href="#gref-phase-dependencies"><em>dependencies</em></a> - Print the target&#8217;s dependencies.</li>
 <li><a class="reference internal" href="#gref-phase-depmap"><em>depmap</em></a> - Depict the target&#8217;s dependencies.</li>
 <li><a class="reference internal" href="#gref-phase-detect-duplicates"><em>detect-duplicates</em></a> - Detect duplicate classes and resources on the classpath.</li>
+<li><a class="reference internal" href="#gref-phase-dex"><em>dex</em></a> - None</li>
 <li><a class="reference internal" href="#gref-phase-doc"><em>doc</em></a> - Create documentation.</li>
 <li><a class="reference internal" href="#gref-phase-eclipse"><em>eclipse</em></a> - Create an Eclipse project from the given targets.</li>
 <li><a class="reference internal" href="#gref-phase-ensime"><em>ensime</em></a> - Create an Ensime project from the given targets.</li>
@@ -489,7 +495,18 @@ Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.
 <div class="section" id="binary">
 <span id="gref-phase-binary"></span><h2>binary<a class="headerlink" href="#binary" title="Permalink to this headline">¶</a></h2>
 <p>Create a jvm binary jar.</p>
+<ul id="gref-cli-binarypythonbinarycreate">
+<li><p class="first"><strong>binary:python-binary-create</strong>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.python.tasks.python_binary_create.PythonBinaryCreate</span></tt></p>
 <ul>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--binary-python-binary-create-timeout</span></tt>
+<tt class="docutils literal"><span class="pre">int</span></tt></div>
+<div class="line">Number of seconds to wait for http connections.</div>
+</div>
+</li>
+</ul>
+</li>
 <li><p class="first">Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.tasks.binary_create.BinaryCreate</span></tt></p>
 <p>Creates a runnable monolithic binary deploy jar.</p>
 </li>
@@ -516,19 +533,6 @@ Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.
 <tt class="docutils literal"><span class="pre">string</span></tt>
 (Default: <tt class="docutils literal"><span class="pre">10</span></tt>)</div>
 <div class="line">Maximum number of duplicate classes to display per artifactdefaults to:</div>
-</div>
-</li>
-</ul>
-</li>
-</ul>
-<ul id="gref-cli-binarypythonbinarycreate">
-<li><p class="first"><strong>binary:python-binary-create</strong>
-Implemented by <tt class="docutils literal"><span class="pre">pants.backend.python.tasks.python_binary_create.PythonBinaryCreate</span></tt></p>
-<ul>
-<li><div class="first line-block">
-<div class="line"><tt class="docutils literal"><span class="pre">--binary-python-binary-create-timeout</span></tt>
-<tt class="docutils literal"><span class="pre">int</span></tt></div>
-<div class="line">Number of seconds to wait for http connections.</div>
 </div>
 </li>
 </ul>
@@ -655,6 +659,41 @@ Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.
 </ul>
 </li>
 </ul>
+<ul id="gref-cli-bundleapk">
+<li><p class="first"><strong>bundle:apk</strong>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.android.tasks.aapt_builder.AaptBuilder</span></tt></p>
+<p>Build an android bundle with compiled code and assets.</p>
+<p>This class gathers compiled classes (an Android dex archive) and packages it with the
+target&#8217;s resource files. The output is an unsigned .apk, an Android application package file.</p>
+<ul>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--bundle-apk-sdk-path</span></tt>
+<tt class="docutils literal"><span class="pre">string</span></tt></div>
+<div class="line">Specify a file location and force the Android SDK there to be used during Android tasks.</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--bundle-apk-target-sdk</span></tt>
+<tt class="docutils literal"><span class="pre">string</span></tt></div>
+<div class="line">Specifies the target Android SDK used to compile resources. Overrides AndroidManifest.xml.</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--bundle-apk-build-tools-version</span></tt>
+<tt class="docutils literal"><span class="pre">string</span></tt></div>
+<div class="line">Specifies the Android build-tools version used to compile resources.</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--bundle-apk-ignored-assets</span></tt>
+<tt class="docutils literal"><span class="pre">string</span></tt>
+(Default: <tt class="docutils literal"><span class="pre">!.svn:!.git:!.ds_store:!*.scc:.*:&amp;lt;dir&amp;gt;_*:!CVS:!thumbs.db:!picasa.ini:!*~:BUILD*</span></tt>)</div>
+<div class="line">Specifies regex patterns the aapt tools should ignore as it spiders down the resource_dir.</div>
+</div>
+</li>
+</ul>
+</li>
+</ul>
 <p><strong>Other command-line options:</strong></p>
 <blockquote>
 <div><a class="reference internal" href="#common">Common</a>
@@ -664,7 +703,42 @@ Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.
 <a class="reference internal" href="#gref-cli-genaapt"><em>gen:aapt</em></a>
 <a class="reference internal" href="#gref-cli-checkexclusives"><em>check-exclusives</em></a>
 <a class="reference internal" href="#gref-cli-ivy"><em>ivy</em></a>
-<a class="reference internal" href="#gref-cli-jvm"><em>jvm</em></a></div></blockquote>
+<a class="reference internal" href="#gref-cli-jvm"><em>jvm</em></a>
+<a class="reference internal" href="#gref-cli-dex"><em>dex</em></a></div></blockquote>
+</div>
+<div class="section" id="changed">
+<span id="gref-phase-changed"></span><h2>changed<a class="headerlink" href="#changed" title="Permalink to this headline">¶</a></h2>
+<p>Print the targets changed since some prior commit.</p>
+<ul id="gref-cli-changed">
+<li><p class="first"><strong>changed</strong>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.tasks.what_changed.WhatChanged</span></tt></p>
+<p>Emits the targets that have been modified since a given commit.</p>
+<ul>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--changed-sep</span></tt>
+<tt class="docutils literal"><span class="pre">string</span></tt>
+(Default: <tt class="docutils literal"><span class="pre">\n</span></tt>)</div>
+<div class="line">String to use to separate results.</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--changed-parent</span></tt>
+<tt class="docutils literal"><span class="pre">string</span></tt>
+(Default: <tt class="docutils literal"><span class="pre">HEAD</span></tt>)</div>
+<div class="line">Identifies the parent tree-ish to calculate changes against.</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--changed-files/--no-changed-files</span></tt></div>
+<div class="line">Shows changed files instead of the targets that own them.</div>
+</div>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>Other command-line options:</strong></p>
+<blockquote>
+<div><a class="reference internal" href="#common">Common</a></div></blockquote>
 </div>
 <div class="section" id="check-exclusives">
 <span id="gref-phase-check-exclusives"></span><h2>check-exclusives<a class="headerlink" href="#check-exclusives" title="Permalink to this headline">¶</a></h2>
@@ -677,32 +751,7 @@ Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core
 with a set of build targets specified by a user. If this process produces
 any collisions where a single target contains multiple tag values for a single
 exclusives key, then it generates an error and the compilation will fail.</p>
-<p>The syntax of the exclusives attribute is:</p>
-<div class="highlight-python"><div class="highlight"><pre>exclusives = {&quot;id&quot;: &quot;value&quot;, ...}
-</pre></div>
-</div>
-<p>For example, suppose that we had two java targets, jliba and jlibb. jliba uses
-slf4j, which includes in its jar package an implementation of log4j. jlibb uses
-log4j directly. But the version of log4j that&#8217;s packaged inside of slf4j is
-different from the version used by jlibb.</p>
-<div class="highlight-python"><div class="highlight"><pre>java_library(name=&#39;jliba&#39;,
-  depedencies = [&#39;slf4j-with-log4j-2.4&#39;])
-java_library(name=&#39;jlibb&#39;,
-java_binary(name=&#39;javabin&#39;, dependencies=[&#39;:jliba&#39;, &#39;:jlibb&#39;])
-</pre></div>
-</div>
-<p>In this case, the binary target &#8216;javabin&#8217; depends on both slf4j with its
-packaged log4j version 2.4, and on log4j-1.9.
-Pants doesn&#8217;t know that the slf4j and log4j jar_dependencies contain
-incompatible versions of the same library, and so it can&#8217;t detect the error.</p>
-<p>With exclusives, the jar_library target for the joda libraries would declare
-exclusives tags:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">jar_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;slf4j-with-log4j-2.4&#39;</span><span class="p">,</span> <span class="n">exclusives</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;log4j&#39;</span><span class="p">:</span> <span class="s">&#39;2.4&#39;</span><span class="p">})</span>
-<span class="n">jar_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;joda-2.1&#39;</span><span class="p">,</span> <span class="n">exclusives</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;log4j&#39;</span><span class="p">:</span> <span class="s">&#39;1.9&#39;</span><span class="p">})</span>
-</pre></div>
-</div>
-<p>With the exclusives declared, pants can recognize that &#8216;javabin&#8217; has conflicting
-dependencies, and can generate an appropriate error message.</p>
+<p>See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> to see how folks use this.</p>
 <p>Data about exclusives is provided to other tasks via data build products.
 If the build data product &#8216;exclusives_groups&#8217; is required, then an
 ExclusivesMapping object will be created.</p>
@@ -753,14 +802,6 @@ Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.
 <div class="section" id="clean-all">
 <span id="gref-phase-clean-all"></span><h2>clean-all<a class="headerlink" href="#clean-all" title="Permalink to this headline">¶</a></h2>
 <p>Clean all build output.</p>
-<ul>
-<li><p class="first">Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.tasks.clean.Cleaner</span></tt></p>
-<p>Clean all current build products.</p>
-</li>
-<li><p class="first">Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.tasks.clean.Invalidator</span></tt></p>
-<p>Invalidate the entire build.</p>
-</li>
-</ul>
 <ul id="gref-cli-cleanallngkillall">
 <li><p class="first"><strong>clean-all:ng-killall</strong>
 Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.tasks.nailgun_task.NailgunKillall</span></tt></p>
@@ -773,22 +814,22 @@ Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.
 </li>
 </ul>
 </li>
+<li><p class="first">Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.tasks.clean.Invalidator</span></tt></p>
+<p>Invalidate the entire build.</p>
+</li>
+<li><p class="first">Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.tasks.clean.Cleaner</span></tt></p>
+<p>Clean all current build products.</p>
+</li>
 </ul>
 <p><strong>Other command-line options:</strong></p>
 <blockquote>
-<div><a class="reference internal" href="#common">Common</a></div></blockquote>
+<div><a class="reference internal" href="#common">Common</a>
+<a class="reference internal" href="#gref-cli-ngkillall"><em>ng-killall</em></a>
+<a class="reference internal" href="#gref-cli-invalidatengkillall"><em>invalidate:ng-killall</em></a></div></blockquote>
 </div>
 <div class="section" id="clean-all-async">
 <span id="gref-phase-clean-all-async"></span><h2>clean-all-async<a class="headerlink" href="#clean-all-async" title="Permalink to this headline">¶</a></h2>
 <p>Clean all build output in a background process.</p>
-<ul>
-<li><p class="first">Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.tasks.clean.AsyncCleaner</span></tt></p>
-<p>Clean all current build products in a background process.</p>
-</li>
-<li><p class="first">Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.tasks.clean.Invalidator</span></tt></p>
-<p>Invalidate the entire build.</p>
-</li>
-</ul>
 <ul id="gref-cli-cleanallasyncngkillall">
 <li><p class="first"><strong>clean-all-async:ng-killall</strong>
 Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.tasks.nailgun_task.NailgunKillall</span></tt></p>
@@ -801,10 +842,18 @@ Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.
 </li>
 </ul>
 </li>
+<li><p class="first">Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.tasks.clean.Invalidator</span></tt></p>
+<p>Invalidate the entire build.</p>
+</li>
+<li><p class="first">Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.tasks.clean.AsyncCleaner</span></tt></p>
+<p>Clean all current build products in a background process.</p>
+</li>
 </ul>
 <p><strong>Other command-line options:</strong></p>
 <blockquote>
-<div><a class="reference internal" href="#common">Common</a></div></blockquote>
+<div><a class="reference internal" href="#common">Common</a>
+<a class="reference internal" href="#gref-cli-ngkillall"><em>ng-killall</em></a>
+<a class="reference internal" href="#gref-cli-invalidatengkillall"><em>invalidate:ng-killall</em></a></div></blockquote>
 </div>
 <div class="section" id="compile">
 <span id="gref-phase-compile"></span><h2>compile<a class="headerlink" href="#compile" title="Permalink to this headline">¶</a></h2>
@@ -1120,6 +1169,45 @@ Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.
 <tt class="docutils literal"><span class="pre">string</span></tt>
 (Default: <tt class="docutils literal"><span class="pre">10</span></tt>)</div>
 <div class="line">Maximum number of duplicate classes to display per artifactdefaults to:</div>
+</div>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>Other command-line options:</strong></p>
+<blockquote>
+<div><a class="reference internal" href="#common">Common</a>
+<a class="reference internal" href="#gref-cli-genthrift"><em>gen:thrift</em></a>
+<a class="reference internal" href="#gref-cli-genscrooge"><em>gen:scrooge</em></a>
+<a class="reference internal" href="#gref-cli-genprotoc"><em>gen:protoc</em></a>
+<a class="reference internal" href="#gref-cli-genaapt"><em>gen:aapt</em></a>
+<a class="reference internal" href="#gref-cli-checkexclusives"><em>check-exclusives</em></a>
+<a class="reference internal" href="#gref-cli-ivy"><em>ivy</em></a>
+<a class="reference internal" href="#gref-cli-jvm"><em>jvm</em></a></div></blockquote>
+</div>
+<div class="section" id="dex">
+<span id="gref-phase-dex"></span><h2>dex<a class="headerlink" href="#dex" title="Permalink to this headline">¶</a></h2>
+<ul id="gref-cli-dex">
+<li><p class="first"><strong>dex</strong>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.android.tasks.dx_compile.DxCompile</span></tt></p>
+<p>Compile java classes into dex files, Dalvik executables.</p>
+<ul>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--dex-sdk-path</span></tt>
+<tt class="docutils literal"><span class="pre">string</span></tt></div>
+<div class="line">Specify a file location and force the Android SDK there to be used during Android tasks.</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--dex-build-tools-version</span></tt>
+<tt class="docutils literal"><span class="pre">string</span></tt></div>
+<div class="line">Specifies the Android build-tools version used to create the dex file.</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--dex-VM-options</span></tt>
+<tt class="docutils literal"><span class="pre">string</span></tt></div>
+<div class="line">Pass VM-specific options to the virtual machine that runs dx (e.g. Xmx1024m).</div>
 </div>
 </li>
 </ul>
@@ -1491,6 +1579,57 @@ Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core
 <div class="section" id="gen">
 <span id="gref-phase-gen"></span><h2>gen<a class="headerlink" href="#gen" title="Permalink to this headline">¶</a></h2>
 <p>Generate code.</p>
+<ul id="gref-cli-genthrift">
+<li><p class="first"><strong>gen:thrift</strong>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.codegen.tasks.apache_thrift_gen.ApacheThriftGen</span></tt></p>
+<ul>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--gen-thrift-version</span></tt>
+<tt class="docutils literal"><span class="pre">string</span></tt></div>
+<div class="line">Thrift compiler version.</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--gen-thrift-lang</span></tt>
+<tt class="docutils literal"><span class="pre">choice</span></tt></div>
+<div class="line">Force generation of thrift code for these languages.</div>
+</div>
+</li>
+</ul>
+</li>
+</ul>
+<ul id="gref-cli-genscrooge">
+<li><p class="first"><strong>gen:scrooge</strong>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.codegen.tasks.scrooge_gen.ScroogeGen</span></tt></p>
+<ul>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--gen-scrooge-quiet</span></tt></div>
+<div class="line">Suppress output, overrides verbose flag in pants.ini.</div>
+</div>
+</li>
+</ul>
+</li>
+</ul>
+<ul id="gref-cli-genprotoc">
+<li><p class="first"><strong>gen:protoc</strong>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.codegen.tasks.protobuf_gen.ProtobufGen</span></tt></p>
+<ul>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--gen-protoc-lang</span></tt>
+<tt class="docutils literal"><span class="pre">choice</span></tt></div>
+<div class="line">Force generation of protobuf code for these languages.</div>
+</div>
+</li>
+</ul>
+</li>
+<li><p class="first">Implemented by <tt class="docutils literal"><span class="pre">pants.backend.codegen.tasks.antlr_gen.AntlrGen</span></tt></p>
+</li>
+<li><p class="first">Implemented by <tt class="docutils literal"><span class="pre">pants.backend.codegen.tasks.ragel_gen.RagelGen</span></tt></p>
+</li>
+<li><p class="first">Implemented by <tt class="docutils literal"><span class="pre">pants.backend.codegen.tasks.jaxb_gen.JaxbGen</span></tt></p>
+<p>Generates java source files from jaxb schema (.xsd).</p>
+</li>
+</ul>
 <ul id="gref-cli-genaapt">
 <li><p class="first"><strong>gen:aapt</strong>
 Implemented by <tt class="docutils literal"><span class="pre">pants.backend.android.tasks.aapt_gen.AaptGen</span></tt></p>
@@ -1525,57 +1664,6 @@ For right now, pants is only supporting &#8216;package&#8217;. More to come as w
 <tt class="docutils literal"><span class="pre">string</span></tt>
 (Default: <tt class="docutils literal"><span class="pre">!.svn:!.git:!.ds_store:!*.scc:.*:&amp;lt;dir&amp;gt;_*:!CVS:!thumbs.db:!picasa.ini:!*~:BUILD*</span></tt>)</div>
 <div class="line">Specifies regex patterns the aapt tools should ignore as it spiders down the resource_dir.</div>
-</div>
-</li>
-</ul>
-</li>
-<li><p class="first">Implemented by <tt class="docutils literal"><span class="pre">pants.backend.codegen.tasks.antlr_gen.AntlrGen</span></tt></p>
-</li>
-<li><p class="first">Implemented by <tt class="docutils literal"><span class="pre">pants.backend.codegen.tasks.jaxb_gen.JaxbGen</span></tt></p>
-<p>Generates java source files from jaxb schema (.xsd).</p>
-</li>
-</ul>
-<ul id="gref-cli-genprotoc">
-<li><p class="first"><strong>gen:protoc</strong>
-Implemented by <tt class="docutils literal"><span class="pre">pants.backend.codegen.tasks.protobuf_gen.ProtobufGen</span></tt></p>
-<ul>
-<li><div class="first line-block">
-<div class="line"><tt class="docutils literal"><span class="pre">--gen-protoc-lang</span></tt>
-<tt class="docutils literal"><span class="pre">choice</span></tt></div>
-<div class="line">Force generation of protobuf code for these languages.</div>
-</div>
-</li>
-</ul>
-</li>
-<li><p class="first">Implemented by <tt class="docutils literal"><span class="pre">pants.backend.codegen.tasks.ragel_gen.RagelGen</span></tt></p>
-</li>
-</ul>
-<ul id="gref-cli-genscrooge">
-<li><p class="first"><strong>gen:scrooge</strong>
-Implemented by <tt class="docutils literal"><span class="pre">pants.backend.codegen.tasks.scrooge_gen.ScroogeGen</span></tt></p>
-<ul>
-<li><div class="first line-block">
-<div class="line"><tt class="docutils literal"><span class="pre">--gen-scrooge-quiet</span></tt></div>
-<div class="line">Suppress output, overrides verbose flag in pants.ini.</div>
-</div>
-</li>
-</ul>
-</li>
-</ul>
-<ul id="gref-cli-genthrift">
-<li><p class="first"><strong>gen:thrift</strong>
-Implemented by <tt class="docutils literal"><span class="pre">pants.backend.codegen.tasks.apache_thrift_gen.ApacheThriftGen</span></tt></p>
-<ul>
-<li><div class="first line-block">
-<div class="line"><tt class="docutils literal"><span class="pre">--gen-thrift-version</span></tt>
-<tt class="docutils literal"><span class="pre">string</span></tt></div>
-<div class="line">Thrift compiler version.</div>
-</div>
-</li>
-<li><div class="first line-block">
-<div class="line"><tt class="docutils literal"><span class="pre">--gen-thrift-lang</span></tt>
-<tt class="docutils literal"><span class="pre">choice</span></tt></div>
-<div class="line">Force generation of thrift code for these languages.</div>
 </div>
 </li>
 </ul>
@@ -1760,11 +1848,6 @@ JavaProtobufLibrary target).</p>
 <div class="section" id="invalidate">
 <span id="gref-phase-invalidate"></span><h2>invalidate<a class="headerlink" href="#invalidate" title="Permalink to this headline">¶</a></h2>
 <p>Invalidate all targets.</p>
-<ul>
-<li><p class="first">Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.tasks.clean.Invalidator</span></tt></p>
-<p>Invalidate the entire build.</p>
-</li>
-</ul>
 <ul id="gref-cli-invalidatengkillall">
 <li><p class="first"><strong>invalidate:ng-killall</strong>
 Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.tasks.nailgun_task.NailgunKillall</span></tt></p>
@@ -1777,10 +1860,14 @@ Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.
 </li>
 </ul>
 </li>
+<li><p class="first">Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core.tasks.clean.Invalidator</span></tt></p>
+<p>Invalidate the entire build.</p>
+</li>
 </ul>
 <p><strong>Other command-line options:</strong></p>
 <blockquote>
-<div><a class="reference internal" href="#common">Common</a></div></blockquote>
+<div><a class="reference internal" href="#common">Common</a>
+<a class="reference internal" href="#gref-cli-ngkillall"><em>ng-killall</em></a></div></blockquote>
 </div>
 <div class="section" id="jar">
 <span id="gref-phase-jar"></span><h2>jar<a class="headerlink" href="#jar" title="Permalink to this headline">¶</a></h2>
@@ -2165,9 +2252,9 @@ maven coordinate [org]#[name] or target.</div>
 <a class="reference internal" href="#gref-cli-checkexclusives"><em>check-exclusives</em></a>
 <a class="reference internal" href="#gref-cli-ivy"><em>ivy</em></a>
 <a class="reference internal" href="#gref-cli-jvm"><em>jvm</em></a>
-<a class="reference internal" href="#gref-cli-jar"><em>jar</em></a>
 <a class="reference internal" href="#gref-cli-docjavadoc"><em>doc:javadoc</em></a>
-<a class="reference internal" href="#gref-cli-docscaladoc"><em>doc:scaladoc</em></a></div></blockquote>
+<a class="reference internal" href="#gref-cli-docscaladoc"><em>doc:scaladoc</em></a>
+<a class="reference internal" href="#gref-cli-jar"><em>jar</em></a></div></blockquote>
 </div>
 <div class="section" id="repl">
 <span id="gref-phase-repl"></span><h2>repl<a class="headerlink" href="#repl" title="Permalink to this headline">¶</a></h2>
@@ -2338,6 +2425,19 @@ Implemented by <tt class="docutils literal"><span class="pre">pants.backend.core
 <div class="section" id="run">
 <span id="gref-phase-run"></span><h2>run<a class="headerlink" href="#run" title="Permalink to this headline">¶</a></h2>
 <p>Run a binary target.</p>
+<ul id="gref-cli-runpythonrun">
+<li><p class="first"><strong>run:python-run</strong>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.python.tasks.python_run.PythonRun</span></tt></p>
+<ul>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--run-python-run-timeout</span></tt>
+<tt class="docutils literal"><span class="pre">int</span></tt></div>
+<div class="line">Number of seconds to wait for http connections.</div>
+</div>
+</li>
+</ul>
+</li>
+</ul>
 <ul id="gref-cli-runjvmrun">
 <li><p class="first"><strong>run:jvm-run</strong>
 Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.tasks.jvm_run.JvmRun</span></tt></p>
@@ -2363,19 +2463,6 @@ Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.
 <div class="line"><tt class="docutils literal"><span class="pre">--run-jvm-run-only-write-cmd-line</span></tt>
 <tt class="docutils literal"><span class="pre">string</span></tt></div>
 <div class="line">Instead of running, just write the cmd line to this file</div>
-</div>
-</li>
-</ul>
-</li>
-</ul>
-<ul id="gref-cli-runpythonrun">
-<li><p class="first"><strong>run:python-run</strong>
-Implemented by <tt class="docutils literal"><span class="pre">pants.backend.python.tasks.python_run.PythonRun</span></tt></p>
-<ul>
-<li><div class="first line-block">
-<div class="line"><tt class="docutils literal"><span class="pre">--run-python-run-timeout</span></tt>
-<tt class="docutils literal"><span class="pre">int</span></tt></div>
-<div class="line">Number of seconds to wait for http connections.</div>
 </div>
 </li>
 </ul>
@@ -2523,6 +2610,31 @@ help about.</p>
 <div class="section" id="test">
 <span id="gref-phase-test"></span><h2>test<a class="headerlink" href="#test" title="Permalink to this headline">¶</a></h2>
 <p>Test compiled code.</p>
+<ul id="gref-cli-testpytest">
+<li><p class="first"><strong>test:pytest</strong>
+Implemented by <tt class="docutils literal"><span class="pre">pants.backend.python.tasks.pytest_run.PytestRun</span></tt></p>
+<ul>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--test-pytest-timeout</span></tt>
+<tt class="docutils literal"><span class="pre">int</span></tt></div>
+<div class="line">Number of seconds to wait for http connections.</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--test-pytest-fast/--no-test-pytest-fast</span></tt>
+(Default: <tt class="docutils literal"><span class="pre">True</span></tt>)</div>
+<div class="line">Run all tests in a single chroot. If set to false, each test target will create a new chroot, which will be much slower.</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line"><tt class="docutils literal"><span class="pre">--test-pytest-options</span></tt>
+<tt class="docutils literal"><span class="pre">string</span></tt></div>
+<div class="line">options to pass to the underlying pytest runner.</div>
+</div>
+</li>
+</ul>
+</li>
+</ul>
 <ul id="gref-cli-testjunit">
 <li><p class="first"><strong>test:junit</strong>
 Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.tasks.junit_run.JUnitRun</span></tt></p>
@@ -2637,31 +2749,6 @@ Implemented by <tt class="docutils literal"><span class="pre">pants.backend.jvm.
 <tt class="docutils literal"><span class="pre">string</span></tt>
 (Default: <tt class="docutils literal"><span class="pre">emma</span></tt>)</div>
 <div class="line">Which coverage subsystem to use</div>
-</div>
-</li>
-</ul>
-</li>
-</ul>
-<ul id="gref-cli-testpytest">
-<li><p class="first"><strong>test:pytest</strong>
-Implemented by <tt class="docutils literal"><span class="pre">pants.backend.python.tasks.pytest_run.PytestRun</span></tt></p>
-<ul>
-<li><div class="first line-block">
-<div class="line"><tt class="docutils literal"><span class="pre">--test-pytest-timeout</span></tt>
-<tt class="docutils literal"><span class="pre">int</span></tt></div>
-<div class="line">Number of seconds to wait for http connections.</div>
-</div>
-</li>
-<li><div class="first line-block">
-<div class="line"><tt class="docutils literal"><span class="pre">--test-pytest-fast/--no-test-pytest-fast</span></tt>
-(Default: <tt class="docutils literal"><span class="pre">True</span></tt>)</div>
-<div class="line">Run all tests in a single chroot. If set to false, each test target will create a new chroot, which will be much slower.</div>
-</div>
-</li>
-<li><div class="first line-block">
-<div class="line"><tt class="docutils literal"><span class="pre">--test-pytest-options</span></tt>
-<tt class="docutils literal"><span class="pre">string</span></tt></div>
-<div class="line">options to pass to the underlying pytest runner.</div>
 </div>
 </li>
 </ul>

@@ -22,6 +22,7 @@ goal.
   * :ref:`gref_phase_builddict` - None
   * :ref:`gref_phase_buildlint` - None
   * :ref:`gref_phase_bundle` - Create an application bundle from binary targets.
+  * :ref:`gref_phase_changed` - Print the targets changed since some prior commit.
   * :ref:`gref_phase_check-exclusives` - Check for exclusivity violations.
   * :ref:`gref_phase_check_published_deps` - Find references to outdated artifacts.
   * :ref:`gref_phase_clean-all` - Clean all build output.
@@ -31,6 +32,7 @@ goal.
   * :ref:`gref_phase_dependencies` - Print the target's dependencies.
   * :ref:`gref_phase_depmap` - Depict the target's dependencies.
   * :ref:`gref_phase_detect-duplicates` - Detect duplicate classes and resources on the classpath.
+  * :ref:`gref_phase_dex` - None
   * :ref:`gref_phase_doc` - Create documentation.
   * :ref:`gref_phase_eclipse` - Create an Eclipse project from the given targets.
   * :ref:`gref_phase_ensime` - Create an Ensime project from the given targets.
@@ -123,6 +125,21 @@ binary
 Create a jvm binary jar.
 
 
+.. _gref_cli_binarypythonbinarycreate:
+
+*
+  **binary:python-binary-create**
+  Implemented by ``pants.backend.python.tasks.python_binary_create.PythonBinaryCreate``
+
+
+
+  * | ``--binary-python-binary-create-timeout``
+      ``int``
+    |
+      Number of seconds to wait for http connections.
+
+
+
 * Implemented by ``pants.backend.jvm.tasks.binary_create.BinaryCreate``
 
 
@@ -154,21 +171,6 @@ Create a jvm binary jar.
       (Default: ``10``)
     |
       Maximum number of duplicate classes to display per artifactdefaults to:
-
-
-
-.. _gref_cli_binarypythonbinarycreate:
-
-*
-  **binary:python-binary-create**
-  Implemented by ``pants.backend.python.tasks.python_binary_create.PythonBinaryCreate``
-
-
-
-  * | ``--binary-python-binary-create-timeout``
-      ``int``
-    |
-      Number of seconds to wait for http connections.
 
 
 
@@ -330,6 +332,41 @@ Create an application bundle from binary targets.
 
 
 
+.. _gref_cli_bundleapk:
+
+*
+  **bundle:apk**
+  Implemented by ``pants.backend.android.tasks.aapt_builder.AaptBuilder``
+
+
+  Build an android bundle with compiled code and assets.
+  
+  This class gathers compiled classes (an Android dex archive) and packages it with the
+  target's resource files. The output is an unsigned .apk, an Android application package file.
+
+  * | ``--bundle-apk-sdk-path``
+      ``string``
+    |
+      Specify a file location and force the Android SDK there to be used during Android tasks.
+
+  * | ``--bundle-apk-target-sdk``
+      ``string``
+    |
+      Specifies the target Android SDK used to compile resources. Overrides AndroidManifest.xml.
+
+  * | ``--bundle-apk-build-tools-version``
+      ``string``
+    |
+      Specifies the Android build-tools version used to compile resources.
+
+  * | ``--bundle-apk-ignored-assets``
+      ``string``
+      (Default: ``!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir&gt;_*:!CVS:!thumbs.db:!picasa.ini:!*~:BUILD*``)
+    |
+      Specifies regex patterns the aapt tools should ignore as it spiders down the resource_dir.
+
+
+
 
 **Other command-line options:**
 
@@ -341,6 +378,49 @@ Create an application bundle from binary targets.
   :ref:`check-exclusives <gref_cli_checkexclusives>`
   :ref:`ivy <gref_cli_ivy>`
   :ref:`jvm <gref_cli_jvm>`
+  :ref:`dex <gref_cli_dex>`
+
+
+
+.. _gref_phase_changed:
+
+changed
+-----------------------------------------------------------------------------
+
+Print the targets changed since some prior commit.
+
+
+.. _gref_cli_changed:
+
+*
+  **changed**
+  Implemented by ``pants.backend.core.tasks.what_changed.WhatChanged``
+
+
+  Emits the targets that have been modified since a given commit.
+
+  * | ``--changed-sep``
+      ``string``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+  * | ``--changed-parent``
+      ``string``
+      (Default: ``HEAD``)
+    |
+      Identifies the parent tree-ish to calculate changes against.
+
+  * | ``--changed-files/--no-changed-files``
+    |
+      Shows changed files instead of the targets that own them.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
 
 
 
@@ -366,33 +446,7 @@ Check for exclusivity violations.
   any collisions where a single target contains multiple tag values for a single
   exclusives key, then it generates an error and the compilation will fail.
   
-  The syntax of the exclusives attribute is: ::
-  
-     exclusives = {"id": "value", ...}
-  
-  For example, suppose that we had two java targets, jliba and jlibb. jliba uses
-  slf4j, which includes in its jar package an implementation of log4j. jlibb uses
-  log4j directly. But the version of log4j that's packaged inside of slf4j is
-  different from the version used by jlibb. ::
-  
-     java_library(name='jliba',
-       depedencies = ['slf4j-with-log4j-2.4'])
-     java_library(name='jlibb',
-     java_binary(name='javabin', dependencies=[':jliba', ':jlibb'])
-  
-  In this case, the binary target 'javabin' depends on both slf4j with its
-  packaged log4j version 2.4, and on log4j-1.9.
-  Pants doesn't know that the slf4j and log4j jar_dependencies contain
-  incompatible versions of the same library, and so it can't detect the error.
-  
-  With exclusives, the jar_library target for the joda libraries would declare
-  exclusives tags: ::
-  
-     jar_library(name='slf4j-with-log4j-2.4', exclusives={'log4j': '2.4'})
-     jar_library(name='joda-2.1', exclusives={'log4j': '1.9'})
-  
-  With the exclusives declared, pants can recognize that 'javabin' has conflicting
-  dependencies, and can generate an appropriate error message.
+  See :ref:`howto_check_exclusives` to see how folks use this.
   
   Data about exclusives is provided to other tasks via data build products.
   If the build data product 'exclusives_groups' is required, then an
@@ -459,20 +513,6 @@ clean-all
 Clean all build output.
 
 
-* Implemented by ``pants.backend.core.tasks.clean.Cleaner``
-
-
-  Clean all current build products.
-
-
-
-* Implemented by ``pants.backend.core.tasks.clean.Invalidator``
-
-
-  Invalidate the entire build.
-
-
-
 .. _gref_cli_cleanallngkillall:
 
 *
@@ -488,10 +528,26 @@ Clean all build output.
 
 
 
+* Implemented by ``pants.backend.core.tasks.clean.Invalidator``
+
+
+  Invalidate the entire build.
+
+
+
+* Implemented by ``pants.backend.core.tasks.clean.Cleaner``
+
+
+  Clean all current build products.
+
+
+
 
 **Other command-line options:**
 
   `Common`_
+  :ref:`ng-killall <gref_cli_ngkillall>`
+  :ref:`invalidate:ng-killall <gref_cli_invalidatengkillall>`
 
 
 
@@ -501,20 +557,6 @@ clean-all-async
 -----------------------------------------------------------------------------
 
 Clean all build output in a background process.
-
-
-* Implemented by ``pants.backend.core.tasks.clean.AsyncCleaner``
-
-
-  Clean all current build products in a background process.
-
-
-
-* Implemented by ``pants.backend.core.tasks.clean.Invalidator``
-
-
-  Invalidate the entire build.
-
 
 
 .. _gref_cli_cleanallasyncngkillall:
@@ -532,10 +574,26 @@ Clean all build output in a background process.
 
 
 
+* Implemented by ``pants.backend.core.tasks.clean.Invalidator``
+
+
+  Invalidate the entire build.
+
+
+
+* Implemented by ``pants.backend.core.tasks.clean.AsyncCleaner``
+
+
+  Clean all current build products in a background process.
+
+
+
 
 **Other command-line options:**
 
   `Common`_
+  :ref:`ng-killall <gref_cli_ngkillall>`
+  :ref:`invalidate:ng-killall <gref_cli_invalidatengkillall>`
 
 
 
@@ -868,6 +926,53 @@ Detect duplicate classes and resources on the classpath.
       (Default: ``10``)
     |
       Maximum number of duplicate classes to display per artifactdefaults to:
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
+  :ref:`gen:thrift <gref_cli_genthrift>`
+  :ref:`gen:scrooge <gref_cli_genscrooge>`
+  :ref:`gen:protoc <gref_cli_genprotoc>`
+  :ref:`gen:aapt <gref_cli_genaapt>`
+  :ref:`check-exclusives <gref_cli_checkexclusives>`
+  :ref:`ivy <gref_cli_ivy>`
+  :ref:`jvm <gref_cli_jvm>`
+
+
+
+.. _gref_phase_dex:
+
+dex
+-----------------------------------------------------------------------------
+
+
+
+.. _gref_cli_dex:
+
+*
+  **dex**
+  Implemented by ``pants.backend.android.tasks.dx_compile.DxCompile``
+
+
+  Compile java classes into dex files, Dalvik executables.
+
+  * | ``--dex-sdk-path``
+      ``string``
+    |
+      Specify a file location and force the Android SDK there to be used during Android tasks.
+
+  * | ``--dex-build-tools-version``
+      ``string``
+    |
+      Specifies the Android build-tools version used to create the dex file.
+
+  * | ``--dex-VM-options``
+      ``string``
+    |
+      Pass VM-specific options to the virtual machine that runs dx (e.g. Xmx1024m).
 
 
 
@@ -1274,6 +1379,74 @@ gen
 Generate code.
 
 
+.. _gref_cli_genthrift:
+
+*
+  **gen:thrift**
+  Implemented by ``pants.backend.codegen.tasks.apache_thrift_gen.ApacheThriftGen``
+
+
+
+  * | ``--gen-thrift-version``
+      ``string``
+    |
+      Thrift compiler version.
+
+  * | ``--gen-thrift-lang``
+      ``choice``
+    |
+      Force generation of thrift code for these languages.
+
+
+
+.. _gref_cli_genscrooge:
+
+*
+  **gen:scrooge**
+  Implemented by ``pants.backend.codegen.tasks.scrooge_gen.ScroogeGen``
+
+
+
+  * | ``--gen-scrooge-quiet``
+    |
+      Suppress output, overrides verbose flag in pants.ini.
+
+
+
+.. _gref_cli_genprotoc:
+
+*
+  **gen:protoc**
+  Implemented by ``pants.backend.codegen.tasks.protobuf_gen.ProtobufGen``
+
+
+
+  * | ``--gen-protoc-lang``
+      ``choice``
+    |
+      Force generation of protobuf code for these languages.
+
+
+
+* Implemented by ``pants.backend.codegen.tasks.antlr_gen.AntlrGen``
+
+
+
+
+
+* Implemented by ``pants.backend.codegen.tasks.ragel_gen.RagelGen``
+
+
+
+
+
+* Implemented by ``pants.backend.codegen.tasks.jaxb_gen.JaxbGen``
+
+
+  Generates java source files from jaxb schema (.xsd).
+
+
+
 .. _gref_cli_genaapt:
 
 *
@@ -1311,74 +1484,6 @@ Generate code.
       (Default: ``!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir&gt;_*:!CVS:!thumbs.db:!picasa.ini:!*~:BUILD*``)
     |
       Specifies regex patterns the aapt tools should ignore as it spiders down the resource_dir.
-
-
-
-* Implemented by ``pants.backend.codegen.tasks.antlr_gen.AntlrGen``
-
-
-
-
-
-* Implemented by ``pants.backend.codegen.tasks.jaxb_gen.JaxbGen``
-
-
-  Generates java source files from jaxb schema (.xsd).
-
-
-
-.. _gref_cli_genprotoc:
-
-*
-  **gen:protoc**
-  Implemented by ``pants.backend.codegen.tasks.protobuf_gen.ProtobufGen``
-
-
-
-  * | ``--gen-protoc-lang``
-      ``choice``
-    |
-      Force generation of protobuf code for these languages.
-
-
-
-* Implemented by ``pants.backend.codegen.tasks.ragel_gen.RagelGen``
-
-
-
-
-
-.. _gref_cli_genscrooge:
-
-*
-  **gen:scrooge**
-  Implemented by ``pants.backend.codegen.tasks.scrooge_gen.ScroogeGen``
-
-
-
-  * | ``--gen-scrooge-quiet``
-    |
-      Suppress output, overrides verbose flag in pants.ini.
-
-
-
-.. _gref_cli_genthrift:
-
-*
-  **gen:thrift**
-  Implemented by ``pants.backend.codegen.tasks.apache_thrift_gen.ApacheThriftGen``
-
-
-
-  * | ``--gen-thrift-version``
-      ``string``
-    |
-      Thrift compiler version.
-
-  * | ``--gen-thrift-lang``
-      ``choice``
-    |
-      Force generation of thrift code for these languages.
 
 
 
@@ -1580,13 +1685,6 @@ invalidate
 Invalidate all targets.
 
 
-* Implemented by ``pants.backend.core.tasks.clean.Invalidator``
-
-
-  Invalidate the entire build.
-
-
-
 .. _gref_cli_invalidatengkillall:
 
 *
@@ -1602,10 +1700,18 @@ Invalidate all targets.
 
 
 
+* Implemented by ``pants.backend.core.tasks.clean.Invalidator``
+
+
+  Invalidate the entire build.
+
+
+
 
 **Other command-line options:**
 
   `Common`_
+  :ref:`ng-killall <gref_cli_ngkillall>`
 
 
 
@@ -2093,9 +2199,9 @@ Publish artifacts.
   :ref:`check-exclusives <gref_cli_checkexclusives>`
   :ref:`ivy <gref_cli_ivy>`
   :ref:`jvm <gref_cli_jvm>`
-  :ref:`jar <gref_cli_jar>`
   :ref:`doc:javadoc <gref_cli_docjavadoc>`
   :ref:`doc:scaladoc <gref_cli_docscaladoc>`
+  :ref:`jar <gref_cli_jar>`
 
 
 
@@ -2318,6 +2424,21 @@ run
 Run a binary target.
 
 
+.. _gref_cli_runpythonrun:
+
+*
+  **run:python-run**
+  Implemented by ``pants.backend.python.tasks.python_run.PythonRun``
+
+
+
+  * | ``--run-python-run-timeout``
+      ``int``
+    |
+      Number of seconds to wait for http connections.
+
+
+
 .. _gref_cli_runjvmrun:
 
 *
@@ -2344,21 +2465,6 @@ Run a binary target.
       ``string``
     |
       Instead of running, just write the cmd line to this file
-
-
-
-.. _gref_cli_runpythonrun:
-
-*
-  **run:python-run**
-  Implemented by ``pants.backend.python.tasks.python_run.PythonRun``
-
-
-
-  * | ``--run-python-run-timeout``
-      ``int``
-    |
-      Number of seconds to wait for http connections.
 
 
 
@@ -2546,6 +2652,31 @@ test
 Test compiled code.
 
 
+.. _gref_cli_testpytest:
+
+*
+  **test:pytest**
+  Implemented by ``pants.backend.python.tasks.pytest_run.PytestRun``
+
+
+
+  * | ``--test-pytest-timeout``
+      ``int``
+    |
+      Number of seconds to wait for http connections.
+
+  * | ``--test-pytest-fast/--no-test-pytest-fast``
+      (Default: ``True``)
+    |
+      Run all tests in a single chroot. If set to false, each test target will create a new chroot, which will be much slower.
+
+  * | ``--test-pytest-options``
+      ``string``
+    |
+      options to pass to the underlying pytest runner.
+
+
+
 .. _gref_cli_testjunit:
 
 *
@@ -2645,31 +2776,6 @@ Test compiled code.
       (Default: ``emma``)
     |
       Which coverage subsystem to use
-
-
-
-.. _gref_cli_testpytest:
-
-*
-  **test:pytest**
-  Implemented by ``pants.backend.python.tasks.pytest_run.PytestRun``
-
-
-
-  * | ``--test-pytest-timeout``
-      ``int``
-    |
-      Number of seconds to wait for http connections.
-
-  * | ``--test-pytest-fast/--no-test-pytest-fast``
-      (Default: ``True``)
-    |
-      Run all tests in a single chroot. If set to false, each test target will create a new chroot, which will be much slower.
-
-  * | ``--test-pytest-options``
-      ``string``
-    |
-      options to pass to the underlying pytest runner.
 
 
 

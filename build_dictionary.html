@@ -165,6 +165,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="build_files.html#depend-on-api-in-library-targets-implementation-in-binary-targets">Depend on API in Library Targets, Implementation in Binary Targets</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_files.html#which-build-files-are-executed-and-how">Which <tt class="docutils literal"><span class="pre">BUILD</span></tt> Files are &#8220;Executed&#8221;? (and how?)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_files.html#id1">BUILD.* files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_files.html#tag-incompatibilities-with-exclusives">Tag Incompatibilities with exclusives</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="invoking.html">Invoking Pants Build</a><ul>
@@ -203,6 +204,7 @@ body a.icon-home:hover{
 </li>
 </ul>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="with_emacs.html">Ensime With Pants</a></li>
 <li class="toctree-l1"><a class="reference internal" href="with_intellij.html">Using Pants with IntelliJ IDEA</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="with_intellij.html#pants-build-plugin-for-intellij">Pants Build Plugin for IntelliJ</a></li>
 <li class="toctree-l2"><a class="reference internal" href="with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
@@ -295,6 +297,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#builddict">builddict</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#buildlint">buildlint</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#bundle">bundle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#changed">changed</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#check-exclusives">check-exclusives</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#check-published-deps">check_published_deps</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#clean-all">clean-all</a></li>
@@ -304,6 +307,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#dependencies">dependencies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#depmap">depmap</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#detect-duplicates">detect-duplicates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#dex">dex</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#doc">doc</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#eclipse">eclipse</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#ensime">ensime</a></li>
@@ -620,7 +624,7 @@ to filter this target&#8217;s transitive dependencies against.</li>
 indicate text file resources to place in this module&#8217;s jar.</li>
 <li><strong>processors</strong> &#8211; A list of the fully qualified class names of the
 annotation processors this library exports.</li>
-<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See CheckExclusives for details.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -817,7 +821,7 @@ as if depending upon the set of dependencies directly.</p>
 <li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
 build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
 <li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
-<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See CheckExclusives
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a>
 for details.</li>
 </ul>
 </td>
@@ -1056,7 +1060,7 @@ that can use source jars (as of 2013, just eclipse and idea goals).</p>
 <li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
 build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
 <li><strong>jars</strong> &#8211; List of <a class="reference internal" href="#bdict-jar"><em>jar</em></a>s to depend upon.</li>
-<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See CheckExclusives for details.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -1087,7 +1091,7 @@ build file defines the <a class="reference internal" href="target_addresses.html
 <span id="bdict-jar-rules"></span><h2>jar_rules<a class="headerlink" href="#jar-rules" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="jar_rules">
-<tt class="descname">jar_rules</tt><big>(</big><em>rules=None</em>, <em>default_dup_action=&amp;lt;object object at 0x11085c2c0&amp;gt;</em><big>)</big><a class="headerlink" href="#jar_rules" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">jar_rules</tt><big>(</big><em>rules=None</em>, <em>default_dup_action=&amp;lt;object object at 0x10c182330&amp;gt;</em><big>)</big><a class="headerlink" href="#jar_rules" title="Permalink to this definition">¶</a></dt>
 <dd><p>A set of rules for packaging up a deploy jar.</p>
 <p>Deploy jars are executable jars with fully self-contained classpaths and as such, assembling them
 presents problems given jar semantics.</p>
@@ -1141,7 +1145,7 @@ to filter this target&#8217;s transitive dependencies against.</li>
 <li><strong>resources</strong> &#8211; An optional list of file paths (DEPRECATED) or
 <tt class="docutils literal"><span class="pre">resources</span></tt> targets (which in turn point to file paths). The paths
 indicate text file resources to place in this module&#8217;s jar.</li>
-<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See CheckExclusives for details.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 <li><strong>premain</strong> (<em>string</em>) &#8211; When an agent is specified at JVM launch time this attribute specifies
 the agent class. Exactly one of <tt class="docutils literal"><span class="pre">premain</span></tt> or <tt class="docutils literal"><span class="pre">agent_class</span></tt> must be specified.</li>
 <li><strong>agent_class</strong> (<em>string</em>) &#8211; If an implementation supports a mechanism to start agents sometime
@@ -1259,7 +1263,7 @@ to filter this target&#8217;s transitive dependencies against.</li>
 <li><strong>resources</strong> &#8211; An optional list of file paths (DEPRECATED) or
 <tt class="docutils literal"><span class="pre">resources</span></tt> targets (which in turn point to file paths). The paths
 indicate text file resources to place in this module&#8217;s jar.</li>
-<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See CheckExclusives for details.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -1310,7 +1314,7 @@ to filter this target&#8217;s transitive dependencies against.</li>
 <li><strong>imports</strong> &#8211; List of external <tt class="xref py py-class docutils literal"><span class="pre">pants.backend.jvm.targets.jar_dependency.JarDependency</span></tt>
 objects and addresses of <tt class="xref py py-class docutils literal"><span class="pre">pants.backend.jvm.targets.jar_library.JarLibrary</span></tt> targets
 which contain .proto definitions.</li>
-<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See CheckExclusives for details.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -1357,7 +1361,7 @@ to publish that represents this target outside the repo.</li>
 <li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
 <li><strong>excludes</strong> &#8211; List of <a class="reference internal" href="#bdict-exclude"><em>exclude</em></a>s
 to filter this target&#8217;s transitive dependencies against.</li>
-<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See CheckExclusives for details.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -1414,7 +1418,7 @@ to filter this target&#8217;s transitive dependencies against.</li>
 <li><strong>language</strong> &#8211; The language used to generate the output files; defaults to &#8216;java&#8217;.</li>
 <li><strong>rpc_style</strong> &#8211; An optional rpc style to generate service stubs with.</li>
 <li><strong>namespace_map</strong> &#8211; An optional dictionary of namespaces to remap {old: new}</li>
-<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See CheckExclusives for details.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -1515,7 +1519,7 @@ to publish that represents this target outside the repo.</li>
 to filter this target&#8217;s transitive dependencies against.</li>
 <li><strong>resources</strong> &#8211; An optional list of <tt class="docutils literal"><span class="pre">resources</span></tt> targets containing text
 file resources to place in this module&#8217;s jar.</li>
-<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See CheckExclusives for details.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -1770,12 +1774,11 @@ build file defines the <a class="reference internal" href="target_addresses.html
 </div>
 <div class="section" id="phase">
 <span id="bdict-phase"></span><h2>phase<a class="headerlink" href="#phase" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt>
-<tt class="descname">phase</tt><big>(</big><em>name</em><big>)</big></dt>
-<dd><p>Implemented by <tt class="docutils literal"><span class="pre">pants.goal.phase.Phase</span></tt></p>
-</dd></dl>
-
+<blockquote>
+<div><p>Factory for objects representing phases.</p>
+<p>Ensures that we have exactly one instance per phase name.</p>
+<p>Implemented by <tt class="docutils literal"><span class="pre">pants.goal.phase.Phase</span></tt></p>
+</div></blockquote>
 </div>
 <div class="section" id="python-antlr-library">
 <span id="bdict-python-antlr-library"></span><h2>python_antlr_library<a class="headerlink" href="#python-antlr-library" title="Permalink to this headline">¶</a></h2>
@@ -1797,7 +1800,7 @@ BUILD file&#8217;s directory.</li>
 recommended that your application uses the pkgutil package to access these
 resources in a .zip-module friendly way.)</li>
 <li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
-<li><strong>exclusives</strong> (<em>dict</em>) &#8211; An optional dict of exclusives tags. See CheckExclusives for details.</li>
+<li><strong>exclusives</strong> (<em>dict</em>) &#8211; An optional dict of exclusives tags. See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -1859,7 +1862,7 @@ be written to disk.</li>
 <li><strong>compatibility</strong> &#8211; either a string or list of strings that represents
 interpreter compatibility for this target, using the Requirement-style format,
 e.g. <tt class="docutils literal"><span class="pre">'CPython&gt;=3',</span> <span class="pre">or</span> <span class="pre">just</span> <span class="pre">['&gt;=2.7','&lt;3']</span></tt> for requirements agnostic to interpreter class.</li>
-<li><strong>exclusives</strong> (<em>dict</em>) &#8211; An optional dict of exclusives tags. See CheckExclusives for details.</li>
+<li><strong>exclusives</strong> (<em>dict</em>) &#8211; An optional dict of exclusives tags. See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -1916,7 +1919,7 @@ target outside the repo.</li>
 interpreter compatibility for this target, using the Requirement-style
 format, e.g. <tt class="docutils literal"><span class="pre">'CPython&gt;=3',</span> <span class="pre">or</span> <span class="pre">just</span> <span class="pre">['&gt;=2.7','&lt;3']</span></tt> for requirements
 agnostic to interpreter class.</li>
-<li><strong>exclusives</strong> &#8211; An optional dict of exclusives tags. See CheckExclusives
+<li><strong>exclusives</strong> &#8211; An optional dict of exclusives tags. See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a>
 for details.</li>
 </ul>
 </td>
@@ -2068,7 +2071,7 @@ BUILD file&#8217;s directory.</li>
 <li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
 <li><strong>coverage</strong> &#8211; the module(s) whose coverage should be generated, e.g.
 &#8216;twitter.common.log&#8217; or [&#8216;twitter.common.log&#8217;, &#8216;twitter.common.http&#8217;]</li>
-<li><strong>exclusives</strong> (<em>dict</em>) &#8211; An optional dict of exclusives tags. See CheckExclusives for details.</li>
+<li><strong>exclusives</strong> (<em>dict</em>) &#8211; An optional dict of exclusives tags. See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -2114,7 +2117,7 @@ namespace, beware <a class="reference external" href="https://issues.apache.org/
 recommended that your application uses the pkgutil package to access these
 resources in a .zip-module friendly way.)</li>
 <li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
-<li><strong>exclusives</strong> (<em>dict</em>) &#8211; An optional dict of exclusives tags. See CheckExclusives for details.</li>
+<li><strong>exclusives</strong> (<em>dict</em>) &#8211; An optional dict of exclusives tags. See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -2322,7 +2325,7 @@ to publish that represents this target outside the repo.</li>
 <li><strong>excludes</strong> &#8211; List of <a class="reference internal" href="#bdict-exclude"><em>exclude</em></a>s
 to filter this target&#8217;s transitive dependencies against.</li>
 <li><strong>resources</strong> &#8211; An optional list of Resources that should be in this target&#8217;s classpath.</li>
-<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See CheckExclusives for details.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -2381,7 +2384,7 @@ to publish that represents this target outside the repo.</li>
 to filter this target&#8217;s transitive dependencies against.</li>
 <li><strong>resources</strong> &#8211; An optional list of paths (DEPRECATED) or <tt class="docutils literal"><span class="pre">resources</span></tt>
 targets containing resources that belong on this library&#8217;s classpath.</li>
-<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See CheckExclusives for details.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
