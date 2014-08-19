@@ -16,7 +16,6 @@ targets; some are handy utilities.
 `benchmark`_ |
 `buildfile_path`_ |
 `bundle`_ |
-`config`_ |
 `ConfluencePublish`_ |
 `credentials`_ |
 `dependencies`_ |
@@ -24,9 +23,7 @@ targets; some are handy utilities.
 `egg`_ |
 `exclude`_ |
 `get_buildroot`_ |
-`get_scm`_ |
 `globs`_ |
-`goal`_ |
 `jar`_ |
 `jar_library`_ |
 `jar_rules`_ |
@@ -41,12 +38,12 @@ targets; some are handy utilities.
 `junit_tests`_ |
 `jvm_app`_ |
 `jvm_binary`_ |
+`keystore`_ |
 `maven_layout`_ |
 `netrc`_ |
 `page`_ |
 `pants`_ |
 `pants_version`_ |
-`phase`_ |
 `python_antlr_library`_ |
 `python_binary`_ |
 `python_library`_ |
@@ -63,10 +60,10 @@ targets; some are handy utilities.
 `scala_specs`_ |
 `scala_tests`_ |
 `scalac_plugin`_ |
-`set_scm`_ |
 `setup_py`_ |
 `Skip`_ |
 `source_root`_ |
+`target`_ |
 `wiki`_ |
 `wiki_artifact`_ |
 `zglobs`_ |
@@ -81,7 +78,6 @@ targets; some are handy utilities.
 `bundle`_ |
 `ConfluencePublish`_ |
 `credentials`_ |
-`dependencies`_ |
 `Duplicate`_ |
 `exclude`_ |
 `globs`_ |
@@ -97,6 +93,7 @@ targets; some are handy utilities.
 `junit_tests`_ |
 `jvm_app`_ |
 `jvm_binary`_ |
+`keystore`_ |
 `page`_ |
 `repo`_ |
 `resources`_ |
@@ -105,6 +102,7 @@ targets; some are handy utilities.
 `scala_specs`_ |
 `scalac_plugin`_ |
 `Skip`_ |
+`target`_ |
 `wiki`_ |
 `wiki_artifact`_ |
 `zglobs`_ |
@@ -112,7 +110,6 @@ targets; some are handy utilities.
 **Python** |
 `buildfile_path`_ |
 `ConfluencePublish`_ |
-`dependencies`_ |
 `globs`_ |
 `page`_ |
 `python_binary`_ |
@@ -124,6 +121,7 @@ targets; some are handy utilities.
 `resources`_ |
 `rglobs`_ |
 `setup_py`_ |
+`target`_ |
 `wiki`_ |
 `wiki_artifact`_ |
 `zglobs`_ |
@@ -134,7 +132,7 @@ targets; some are handy utilities.
 android_binary
 -------------------------------------------------------------------------------
 
-.. py:function:: android_binary(*args, **kwargs)
+.. py:function:: android_binary(build_type=None, *args, **kwargs)
 
  Produces an Android binary.
 
@@ -150,7 +148,7 @@ android_binary
    Defaults to the latest full release.
  :param manifest: path/to/file of 'AndroidManifest.xml' (required name). Paths are relative
    to the BUILD file's directory.
- :param release_type: Which keystore is used to sign target: 'debug' or 'release'.
+ :param string build_type: One of [debug, release]. The keystore to sign the package with.
    Set as 'debug' by default.
 
  Implemented by ``pants.backend.android.targets.android_binary.AndroidBinary``
@@ -309,22 +307,6 @@ bundle
  Implemented by ``pants.backend.jvm.targets.jvm_binary.factory``
 
 
-.. _bdict_config:
-
-config
--------------------------------------------------------------------------------
-
-.. py:function:: config(configparser)
-
- Encapsulates ini-style config file loading and access additionally supporting recursive variable
- substitution using standard python format strings, ie: %(var_name)s will be replaced with the
- value of var_name.
-
-
-
- Implemented by ``pants.base.config.Config``
-
-
 .. _bdict_ConfluencePublish:
 
 ConfluencePublish
@@ -372,28 +354,12 @@ credentials
 dependencies
 -------------------------------------------------------------------------------
 
-.. py:function:: dependencies(*args, **kwargs)
-
- A set of dependencies that may be depended upon,
- as if depending upon the set of dependencies directly.
 
 
- :param string name: The name of this target, which combined with this
-   build file defines the :doc:`target address <target_addresses>`.
- :param dependencies: Other targets that this target depends on.
- :type dependencies: list of target specs
- :param exclusives: An optional map of exclusives tags. See :ref:`howto_check_exclusives`
-   for details.
+ Old name for `target`_
 
- Implemented by ``pants.backend.core.targets.dependencies.Dependencies``
 
-**Methods:**
 
- .. py:method:: with_description(description)
-
-  Set a human-readable description of this target.
-  
-  :param description: Descriptive string
 
 .. _bdict_Duplicate:
 
@@ -459,20 +425,6 @@ get_buildroot
  Implemented by ``pants.base.build_environment.get_buildroot``
 
 
-.. _bdict_get_scm:
-
-get_scm
--------------------------------------------------------------------------------
-
-.. py:function:: get_scm()
-
-
-
- Returns the pants Scm if any.
-
- Implemented by ``pants.base.build_environment.get_scm``
-
-
 .. _bdict_globs:
 
 globs
@@ -487,24 +439,6 @@ globs
 
 
  Implemented by ``pants.backend.core.wrapped_globs.Globs``
-
-
-.. _bdict_goal:
-
-goal
--------------------------------------------------------------------------------
-
-.. py:function:: goal(name, action, dependencies=None, serialize=True)
-
-
-
- :param name: the name of the goal.
- :param action: the goal action object to invoke this goal.
- :param dependencies: the names of other goals which must be achieved before invoking this goal.
- :param serialize: a flag indicating whether or not the action to achieve this goal requires
-   the global lock. If true, the action will block until it can acquire the lock.
-
- Implemented by ``pants.goal.task_registrar.TaskRegistrar``
 
 
 .. _bdict_jar:
@@ -600,7 +534,7 @@ jar_library
 jar_rules
 -------------------------------------------------------------------------------
 
-.. py:function:: jar_rules(rules=None, default_dup_action=&lt;object object at 0x10c182330&gt;)
+.. py:function:: jar_rules(rules=None, default_dup_action=&lt;object object at 0x10fdbb200&gt;)
 
  A set of rules for packaging up a deploy jar.
  
@@ -1040,6 +974,32 @@ jvm_binary
   
   :param description: Descriptive string
 
+.. _bdict_keystore:
+
+keystore
+-------------------------------------------------------------------------------
+
+.. py:function:: keystore(build_type=None, source=None, keystore_alias=None, keystore_password=None, key_password=None, **kwargs)
+
+ Represents a keystore configuration
+
+
+ :param string build_type: What type of package the keystore signs. Either 'debug' or 'release'.
+ :param string source: path/to/keystore
+ :param string keystore_alias: The alias of this keystore.
+ :param string keystore_password: The password for the keystore.
+ :param string key_password: The password for the key.
+
+ Implemented by ``pants.backend.android.targets.keystore.Keystore``
+
+**Methods:**
+
+ .. py:method:: with_description(description)
+
+  Set a human-readable description of this target.
+  
+  :param description: Descriptive string
+
 .. _bdict_maven_layout:
 
 maven_layout
@@ -1144,21 +1104,6 @@ pants_version
  Returns the pants semantic version number: http://semver.org/
 
  Implemented by ``pants.base.build_environment.pants_version``
-
-
-.. _bdict_phase:
-
-phase
--------------------------------------------------------------------------------
-
-
- Factory for objects representing phases.
- 
- Ensures that we have exactly one instance per phase name.
-
-
-
- Implemented by ``pants.goal.phase.Phase``
 
 
 .. _bdict_python_antlr_library:
@@ -1663,20 +1608,6 @@ scalac_plugin
   
   :param description: Descriptive string
 
-.. _bdict_set_scm:
-
-set_scm
--------------------------------------------------------------------------------
-
-.. py:function:: set_scm(scm)
-
-
-
- Sets the pants Scm.
-
- Implemented by ``pants.base.build_environment.set_scm``
-
-
 .. _bdict_setup_py:
 
 setup_py
@@ -1750,6 +1681,36 @@ source_root
 
  Implemented by ``pants.base.source_root.SourceRoot``
 
+
+.. _bdict_target:
+
+target
+-------------------------------------------------------------------------------
+
+.. py:function:: target(*args, **kwargs)
+
+ A set of dependencies that may be depended upon,
+ as if depending upon the set of dependencies directly.
+ 
+ NB: This class is commonly referred to by the alias 'target' in BUILD files.
+
+
+ :param string name: The name of this target, which combined with this
+   build file defines the :doc:`target address <target_addresses>`.
+ :param dependencies: Other targets that this target depends on.
+ :type dependencies: list of target specs
+ :param exclusives: An optional map of exclusives tags. See :ref:`howto_check_exclusives`
+   for details.
+
+ Implemented by ``pants.backend.core.targets.dependencies.Dependencies``
+
+**Methods:**
+
+ .. py:method:: with_description(description)
+
+  Set a human-readable description of this target.
+  
+  :param description: Descriptive string
 
 .. _bdict_wiki:
 
