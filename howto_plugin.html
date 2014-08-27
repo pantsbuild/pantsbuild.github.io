@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Target Addresses &mdash; pants 0.1 documentation</title>
+  <title>Developing a Pants Plugin &mdash; pants 0.1 documentation</title>
   
 
   
@@ -46,8 +46,9 @@
 
   
     <link rel="top" title="pants 0.1 documentation" href="index.html"/>
-        <link rel="next" title="JVM Projects with Pants" href="JVMProjects.html"/>
-        <link rel="prev" title="First Tutorial" href="first_tutorial.html"/>
+        <link rel="up" title="Pants Developer Center" href="dev.html"/>
+        <link rel="next" title="Custom Pants for Your Site" href="howto_customize.html"/>
+        <link rel="prev" title="Task Developer’s Guide" href="dev_tasks.html"/>
  
 <script type="text/javascript">
   // In a plain template, we'd put this in the footer block.
@@ -114,7 +115,7 @@ body a.icon-home:hover{
       <div class="wy-menu wy-menu-vertical" data-spy="affix">
         
         
-            <ul class="current">
+            <ul>
 <li class="toctree-l1"><a class="reference internal" href="first_concepts.html">Pants Conceptual Overview</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="first_concepts.html#goals-and-targets">Goals and Targets</a></li>
 <li class="toctree-l2"><a class="reference internal" href="first_concepts.html#target-types">Target Types</a></li>
@@ -129,7 +130,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="first_tutorial.html#next">Next</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Target Addresses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="target_addresses.html">Target Addresses</a></li>
 <li class="toctree-l1"><a class="reference internal" href="JVMProjects.html">JVM Projects with Pants</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="JVMProjects.html#relevant-goals-and-targets">Relevant Goals and Targets</a></li>
 <li class="toctree-l2"><a class="reference internal" href="JVMProjects.html#build-for-a-simple-binary">BUILD for a Simple Binary</a></li>
@@ -345,13 +346,13 @@ body a.icon-home:hover{
 </ul>
 </li>
 </ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="dev.html">Pants Developer Center</a><ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="dev.html">Pants Developer Center</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="howto_contribute.html">Pants Contributors Guide</a></li>
 <li class="toctree-l2"><a class="reference internal" href="howto_ask.html">How To Ask</a></li>
 <li class="toctree-l2"><a class="reference internal" href="howto_develop.html">Pants Developers Guide</a></li>
 <li class="toctree-l2"><a class="reference internal" href="dev_tasks.html">Task Developer&#8217;s Guide</a></li>
-<li class="toctree-l2"><a class="reference internal" href="howto_plugin.html">Developing a Pants Plugin</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Developing a Pants Plugin</a></li>
 <li class="toctree-l2"><a class="reference internal" href="howto_customize.html">Custom Pants for Your Site</a></li>
 <li class="toctree-l2"><a class="reference internal" href="intellij.html">Pants Development with IntelliJ IDEA</a></li>
 <li class="toctree-l2"><a class="reference internal" href="internals.html">Pants Internals</a></li>
@@ -381,126 +382,27 @@ body a.icon-home:hover{
         <div class="rst-content">
           <ul class="wy-breadcrumbs">
   <li><a href="index.html">Docs</a> &raquo;</li>
-  <li><a href="">Target Addresses</a></li>
+  <li><a href="">Developing a Pants Plugin</a></li>
   
 </ul>
 <hr/>
 
           
-  <div class="section" id="target-addresses">
-<h1>Target Addresses<a class="headerlink" href="#target-addresses" title="Permalink to this headline">¶</a></h1>
-<p>Knowing how to specify exactly the targets you need is a critical skill when
-using pants. This document describes target addresses and a multitude of ways
-to specify them.</p>
-<p>Pants targets (&#8220;nouns&#8221; of the build) have an <tt class="docutils literal"><span class="pre">address</span></tt>, a combination of the
-<tt class="docutils literal"><span class="pre">BUILD</span></tt> file path and target name. Addresses are used to reference targets
-in <tt class="docutils literal"><span class="pre">BUILD</span></tt> files, and from the command-line to specify what targets to
-perform the given actions on.</p>
-<p>You can specify targets several ways. Some are most useful when writing
-<tt class="docutils literal"><span class="pre">BUILD</span></tt> targets, while others are useful when invoking pants on the
-command-line. Most specify a single target, but globs are available too.</p>
-<p>The following target addresses all specify the same single target.</p>
-<ul>
-<li><p class="first">Fully qualified target address is the BUILD file path plus target name:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ ./pants goal list examples/src/java/com/pants/examples/hello/main:main
-examples/src/java/com/pants/examples/hello/main:main
-</pre></div>
-</div>
-</li>
-<li><p class="first">Specify the default target, which matches the parent directory name:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ ./pants goal list examples/src/java/com/pants/examples/hello/main
-examples/src/java/com/pants/examples/hello/main:main
-</pre></div>
-</div>
-</li>
-<li><p class="first">Relative paths and trailing forward slashes are ignored on the command-line to accommodate tab
-completion:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ ./pants goal list ./examples/src/java/com/pants/examples/hello/main/
-examples/src/java/com/pants/examples/hello/main:main
-</pre></div>
-</div>
-<p>Absolute paths are also allowed to support flexibility in scripting and command line use:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ pants goal list $REPO_ROOT/src/java/com/pants/examples/hello/main
-src/java/com/pants/examples/hello/main:main
-</pre></div>
-</div>
-<p><em>NB: Neither the `./` or any other relative or absolute path forms nor the trailing slash are
-allowed in target addresses written down in BUILD files - these affordances are just for ease of
-command line specification of target addresses.</em></p>
-</li>
-</ul>
-<p>As a convenience, targets can be referenced relatively within the same BUILD file:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;application&#39;</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
-<span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;mybird&#39;</span><span class="p">,</span>
-  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;:application&#39;</span><span class="p">],</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<p>To refer to a target in a top-level BUILD file, prefix the target name with <tt class="docutils literal"><span class="pre">//:</span></tt>. (You can
-prefix any absolute path with //, but it&#8217;s mainly useful for top-level targets since &#8221;:target&#8221;
-is relative.)</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;application&#39;</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
-<span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;mybird&#39;</span><span class="p">,</span>
-  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;//:application&#39;</span><span class="p">],</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<p>Here <cite>//:application</cite> refers to the <cite>application</cite> target in the root level BUILD file and <em>not</em>
-to the <cite>application</cite> target defined just above <cite>mybird</cite>.  On the command line you could reference
-the root level <cite>application</cite> target with either of:</p>
-<ul>
-<li><div class="first highlight-python"><div class="highlight"><pre>$ ./pants goal list :application
-</pre></div>
-</div>
-</li>
-<li><div class="first highlight-python"><div class="highlight"><pre>$ ./pants goal list //:application
-</pre></div>
-</div>
-</li>
-</ul>
-<p>Pants supports two globbing target selectors. These globbing selectors are
-provided as a convenience on the command-line. For target dependencies,
-explicit target names are used.</p>
-<p>A trailing single colon specifies a glob of targets at the specified location:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ ./pants goal list tests/python/pants_test/:
-tests/python/pants_test:base-test
-tests/python/pants_test:test_maven_layout
-tests/python/pants_test:test_thrift_util
-tests/python/pants_test:all
-</pre></div>
-</div>
-<p>A trailing double colon specifies a recursive glob of targets at the specified
-location:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ ./pants goal list tests/python/pants_test/::
-tests/python/pants_test:base-test
-tests/python/pants_test:test_maven_layout
-tests/python/pants_test:all
-tests/python/pants_test/base:base-test
-tests/python/pants_test/base:all
-tests/python/pants_test/base:base
-...
-tests/python/pants_test/tasks:sorttargets
-tests/python/pants_test/tasks:targets_help
-tests/python/pants_test/tasks:what_changed
-tests/python/pants_test/testutils:testutils
-</pre></div>
-</div>
-<p>A leading caret specifies that this target or set of targets should be excluded from the
-list of targets:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ ./pants goal list tests/python/pants_test/:: ^tests/python/pants_test/base::
-tests/python/pants_test:base-test
-tests/python/pants_test:test_maven_layout
-tests/python/pants_test:all
-tests/python/pants_test/cache:cache
-tests/python/pants_test/commands:commands
-tests/python/pants_test/commands:test_goal
-...
-tests/python/pants_test/tasks:sorttargets
-tests/python/pants_test/tasks:targets_help
-tests/python/pants_test/tasks:what_changed
-tests/python/pants_test/testutils:testutils
-</pre></div>
-</div>
+  <div class="section" id="developing-a-pants-plugin">
+<h1>Developing a Pants Plugin<a class="headerlink" href="#developing-a-pants-plugin" title="Permalink to this headline">¶</a></h1>
+<p><em>As of September 2014, this process is new and still evolving;</em>
+<em>expect it to change somewhat.</em></p>
+<p>This page documents how to develop a Pants plugin, a set of code
+that defines new Pants functionality. If you
+<a class="reference internal" href="dev_tasks.html"><em>develop a new task</em></a>
+or target to add to Pants (or to override an existing part of Pants),
+a plugin gives you a way to register your code with Pants.</p>
+<p>Much of Pants&#8217; own functionality is organized in plugins; see
+them in <tt class="docutils literal"><span class="pre">src/python/pants/backend/*</span></tt>.</p>
+<p>A plugin registers its functionality with Pants by defining some
+functions in a <tt class="docutils literal"><span class="pre">register.py</span></tt> file. For example, Pants&#8217; <tt class="docutils literal"><span class="pre">jvm</span></tt>
+code registers in
+<a class="reference external" href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/backend/jvm/register.py">src/python/pnats/backend/jvm/register.py</a></p>
 </div>
 
 
@@ -508,10 +410,10 @@ tests/python/pants_test/testutils:testutils
   
     <div class="rst-footer-buttons">
       
-        <a href="JVMProjects.html" class="btn btn-neutral float-right" title="JVM Projects with Pants"/>Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="howto_customize.html" class="btn btn-neutral float-right" title="Custom Pants for Your Site"/>Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="first_tutorial.html" class="btn btn-neutral" title="First Tutorial"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="dev_tasks.html" class="btn btn-neutral" title="Task Developer’s Guide"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
