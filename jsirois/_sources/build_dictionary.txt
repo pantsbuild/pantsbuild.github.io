@@ -9,7 +9,6 @@ commands and values available. Many of these define ``BUILD``
 targets; some are handy utilities.
 
 **All The Things** |
-`Amount`_ |
 `android_binary`_ |
 `android_resources`_ |
 `annotation_processor`_ |
@@ -17,7 +16,6 @@ targets; some are handy utilities.
 `benchmark`_ |
 `buildfile_path`_ |
 `bundle`_ |
-`config`_ |
 `ConfluencePublish`_ |
 `credentials`_ |
 `dependencies`_ |
@@ -25,9 +23,7 @@ targets; some are handy utilities.
 `egg`_ |
 `exclude`_ |
 `get_buildroot`_ |
-`get_scm`_ |
 `globs`_ |
-`goal`_ |
 `jar`_ |
 `jar_library`_ |
 `jar_rules`_ |
@@ -42,12 +38,12 @@ targets; some are handy utilities.
 `junit_tests`_ |
 `jvm_app`_ |
 `jvm_binary`_ |
+`keystore`_ |
 `maven_layout`_ |
 `netrc`_ |
 `page`_ |
 `pants`_ |
 `pants_version`_ |
-`phase`_ |
 `python_antlr_library`_ |
 `python_binary`_ |
 `python_library`_ |
@@ -64,11 +60,10 @@ targets; some are handy utilities.
 `scala_specs`_ |
 `scala_tests`_ |
 `scalac_plugin`_ |
-`set_scm`_ |
 `setup_py`_ |
 `Skip`_ |
 `source_root`_ |
-`Time`_ |
+`target`_ |
 `wiki`_ |
 `wiki_artifact`_ |
 `zglobs`_ |
@@ -83,7 +78,6 @@ targets; some are handy utilities.
 `bundle`_ |
 `ConfluencePublish`_ |
 `credentials`_ |
-`dependencies`_ |
 `Duplicate`_ |
 `exclude`_ |
 `globs`_ |
@@ -99,6 +93,7 @@ targets; some are handy utilities.
 `junit_tests`_ |
 `jvm_app`_ |
 `jvm_binary`_ |
+`keystore`_ |
 `page`_ |
 `repo`_ |
 `resources`_ |
@@ -107,6 +102,7 @@ targets; some are handy utilities.
 `scala_specs`_ |
 `scalac_plugin`_ |
 `Skip`_ |
+`target`_ |
 `wiki`_ |
 `wiki_artifact`_ |
 `zglobs`_ |
@@ -114,34 +110,21 @@ targets; some are handy utilities.
 **Python** |
 `buildfile_path`_ |
 `ConfluencePublish`_ |
-`dependencies`_ |
 `globs`_ |
 `page`_ |
 `python_binary`_ |
 `python_library`_ |
 `python_requirement`_ |
 `python_requirement_library`_ |
+`python_requirements`_ |
 `python_tests`_ |
 `resources`_ |
 `rglobs`_ |
 `setup_py`_ |
+`target`_ |
 `wiki`_ |
 `wiki_artifact`_ |
 `zglobs`_ |
-
-
-.. _bdict_Amount:
-
-Amount
--------------------------------------------------------------------------------
-
-
-
- Used in some params,
- e.g., ``Amount(2, Time.MINUTES)``.
- From twitter.commons.
-
-
 
 
 .. _bdict_android_binary:
@@ -149,7 +132,7 @@ Amount
 android_binary
 -------------------------------------------------------------------------------
 
-.. py:function:: android_binary(*args, **kwargs)
+.. py:function:: android_binary(build_type=None, *args, **kwargs)
 
  Produces an Android binary.
 
@@ -165,7 +148,7 @@ android_binary
    Defaults to the latest full release.
  :param manifest: path/to/file of 'AndroidManifest.xml' (required name). Paths are relative
    to the BUILD file's directory.
- :param release_type: Which keystore is used to sign target: 'debug' or 'release'.
+ :param string build_type: One of [debug, release]. The keystore to sign the package with.
    Set as 'debug' by default.
 
  Implemented by ``pants.backend.android.targets.android_binary.AndroidBinary``
@@ -229,7 +212,7 @@ annotation_processor
    indicate text file resources to place in this module's jar.
  :param processors: A list of the fully qualified class names of the
    annotation processors this library exports.
- :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
+ :param exclusives: An optional map of exclusives tags. See :ref:`howto_check_exclusives` for details.
 
  Implemented by ``pants.backend.jvm.targets.annotation_processor.AnnotationProcessor``
 
@@ -324,28 +307,12 @@ bundle
  Implemented by ``pants.backend.jvm.targets.jvm_binary.factory``
 
 
-.. _bdict_config:
-
-config
--------------------------------------------------------------------------------
-
-.. py:function:: config(configparser)
-
- Encapsulates ini-style config file loading and access additionally supporting recursive variable
- substitution using standard python format strings, ie: %(var_name)s will be replaced with the
- value of var_name.
-
-
-
- Implemented by ``pants.base.config.Config``
-
-
 .. _bdict_ConfluencePublish:
 
 ConfluencePublish
 -------------------------------------------------------------------------------
 
-.. py:function:: ConfluencePublish(context, workdir)
+.. py:function:: ConfluencePublish(*args, **kwargs)
 
 
 
@@ -387,28 +354,12 @@ credentials
 dependencies
 -------------------------------------------------------------------------------
 
-.. py:function:: dependencies(*args, **kwargs)
-
- A set of dependencies that may be depended upon,
- as if depending upon the set of dependencies directly.
 
 
- :param string name: The name of this target, which combined with this
-   build file defines the :doc:`target address <target_addresses>`.
- :param dependencies: Other targets that this target depends on.
- :type dependencies: list of target specs
- :param exclusives: An optional map of exclusives tags. See CheckExclusives
-   for details.
+ Old name for `target`_
 
- Implemented by ``pants.backend.core.targets.dependencies.Dependencies``
 
-**Methods:**
 
- .. py:method:: with_description(description)
-
-  Set a human-readable description of this target.
-  
-  :param description: Descriptive string
 
 .. _bdict_Duplicate:
 
@@ -474,20 +425,6 @@ get_buildroot
  Implemented by ``pants.base.build_environment.get_buildroot``
 
 
-.. _bdict_get_scm:
-
-get_scm
--------------------------------------------------------------------------------
-
-.. py:function:: get_scm()
-
-
-
- Returns the pants Scm if any.
-
- Implemented by ``pants.base.build_environment.get_scm``
-
-
 .. _bdict_globs:
 
 globs
@@ -502,24 +439,6 @@ globs
 
 
  Implemented by ``pants.backend.core.wrapped_globs.Globs``
-
-
-.. _bdict_goal:
-
-goal
--------------------------------------------------------------------------------
-
-.. py:function:: goal(name, action, dependencies=None, serialize=True)
-
-
-
- :param name: the name of the goal.
- :param action: the goal action object to invoke this goal.
- :param dependencies: the names of other goals which must be achieved before invoking this goal.
- :param serialize: a flag indicating whether or not the action to achieve this goal requires
-   the global lock. If true, the action will block until it can acquire the lock.
-
- Implemented by ``pants.goal.goal.Goal``
 
 
 .. _bdict_jar:
@@ -598,7 +517,7 @@ jar_library
  :param string name: The name of this target, which combined with this
    build file defines the :doc:`target address <target_addresses>`.
  :param jars: List of :ref:`jar <bdict_jar>`\s to depend upon.
- :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
+ :param exclusives: An optional map of exclusives tags. See :ref:`howto_check_exclusives` for details.
 
  Implemented by ``pants.backend.jvm.targets.jar_library.JarLibrary``
 
@@ -615,7 +534,7 @@ jar_library
 jar_rules
 -------------------------------------------------------------------------------
 
-.. py:function:: jar_rules(rules=None, default_dup_action=&lt;object object at 0x7fa3fdc3a5d0&gt;)
+.. py:function:: jar_rules(rules=None, default_dup_action=&lt;object object at 0x7feb510f7d30&gt;)
 
  A set of rules for packaging up a deploy jar.
  
@@ -667,7 +586,7 @@ java_agent
  :param resources: An optional list of file paths (DEPRECATED) or
    ``resources`` targets (which in turn point to file paths). The paths
    indicate text file resources to place in this module's jar.
- :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
+ :param exclusives: An optional map of exclusives tags. See :ref:`howto_check_exclusives` for details.
  :param string premain: When an agent is specified at JVM launch time this attribute specifies
    the agent class. Exactly one of ``premain`` or ``agent_class`` must be specified.
  :param string agent_class: If an implementation supports a mechanism to start agents sometime
@@ -758,7 +677,7 @@ java_library
  :param resources: An optional list of file paths (DEPRECATED) or
    ``resources`` targets (which in turn point to file paths). The paths
    indicate text file resources to place in this module's jar.
- :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
+ :param exclusives: An optional map of exclusives tags. See :ref:`howto_check_exclusives` for details.
 
  Implemented by ``pants.backend.jvm.targets.java_library.JavaLibrary``
 
@@ -795,7 +714,7 @@ java_protobuf_library
  :param imports: List of external :class:`pants.backend.jvm.targets.jar_dependency.JarDependency`
    objects and addresses of :class:`pants.backend.jvm.targets.jar_library.JarLibrary` targets
    which contain .proto definitions.
- :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
+ :param exclusives: An optional map of exclusives tags. See :ref:`howto_check_exclusives` for details.
 
  Implemented by ``pants.backend.codegen.targets.java_protobuf_library.JavaProtobufLibrary``
 
@@ -828,7 +747,7 @@ java_ragel_library
  :type dependencies: list of target specs
  :param excludes: List of :ref:`exclude <bdict_exclude>`\s
    to filter this target's transitive dependencies against.
- :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
+ :param exclusives: An optional map of exclusives tags. See :ref:`howto_check_exclusives` for details.
 
  Implemented by ``pants.backend.codegen.targets.java_ragel_library.JavaRagelLibrary``
 
@@ -878,7 +797,7 @@ java_thrift_library
  :param language: The language used to generate the output files; defaults to 'java'.
  :param rpc_style: An optional rpc style to generate service stubs with.
  :param namespace_map: An optional dictionary of namespaces to remap {old: new}
- :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
+ :param exclusives: An optional map of exclusives tags. See :ref:`howto_check_exclusives` for details.
 
  Implemented by ``pants.backend.codegen.targets.java_thrift_library.JavaThriftLibrary``
 
@@ -952,7 +871,7 @@ junit_tests
    to filter this target's transitive dependencies against.
  :param resources: An optional list of ``resources`` targets containing text
    file resources to place in this module's jar.
- :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
+ :param exclusives: An optional map of exclusives tags. See :ref:`howto_check_exclusives` for details.
 
  Implemented by ``pants.backend.jvm.targets.java_tests.JavaTests``
 
@@ -1055,6 +974,32 @@ jvm_binary
   
   :param description: Descriptive string
 
+.. _bdict_keystore:
+
+keystore
+-------------------------------------------------------------------------------
+
+.. py:function:: keystore(build_type=None, source=None, keystore_alias=None, keystore_password=None, key_password=None, **kwargs)
+
+ Represents a keystore configuration
+
+
+ :param string build_type: What type of package the keystore signs. Either 'debug' or 'release'.
+ :param string source: path/to/keystore
+ :param string keystore_alias: The alias of this keystore.
+ :param string keystore_password: The password for the keystore.
+ :param string key_password: The password for the key.
+
+ Implemented by ``pants.backend.android.targets.keystore.Keystore``
+
+**Methods:**
+
+ .. py:method:: with_description(description)
+
+  Set a human-readable description of this target.
+  
+  :param description: Descriptive string
+
 .. _bdict_maven_layout:
 
 maven_layout
@@ -1074,7 +1019,7 @@ maven_layout
    expecting to find java files in ``src/main/java``, expect them in
    ``**basedir**/src/main/java``.
 
- Implemented by ``pants.base.build_file_aliases.&lt;lambda&gt;``
+ Implemented by ``pants.base.build_file_aliases.curry_context.pants.backend.maven_layout.maven_layout.maven_layout``
 
 
 .. _bdict_netrc:
@@ -1161,19 +1106,6 @@ pants_version
  Implemented by ``pants.base.build_environment.pants_version``
 
 
-.. _bdict_phase:
-
-phase
--------------------------------------------------------------------------------
-
-.. py:function:: phase(name)
-
-
-
-
- Implemented by ``pants.goal.phase.Phase``
-
-
 .. _bdict_python_antlr_library:
 
 python_antlr_library
@@ -1195,7 +1127,7 @@ python_antlr_library
      resources in a .zip-module friendly way.)
  :param dependencies: Other targets that this target depends on.
  :type dependencies: list of target specs
- :param dict exclusives: An optional dict of exclusives tags. See CheckExclusives for details.
+ :param dict exclusives: An optional dict of exclusives tags. See :ref:`howto_check_exclusives` for details.
 
  Implemented by ``pants.backend.codegen.targets.python_antlr_library.PythonAntlrLibrary``
 
@@ -1243,7 +1175,7 @@ python_binary
  :param compatibility: either a string or list of strings that represents
    interpreter compatibility for this target, using the Requirement-style format,
    e.g. ``'CPython>=3', or just ['>=2.7','<3']`` for requirements agnostic to interpreter class.
- :param dict exclusives: An optional dict of exclusives tags. See CheckExclusives for details.
+ :param dict exclusives: An optional dict of exclusives tags. See :ref:`howto_check_exclusives` for details.
 
  Implemented by ``pants.backend.python.targets.python_binary.PythonBinary``
 
@@ -1285,7 +1217,7 @@ python_library
    interpreter compatibility for this target, using the Requirement-style
    format, e.g. ``'CPython>=3', or just ['>=2.7','<3']`` for requirements
    agnostic to interpreter class.
- :param exclusives: An optional dict of exclusives tags. See CheckExclusives
+ :param exclusives: An optional dict of exclusives tags. See :ref:`howto_check_exclusives`
    for details.
 
 
@@ -1386,7 +1318,7 @@ python_requirements
      this function to the requirements file.  By default a `requirements.txt` file sibling to the
      BUILD file is assumed.
 
- Implemented by ``pants.base.build_file_aliases.&lt;lambda&gt;``
+ Implemented by ``pants.base.build_file_aliases.curry_context.pants.backend.python.python_requirements.python_requirements``
 
 
 .. _bdict_python_test_suite:
@@ -1420,7 +1352,7 @@ python_tests
  :type dependencies: list of target specs
  :param coverage: the module(s) whose coverage should be generated, e.g.
    'twitter.common.log' or ['twitter.common.log', 'twitter.common.http']
- :param dict exclusives: An optional dict of exclusives tags. See CheckExclusives for details.
+ :param dict exclusives: An optional dict of exclusives tags. See :ref:`howto_check_exclusives` for details.
 
  Implemented by ``pants.backend.python.targets.python_tests.PythonTests``
 
@@ -1452,7 +1384,7 @@ python_thrift_library
    resources in a .zip-module friendly way.)
  :param dependencies: Other targets that this target depends on.
  :type dependencies: list of target specs
- :param dict exclusives: An optional dict of exclusives tags. See CheckExclusives for details.
+ :param dict exclusives: An optional dict of exclusives tags. See :ref:`howto_check_exclusives` for details.
 
  Implemented by ``pants.backend.codegen.targets.python_thrift_library.PythonThriftLibrary``
 
@@ -1611,7 +1543,7 @@ scala_specs
  :param excludes: List of :ref:`exclude <bdict_exclude>`\s
    to filter this target's transitive dependencies against.
  :param resources: An optional list of Resources that should be in this target's classpath.
- :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
+ :param exclusives: An optional map of exclusives tags. See :ref:`howto_check_exclusives` for details.
 
  Implemented by ``pants.backend.jvm.targets.scala_tests.ScalaTests``
 
@@ -1664,7 +1596,7 @@ scalac_plugin
    to filter this target's transitive dependencies against.
  :param resources: An optional list of paths (DEPRECATED) or ``resources``
    targets containing resources that belong on this library's classpath.
- :param exclusives: An optional map of exclusives tags. See CheckExclusives for details.
+ :param exclusives: An optional map of exclusives tags. See :ref:`howto_check_exclusives` for details.
 
  Implemented by ``pants.backend.jvm.targets.scalac_plugin.ScalacPlugin``
 
@@ -1675,20 +1607,6 @@ scalac_plugin
   Set a human-readable description of this target.
   
   :param description: Descriptive string
-
-.. _bdict_set_scm:
-
-set_scm
--------------------------------------------------------------------------------
-
-.. py:function:: set_scm(scm)
-
-
-
- Sets the pants Scm.
-
- Implemented by ``pants.base.build_environment.set_scm``
-
 
 .. _bdict_setup_py:
 
@@ -1764,19 +1682,35 @@ source_root
  Implemented by ``pants.base.source_root.SourceRoot``
 
 
-.. _bdict_Time:
+.. _bdict_target:
 
-Time
+target
 -------------------------------------------------------------------------------
 
+.. py:function:: target(*args, **kwargs)
+
+ A set of dependencies that may be depended upon,
+ as if depending upon the set of dependencies directly.
+ 
+ NB: This class is commonly referred to by the alias 'target' in BUILD files.
 
 
- Used in some params,
- e.g., ``Amount(2, Time.MINUTES)``.
- From twitter.commons
+ :param string name: The name of this target, which combined with this
+   build file defines the :doc:`target address <target_addresses>`.
+ :param dependencies: Other targets that this target depends on.
+ :type dependencies: list of target specs
+ :param exclusives: An optional map of exclusives tags. See :ref:`howto_check_exclusives`
+   for details.
 
+ Implemented by ``pants.backend.core.targets.dependencies.Dependencies``
 
+**Methods:**
 
+ .. py:method:: with_description(description)
+
+  Set a human-readable description of this target.
+  
+  :param description: Descriptive string
 
 .. _bdict_wiki:
 

@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Set up Your Source Tree for Pants &mdash; pants 0.1 documentation</title>
+  <title>Custom Pants for Your Site &mdash; pants 0.1 documentation</title>
   
 
   
@@ -46,8 +46,9 @@
 
   
     <link rel="top" title="pants 0.1 documentation" href="index.html"/>
-        <link rel="next" title="Installing Pants" href="install.html"/>
-        <link rel="prev" title="Using Pants with IntelliJ IDEA" href="with_intellij.html"/>
+        <link rel="up" title="Pants Developer Center" href="dev.html"/>
+        <link rel="next" title="Pants Development with IntelliJ IDEA" href="intellij.html"/>
+        <link rel="prev" title="Developing a Pants Plugin" href="howto_plugin.html"/>
  
 <script type="text/javascript">
   // In a plain template, we'd put this in the footer block.
@@ -223,13 +224,13 @@ body a.icon-home:hover{
 </ul>
 </li>
 </ul>
-<ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="">Set up Your Source Tree for Pants</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#configuring-with-pants-ini">Configuring with <tt class="docutils literal"><span class="pre">pants.ini</span></tt></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#configure-code-layout-with-source-root">Configure Code Layout with <cite>source_root</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#top-level-build-for-tree-global-config">Top-level <cite>BUILD.*</cite> for tree-global config</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#build-in-the-source-tree-for-special-targets">BUILD.* in the source tree for special targets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#restricting-publish-to-release-branch">Restricting Publish to &#8220;Release Branch&#8221;</a></li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="setup_repo.html">Set up Your Source Tree for Pants</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="setup_repo.html#configuring-with-pants-ini">Configuring with <tt class="docutils literal"><span class="pre">pants.ini</span></tt></a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup_repo.html#configure-code-layout-with-source-root">Configure Code Layout with <cite>source_root</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup_repo.html#top-level-build-for-tree-global-config">Top-level <cite>BUILD.*</cite> for tree-global config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup_repo.html#build-in-the-source-tree-for-special-targets">BUILD.* in the source tree for special targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup_repo.html#restricting-publish-to-release-branch">Restricting Publish to &#8220;Release Branch&#8221;</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installing Pants</a><ul>
@@ -355,14 +356,14 @@ body a.icon-home:hover{
 </ul>
 </li>
 </ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="dev.html">Pants Developer Center</a><ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="dev.html">Pants Developer Center</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="howto_contribute.html">Pants Contributors Guide</a></li>
 <li class="toctree-l2"><a class="reference internal" href="howto_ask.html">How To Ask</a></li>
 <li class="toctree-l2"><a class="reference internal" href="howto_develop.html">Pants Developers Guide</a></li>
 <li class="toctree-l2"><a class="reference internal" href="dev_tasks.html">Task Developer&#8217;s Guide</a></li>
 <li class="toctree-l2"><a class="reference internal" href="howto_plugin.html">Developing a Pants Plugin</a></li>
-<li class="toctree-l2"><a class="reference internal" href="howto_customize.html">Custom Pants for Your Site</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Custom Pants for Your Site</a></li>
 <li class="toctree-l2"><a class="reference internal" href="intellij.html">Pants Development with IntelliJ IDEA</a></li>
 <li class="toctree-l2"><a class="reference internal" href="internals.html">Pants Internals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="release.html">Release Process</a></li>
@@ -391,151 +392,26 @@ body a.icon-home:hover{
         <div class="rst-content">
           <ul class="wy-breadcrumbs">
   <li><a href="index.html">Docs</a> &raquo;</li>
-  <li><a href="">Set up Your Source Tree for Pants</a></li>
+  <li><a href="">Custom Pants for Your Site</a></li>
   
 </ul>
 <hr/>
 
           
-  <div class="section" id="set-up-your-source-tree-for-pants">
-<h1>Set up Your Source Tree for Pants<a class="headerlink" href="#set-up-your-source-tree-for-pants" title="Permalink to this headline">¶</a></h1>
-<p>If you&#8217;re setting up the Pants build tool to work in your source tree, you
-probably want to configure Pants&#8217; behavior.  (Once it&#8217;s set up, most
-folks should be able to use the <a class="reference internal" href="first_concepts.html"><em>Pants Conceptual Overview</em></a>
-and not worry about these things.)</p>
-<div class="section" id="configuring-with-pants-ini">
-<span id="setup-pants-ini"></span><h2>Configuring with <tt class="docutils literal"><span class="pre">pants.ini</span></tt><a class="headerlink" href="#configuring-with-pants-ini" title="Permalink to this headline">¶</a></h2>
-<p>Pants Build is very configurable. Your source tree&#8217;s top-level directory should
-contain a <tt class="docutils literal"><span class="pre">pants.ini</span></tt> file that sets many, many options. You can modify a broad range of
-settings here, including specific binaries to use in your toolchain,
-arguments to pass to tools, etc.</p>
-<p>These files are formatted as
-<a class="reference external" href="http://docs.python.org/install/index.html#inst-config-syntax">Python config files</a>,
-parsed by <a class="reference external" href="http://docs.python.org/library/configparser.html">ConfigParser</a>.
-Thus, they look something like:</p>
-<div class="highlight-python"><div class="highlight"><pre>[section]
-setting1: value1
-setting2: value2
-</pre></div>
-</div>
-<p>The <tt class="docutils literal"><span class="pre">[DEFAULT]</span></tt> section is special: its values are available in other sections.
-It&#8217;s thus handy for defining values that will be used in several contexts, as in these
-excerpts that define/use <tt class="docutils literal"><span class="pre">thrift_workdir</span></tt>:</p>
-<div class="highlight-python"><div class="highlight"><pre>[DEFAULT]
-thrift_workdir: %(pants_workdir)s/thrift
-
-[thrift-gen]
-workdir: %(thrift_workdir)s
-
-[java-compile]
-args: [
-  &#39;-C-Tnowarnprefixes&#39;, &#39;-C%(thrift_workdir)s&#39;,
-]
-</pre></div>
-</div>
-<p>It&#8217;s also handy for defining values that are used in several contexts, since these values
-will be available in all those contexts. The code that combines DEFAULT values with
-others is in Pants&#8217;
-<a class="reference external" href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/base/config.py">base/config.py</a>.</p>
-</div>
-<div class="section" id="configure-code-layout-with-source-root">
-<span id="setup-source-root"></span><h2>Configure Code Layout with <cite>source_root</cite><a class="headerlink" href="#configure-code-layout-with-source-root" title="Permalink to this headline">¶</a></h2>
-<p>Maybe someday all the world&#8217;s programmers will agree on the one true directory
-structure for source code. Until then, you&#8217;ll want some
-<a class="reference internal" href="build_dictionary.html#bdict-source-root"><em>source_root</em></a> rules to specify which directories hold
-your code. A typical programming language has a notion of <em>base paths</em>
-for imports; you configure pants to tell it those base paths.</p>
-<p>If your project&#8217;s source tree is laid out for Maven, there&#8217;s a shortcut function
-<cite>maven_layout</cite> that configures source roots for Maven&#8217;s expected
-source code tree structure.</p>
-<div class="section" id="organized-by-language">
-<h3>Organized by Language<a class="headerlink" href="#organized-by-language" title="Permalink to this headline">¶</a></h3>
-<p>If your top-level <tt class="docutils literal"><span class="pre">BUILD</span></tt> file is <tt class="docutils literal"><span class="pre">top/BUILD</span></tt> and your main Java code is in
-<tt class="docutils literal"><span class="pre">top/src/java/com/foo/</span></tt> and your Java tests are in <tt class="docutils literal"><span class="pre">top/src/javatest/com/foo/</span></tt>,
-then your top-level <cite>BUILD</cite> file might look like:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># top/BUILD</span>
-<span class="n">source_root</span><span class="p">(</span><span class="s">&#39;src/java&#39;</span><span class="p">)</span>
-<span class="n">source_root</span><span class="p">(</span><span class="s">&#39;src/javatest&#39;</span><span class="p">)</span>
-<span class="o">...</span>
-</pre></div>
-</div>
-<p>Pants can optionally enforce that only certain target types are allowed under each source root:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># top/BUILD</span>
-<span class="n">source_root</span><span class="p">(</span><span class="s">&#39;src/java&#39;</span><span class="p">,</span> <span class="n">annotation_processor</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">jvm_binary</span><span class="p">,</span> <span class="n">java_library</span><span class="p">,</span> <span class="n">page</span><span class="p">)</span>
-<span class="n">source_root</span><span class="p">(</span><span class="s">&#39;src/javatest&#39;</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">java_library</span><span class="p">,</span> <span class="n">java_tests</span><span class="p">,</span> <span class="n">page</span><span class="p">)</span>
-<span class="o">...</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="organized-by-project">
-<h3>Organized by Project<a class="headerlink" href="#organized-by-project" title="Permalink to this headline">¶</a></h3>
-<p>If your top-level <tt class="docutils literal"><span class="pre">BUILD</span></tt> file is <tt class="docutils literal"><span class="pre">top/BUILD</span></tt> and the Java code for your
-Theodore and Hank projects live in <tt class="docutils literal"><span class="pre">top/theodore/src/java/com/foo/</span></tt>,
-then your top-level <cite>BUILD</cite> file might not contain any <tt class="docutils literal"><span class="pre">source_root</span></tt> statements.
-Instead, <tt class="docutils literal"><span class="pre">theodore/BUILD</span></tt> and <tt class="docutils literal"><span class="pre">hank/BUILD</span></tt> might look like:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># top/(project)/BUILD</span>
-<span class="n">source_root</span><span class="p">(</span><span class="s">&#39;src/java&#39;</span><span class="p">)</span>
-<span class="n">source_root</span><span class="p">(</span><span class="s">&#39;src/javatest&#39;</span><span class="p">)</span>
-<span class="o">...</span>
-</pre></div>
-</div>
-<p>Or:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># top/(project)/BUILD</span>
-<span class="n">source_root</span><span class="p">(</span><span class="s">&#39;src/java&#39;</span><span class="p">,</span> <span class="n">annotation_processor</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">jvm_binary</span><span class="p">,</span> <span class="n">java_library</span><span class="p">,</span> <span class="n">page</span><span class="p">)</span>
-<span class="n">source_root</span><span class="p">(</span><span class="s">&#39;src/javatest&#39;</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">java_library</span><span class="p">,</span> <span class="n">java_tests</span><span class="p">,</span> <span class="n">page</span><span class="p">)</span>
-<span class="o">...</span>
-</pre></div>
-</div>
-<div class="section" id="build-and-environment-specific-config">
-<h4><cite>BUILD.*</cite> and environment-specific config<a class="headerlink" href="#build-and-environment-specific-config" title="Permalink to this headline">¶</a></h4>
-<p>When we said <cite>BUILD</cite> files were named <cite>BUILD</cite>, we really meant <cite>BUILD</cite>
-or <em>BUILD</em>.<cite>something</cite>. If you have some rules that make sense for folks
-in one environment but not others, you might put them into a separate
-BUILD file named <em>BUILD</em>.<cite>something</cite>.</p>
-</div>
-</div>
-</div>
-<div class="section" id="top-level-build-for-tree-global-config">
-<h2>Top-level <cite>BUILD.*</cite> for tree-global config<a class="headerlink" href="#top-level-build-for-tree-global-config" title="Permalink to this headline">¶</a></h2>
-<p>When you invoke <tt class="docutils literal"><span class="pre">./pants</span> <span class="pre">goal</span> <span class="pre">something</span> <span class="pre">src/foo:foo</span></tt> it processes
-the code in <cite>src/foo/BUILD</cite> and the code in <cite>./BUILD</cite> <em>and</em> <cite>./BUILD.*</cite>. If you
-distribute code to different organizations, and want different configuration
-for them, you might put the relevant config code in <cite>./BUILD.something</cite>.
-You can give that file to some people and not-give it to others.</p>
-</div>
-<div class="section" id="build-in-the-source-tree-for-special-targets">
-<h2>BUILD.* in the source tree for special targets<a class="headerlink" href="#build-in-the-source-tree-for-special-targets" title="Permalink to this headline">¶</a></h2>
-<p>If you distribute code to different organizations, you might want to expose some
-targets to one organization but not to another. You can do this by defining
-those targets in a <cite>BUILD.*</cite> file. You can give that file to some people and
-not-give it to others. This code will be processed by people invoking pants
-on this directory only if they have the file.</p>
-<p>For example, you might work at the Foo Corporation, which maintains a fleet
-of machines to run big test jobs. You might define a humungous test job
-as a convenient way to send many many tests to the fleet</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># src/javatest/com/foo/BUILD.foo</span>
-
-<span class="c"># many-many test: Run this on the fleet, not your workstation</span>
-<span class="c"># (unless you want to wait a few hours for results)</span>
-<span class="n">junit_tests</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;many-many&#39;</span><span class="p">,</span>
-<span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
-  <span class="s">&#39;bar:all&#39;</span><span class="p">,</span>
-  <span class="s">&#39;baz:all&#39;</span><span class="p">,</span>
-  <span class="s">&#39;garply:all&#39;</span><span class="p">,</span>
-<span class="p">],)</span>
-</pre></div>
-</div>
-<p>If you don&#8217;t want to make this test definition available to the public (lest
-they complain about how long it takes), you might put this in a <cite>BUILD.foo</cite>
-file and hold back this file when mirroring for the public repository.</p>
-</div>
-<div class="section" id="restricting-publish-to-release-branch">
-<span id="setup-publish-restrict-branch"></span><h2>Restricting Publish to &#8220;Release Branch&#8221;<a class="headerlink" href="#restricting-publish-to-release-branch" title="Permalink to this headline">¶</a></h2>
-<p>Your organization might have a notion of a special &#8220;release branch&#8221;: you want
-<a class="reference internal" href="publish.html"><em>artifact publishing</em></a>
-to happen on this source control branch, which you maintain
-extra-carefully. You can set this branch using the restrict_push_branches option.</p>
-</div>
+  <div class="section" id="custom-pants-for-your-site">
+<h1>Custom Pants for Your Site<a class="headerlink" href="#custom-pants-for-your-site" title="Permalink to this headline">¶</a></h1>
+<p><em>As of September 2014, this process is new and still evolving;</em>
+<em>expect it to change plenty.</em></p>
+<p>You might want to tailor Pants&#8217; behavior for your organization
+by defining some special functionality. If your changes are
+generally-useful, you could <a class="reference internal" href="howto_contribute.html"><em>add them to Pants proper</em></a>.
+But perhaps your organization has, e.g., some custom code generation
+that wouldn&#8217;t be of use to other organizations. You want to add some
+functionality to Pants in a maintainable way.</p>
+<p>At a high level, you want to
+<a class="reference internal" href="howto_plugin.html"><em>develop a Pants plugin</em></a>
+and create an altered Pants that registers your Plugin in addition
+to the regular ones.</p>
 </div>
 
 
@@ -543,10 +419,10 @@ extra-carefully. You can set this branch using the restrict_push_branches option
   
     <div class="rst-footer-buttons">
       
-        <a href="install.html" class="btn btn-neutral float-right" title="Installing Pants"/>Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="intellij.html" class="btn btn-neutral float-right" title="Pants Development with IntelliJ IDEA"/>Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="with_intellij.html" class="btn btn-neutral" title="Using Pants with IntelliJ IDEA"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="howto_plugin.html" class="btn btn-neutral" title="Developing a Pants Plugin"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   

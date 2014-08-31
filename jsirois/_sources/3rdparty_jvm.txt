@@ -69,7 +69,7 @@ and add ``import`` statements in your Java code.
 
 For example, your ``BUILD`` file might have
 
-.. literalinclude:: ../../../../tests/java/com/pants/examples/hello/greet/BUILD
+.. literalinclude:: ../../../../examples/tests/java/com/pants/examples/hello/greet/BUILD
    :start-after: sources
    :end-before: src/java
 
@@ -98,7 +98,7 @@ When consuming such third-party artifacts, exclude dependencies that
       ]
       dependencies=[
         # and re-include local version of source manually:
-        pants('util/near'),
+        'util/near',
       ]
     )
 
@@ -111,7 +111,7 @@ different versions of some package, you can dump your dependency "tree"
 with versions with an Ivy resolve report. To generate a report for
 a target such as the ``hello/main`` example::
 
-    $ ./pants goal resolve src/java/com/pants/examples/hello/main --ivy-open
+    $ ./pants goal resolve examples/src/java/com/pants/examples/hello/main --ivy-open
 
 Ivy's report shows which things depend on which versions. You can see which
 package is pulling in the package-version you didn't expect. (It might not
@@ -125,7 +125,7 @@ sets ``force=True`` to *force* using that version::
   scala_library(
     name = "loadtest",
     dependencies = [
-      pants('3rdparty/bijection:bijection-scrooge'),
+      '3rdparty/bijection:bijection-scrooge',
       # our 3rdparty/BUILD still has 6.1.4 as the default version, but
       # finagle-[core|thrift] version 6.1.4 is superceded (evicted) by
       # version 6.4.1
@@ -148,7 +148,7 @@ hand-picked versions::
       dependencies=[
         # Don't use retro's expected (old, incompatible) common-logging
         # version, yipe; use the same version we use everywhere else:
-	pants('3rdparty/jvm/common-logging'),
+	'3rdparty/jvm/common-logging',
       ])
 
 **If you notice a small number of transitive dependencies to exclude**
@@ -157,7 +157,7 @@ transitive dependencies from JVM targets::
 
     java_library(name = 'loadtest',
       dependencies = [
-        pants('3rdparty/storm:storm'),
+        '3rdparty/storm:storm',
       ],
       sources = globs('*.java'),
       excludes = [
@@ -183,9 +183,31 @@ skipped by pants. To bring both jars in, use the ``.with_artifacts()`` method of
 
     jar_library(name = 'stanford-corenlp',
       jars = [
-        jar(org = 'edu.stanford.nlp', name = 'stanford-corenlp', rev = '3.3.1').with_sources().with_artifact(classifier='models').with_artifact(classifier=''),
+        jar(org = 'edu.stanford.nlp', name = 'stanford-corenlp', rev = '3.3.1')
+        .with_sources().with_artifact(classifier='models').with_artifact(classifier=''),
       ]
     )
 
 And as a result, both jars will now be brought into the target's classpath.
 
+
+*******************************
+Using a SNAPSHOT JVM Dependency
+*******************************
+
+.. _test_3rdparty_jvm_snapshot:
+
+Sometimes your code depends on a buggy external JVM dependency. You think you've fixed the
+external code, but want to test locally before uploading it to make sure.
+To do this, in the ``jar`` dependency for the artifact, specify the ``url`` attribute
+to point to the local file and change the ``rev``. If you are actively making changes
+to the dependency, you can also use the ``mutable`` jar attribute to re-import the file
+each time pants is run (otherwise, pants will cache it)::
+
+    jar_library(name='checkstyle',
+      jars = [
+        jar(org='com.puppycrawl.tools', name='checkstyle', rev='5.5-SNAPSHOT',
+            url='file:///Users/pantsdev/Src/checkstyle/checkstyle.jar',
+            mutable=True),
+      ],
+    )

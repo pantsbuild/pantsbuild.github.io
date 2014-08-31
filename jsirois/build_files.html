@@ -62,12 +62,22 @@
     ga('create', 'UA-39101739-2', 'auto');
     ga('send', 'pageview');
 
-    // Show the travis-ci status graphic
+    // Show the travis-ci status graphic.
     $('.wy-breadcrumbs').append(
-      '<div style="float: right;">' +
-      '<a href="https://travis-ci.org/pantsbuild/pants">' +
-      '<img src="https://travis-ci.org/pantsbuild/pants.png?branch=master">' +
-      '</a></div>');
+      '<div style="float: right; padding: 1px;">' +
+        '<a href="https://travis-ci.org/pantsbuild/pants">' +
+          '<img src="https://travis-ci.org/pantsbuild/pants.png?branch=master">' +
+        '</a>' +
+      '</div>');
+
+    // Show the coveralls status graphic.
+    $('.wy-breadcrumbs').append(
+      '<div style="float: right; padding: 1px;">' +
+        '<a href="https://coveralls.io/r/pantsbuild/pants?branch=master">' +
+          '<img src="https://coveralls.io/repos/pantsbuild/pants/badge.png?branch=master"' +
+          '     alt="Coverage Status">' +
+        '</a>' +
+      '</div>');
   });
 </script>
 <style type="text/css">
@@ -165,6 +175,9 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="#depend-on-api-in-library-targets-implementation-in-binary-targets">Depend on API in Library Targets, Implementation in Binary Targets</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#which-build-files-are-executed-and-how">Which <tt class="docutils literal"><span class="pre">BUILD</span></tt> Files are &#8220;Executed&#8221;? (and how?)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id1">BUILD.* files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tag-incompatibilities-with-exclusives">Tag Incompatibilities with exclusives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#what-happened-to-the-pants-wrapper-around-targets">What happened to the pants() wrapper around targets?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-an-older-version-of-pants">Using an older version of Pants?</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="invoking.html">Invoking Pants Build</a><ul>
@@ -203,6 +216,7 @@ body a.icon-home:hover{
 </li>
 </ul>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="with_emacs.html">Ensime With Pants</a></li>
 <li class="toctree-l1"><a class="reference internal" href="with_intellij.html">Using Pants with IntelliJ IDEA</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="with_intellij.html#pants-build-plugin-for-intellij">Pants Build Plugin for IntelliJ</a></li>
 <li class="toctree-l2"><a class="reference internal" href="with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
@@ -225,7 +239,6 @@ body a.icon-home:hover{
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="build_dictionary.html">BUILD Dictionary</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#amount">Amount</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#android-binary">android_binary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#android-resources">android_resources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#annotation-processor">annotation_processor</a></li>
@@ -233,7 +246,6 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#benchmark">benchmark</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#buildfile-path">buildfile_path</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#bundle">bundle</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#config">config</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#confluencepublish">ConfluencePublish</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#credentials">credentials</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#dependencies">dependencies</a></li>
@@ -241,9 +253,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#egg">egg</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#exclude">exclude</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#get-buildroot">get_buildroot</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#get-scm">get_scm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#globs">globs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#goal">goal</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jar">jar</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jar-library">jar_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jar-rules">jar_rules</a></li>
@@ -258,12 +268,12 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#junit-tests">junit_tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jvm-app">jvm_app</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jvm-binary">jvm_binary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#keystore">keystore</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#maven-layout">maven_layout</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#netrc">netrc</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#page">page</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#pants">pants</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#pants-version">pants_version</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#phase">phase</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-antlr-library">python_antlr_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-binary">python_binary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-library">python_library</a></li>
@@ -280,11 +290,10 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#scala-specs">scala_specs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#scala-tests">scala_tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#scalac-plugin">scalac_plugin</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#set-scm">set_scm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#setup-py">setup_py</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#skip">Skip</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#source-root">source_root</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#time">Time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#target">target</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#wiki">wiki</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#wiki-artifact">wiki_artifact</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#zglobs">zglobs</a></li>
@@ -297,6 +306,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#builddict">builddict</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#buildlint">buildlint</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#bundle">bundle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#changed">changed</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#check-exclusives">check-exclusives</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#check-published-deps">check_published_deps</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#clean-all">clean-all</a></li>
@@ -306,14 +316,16 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#dependencies">dependencies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#depmap">depmap</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#detect-duplicates">detect-duplicates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#dex">dex</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#doc">doc</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#eclipse">eclipse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#ensime">ensime</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#filedeps">filedeps</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#filemap">filemap</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#filter">filter</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#gen">gen</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#goals">goals</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#gref-phase-idea">idea</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#gref-goal-idea">idea</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#imports">imports</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#invalidate">invalidate</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#jar">jar</a></li>
@@ -335,6 +347,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#run">run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#run-dirty">run-dirty</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#server">server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#sign">sign</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#sort">sort</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#targets">targets</a></li>
 <li class="toctree-l2"><a class="reference internal" href="goals_reference.html#test">test</a></li>
@@ -348,6 +361,8 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="howto_ask.html">How To Ask</a></li>
 <li class="toctree-l2"><a class="reference internal" href="howto_develop.html">Pants Developers Guide</a></li>
 <li class="toctree-l2"><a class="reference internal" href="dev_tasks.html">Task Developer&#8217;s Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto_plugin.html">Developing a Pants Plugin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto_customize.html">Custom Pants for Your Site</a></li>
 <li class="toctree-l2"><a class="reference internal" href="intellij.html">Pants Development with IntelliJ IDEA</a></li>
 <li class="toctree-l2"><a class="reference internal" href="internals.html">Pants Internals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="release.html">Release Process</a></li>
@@ -408,8 +423,8 @@ functions, lists, dictionaries, and indentation.</p>
 <p>If you&#8217;re curious to know how Pants interprets your <tt class="docutils literal"><span class="pre">BUILD</span></tt> file, these
 goals can be especially helpful:</p>
 <p><tt class="docutils literal"><span class="pre">list</span></tt> Did I define the targets I meant to?</p>
-<div class="highlight-python"><div class="highlight"><pre>$ ./pants goal list src/java/com/pants/examples/hello/greet
-src/java/com/pants/examples/hello/greet/BUILD:greet
+<div class="highlight-python"><div class="highlight"><pre>$ ./pants goal list examples/src/com/pants/examples/hello/greet
+examples/src/com/pants/examples/hello/greet:greet
 </pre></div>
 </div>
 <p><tt class="docutils literal"><span class="pre">list</span> <span class="pre">::</span></tt> List <strong>every</strong> target to find out:
@@ -429,7 +444,7 @@ $ # Instead of listing all targets, a strack trace. We found a problem
 dependencies pulled in from 3rdparty <tt class="docutils literal"><span class="pre">.jars</span></tt>. For example, here it shows
 that <tt class="docutils literal"><span class="pre">main-bin</span></tt> depends on the 3rdparty <tt class="docutils literal"><span class="pre">log4j</span></tt> jar, but not that
 <tt class="docutils literal"><span class="pre">log4j</span></tt> depends on <tt class="docutils literal"><span class="pre">javax.mail</span></tt>:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ ./pants goal depmap src/java/com/pants/examples/hello/main
+<div class="highlight-python"><div class="highlight"><pre>$ ./pants goal depmap examples/src/com/pants/examples/hello/main
 internal-src.java.com.pants.examples.hello.main.main
   internal-src.java.com.pants.examples.hello.main.main-bin
     internal-src.java.com.pants.examples.hello.greet.greet
@@ -437,12 +452,12 @@ internal-src.java.com.pants.examples.hello.main.main
 </pre></div>
 </div>
 <p><tt class="docutils literal"><span class="pre">filedeps</span></tt> What source files do I depend on?</p>
-<div class="highlight-python"><div class="highlight"><pre>$ ./pants goal filedeps src/java/com/pants/examples/hello/main
-~archie/workspace/pants/src/java/com/pants/examples/hello/greet/BUILD
-~archie/workspace/pants/src/java/com/pants/examples/hello/greet/Greeting.java
-~archie/workspace/pants/src/java/com/pants/examples/hello/main/BUILD
-~archie/workspace/pants/src/java/com/pants/examples/hello/main/config/log4j.properties
-~archie/workspace/pants/src/java/com/pants/examples/hello/main/HelloMain.java
+<div class="highlight-python"><div class="highlight"><pre>$ ./pants goal filedeps examples/src/com/pants/examples/hello/main
+~archie/workspace/pants/examples/src/com/pants/examples/hello/greet/BUILD
+~archie/workspace/pants/examples/src/com/pants/examples/hello/greet/Greeting.java
+~archie/workspace/pants/examples/src/com/pants/examples/hello/main/BUILD
+~archie/workspace/pants/examples/src/com/pants/examples/hello/main/config/log4j.properties
+~archie/workspace/pants/examples/src/com/pants/examples/hello/main/HelloMain.java
 </pre></div>
 </div>
 </div>
@@ -457,7 +472,7 @@ functionality:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="c"># depends on plain ol&#39; tugboat</span>
 <span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;theodore&#39;</span><span class="p">,</span>
   <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
-    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;src/java/com/twitter/tugboat&#39;</span><span class="p">),</span>
+    <span class="s">&#39;src/java/com/twitter/tugboat&#39;</span><span class="p">,</span>
   <span class="p">],</span>
   <span class="n">sources</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s">&#39;*.java&#39;</span><span class="p">),</span>
 <span class="p">)</span>
@@ -468,7 +483,7 @@ non-default target:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="c"># depends on optional tugboat functionality</span>
 <span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;hank&#39;</span><span class="p">,</span>
   <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
-    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;src/java/com/twitter/tugboat:hispeed&#39;</span><span class="p">),</span>
+    <span class="s">&#39;src/java/com/twitter/tugboat:hispeed&#39;</span><span class="p">,</span>
   <span class="p">],</span>
   <span class="n">sources</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s">&#39;*.java&#39;</span><span class="p">),</span>
 <span class="p">)</span>
@@ -477,7 +492,7 @@ non-default target:</p>
 <p>Default targets are more convenient to reference on the command line and less
 verbose as build dependencies. For example, consider the following names for the
 same target:</p>
-<div class="highlight-python"><div class="highlight"><pre>src/java/com/twitter/tugboat/BUILD:tugboat  # absolute target name
+<div class="highlight-python"><div class="highlight"><pre>src/java/com/twitter/tugboat:tugboat  # absolute target name
 src/java/com/twitter/tugboat/BUILD          # references default target &quot;tugboat&quot;
 src/java/com/twitter/tugboat   # references default build file &quot;BUILD&quot; and default target &quot;tugboat&quot;
 src/java/com/twitter/tugboat/  # trailing slashes are ignored - useful for command-line completion
@@ -589,7 +604,7 @@ src/java/com/twitter/etl/from/HBaseDataImporter.java
 # DO NOT bundle interface and implementations - forces extra dependencies.
 java_library(name=&#39;from&#39;,
   dependencies=[
-    pants(&#39;3rdparty/jvm/org/apache/hbase&#39;),
+    &#39;3rdparty/jvm/org/apache/hbase&#39;,
   ],
   sources=globs(&#39;*.java&#39;),
 )
@@ -617,7 +632,7 @@ java_library(name=&#39;from&#39;,
 # pants target src/java/com/twitter/etl/from/hbase
 java_library(name=&#39;hbase&#39;,
   dependencies=[
-    pants(&#39;3rdparty/jvm/org/apache/hbase&#39;),
+    &#39;3rdparty/jvm/org/apache/hbase&#39;,
   ],
   sources=globs(&#39;*.java&#39;),
 )
@@ -641,7 +656,7 @@ java_library(name=&#39;from&#39;,
 # Implementation with heavyweight dependencies exposed separately.
 java_library(name=&#39;hbase&#39;,
   dependencies=[
-    pants(&#39;3rdparty/jvm/org/apache/hbase&#39;),
+    &#39;3rdparty/jvm/org/apache/hbase&#39;,
   ],
   sources=[&#39;HBaseDataImporter.java&#39;],
 )
@@ -656,13 +671,13 @@ implementations are available. SLF4J is a widely-used example.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="c"># Incorrect - forces a logging implementation on all library users.</span>
 <span class="n">scala_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;mylib&#39;</span><span class="p">,</span>
   <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
-    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;3rdparty:slf4j-api&#39;</span><span class="p">),</span>
-    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;3rdparty:slf4j-jdk14&#39;</span><span class="p">),</span>
+    <span class="s">&#39;3rdparty:slf4j-api&#39;</span><span class="p">,</span>
+    <span class="s">&#39;3rdparty:slf4j-jdk14&#39;</span><span class="p">,</span>
   <span class="p">],</span>
 <span class="p">)</span>
 
 <span class="n">jvm_binary</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;mybin&#39;</span><span class="p">,</span>
-  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="n">pants</span><span class="p">(</span><span class="s">&#39;:mylib&#39;</span><span class="p">)],</span>
+  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;:mylib&#39;</span><span class="p">],</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -671,15 +686,15 @@ Allow binary targets to specify the logging implementation of their choosing.</p
 <div class="highlight-python"><div class="highlight"><pre><span class="c"># Better approach - only depend on API in a library target.</span>
 <span class="n">scala_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;mylib&#39;</span><span class="p">,</span>
   <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
-    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;3rdparty:slf4j-api&#39;</span><span class="p">),</span>
+    <span class="s">&#39;3rdparty:slf4j-api&#39;</span><span class="p">,</span>
   <span class="p">],</span>
 <span class="p">)</span>
 
 <span class="c"># Bring your own API implementation in the binary.</span>
 <span class="n">jvm_binary</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;mybin&#39;</span><span class="p">,</span>
   <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
-    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;3rdparty:slf4j-jdk14&#39;</span><span class="p">),</span>
-    <span class="n">pants</span><span class="p">(</span><span class="s">&#39;:mylib&#39;</span><span class="p">),</span>
+    <span class="s">&#39;3rdparty:slf4j-jdk14&#39;</span><span class="p">,</span>
+    <span class="s">&#39;:mylib&#39;</span><span class="p">,</span>
   <span class="p">],</span>
 <span class="p">)</span>
 </pre></div>
@@ -697,11 +712,11 @@ If one <tt class="docutils literal"><span class="pre">BUILD</span></tt> file has
 targets and register those targets in a Pants data structure.</p>
 <p>Though your repo might contain many <tt class="docutils literal"><span class="pre">BUILD</span></tt> files, Pants might not execute all
 of them. If you invoke:</p>
-<div class="highlight-python"><div class="highlight"><pre>./pants goal test tests/java/com/pants/examples/hello/greet:greet
+<div class="highlight-python"><div class="highlight"><pre>./pants goal test examples/tests/java/com/pants/examples/hello/greet:greet
 </pre></div>
 </div>
 <p>Pants executes the source tree&#8217;s top-level <tt class="docutils literal"><span class="pre">BUILD</span></tt> file (executed on every Pants run) and
-<tt class="docutils literal"><span class="pre">tests/java/com/pants/examples/hello/greet/BUILD</span></tt>. The <tt class="docutils literal"><span class="pre">greet</span></tt> target
+<tt class="docutils literal"><span class="pre">examples/tests/java/com/pants/examples/hello/greet/BUILD</span></tt>. The <tt class="docutils literal"><span class="pre">greet</span></tt> target
 depends on targets from other <tt class="docutils literal"><span class="pre">BUILD</span></tt> files, so Pants executes those <tt class="docutils literal"><span class="pre">BUILD</span></tt>
 files, too; it iterates over the dependency tree, executing <tt class="docutils literal"><span class="pre">BUILD</span></tt> files as it
 goes. It does <em>not</em> execute <tt class="docutils literal"><span class="pre">BUILD</span></tt> files that don&#8217;t contain targets in that
@@ -720,6 +735,98 @@ that only makes sense behind your organization&#8217;s firewall.</p>
 <p>A build target defined in <tt class="docutils literal"><span class="pre">BUILD.foo</span></tt> can&#8217;t have the same <tt class="docutils literal"><span class="pre">name</span></tt> as
 a build target defined in the same directory&#8217;s <tt class="docutils literal"><span class="pre">BUILD</span></tt> file; they share
 a namespace.</p>
+</div>
+<div class="section" id="tag-incompatibilities-with-exclusives">
+<span id="howto-check-exclusives"></span><h2>Tag Incompatibilities with exclusives<a class="headerlink" href="#tag-incompatibilities-with-exclusives" title="Permalink to this headline">¶</a></h2>
+<p>A big code workspace might contain some parts that aren&#8217;t compatible
+with each other. To make sure that no target tries to use targets
+that don&#8217;t work together, you can tag those targets with <tt class="docutils literal"><span class="pre">exclusives</span></tt>.</p>
+<p>For example, suppose that we had two java targets, jliba and jlibb. jliba uses
+<tt class="docutils literal"><span class="pre">slf4j</span></tt>, which includes in its jar package an implementation of <tt class="docutils literal"><span class="pre">log4j</span></tt>. jlibb uses
+<tt class="docutils literal"><span class="pre">log4j</span></tt> directly. But the version of log4j that&#8217;s packaged inside of <tt class="docutils literal"><span class="pre">slf4j</span></tt> is
+different from the version used by jlibb.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;jliba&#39;</span><span class="p">,</span>
+  <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;3rdparty/jvm/org/slf4j:slf4j-with-log4j-2.4&#39;</span><span class="p">])</span>
+<span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;jlibb&#39;</span><span class="p">,</span>
+  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;3rdparty/jvm/log4j:log4j-1.9&#39;</span><span class="p">])</span>
+<span class="n">java_binary</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;javabin&#39;</span><span class="p">,</span> <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;:jliba&#39;</span><span class="p">,</span> <span class="s">&#39;:jlibb&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>In this case, the binary target <tt class="docutils literal"><span class="pre">javabin</span></tt> depends on both <tt class="docutils literal"><span class="pre">slf4j</span></tt> with its
+packaged <tt class="docutils literal"><span class="pre">log4j</span></tt> version 2.4, and on <tt class="docutils literal"><span class="pre">log4j-1.9</span></tt>.
+Pants doesn&#8217;t know that the slf4j and log4j <tt class="docutils literal"><span class="pre">jar_dependencies</span></tt> contain
+incompatible versions of the same library, and so it can&#8217;t detect the error.</p>
+<p>With exclusives, the <tt class="docutils literal"><span class="pre">jar_library</span></tt> target for the joda libraries would declare
+exclusives tags:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">jar_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;slf4j-with-log4j-2.4&#39;</span><span class="p">,</span> <span class="n">exclusives</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;log4j&#39;</span><span class="p">:</span> <span class="s">&#39;2.4&#39;</span><span class="p">},</span> <span class="n">jars</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
+<span class="n">jar_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;joda-2.1&#39;</span><span class="p">,</span> <span class="n">exclusives</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;log4j&#39;</span><span class="p">:</span> <span class="s">&#39;1.9&#39;</span><span class="p">},</span> <span class="n">jars</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>With the exclusives declared, pants can recognize that &#8216;javabin&#8217; has conflicting
+dependencies, and can generate an appropriate error message.</p>
+</div>
+<div class="section" id="what-happened-to-the-pants-wrapper-around-targets">
+<span id="usage-pants-wrapper-gone"></span><h2>What happened to the pants() wrapper around targets?<a class="headerlink" href="#what-happened-to-the-pants-wrapper-around-targets" title="Permalink to this headline">¶</a></h2>
+<p>If you have an existing project using Pants and have recently upgraded, you may encounter
+this warning</p>
+<div class="highlight-python"><div class="highlight"><pre>*** pants() wrapper is obsolete and will be removed in a future release.
+</pre></div>
+</div>
+<p>or the BUILD may fail an error.</p>
+<div class="highlight-python"><div class="highlight"><pre>NameError: name &#39;pants&#39; is not defined
+</pre></div>
+</div>
+<p>In pre-release versions of Pants, targets declared in the <tt class="docutils literal"><span class="pre">dependencies</span></tt> attribute had
+to be wrapped in a call to the <tt class="docutils literal"><span class="pre">pants()</span></tt> method.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;foo&#39;</span><span class="p">,</span>
+    <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="n">pants</span><span class="p">(</span><span class="s">&#39;bar&#39;</span><span class="p">)])</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">pants()</span></tt> method has since been replaced with a noop and as of Pants 0.0.24 is
+officially deprecated.  The above snippet should be re-written to use the target as a plain
+string.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;foo&#39;</span><span class="p">,</span>
+    <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;bar&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>You can use <tt class="docutils literal"><span class="pre">sed</span></tt> or a similar utility to quickly remove these references
+from your BUILD files with a regular expression.</p>
+<div class="highlight-python"><div class="highlight"><pre># Run this command from the root of your repo.
+sed -i &quot;&quot; -e &#39;s/pants(\([^)]*\))/\1/g&#39; `find . -name &quot;BUILD*&quot;`
+</pre></div>
+</div>
+</div>
+<div class="section" id="using-an-older-version-of-pants">
+<h2>Using an older version of Pants?<a class="headerlink" href="#using-an-older-version-of-pants" title="Permalink to this headline">¶</a></h2>
+<p>If you are following along in these examples and are using a version of pants prior to the 2014 open source release you might see one of
+the following messages:</p>
+<p>From a <tt class="docutils literal"><span class="pre">python_*</span></tt> target dependencies attribute:</p>
+<div class="highlight-python"><div class="highlight"><pre>AttributeError: &#39;str&#39; object has no attribute &#39;resolve&#39;
+</pre></div>
+</div>
+<p>From a <tt class="docutils literal"><span class="pre">java_library</span></tt> dependencies attribute:</p>
+<div class="highlight-python"><div class="highlight"><pre>The following targets could not be loaded:
+  src/java/com/twitter/foo/bar/baz =&gt;
+    TargetDefinitionException: Error with src/java/com/foo/bar/baz/BUILD:baz:
+       Expected elements of list to be (&lt;class &#39;twitter.pants.targets.external_dependency.ExternalDependency&#39;&gt;, &lt;class &#39;twitter.pants.targets.anonymous.AnonymousDeps&#39;&gt;,
+         &lt;class &#39;twitter.pants.base.target.Target&#39;&gt;), got value 3rdparty:guava of type &lt;type &#39;str&#39;&gt;
+</pre></div>
+</div>
+<p>From a <tt class="docutils literal"><span class="pre">java_library</span></tt> resources attribute:</p>
+<div class="highlight-python"><div class="highlight"><pre>IOError: [Errno 2] No such file or directory: &#39;/Users/pantsaddict/workspace/src/resources/com/foo/bar&#39;
+</pre></div>
+</div>
+<p>From a <tt class="docutils literal"><span class="pre">junit_tests</span></tt> resources attribute:</p>
+<div class="highlight-python"><div class="highlight"><pre>ValueError: Expected elements of list to be &lt;class &#39;twitter.pants.base.target.Target&#39;&gt;, got value tests/scala/foo/bar/baz/resources of type &lt;type &#39;str&#39;&gt;
+</pre></div>
+</div>
+<p>From a <tt class="docutils literal"><span class="pre">provides</span></tt> repo attribute:</p>
+<div class="highlight-python"><div class="highlight"><pre>ValueError: repo must be Repository or Pants but was foo/bar/baz:baz
+</pre></div>
+</div>
+<p>All of these errors likely mean  that you need to wrap the strings mentioned in the error message with the <tt class="docutils literal"><span class="pre">pants()</span></tt> wrapper
+function in your BUILD files.  The open source Pants release deprecated the use of this wrapper and thus examples in this
+documentation don&#8217;t include it.  For more information, see the <a class="reference internal" href="#usage-pants-wrapper-gone"><em>pants wrapper</em></a> notes above.</p>
 </div>
 </div>
 
