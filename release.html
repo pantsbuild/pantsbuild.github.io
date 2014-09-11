@@ -225,6 +225,8 @@ body a.icon-home:hover{
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installing Pants</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="install.html#virtualenv-based-installation">Virtualenv-based Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#system-wide-installation">System-wide Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="install.html#pex-based-installation">PEX-based Installation</a></li>
 </ul>
 </li>
@@ -391,7 +393,7 @@ body a.icon-home:hover{
           
   <div class="section" id="release-process">
 <h1>Release Process<a class="headerlink" href="#release-process" title="Permalink to this headline">¶</a></h1>
-<p>This page describes how to make a versioned release of Pants.</p>
+<p>This page describes how to make a versioned release of Pants and and other related packages to PyPi.</p>
 <p>At a high level, releasing pants involves:</p>
 <ul class="simple">
 <li>Deciding what/when to release. At present this is ad-hoc, typically when
@@ -401,6 +403,11 @@ that change. Things are likely to remain this way pre 1.0.0.</li>
 <li>(optional) Perform a release dry run.</li>
 <li>Publishing the release to PyPi.</li>
 <li>Announce the release on <cite>pants-devel</cite>.</li>
+</ul>
+<p>The current list of packages that are part of this release process:</p>
+<ul class="simple">
+<li>pantsbuild.pants</li>
+<li>pantsbuild.pants.testinfra</li>
 </ul>
 <div class="section" id="prepare-release">
 <h2>Prepare Release<a class="headerlink" href="#prepare-release" title="Permalink to this headline">¶</a></h2>
@@ -418,18 +425,20 @@ out for review.</p>
 otherwise you&#8217;ll need to hand off to someone who is.  The list is on the
 <a class="reference external" href="https://pypi.python.org/pypi/pantsbuild.pants">pantsbuild.pants package index page</a> in the
 <cite>Package Index Owner</cite> field:</p>
-<div class="highlight-python"><div class="highlight"><pre>curl -s https://pypi.python.org/pypi/pantsbuild.pants | grep -A1 &quot;Owner&quot;
+<div class="highlight-python"><div class="highlight"><pre>$ curl -s &quot;https://pypi.python.org`(curl -s https://pypi.python.org/pypi/pantsbuild.pants | grep -oE  &quot;/pypi/pantsbuild.pants/[0-9]*\.[0-9]*\.[0-9]*&quot; | head -n1)`&quot; | grep -A1 &quot;Owner&quot;
 &lt;strong&gt;Package Index Owner:&lt;/strong&gt;
-&lt;span&gt;john.sirois, benjyw, traviscrawford, ericzundel&lt;/span&gt;
+&lt;span&gt;john.sirois, benjyw, traviscrawford, ericzundel, ity&lt;/span&gt;
 </pre></div>
 </div>
+<p>All the other packages that are part of this simultaneous release process must have the same owner
+list or the release script would break.</p>
 <p>Releases should only be published from master, so get on master and ensure your version number
 commit is present. After confirming this, publish locally and verify the release.</p>
 <div class="highlight-python"><div class="highlight"><pre>./build-support/bin/release.sh -n
 </pre></div>
 </div>
-<p>This will perform a dry run local build of the pantsbuild.pants sdist, install it in a virtualenv
-and then smoke test basic operation.</p>
+<p>This will perform a dry run local build of the pantsbuild.pants sdist and other related package
+sdists, install them in a virtualenv and then smoke test basic operations.</p>
 <p>Note that the release publish flow also performs a mandatory dry run so executing a dry run
 separately is not required.</p>
 </div>
@@ -439,16 +448,17 @@ separately is not required.</p>
 <div class="highlight-python"><div class="highlight"><pre>./build-support/bin/release.sh
 </pre></div>
 </div>
-<p>This also performs a dry run and then proceeds to upload the smoke tested sdist to PyPi.</p>
+<p>This also performs a dry run and then proceeds to upload the smoke tested sdists to PyPi.</p>
 </div>
 <div class="section" id="announce">
 <h2>Announce<a class="headerlink" href="#announce" title="Permalink to this headline">¶</a></h2>
 <p>Check PyPi to ensure everything looks good. The <a class="reference external" href="https://pypi.python.org/pypi/pantsbuild.pants">pantsbuild.pants package index page</a> should display the package version you just
-uploaded. To test the package is installable:</p>
+uploaded. The same check applies to other related package PyPi pages.</p>
+<p>To test the packages are installable:</p>
 <div class="highlight-python"><div class="highlight"><pre>./build-support/bin/release.sh -t
 </pre></div>
 </div>
-<p>This will attempt to install the just-published package from pypi and then smoke test it.</p>
+<p>This will attempt to install the just-published packages from pypi and then smoke test them.</p>
 <p>Finally, announce the release to <cite>pants-devel</cite>.</p>
 </div>
 </div>
