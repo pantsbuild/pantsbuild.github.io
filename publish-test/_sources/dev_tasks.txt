@@ -130,7 +130,7 @@ Let's explore how to collect all targets of a particular type. ::
      interesting_targets = set()
      for target in targets:
        target.walk(lambda t: interesting_targets.add(t),
-                   lambda t: isinstance(t, FooLibrary)
+                   lambda t: isinstance(t, FooLibrary))
 
 First we need to iterate over ``targets``, which are the active concrete targets.
 Then we ``walk`` each concrete target, providing as the first parameter
@@ -149,10 +149,11 @@ Task Installation
 
 Tasks must be installed before they are available for use.
 Fortunately this is a simple process. They are installed
-in ``goal.py`` as follows: ::
+in ``register.py`` as follows: ::
 
-   from pants.tasks.pagerank import PageRank
-   goal(name='pagerank', action=PageRank).install().with_description('PageRank the given targets.')
+   def register_goals():
+     from pants.backend.core.tasks.pagerank import PageRank
+     task(name='pagerank', action=PageRank).install().with_description('PageRank the given targets.')
 
 
 
@@ -203,8 +204,8 @@ example, including exemplary configuration and error handling (which your task w
 right :)  ::
 
    class Scalastyle(NailgunTask):
-     def __init__(self, context, workdir):
-       super(Scalastyle, self).__init__(context, workdir)
+     def __init__(self, *args, **kwargs):
+       super(Scalastyle, self).__init__(*args, **kwargs)
        self._scalastyle_config = self.context.config.get_required('scalastyle, 'config')
        self._scalastyle_bootstrap_key = 'scalastyle'
        self.register_jvm_tool(self._scalastyle_bootstrap_key, [':scalastyle'])
