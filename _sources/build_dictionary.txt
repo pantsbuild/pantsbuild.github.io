@@ -569,7 +569,7 @@ jar_library
 jar_rules
 -------------------------------------------------------------------------------
 
-.. py:function:: jar_rules(rules=None, default_dup_action=&lt;object object at 0x10fbcf400&gt;)
+.. py:function:: jar_rules(rules=None, default_dup_action=&lt;object object at 0x10d78a390&gt;)
 
  A set of rules for packaging up a deploy jar.
  
@@ -1526,7 +1526,7 @@ python_thrift_library
 repo
 -------------------------------------------------------------------------------
 
-.. py:function:: repo(name, exclusives, url, push_db=None)
+.. py:function:: repo(name, exclusives, url, push_db_basedir=None)
 
  An artifact repository, such as a maven repo.
 
@@ -1535,8 +1535,8 @@ repo
  :type name: string
  :param url:  Optional URL of the repository.
  :type url: string
- :param push_db:  Path of the push history file.
- :type push_db: string
+ :param push_db_basedir:  Push history file base directory.
+ :type push_db_basedir: string
  :param dependencies:  Other targets that this target depends on.
  :type dependencies:  list of target specs
  :param exclusives:  An optional map of exclusives tags.
@@ -1795,23 +1795,13 @@ Skip
 source_root
 -------------------------------------------------------------------------------
 
-.. py:function:: source_root(parse_context)
-
- Allows registration of a source root for a set of targets.
- 
- A source root is the base path sources for a particular language are found relative to.
- Generally compilers or interpreters for the source will expect sources relative to a base path
- and a source root allows calculation of the correct relative paths.
- 
- E.g., a Java compiler probably expects to find ``.java`` files for
- ``package com.twitter.common.net`` in ``*something*/com/twitter/common/net``.
- The ``source_root`` command specifies that *something*.
- 
- It is illegal to have nested source roots.
+.. py:function:: source_root(cls, parse_context)
 
 
 
- Implemented by ``pants.base.source_root.SourceRoot``
+ Creates a ``SourceRoot`` valid for the given ``ParseContext``.
+
+ Implemented by ``pants.base.source_root.factory``
 
 
 .. _bdict_target:
