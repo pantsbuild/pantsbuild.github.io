@@ -62,22 +62,12 @@
     ga('create', 'UA-39101739-2', 'auto');
     ga('send', 'pageview');
 
-    // Show the travis-ci status graphic.
+    // Show the travis-ci status graphic
     $('.wy-breadcrumbs').append(
-      '<div style="float: right; padding: 1px;">' +
-        '<a href="https://travis-ci.org/pantsbuild/pants">' +
-          '<img src="https://travis-ci.org/pantsbuild/pants.png?branch=master">' +
-        '</a>' +
-      '</div>');
-
-    // Show the coveralls status graphic.
-    $('.wy-breadcrumbs').append(
-      '<div style="float: right; padding: 1px;">' +
-        '<a href="https://coveralls.io/r/pantsbuild/pants?branch=master">' +
-          '<img src="https://coveralls.io/repos/pantsbuild/pants/badge.png?branch=master"' +
-          '     alt="Coverage Status">' +
-        '</a>' +
-      '</div>');
+      '<div style="float: right;">' +
+      '<a href="https://travis-ci.org/pantsbuild/pants">' +
+      '<img src="https://travis-ci.org/pantsbuild/pants.png?branch=master">' +
+      '</a></div>');
   });
 </script>
 <style type="text/css">
@@ -163,6 +153,7 @@ body a.icon-home:hover{
 <li class="toctree-l1"><a class="reference internal" href="page.html">README Files and Markdown</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="page.html#markdown-to-html">Markdown to HTML</a></li>
 <li class="toctree-l2"><a class="reference internal" href="page.html#link-to-another-page">Link to Another <tt class="docutils literal"><span class="pre">page</span></tt></a></li>
+<li class="toctree-l2"><a class="reference internal" href="page.html#include-a-file-snippet">Include a File Snippet</a></li>
 <li class="toctree-l2"><a class="reference internal" href="page.html#publishing">Publishing</a></li>
 </ul>
 </li>
@@ -233,6 +224,8 @@ body a.icon-home:hover{
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installing Pants</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="install.html#virtualenv-based-installation">Virtualenv-based Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#system-wide-installation">System-wide Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="install.html#pex-based-installation">PEX-based Installation</a></li>
 </ul>
 </li>
@@ -686,8 +679,7 @@ if we wanted to build an a la carte <cite>fab</cite> wrapper for fabric:</p>
 </div>
 <p>We build:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>./pants src/python/fabwrap:fab
-Build operating on targets: OrderedSet<span class="o">([</span>PythonBinary<span class="o">(</span>src/python/fabwrap/BUILD:fab<span class="o">)])</span>
-Building PythonBinary PythonBinary<span class="o">(</span>src/python/fabwrap/BUILD:fab<span class="o">)</span>:
+...
 Wrote /private/tmp/wickman-pants/dist/fab.pex
 </pre></div>
 </div>
@@ -735,9 +727,32 @@ match the pattern *foo*, you could run</p>
 <div class="section" id="code-coverage">
 <h3>Code Coverage<a class="headerlink" href="#code-coverage" title="Permalink to this headline">¶</a></h3>
 <p>To get code coverage data, set the <cite>PANTS_PY_COVERAGE</cite> environment variable:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ PANTS_PY_COVERAGE=1  ./pants examples/tests/python/example_test/hello/greet:greet
+<div class="highlight-python"><div class="highlight"><pre>$ PANTS_PY_COVERAGE=1 ./pants examples/tests/python/example_test/hello/greet:greet
 </pre></div>
 </div>
+<p>This uses the <cite>python_tests.coverage</cite> target attribute to determine what modules to measure
+coverage against for each <cite>python_tests</cite> target run.  If the attribute is not present it&#8217;s assumed
+the coverage should be measured over the same packages that house the test target&#8217;s sources. This
+heuristic only works with parallel source and test package structures and reliance upon it is
+discouraged.</p>
+<p>There are 2 alternatives to specifying <cite>coverage</cite> attributes on all <cite>python_tests</cite> targets, but both
+override any existing <cite>coverage</cite> attributes in-play to form a global coverage specification for the
+test run.</p>
+<p><cite>PANTS_PY_COVERAGE=modules:[module1](,...,[moduleN])</cite> allows specification of package or module
+names to track coverage against.  For example:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ PANTS_PY_COVERAGE=modules:example.hello.greet,example.hello.main ./pants ...
+</pre></div>
+</div>
+<p>This would measure coverage against all python code in the <cite>example.hello.greet</cite> and
+<cite>example.hello.main</cite> packages regardless of <cite>coverage</cite> attributes present on the <cite>python_tests</cite>
+targets in-play.</p>
+<p>Similarly, a set of base paths can be specified containing the code for coverage to be measured
+over:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ PANTS_PY_COVERAGE=paths:example/hello ./pants ...
+</pre></div>
+</div>
+<p>In this case the paths should be relative to the source root housing the python code; for this
+example, <cite>examples/src/python</cite>.</p>
 </div>
 <div class="section" id="interactive-debugging-on-test-failure">
 <h3>Interactive Debugging on Test Failure<a class="headerlink" href="#interactive-debugging-on-test-failure" title="Permalink to this headline">¶</a></h3>
@@ -745,24 +760,6 @@ match the pattern *foo*, you could run</p>
 leaving out the <tt class="docutils literal"><span class="pre">goal</span> <span class="pre">test</span></tt> and passing <tt class="docutils literal"><span class="pre">--pdb</span></tt>.
 This can be useful for
 inspecting the state of objects especially if you are mocking interfaces.</p>
-</div>
-<div class="section" id="other-testing-frameworks">
-<h3>Other Testing Frameworks<a class="headerlink" href="#other-testing-frameworks" title="Permalink to this headline">¶</a></h3>
-<p>Although most tests can run under <cite>pytest</cite>, if you need to use a different testing framework, you
-can. Set the <cite>entry_point</cite> keyword argument when calling python_tests:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">python_tests</span><span class="p">(</span>
-  <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;tests&#39;</span><span class="p">,</span>
-  <span class="n">sources</span> <span class="o">=</span> <span class="p">[],</span>
-  <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s">&#39;src/python/twitter/infraops/supplybird:supplybird-lib&#39;</span><span class="p">,</span>
-    <span class="s">&#39;3rdparty/python:mock&#39;</span>
-  <span class="p">],</span>
-  <span class="n">entry_point</span><span class="o">=</span><span class="s">&quot;twitter.infraops.supplybird.core.run_tests&quot;</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<p>The <cite>entry_point</cite> exits with a non-zero status if there are test failures.</p>
-<p>Keep in mind, however, that much of the above documentation assumes you are using <cite>pytest</cite>.</p>
 </div>
 </div>
 <div class="section" id="manipulating-pex-behavior-with-environment-variables">

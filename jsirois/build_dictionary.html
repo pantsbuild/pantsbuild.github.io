@@ -62,22 +62,12 @@
     ga('create', 'UA-39101739-2', 'auto');
     ga('send', 'pageview');
 
-    // Show the travis-ci status graphic.
+    // Show the travis-ci status graphic
     $('.wy-breadcrumbs').append(
-      '<div style="float: right; padding: 1px;">' +
-        '<a href="https://travis-ci.org/pantsbuild/pants">' +
-          '<img src="https://travis-ci.org/pantsbuild/pants.png?branch=master">' +
-        '</a>' +
-      '</div>');
-
-    // Show the coveralls status graphic.
-    $('.wy-breadcrumbs').append(
-      '<div style="float: right; padding: 1px;">' +
-        '<a href="https://coveralls.io/r/pantsbuild/pants?branch=master">' +
-          '<img src="https://coveralls.io/repos/pantsbuild/pants/badge.png?branch=master"' +
-          '     alt="Coverage Status">' +
-        '</a>' +
-      '</div>');
+      '<div style="float: right;">' +
+      '<a href="https://travis-ci.org/pantsbuild/pants">' +
+      '<img src="https://travis-ci.org/pantsbuild/pants.png?branch=master">' +
+      '</a></div>');
   });
 </script>
 <style type="text/css">
@@ -163,6 +153,7 @@ body a.icon-home:hover{
 <li class="toctree-l1"><a class="reference internal" href="page.html">README Files and Markdown</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="page.html#markdown-to-html">Markdown to HTML</a></li>
 <li class="toctree-l2"><a class="reference internal" href="page.html#link-to-another-page">Link to Another <tt class="docutils literal"><span class="pre">page</span></tt></a></li>
+<li class="toctree-l2"><a class="reference internal" href="page.html#include-a-file-snippet">Include a File Snippet</a></li>
 <li class="toctree-l2"><a class="reference internal" href="page.html#publishing">Publishing</a></li>
 </ul>
 </li>
@@ -233,6 +224,8 @@ body a.icon-home:hover{
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installing Pants</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="install.html#virtualenv-based-installation">Virtualenv-based Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#system-wide-installation">System-wide Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="install.html#pex-based-installation">PEX-based Installation</a></li>
 </ul>
 </li>
@@ -524,7 +517,7 @@ targets; some are handy utilities.</p>
 <span id="bdict-android-binary"></span><h2>android_binary<a class="headerlink" href="#android-binary" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="android_binary">
-<tt class="descname">android_binary</tt><big>(</big><em>build_type=None</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#android_binary" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">android_binary</tt><big>(</big><em>name</em>, <em>exclusives</em>, <em>address</em>, <em>sources=None</em>, <em>sources_rel_path=None</em>, <em>provides=None</em>, <em>excludes=None</em>, <em>resources=None</em>, <em>configurations=None</em>, <em>address=None</em>, <em>build_tools_version=u'19.1.0'</em>, <em>manifest=None</em>, <em>build_type=None</em><big>)</big><a class="headerlink" href="#android_binary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Produces an Android binary.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -543,6 +536,11 @@ Defaults to the latest full release.</li>
 to the BUILD file&#8217;s directory.</li>
 <li><strong>build_type</strong> (<em>string</em>) &#8211; One of [debug, release]. The keystore to sign the package with.
 Set as &#8216;debug&#8217; by default.</li>
+<li><strong>configurations</strong> (<em>tuple of strings</em>) &#8211; One or more ivy configurations to resolve for this target.
+This parameter is not intended for general use.</li>
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags.
+See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -573,7 +571,7 @@ Set as &#8216;debug&#8217; by default.</li>
 <span id="bdict-android-resources"></span><h2>android_resources<a class="headerlink" href="#android-resources" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="android_resources">
-<tt class="descname">android_resources</tt><big>(</big><em>resource_dir=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#android_resources" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">android_resources</tt><big>(</big><em>name</em>, <em>exclusives</em>, <em>address</em>, <em>sources=None</em>, <em>sources_rel_path=None</em>, <em>provides=None</em>, <em>excludes=None</em>, <em>resources=None</em>, <em>configurations=None</em>, <em>address=None</em>, <em>build_tools_version=u'19.1.0'</em>, <em>manifest=None</em>, <em>resource_dir=None</em><big>)</big><a class="headerlink" href="#android_resources" title="Permalink to this definition">¶</a></dt>
 <dd><p>Processes android resources to generate R.java</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -582,7 +580,22 @@ Set as &#8216;debug&#8217; by default.</li>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>resource_dir</strong> (<em>string</em>) &#8211; path/to/directory containing Android resource files,
 often named &#8216;res&#8217;.</li>
+<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
+build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
+<li><strong>sources</strong> (<tt class="docutils literal"><span class="pre">Fileset</span></tt> or list of strings.) &#8211; Source code files to compile. Paths are relative to the
+BUILD file&#8217;s directory.</li>
+<li><strong>excludes</strong> &#8211; List of <a class="reference internal" href="#bdict-exclude"><em>exclude</em></a>s
+to filter this target&#8217;s transitive dependencies against.</li>
+<li><strong>build_tools_version</strong> &#8211; API for the Build Tools (separate from SDK version).
+Defaults to the latest full release.</li>
+<li><strong>manifest</strong> &#8211; path/to/file of &#8216;AndroidManifest.xml&#8217; (required name). Paths are relative
+to the BUILD file&#8217;s directory.
+Set as &#8216;debug&#8217; by default.</li>
+<li><strong>configurations</strong> (<em>tuple of strings</em>) &#8211; One or more ivy configurations to resolve for this target.
+This parameter is not intended for general use.</li>
 <li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags.
+See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -613,28 +626,26 @@ often named &#8216;res&#8217;.</li>
 <span id="bdict-annotation-processor"></span><h2>annotation_processor<a class="headerlink" href="#annotation-processor" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="annotation_processor">
-<tt class="descname">annotation_processor</tt><big>(</big><em>processors=None</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#annotation_processor" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">annotation_processor</tt><big>(</big><em>name</em>, <em>exclusives</em>, <em>address</em>, <em>sources=None</em>, <em>sources_rel_path=None</em>, <em>provides=None</em>, <em>excludes=None</em>, <em>resources=None</em>, <em>configurations=None</em>, <em>processors=None</em><big>)</big><a class="headerlink" href="#annotation_processor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Produces a Java library containing one or more annotation processors.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
-build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
-<li><strong>sources</strong> (<tt class="docutils literal"><span class="pre">Fileset</span></tt> or list of strings) &#8211; Source code files to compile. Paths are relative to the
-BUILD file&#8217;s directory.</li>
-<li><strong>provides</strong> &#8211; The <tt class="docutils literal"><span class="pre">artifact</span></tt>
-to publish that represents this target outside the repo.</li>
-<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
-<li><strong>excludes</strong> &#8211; List of <a class="reference internal" href="#bdict-exclude"><em>exclude</em></a>s
-to filter this target&#8217;s transitive dependencies against.</li>
 <li><strong>resources</strong> &#8211; An optional list of file paths (DEPRECATED) or
 <tt class="docutils literal"><span class="pre">resources</span></tt> targets (which in turn point to file paths). The paths
 indicate text file resources to place in this module&#8217;s jar.</li>
 <li><strong>processors</strong> &#8211; A list of the fully qualified class names of the
 annotation processors this library exports.</li>
-<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
+<li><strong>provides</strong> &#8211; An optional Dependency object indicating the The ivy artifact to export.</li>
+<li><strong>configurations</strong> (<em>tuple of strings</em>) &#8211; One or more ivy configurations to resolve for this target.
+This parameter is not intended for general use.</li>
+<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
+build file defines the target address.</li>
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags.
+See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -690,7 +701,7 @@ annotation processors this library exports.</li>
 <span id="bdict-benchmark"></span><h2>benchmark<a class="headerlink" href="#benchmark" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt>
-<tt class="descname">benchmark</tt><big>(</big><em>address=None</em>, <em>sources=None</em>, <em>sources_rel_path=None</em>, <em>provides=None</em>, <em>excludes=None</em>, <em>resources=None</em>, <em>configurations=None</em>, <em>**kwargs</em><big>)</big></dt>
+<tt class="descname">benchmark</tt><big>(</big><em>name</em>, <em>exclusives</em>, <em>address</em>, <em>sources=None</em>, <em>sources_rel_path=None</em>, <em>provides=None</em>, <em>excludes=None</em>, <em>resources=None</em>, <em>configurations=None</em>, <em>address=None</em>, <em>sources=None</em>, <em>sources_rel_path=None</em>, <em>provides=None</em>, <em>excludes=None</em>, <em>resources=None</em>, <em>configurations=None</em><big>)</big></dt>
 <dd><p>A caliper benchmark.</p>
 <p>Run it with the <tt class="docutils literal"><span class="pre">bench</span></tt> goal.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -698,15 +709,13 @@ annotation processors this library exports.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
-build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
-<li><strong>sources</strong> (<tt class="docutils literal"><span class="pre">Fileset</span></tt> or list of strings) &#8211; Source code files to compile. Paths are relative to the
-BUILD file&#8217;s directory.</li>
-<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
-<li><strong>excludes</strong> &#8211; List of <a class="reference internal" href="#bdict-exclude"><em>exclude</em></a>s
-to filter this target&#8217;s transitive dependencies against.</li>
 <li><strong>configurations</strong> (<em>tuple of strings</em>) &#8211; One or more ivy configurations to resolve for this target.
 This parameter is not intended for general use.</li>
+<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
+build file defines the target address.</li>
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags.
+See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -766,7 +775,7 @@ This parameter is not intended for general use.</li>
 <span id="bdict-credentials"></span><h2>credentials<a class="headerlink" href="#credentials" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt>
-<tt class="descname">credentials</tt><big>(</big><em>username=None</em>, <em>password=None</em>, <em>**kwargs</em><big>)</big></dt>
+<tt class="descname">credentials</tt><big>(</big><em>name</em>, <em>exclusives</em>, <em>username</em>, <em>password=None</em><big>)</big></dt>
 <dd><p>Supplies credentials for a maven repository on demand.</p>
 <p>The <tt class="docutils literal"><span class="pre">jar-publish</span></tt> section of your <tt class="docutils literal"><span class="pre">pants.ini</span></tt> file can refer to one
 or more of these.</p>
@@ -778,6 +787,9 @@ or more of these.</p>
 <li><strong>name</strong> (<em>string</em>) &#8211; The name of these credentials.</li>
 <li><strong>username</strong> (<em>string or callable</em>) &#8211; Either a constant username value or else a callable that can fetch one.</li>
 <li><strong>password</strong> (<em>string or callable</em>) &#8211; Either a constant password value or else a callable that can fetch one.</li>
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags.
+See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -976,17 +988,19 @@ that can use source jars (as of 2013, just eclipse and idea goals).</p>
 <span id="bdict-jar-library"></span><h2>jar_library<a class="headerlink" href="#jar-library" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="jar_library">
-<tt class="descname">jar_library</tt><big>(</big><em>jars=None</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#jar_library" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">jar_library</tt><big>(</big><em>name</em>, <em>exclusives</em>, <em>jars=None</em><big>)</big><a class="headerlink" href="#jar_library" title="Permalink to this definition">¶</a></dt>
 <dd><p>A set of jars that may be depended upon.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
-build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
 <li><strong>jars</strong> &#8211; List of <a class="reference internal" href="#bdict-jar"><em>jar</em></a>s to depend upon.</li>
-<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
+<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
+build file defines the target address.</li>
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags.
+See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -1017,7 +1031,7 @@ build file defines the <a class="reference internal" href="target_addresses.html
 <span id="bdict-jar-rules"></span><h2>jar_rules<a class="headerlink" href="#jar-rules" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="jar_rules">
-<tt class="descname">jar_rules</tt><big>(</big><em>rules=None</em>, <em>default_dup_action=&amp;lt;object object at 0x7feb510f7d30&amp;gt;</em><big>)</big><a class="headerlink" href="#jar_rules" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">jar_rules</tt><big>(</big><em>rules=None</em>, <em>default_dup_action=&amp;lt;object object at 0x7f384001ad20&amp;gt;</em><big>)</big><a class="headerlink" href="#jar_rules" title="Permalink to this definition">¶</a></dt>
 <dd><p>A set of rules for packaging up a deploy jar.</p>
 <p>Deploy jars are executable jars with fully self-contained classpaths and as such, assembling them
 presents problems given jar semantics.</p>
@@ -1054,24 +1068,13 @@ no explicit rules apply to the entry.</li>
 <span id="bdict-java-agent"></span><h2>java_agent<a class="headerlink" href="#java-agent" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="java_agent">
-<tt class="descname">java_agent</tt><big>(</big><em>name</em>, <em>sources=None</em>, <em>excludes=None</em>, <em>resources=None</em>, <em>exclusives=None</em>, <em>premain=None</em>, <em>agent_class=None</em>, <em>can_redefine=False</em>, <em>can_retransform=False</em>, <em>can_set_native_method_prefix=False</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#java_agent" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">java_agent</tt><big>(</big><em>name</em>, <em>exclusives</em>, <em>address</em>, <em>sources</em>, <em>sources_rel_path=None</em>, <em>provides=None</em>, <em>excludes=None</em>, <em>resources=None</em>, <em>configurations=None</em>, <em>name=None</em>, <em>sources=None</em>, <em>excludes=None</em>, <em>resources=None</em>, <em>exclusives=None</em>, <em>premain=None</em>, <em>agent_class=None</em>, <em>can_redefine=False</em>, <em>can_retransform=False</em>, <em>can_set_native_method_prefix=False</em><big>)</big><a class="headerlink" href="#java_agent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Defines a java agent entrypoint.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
-build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
-<li><strong>sources</strong> (<tt class="docutils literal"><span class="pre">Fileset</span></tt> or list of strings) &#8211; Source code files to compile. Paths are relative to the
-BUILD file&#8217;s directory.</li>
-<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
-<li><strong>excludes</strong> &#8211; List of <a class="reference internal" href="#bdict-exclude"><em>exclude</em></a>s
-to filter this target&#8217;s transitive dependencies against.</li>
-<li><strong>resources</strong> &#8211; An optional list of file paths (DEPRECATED) or
-<tt class="docutils literal"><span class="pre">resources</span></tt> targets (which in turn point to file paths). The paths
-indicate text file resources to place in this module&#8217;s jar.</li>
-<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 <li><strong>premain</strong> (<em>string</em>) &#8211; When an agent is specified at JVM launch time this attribute specifies
 the agent class. Exactly one of <tt class="docutils literal"><span class="pre">premain</span></tt> or <tt class="docutils literal"><span class="pre">agent_class</span></tt> must be specified.</li>
 <li><strong>agent_class</strong> (<em>string</em>) &#8211; If an implementation supports a mechanism to start agents sometime
@@ -1083,6 +1086,18 @@ after the VM has started then this attribute specifies the agent class. Exactly 
 agent; <cite>False</cite> by default.</li>
 <li><strong>can_set_native_method_prefix</strong> (<em>bool</em>) &#8211; <cite>True</cite> if the ability to set he native method prefix
 is needed by this agent; <cite>False</cite> by default.</li>
+<li><strong>provides</strong> &#8211; The <tt class="docutils literal"><span class="pre">artifact</span></tt>
+to publish that represents this target outside the repo.</li>
+<li><strong>resources</strong> &#8211; An optional list of file paths (DEPRECATED) or
+<tt class="docutils literal"><span class="pre">resources</span></tt> targets (which in turn point to file paths). The paths
+indicate text file resources to place in this module&#8217;s jar.</li>
+<li><strong>configurations</strong> (<em>tuple of strings</em>) &#8211; One or more ivy configurations to resolve for this target.
+This parameter is not intended for general use.</li>
+<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
+build file defines the target address.</li>
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags.
+See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -1113,20 +1128,15 @@ is needed by this agent; <cite>False</cite> by default.</li>
 <span id="bdict-java-antlr-library"></span><h2>java_antlr_library<a class="headerlink" href="#java-antlr-library" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="java_antlr_library">
-<tt class="descname">java_antlr_library</tt><big>(</big><em>name=None</em>, <em>sources=None</em>, <em>provides=None</em>, <em>excludes=None</em>, <em>compiler=u'antlr3'</em>, <em>package=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#java_antlr_library" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">java_antlr_library</tt><big>(</big><em>name</em>, <em>exclusives</em>, <em>address</em>, <em>sources=None</em>, <em>sources_rel_path=None</em>, <em>provides=None</em>, <em>excludes=None</em>, <em>resources=None</em>, <em>configurations=None</em>, <em>name=None</em>, <em>sources=None</em>, <em>provides=None</em>, <em>excludes=None</em>, <em>compiler=u'antlr3'</em>, <em>package=None</em><big>)</big><a class="headerlink" href="#java_antlr_library" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates a stub Java library from Antlr grammar files.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
-build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
-<li><strong>sources</strong> (<tt class="docutils literal"><span class="pre">Fileset</span></tt> or list of strings) &#8211; Source code files to compile. Paths are relative to the
-BUILD file&#8217;s directory.</li>
 <li><strong>provides</strong> &#8211; The <tt class="docutils literal"><span class="pre">artifact</span></tt>
 to publish that represents this target outside the repo.</li>
-<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
 <li><strong>excludes</strong> &#8211; List of <a class="reference internal" href="#bdict-exclude"><em>exclude</em></a>s
 to filter this target&#8217;s transitive dependencies against.</li>
 <li><strong>compiler</strong> &#8211; The name of the compiler used to compile the ANTLR files.
@@ -1134,6 +1144,13 @@ Currently only supports &#8216;antlr3&#8217; and &#8216;antlr4&#8217;</li>
 <li><strong>package</strong> &#8211; A string which specifies the package to be used on the dependent sources.
 If unset, the package will be based on the path to the sources. Note that if the sources
 Are spread among different files, this must be set as the package cannot be inferred.</li>
+<li><strong>configurations</strong> (<em>tuple of strings</em>) &#8211; One or more ivy configurations to resolve for this target.
+This parameter is not intended for general use.</li>
+<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
+build file defines the target address.</li>
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags.
+See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -1164,7 +1181,7 @@ Are spread among different files, this must be set as the package cannot be infe
 <span id="bdict-java-library"></span><h2>java_library<a class="headerlink" href="#java-library" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="java_library">
-<tt class="descname">java_library</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#java_library" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">java_library</tt><big>(</big><em>name</em>, <em>exclusives</em>, <em>address</em>, <em>sources=None</em>, <em>sources_rel_path=None</em>, <em>provides=None</em>, <em>excludes=None</em>, <em>resources=None</em>, <em>configurations=None</em><big>)</big><a class="headerlink" href="#java_library" title="Permalink to this definition">¶</a></dt>
 <dd><p>A collection of Java code.</p>
 <p>Normally has conceptually-related sources; invoking the <tt class="docutils literal"><span class="pre">compile</span></tt> goal
 on this target compiles Java and generates classes. Invoking the <tt class="docutils literal"><span class="pre">jar</span></tt>
@@ -1176,20 +1193,18 @@ more sensible thing to bundle.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
-build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
-<li><strong>sources</strong> (<tt class="docutils literal"><span class="pre">Fileset</span></tt> or list of strings) &#8211; Source code files to compile. Paths are relative to the
-BUILD file&#8217;s directory.</li>
 <li><strong>provides</strong> &#8211; The <tt class="docutils literal"><span class="pre">artifact</span></tt>
 to publish that represents this target outside the repo.</li>
-<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on. If your
-code <tt class="docutils literal"><span class="pre">import</span></tt>s code from other places, it depends on them.</li>
-<li><strong>excludes</strong> &#8211; List of <a class="reference internal" href="#bdict-exclude"><em>exclude</em></a>s
-to filter this target&#8217;s transitive dependencies against.</li>
 <li><strong>resources</strong> &#8211; An optional list of file paths (DEPRECATED) or
 <tt class="docutils literal"><span class="pre">resources</span></tt> targets (which in turn point to file paths). The paths
 indicate text file resources to place in this module&#8217;s jar.</li>
-<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
+<li><strong>configurations</strong> (<em>tuple of strings</em>) &#8211; One or more ivy configurations to resolve for this target.
+This parameter is not intended for general use.</li>
+<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
+build file defines the target address.</li>
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags.
+See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -1220,27 +1235,25 @@ indicate text file resources to place in this module&#8217;s jar.</li>
 <span id="bdict-java-protobuf-library"></span><h2>java_protobuf_library<a class="headerlink" href="#java-protobuf-library" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="java_protobuf_library">
-<tt class="descname">java_protobuf_library</tt><big>(</big><em>buildflags=None</em>, <em>imports=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#java_protobuf_library" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">java_protobuf_library</tt><big>(</big><em>name</em>, <em>exclusives</em>, <em>address</em>, <em>sources=None</em>, <em>sources_rel_path=None</em>, <em>provides=None</em>, <em>excludes=None</em>, <em>resources=None</em>, <em>configurations=None</em>, <em>buildflags=None</em>, <em>imports=None</em><big>)</big><a class="headerlink" href="#java_protobuf_library" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates a stub Java library from protobuf IDL files.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
-build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
-<li><strong>sources</strong> (<tt class="docutils literal"><span class="pre">Fileset</span></tt> or list of strings) &#8211; Source code files to compile. Paths are relative to the
-BUILD file&#8217;s directory.</li>
-<li><strong>provides</strong> &#8211; The <tt class="docutils literal"><span class="pre">artifact</span></tt>
-to publish that represents this target outside the repo.</li>
-<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
-<li><strong>excludes</strong> &#8211; List of <a class="reference internal" href="#bdict-exclude"><em>exclude</em></a>s
-to filter this target&#8217;s transitive dependencies against.</li>
 <li><strong>buildflags</strong> &#8211; Unused, and will be removed in a future release.</li>
 <li><strong>imports</strong> &#8211; List of external <tt class="xref py py-class docutils literal"><span class="pre">pants.backend.jvm.targets.jar_dependency.JarDependency</span></tt>
 objects and addresses of <tt class="xref py py-class docutils literal"><span class="pre">pants.backend.jvm.targets.jar_library.JarLibrary</span></tt> targets
 which contain .proto definitions.</li>
-<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
+<li><strong>provides</strong> &#8211; An optional Dependency object indicating the The ivy artifact to export.</li>
+<li><strong>configurations</strong> (<em>tuple of strings</em>) &#8211; One or more ivy configurations to resolve for this target.
+This parameter is not intended for general use.</li>
+<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
+build file defines the target address.</li>
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags.
+See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -1271,23 +1284,20 @@ which contain .proto definitions.</li>
 <span id="bdict-java-ragel-library"></span><h2>java_ragel_library<a class="headerlink" href="#java-ragel-library" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="java_ragel_library">
-<tt class="descname">java_ragel_library</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#java_ragel_library" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">java_ragel_library</tt><big>(</big><em>name</em>, <em>exclusives</em>, <em>address</em>, <em>sources=None</em>, <em>sources_rel_path=None</em>, <em>provides=None</em>, <em>excludes=None</em>, <em>resources=None</em>, <em>configurations=None</em><big>)</big><a class="headerlink" href="#java_ragel_library" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates a stub Java library from a Ragel file.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>configurations</strong> (<em>tuple of strings</em>) &#8211; One or more ivy configurations to resolve for this target.
+This parameter is not intended for general use.</li>
 <li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
-build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
-<li><strong>sources</strong> (<tt class="docutils literal"><span class="pre">Fileset</span></tt> or list of strings) &#8211; Source code files to compile. Paths are relative to the
-BUILD file&#8217;s directory.</li>
-<li><strong>provides</strong> &#8211; The <tt class="docutils literal"><span class="pre">artifact</span></tt>
-to publish that represents this target outside the repo.</li>
+build file defines the target address.</li>
 <li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
-<li><strong>excludes</strong> &#8211; List of <a class="reference internal" href="#bdict-exclude"><em>exclude</em></a>s
-to filter this target&#8217;s transitive dependencies against.</li>
-<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags.
+See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -1323,28 +1333,25 @@ to filter this target&#8217;s transitive dependencies against.</li>
 <span id="bdict-java-thrift-library"></span><h2>java_thrift_library<a class="headerlink" href="#java-thrift-library" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="java_thrift_library">
-<tt class="descname">java_thrift_library</tt><big>(</big><em>compiler=None</em>, <em>language=None</em>, <em>rpc_style=None</em>, <em>namespace_map=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#java_thrift_library" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">java_thrift_library</tt><big>(</big><em>name</em>, <em>exclusives</em>, <em>address</em>, <em>sources=None</em>, <em>sources_rel_path=None</em>, <em>provides=None</em>, <em>excludes=None</em>, <em>resources=None</em>, <em>configurations=None</em>, <em>compiler=None</em>, <em>language=None</em>, <em>rpc_style=None</em>, <em>namespace_map=None</em><big>)</big><a class="headerlink" href="#java_thrift_library" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates a stub Java or Scala library from thrift IDL files.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
-build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
-<li><strong>sources</strong> (<tt class="docutils literal"><span class="pre">Fileset</span></tt> or list of strings) &#8211; Source code files to compile. Paths are relative to the
-BUILD file&#8217;s directory.</li>
-<li><strong>provides</strong> &#8211; The <tt class="docutils literal"><span class="pre">artifact</span></tt>
-to publish that represents this target outside the repo.</li>
-<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
-<li><strong>excludes</strong> &#8211; List of <a class="reference internal" href="#bdict-exclude"><em>exclude</em></a>s
-to filter this target&#8217;s transitive dependencies against.</li>
 <li><strong>compiler</strong> &#8211; The compiler used to compile the thrift files; default is &#8216;thrift&#8217;
 (The apache thrift compiler).</li>
 <li><strong>language</strong> &#8211; The language used to generate the output files; defaults to &#8216;java&#8217;.</li>
 <li><strong>rpc_style</strong> &#8211; An optional rpc style to generate service stubs with.</li>
 <li><strong>namespace_map</strong> &#8211; An optional dictionary of namespaces to remap {old: new}</li>
-<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
+<li><strong>configurations</strong> (<em>tuple of strings</em>) &#8211; One or more ivy configurations to resolve for this target.
+This parameter is not intended for general use.</li>
+<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
+build file defines the target address.</li>
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags.
+See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -1375,7 +1382,7 @@ to filter this target&#8217;s transitive dependencies against.</li>
 <span id="bdict-jaxb-library"></span><h2>jaxb_library<a class="headerlink" href="#jaxb-library" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="jaxb_library">
-<tt class="descname">jaxb_library</tt><big>(</big><em>package=None</em>, <em>language=u'java'</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#jaxb_library" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">jaxb_library</tt><big>(</big><em>name</em>, <em>exclusives</em>, <em>address</em>, <em>sources=None</em>, <em>sources_rel_path=None</em>, <em>provides=None</em>, <em>excludes=None</em>, <em>resources=None</em>, <em>configurations=None</em>, <em>package=None</em>, <em>language=u'java'</em><big>)</big><a class="headerlink" href="#jaxb_library" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates a stub Java library from jaxb xsd files.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1388,15 +1395,13 @@ If unspecified, Pants guesses it from the file path leading to the schema
 <tt class="docutils literal"><span class="pre">.../com/company/package/schema.xsd</span></tt>. This guess is probably less
 accurate than setting the package explicitly in the <tt class="docutils literal"><span class="pre">BUILD</span></tt> file.</li>
 <li><strong>language</strong> (<em>string</em>) &#8211; only &#8216;java&#8217; is supported. Default: &#8216;java&#8217;</li>
-<li><strong>buildflags</strong> &#8211; (currently unused)</li>
+<li><strong>configurations</strong> (<em>tuple of strings</em>) &#8211; One or more ivy configurations to resolve for this target.
+This parameter is not intended for general use.</li>
 <li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
-build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
-<li><strong>sources</strong> (<tt class="docutils literal"><span class="pre">FileSet</span></tt> or list of strings.) &#8211; A list of filenames representing the source code this library is compiled from.</li>
-<li><strong>dependencies</strong> (<em>List of target specs.</em>) &#8211; Other targets that this target depends on.</li>
-<li><strong>excludes</strong> &#8211; List of <tt class="docutils literal"><span class="pre">exclude</span></tt>s to filter this
-target&#8217;s transitive dependencies against.</li>
-<li><strong>configurations</strong> (<em>tuple of strings</em>) &#8211; One or more ivy configurations to resolve for this target. This parameter
-is not intended for general use.</li>
+build file defines the target address.</li>
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags.
+See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -1427,25 +1432,20 @@ is not intended for general use.</li>
 <span id="bdict-junit-tests"></span><h2>junit_tests<a class="headerlink" href="#junit-tests" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="junit_tests">
-<tt class="descname">junit_tests</tt><big>(</big><em>sources=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#junit_tests" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">junit_tests</tt><big>(</big><em>name</em>, <em>exclusives</em>, <em>address</em>, <em>sources=None</em>, <em>sources_rel_path=None</em>, <em>provides=None</em>, <em>excludes=None</em>, <em>resources=None</em>, <em>configurations=None</em>, <em>sources=None</em><big>)</big><a class="headerlink" href="#junit_tests" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tests JVM sources with JUnit.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>configurations</strong> (<em>tuple of strings</em>) &#8211; One or more ivy configurations to resolve for this target.
+This parameter is not intended for general use.</li>
 <li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
-build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
-<li><strong>sources</strong> (<tt class="docutils literal"><span class="pre">Fileset</span></tt> or list of strings) &#8211; Source code files to compile. Paths are relative to the
-BUILD file&#8217;s directory.</li>
-<li><strong>provides</strong> &#8211; The <tt class="docutils literal"><span class="pre">artifact</span></tt>
-to publish that represents this target outside the repo.</li>
+build file defines the target address.</li>
 <li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
-<li><strong>excludes</strong> &#8211; List of <a class="reference internal" href="#bdict-exclude"><em>exclude</em></a>s
-to filter this target&#8217;s transitive dependencies against.</li>
-<li><strong>resources</strong> &#8211; An optional list of <tt class="docutils literal"><span class="pre">resources</span></tt> targets containing text
-file resources to place in this module&#8217;s jar.</li>
-<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags.
+See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -1476,7 +1476,7 @@ file resources to place in this module&#8217;s jar.</li>
 <span id="bdict-jvm-app"></span><h2>jvm_app<a class="headerlink" href="#jvm-app" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="jvm_app">
-<tt class="descname">jvm_app</tt><big>(</big><em>name=None</em>, <em>binary=None</em>, <em>bundles=None</em>, <em>basename=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#jvm_app" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">jvm_app</tt><big>(</big><em>name</em>, <em>exclusives</em>, <em>name</em>, <em>binary=None</em>, <em>bundles=None</em>, <em>basename=None</em><big>)</big><a class="headerlink" href="#jvm_app" title="Permalink to this definition">¶</a></dt>
 <dd><p>A JVM-based application consisting of a binary plus &#8220;extra files&#8221;.</p>
 <p>Invoking the <tt class="docutils literal"><span class="pre">bundle</span></tt> goal on one of these targets creates a
 self-contained artifact suitable for deployment on some other machine.
@@ -1497,6 +1497,9 @@ describing &#8220;extra files&#8221; that should be included with this app
 <li><strong>basename</strong> (<em>string</em>) &#8211; Name of this application, if different from the
 <tt class="docutils literal"><span class="pre">name</span></tt>. Pants uses this in the <tt class="docutils literal"><span class="pre">bundle</span></tt> goal to name the distribution
 artifact. In most cases this parameter is not necessary.</li>
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags.
+See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -1527,7 +1530,7 @@ artifact. In most cases this parameter is not necessary.</li>
 <span id="bdict-jvm-binary"></span><h2>jvm_binary<a class="headerlink" href="#jvm-binary" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="jvm_binary">
-<tt class="descname">jvm_binary</tt><big>(</big><em>name=None</em>, <em>main=None</em>, <em>basename=None</em>, <em>source=None</em>, <em>deploy_excludes=None</em>, <em>deploy_jar_rules=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#jvm_binary" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">jvm_binary</tt><big>(</big><em>name</em>, <em>exclusives</em>, <em>address</em>, <em>sources=None</em>, <em>sources_rel_path=None</em>, <em>provides=None</em>, <em>excludes=None</em>, <em>resources=None</em>, <em>configurations=None</em>, <em>name=None</em>, <em>main=None</em>, <em>basename=None</em>, <em>source=None</em>, <em>deploy_excludes=None</em>, <em>deploy_jar_rules=None</em><big>)</big><a class="headerlink" href="#jvm_binary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Produces a JVM binary optionally identifying a launcher main class.</p>
 <p>Below are a summary of how key goals affect targets of this type:</p>
 <ul class="simple">
@@ -1551,6 +1554,8 @@ present as the source of this target or depended-upon library.</li>
 <tt class="docutils literal"><span class="pre">'hello'</span></tt>. (By default, uses <tt class="docutils literal"><span class="pre">name</span></tt> param)</li>
 <li><strong>source</strong> (<em>string</em>) &#8211; Name of one <tt class="docutils literal"><span class="pre">.java</span></tt> or <tt class="docutils literal"><span class="pre">.scala</span></tt> file (a good
 place for a <tt class="docutils literal"><span class="pre">main</span></tt>).</li>
+<li><strong>sources</strong> &#8211; Overridden by source. If you want more than one source
+file, use a library and have the jvm_binary depend on that library.</li>
 <li><strong>resources</strong> &#8211; List of <tt class="docutils literal"><span class="pre">resource</span></tt>s to include in bundle.</li>
 <li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Targets (probably <tt class="docutils literal"><span class="pre">java_library</span></tt> and
 <tt class="docutils literal"><span class="pre">scala_library</span></tt> targets) to &#8220;link&#8221; in.</li>
@@ -1566,6 +1571,8 @@ code but exclude the conflicting <tt class="docutils literal"><span class="pre">
 deploy jar.</li>
 <li><strong>configurations</strong> (<em>tuple of strings</em>) &#8211; Ivy configurations to resolve for this target.
 This parameter is not intended for general use.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags.
+See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -1596,7 +1603,7 @@ This parameter is not intended for general use.</li>
 <span id="bdict-keystore"></span><h2>keystore<a class="headerlink" href="#keystore" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt>
-<tt class="descname">keystore</tt><big>(</big><em>build_type=None</em>, <em>source=None</em>, <em>keystore_alias=None</em>, <em>keystore_password=None</em>, <em>key_password=None</em>, <em>**kwargs</em><big>)</big></dt>
+<tt class="descname">keystore</tt><big>(</big><em>name</em>, <em>exclusives</em>, <em>build_type</em>, <em>source=None</em>, <em>keystore_alias=None</em>, <em>keystore_password=None</em>, <em>key_password=None</em><big>)</big></dt>
 <dd><p>Represents a keystore configuration</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1608,6 +1615,11 @@ This parameter is not intended for general use.</li>
 <li><strong>keystore_alias</strong> (<em>string</em>) &#8211; The alias of this keystore.</li>
 <li><strong>keystore_password</strong> (<em>string</em>) &#8211; The password for the keystore.</li>
 <li><strong>key_password</strong> (<em>string</em>) &#8211; The password for the key.</li>
+<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
+build file defines the target address.</li>
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags.
+See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -1671,7 +1683,7 @@ expecting to find java files in <tt class="docutils literal"><span class="pre">s
 <span id="bdict-page"></span><h2>page<a class="headerlink" href="#page" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt>
-<tt class="descname">page</tt><big>(</big><em>source</em>, <em>resources=None</em>, <em>provides=None</em>, <em>**kwargs</em><big>)</big></dt>
+<tt class="descname">page</tt><big>(</big><em>name</em>, <em>exclusives</em>, <em>source</em>, <em>resources</em>, <em>provides=None</em><big>)</big></dt>
 <dd><p>Describes a single documentation page.</p>
 <p>Here is an example, that shows a markdown page providing a wiki page on an Atlassian Confluence
 wiki:</p>
@@ -1693,11 +1705,13 @@ wiki:</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
-build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
 <li><strong>source</strong> &#8211; Source of the page in markdown format.</li>
-<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
 <li><strong>resources</strong> &#8211; An optional list of Resources objects.</li>
+<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
+build file defines the target address.</li>
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags.
+See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -1744,23 +1758,33 @@ build file defines the <a class="reference internal" href="target_addresses.html
 <span id="bdict-python-antlr-library"></span><h2>python_antlr_library<a class="headerlink" href="#python-antlr-library" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="python_antlr_library">
-<tt class="descname">python_antlr_library</tt><big>(</big><em>module=None</em>, <em>antlr_version=u'3.1.3'</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#python_antlr_library" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">python_antlr_library</tt><big>(</big><em>name</em>, <em>exclusives</em>, <em>address</em>, <em>sources=None</em>, <em>resources=None</em>, <em>resource_targets=None</em>, <em>provides=None</em>, <em>compatibility=None</em>, <em>module=None</em>, <em>antlr_version=u'3.1.3'</em><big>)</big><a class="headerlink" href="#python_antlr_library" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates a stub Python library from Antlr grammar files.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> &#8211; Name of library</li>
 <li><strong>module</strong> &#8211; everything beneath module is relative to this module name, None if root namespace</li>
 <li><strong>antlr_version</strong> &#8211; </li>
-<li><strong>sources</strong> (<tt class="docutils literal"><span class="pre">Fileset</span></tt> or list of strings) &#8211; Source code files to compile. Paths are relative to the
-BUILD file&#8217;s directory.</li>
 <li><strong>resources</strong> &#8211; non-Python resources, e.g. templates, keys, other data (it is
 recommended that your application uses the pkgutil package to access these
 resources in a .zip-module friendly way.)</li>
-<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
-<li><strong>exclusives</strong> (<em>dict</em>) &#8211; An optional dict of exclusives tags. See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
+<li><strong>dependencies</strong> (<em>List of target specs</em>) &#8211; Other targets that this target depends on.
+These dependencies may
+be <tt class="docutils literal"><span class="pre">python_library</span></tt>-like targets (<tt class="docutils literal"><span class="pre">python_library</span></tt>,
+<tt class="docutils literal"><span class="pre">python_thrift_library</span></tt>, <tt class="docutils literal"><span class="pre">python_antlr_library</span></tt> and so forth) or
+<tt class="docutils literal"><span class="pre">python_requirement_library</span></tt> targets.</li>
+<li><strong>provides</strong> &#8211; The <a class="reference internal" href="#bdict-setup-py"><em>setup_py</em></a> to publish that represents this
+target outside the repo.</li>
+<li><strong>compatibility</strong> &#8211; either a string or list of strings that represents
+interpreter compatibility for this target, using the Requirement-style
+format, e.g. <tt class="docutils literal"><span class="pre">'CPython&gt;=3',</span> <span class="pre">or</span> <span class="pre">just</span> <span class="pre">['&gt;=2.7','&lt;3']</span></tt> for requirements
+agnostic to interpreter class.</li>
+<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
+build file defines the target address.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags.
+See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -1791,7 +1815,7 @@ resources in a .zip-module friendly way.)</li>
 <span id="bdict-python-binary"></span><h2>python_binary<a class="headerlink" href="#python-binary" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="python_binary">
-<tt class="descname">python_binary</tt><big>(</big><em>source=None</em>, <em>entry_point=None</em>, <em>inherit_path=False</em>, <em>zip_safe=True</em>, <em>always_write_cache=False</em>, <em>repositories=None</em>, <em>indices=None</em>, <em>ignore_errors=False</em>, <em>platforms=()</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#python_binary" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">python_binary</tt><big>(</big><em>name</em>, <em>exclusives</em>, <em>address</em>, <em>sources=None</em>, <em>resources=None</em>, <em>resource_targets=None</em>, <em>provides=None</em>, <em>compatibility=None</em>, <em>source=None</em>, <em>entry_point=None</em>, <em>inherit_path=False</em>, <em>zip_safe=True</em>, <em>always_write_cache=False</em>, <em>repositories=None</em>, <em>indices=None</em>, <em>ignore_errors=False</em>, <em>platforms=()</em><big>)</big><a class="headerlink" href="#python_binary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Produces a Python binary.</p>
 <p>Python binaries are pex files, self-contained executable shell
 scripts that contain a complete Python environment capable of
@@ -1802,15 +1826,16 @@ running the target. For more information about pex files see
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> &#8211; target name</li>
-<li><strong>source</strong> &#8211; the python source file that becomes this binary&#8217;s __main__.
+<li><strong>source</strong> &#8211; relative path to one python source file that becomes this
+binary&#8217;s __main__.
 If None specified, drops into an interpreter by default.</li>
-<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
 <li><strong>entry_point</strong> (<em>string</em>) &#8211; the default entry point for this binary.  if None, drops into the entry
 point that is defined by source. Something like
 &#8220;pants.bin.pants_exe:main&#8221;, where &#8220;pants.bin.pants_exe&#8221; is the package
 name and &#8220;main&#8221; is the function name (if ommitted, the module is
 executed directly, presuming it has a <tt class="docutils literal"><span class="pre">__main.py__</span></tt>).</li>
+<li><strong>sources</strong> &#8211; Overridden by source. To specify more than one source file,
+use a python_library and have the python_binary depend on that library.</li>
 <li><strong>inherit_path</strong> &#8211; inherit the sys.path of the environment that this binary runs in</li>
 <li><strong>zip_safe</strong> &#8211; whether or not this binary is safe to run in compacted (zip-file) form</li>
 <li><strong>always_write_cache</strong> &#8211; whether or not the .deps cache of this PEX file should always
@@ -1822,7 +1847,21 @@ be written to disk.</li>
 <li><strong>compatibility</strong> &#8211; either a string or list of strings that represents
 interpreter compatibility for this target, using the Requirement-style format,
 e.g. <tt class="docutils literal"><span class="pre">'CPython&gt;=3',</span> <span class="pre">or</span> <span class="pre">just</span> <span class="pre">['&gt;=2.7','&lt;3']</span></tt> for requirements agnostic to interpreter class.</li>
-<li><strong>exclusives</strong> (<em>dict</em>) &#8211; An optional dict of exclusives tags. See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
+<li><strong>dependencies</strong> (<em>List of target specs</em>) &#8211; Other targets that this target depends on.
+These dependencies may
+be <tt class="docutils literal"><span class="pre">python_library</span></tt>-like targets (<tt class="docutils literal"><span class="pre">python_library</span></tt>,
+<tt class="docutils literal"><span class="pre">python_thrift_library</span></tt>, <tt class="docutils literal"><span class="pre">python_antlr_library</span></tt> and so forth) or
+<tt class="docutils literal"><span class="pre">python_requirement_library</span></tt> targets.</li>
+<li><strong>resources</strong> &#8211; non-Python resources, e.g. templates, keys, other data
+(it is
+recommended that your application uses the pkgutil package to access these
+resources in a .zip-module friendly way.)</li>
+<li><strong>provides</strong> &#8211; The <a class="reference internal" href="#bdict-setup-py"><em>setup_py</em></a> to publish that represents this
+target outside the repo.</li>
+<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
+build file defines the target address.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags.
+See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -1853,34 +1892,32 @@ e.g. <tt class="docutils literal"><span class="pre">'CPython&gt;=3',</span> <spa
 <span id="bdict-python-library"></span><h2>python_library<a class="headerlink" href="#python-library" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="python_library">
-<tt class="descname">python_library</tt><big>(</big><em>address=None</em>, <em>sources=None</em>, <em>resources=None</em>, <em>resource_targets=None</em>, <em>provides=None</em>, <em>compatibility=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#python_library" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">python_library</tt><big>(</big><em>name</em>, <em>exclusives</em>, <em>address</em>, <em>sources=None</em>, <em>resources=None</em>, <em>resource_targets=None</em>, <em>provides=None</em>, <em>compatibility=None</em>, <em>address=None</em>, <em>sources=None</em>, <em>resources=None</em>, <em>resource_targets=None</em>, <em>provides=None</em>, <em>compatibility=None</em><big>)</big><a class="headerlink" href="#python_library" title="Permalink to this definition">¶</a></dt>
 <dd><p>Produces a Python library.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> &#8211; Name of library</li>
-<li><strong>sources</strong> &#8211; A list of filenames representing the source code this
-library is compiled from. Paths are relative to the
-BUILD file&#8217;s directory.</li>
+<li><strong>dependencies</strong> (<em>List of target specs</em>) &#8211; Other targets that this target depends on.
+These dependencies may
+be <tt class="docutils literal"><span class="pre">python_library</span></tt>-like targets (<tt class="docutils literal"><span class="pre">python_library</span></tt>,
+<tt class="docutils literal"><span class="pre">python_thrift_library</span></tt>, <tt class="docutils literal"><span class="pre">python_antlr_library</span></tt> and so forth) or
+<tt class="docutils literal"><span class="pre">python_requirement_library</span></tt> targets.</li>
 <li><strong>resources</strong> &#8211; non-Python resources, e.g. templates, keys, other data
 (it is
 recommended that your application uses the pkgutil package to access these
 resources in a .zip-module friendly way.)</li>
-<li><strong>dependencies</strong> (<em>List of target specs</em>) &#8211; Other targets that this target depends on.
-These dependencies may
-be other <tt class="docutils literal"><span class="pre">python_library</span></tt>-like targets (<tt class="docutils literal"><span class="pre">python_library</span></tt>,
-<tt class="docutils literal"><span class="pre">python_thrift_library</span></tt>, <tt class="docutils literal"><span class="pre">python_antlr_library</span></tt> and so forth) or
-<tt class="docutils literal"><span class="pre">python_requirement_library</span></tt> targets.</li>
 <li><strong>provides</strong> &#8211; The <a class="reference internal" href="#bdict-setup-py"><em>setup_py</em></a> to publish that represents this
 target outside the repo.</li>
 <li><strong>compatibility</strong> &#8211; either a string or list of strings that represents
 interpreter compatibility for this target, using the Requirement-style
 format, e.g. <tt class="docutils literal"><span class="pre">'CPython&gt;=3',</span> <span class="pre">or</span> <span class="pre">just</span> <span class="pre">['&gt;=2.7','&lt;3']</span></tt> for requirements
 agnostic to interpreter class.</li>
-<li><strong>exclusives</strong> &#8211; An optional dict of exclusives tags. See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a>
-for details.</li>
+<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
+build file defines the target address.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags.
+See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -1936,7 +1973,7 @@ dependencies: <cite>celery&gt;=2.5.1</cite>, <cite>django-picklefield&gt;=0.2.0<
 <span id="bdict-python-requirement-library"></span><h2>python_requirement_library<a class="headerlink" href="#python-requirement-library" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="python_requirement_library">
-<tt class="descname">python_requirement_library</tt><big>(</big><em>requirements=None</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#python_requirement_library" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">python_requirement_library</tt><big>(</big><em>name</em>, <em>exclusives</em>, <em>requirements=None</em><big>)</big><a class="headerlink" href="#python_requirement_library" title="Permalink to this definition">¶</a></dt>
 <dd><p>Named target for some pip requirements.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1945,6 +1982,9 @@ dependencies: <cite>celery&gt;=2.5.1</cite>, <cite>django-picklefield&gt;=0.2.0<
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>name</strong> (<em>string</em>) &#8211; The target name.</li>
 <li><strong>requirements</strong> (List of <a class="reference internal" href="#bdict-python-requirement"><em>python_requirement</em></a>s) &#8211; pip requirements</li>
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags.
+See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -2017,21 +2057,34 @@ BUILD file is assumed.</li>
 <span id="bdict-python-tests"></span><h2>python_tests<a class="headerlink" href="#python-tests" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="python_tests">
-<tt class="descname">python_tests</tt><big>(</big><em>coverage=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#python_tests" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">python_tests</tt><big>(</big><em>name</em>, <em>exclusives</em>, <em>address</em>, <em>sources=None</em>, <em>resources=None</em>, <em>resource_targets=None</em>, <em>provides=None</em>, <em>compatibility=None</em>, <em>coverage=None</em><big>)</big><a class="headerlink" href="#python_tests" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tests a Python library.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> &#8211; See PythonLibrary target</li>
-<li><strong>sources</strong> (<tt class="docutils literal"><span class="pre">Fileset</span></tt> or list of strings) &#8211; Source code files to compile. Paths are relative to the
-BUILD file&#8217;s directory.</li>
-<li><strong>resources</strong> &#8211; See PythonLibrary target</li>
-<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
 <li><strong>coverage</strong> &#8211; the module(s) whose coverage should be generated, e.g.
 &#8216;twitter.common.log&#8217; or [&#8216;twitter.common.log&#8217;, &#8216;twitter.common.http&#8217;]</li>
-<li><strong>exclusives</strong> (<em>dict</em>) &#8211; An optional dict of exclusives tags. See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
+<li><strong>dependencies</strong> (<em>List of target specs</em>) &#8211; Other targets that this target depends on.
+These dependencies may
+be <tt class="docutils literal"><span class="pre">python_library</span></tt>-like targets (<tt class="docutils literal"><span class="pre">python_library</span></tt>,
+<tt class="docutils literal"><span class="pre">python_thrift_library</span></tt>, <tt class="docutils literal"><span class="pre">python_antlr_library</span></tt> and so forth) or
+<tt class="docutils literal"><span class="pre">python_requirement_library</span></tt> targets.</li>
+<li><strong>resources</strong> &#8211; non-Python resources, e.g. templates, keys, other data
+(it is
+recommended that your application uses the pkgutil package to access these
+resources in a .zip-module friendly way.)</li>
+<li><strong>provides</strong> &#8211; The <a class="reference internal" href="#bdict-setup-py"><em>setup_py</em></a> to publish that represents this
+target outside the repo.</li>
+<li><strong>compatibility</strong> &#8211; either a string or list of strings that represents
+interpreter compatibility for this target, using the Requirement-style
+format, e.g. <tt class="docutils literal"><span class="pre">'CPython&gt;=3',</span> <span class="pre">or</span> <span class="pre">just</span> <span class="pre">['&gt;=2.7','&lt;3']</span></tt> for requirements
+agnostic to interpreter class.</li>
+<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
+build file defines the target address.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags.
+See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -2062,22 +2115,34 @@ BUILD file&#8217;s directory.</li>
 <span id="bdict-python-thrift-library"></span><h2>python_thrift_library<a class="headerlink" href="#python-thrift-library" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="python_thrift_library">
-<tt class="descname">python_thrift_library</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#python_thrift_library" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">python_thrift_library</tt><big>(</big><em>name</em>, <em>exclusives</em>, <em>address</em>, <em>sources=None</em>, <em>resources=None</em>, <em>resource_targets=None</em>, <em>provides=None</em>, <em>compatibility=None</em><big>)</big><a class="headerlink" href="#python_thrift_library" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates a stub Python library from thrift IDL files.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> &#8211; Name of library</li>
 <li><strong>sources</strong> (<tt class="docutils literal"><span class="pre">Fileset</span></tt> or list of strings. Paths are relative to the
 BUILD file&#8217;s directory.) &#8211; thrift source files (If more than one tries to use the same
 namespace, beware <a class="reference external" href="https://issues.apache.org/jira/browse/THRIFT-515">https://issues.apache.org/jira/browse/THRIFT-515</a>)</li>
 <li><strong>resources</strong> &#8211; non-Python resources, e.g. templates, keys, other data (it is
 recommended that your application uses the pkgutil package to access these
 resources in a .zip-module friendly way.)</li>
-<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
-<li><strong>exclusives</strong> (<em>dict</em>) &#8211; An optional dict of exclusives tags. See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
+<li><strong>dependencies</strong> (<em>List of target specs</em>) &#8211; Other targets that this target depends on.
+These dependencies may
+be <tt class="docutils literal"><span class="pre">python_library</span></tt>-like targets (<tt class="docutils literal"><span class="pre">python_library</span></tt>,
+<tt class="docutils literal"><span class="pre">python_thrift_library</span></tt>, <tt class="docutils literal"><span class="pre">python_antlr_library</span></tt> and so forth) or
+<tt class="docutils literal"><span class="pre">python_requirement_library</span></tt> targets.</li>
+<li><strong>provides</strong> &#8211; The <a class="reference internal" href="#bdict-setup-py"><em>setup_py</em></a> to publish that represents this
+target outside the repo.</li>
+<li><strong>compatibility</strong> &#8211; either a string or list of strings that represents
+interpreter compatibility for this target, using the Requirement-style
+format, e.g. <tt class="docutils literal"><span class="pre">'CPython&gt;=3',</span> <span class="pre">or</span> <span class="pre">just</span> <span class="pre">['&gt;=2.7','&lt;3']</span></tt> for requirements
+agnostic to interpreter class.</li>
+<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
+build file defines the target address.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags.
+See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -2108,7 +2173,7 @@ resources in a .zip-module friendly way.)</li>
 <span id="bdict-repo"></span><h2>repo<a class="headerlink" href="#repo" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt>
-<tt class="descname">repo</tt><big>(</big><em>url=None</em>, <em>push_db=None</em>, <em>**kwargs</em><big>)</big></dt>
+<tt class="descname">repo</tt><big>(</big><em>name</em>, <em>exclusives</em>, <em>url</em>, <em>push_db=None</em><big>)</big></dt>
 <dd><p>An artifact repository, such as a maven repo.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -2118,6 +2183,9 @@ resources in a .zip-module friendly way.)</li>
 <li><strong>name</strong> (<em>string</em>) &#8211; Name of the repository.</li>
 <li><strong>url</strong> (<em>string</em>) &#8211; Optional URL of the repository.</li>
 <li><strong>push_db</strong> (<em>string</em>) &#8211; Path of the push history file.</li>
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags.
+See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -2148,7 +2216,7 @@ resources in a .zip-module friendly way.)</li>
 <span id="bdict-resources"></span><h2>resources<a class="headerlink" href="#resources" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt>
-<tt class="descname">resources</tt><big>(</big><em>address=None</em>, <em>sources=None</em>, <em>**kwargs</em><big>)</big></dt>
+<tt class="descname">resources</tt><big>(</big><em>name</em>, <em>exclusives</em>, <em>address</em>, <em>sources=None</em><big>)</big></dt>
 <dd><p>A set of files accessible as resources from the JVM classpath.</p>
 <p>Looking for loose files in your application bundle? Those are <a class="reference internal" href="#bdict-bundle"><em>bundle</em></a>s.</p>
 <p>Resources are Java-style resources accessible via the <tt class="docutils literal"><span class="pre">Class.getResource</span></tt>
@@ -2162,6 +2230,9 @@ and friends API. In the <tt class="docutils literal"><span class="pre">jar</span
 build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
 <li><strong>sources</strong> (<tt class="docutils literal"><span class="pre">Fileset</span></tt> or list of strings) &#8211; Files to &#8220;include&#8221;. Paths are relative to the
 BUILD file&#8217;s directory.</li>
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags.
+See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -2204,7 +2275,7 @@ the config, config/foo, config/foo/bar directories.</p>
 <span id="bdict-scala-library"></span><h2>scala_library<a class="headerlink" href="#scala-library" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="scala_library">
-<tt class="descname">scala_library</tt><big>(</big><em>java_sources=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#scala_library" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">scala_library</tt><big>(</big><em>name</em>, <em>exclusives</em>, <em>address</em>, <em>sources=None</em>, <em>sources_rel_path=None</em>, <em>provides=None</em>, <em>excludes=None</em>, <em>resources=None</em>, <em>configurations=None</em>, <em>java_sources=None</em><big>)</big><a class="headerlink" href="#scala_library" title="Permalink to this definition">¶</a></dt>
 <dd><p>A collection of Scala code.</p>
 <p>Normally has conceptually-related sources; invoking the <tt class="docutils literal"><span class="pre">compile</span></tt> goal
 on this target compiles scala and generates classes. Invoking the <tt class="docutils literal"><span class="pre">bundle</span></tt>
@@ -2216,25 +2287,22 @@ more sensible thing to bundle.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
-build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
-<li><strong>sources</strong> (<tt class="docutils literal"><span class="pre">Fileset</span></tt> or list of strings) &#8211; Source code files to compile. Paths are relative to the
-BUILD file&#8217;s directory.</li>
 <li><strong>java_sources</strong> (<em>target spec or list of target specs</em>) &#8211; Java libraries this library has a <em>circular</em>
 dependency on.
 If you don&#8217;t have the particular problem of circular dependencies
 forced by splitting interdependent java and scala into multiple targets,
 don&#8217;t use this at all.
 Prefer using <tt class="docutils literal"><span class="pre">dependencies</span></tt> to express non-circular dependencies.</li>
-<li><strong>provides</strong> &#8211; The <tt class="docutils literal"><span class="pre">artifact</span></tt>
-to publish that represents this target outside the repo.</li>
-<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on. If your
-code <tt class="docutils literal"><span class="pre">import</span></tt>s code from other places, it depends on them.</li>
-<li><strong>excludes</strong> &#8211; List of <a class="reference internal" href="#bdict-exclude"><em>exclude</em></a>s
-to filter this target&#8217;s transitive dependencies against.</li>
 <li><strong>resources</strong> &#8211; An optional list of paths (DEPRECATED) or <tt class="docutils literal"><span class="pre">resources</span></tt>
 targets containing resources that belong on this library&#8217;s classpath.</li>
-<li><strong>exclusives</strong> &#8211; An optional list of exclusives tags.</li>
+<li><strong>provides</strong> &#8211; An optional Dependency object indicating the The ivy artifact to export.</li>
+<li><strong>configurations</strong> (<em>tuple of strings</em>) &#8211; One or more ivy configurations to resolve for this target.
+This parameter is not intended for general use.</li>
+<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
+build file defines the target address.</li>
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags.
+See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -2265,27 +2333,20 @@ targets containing resources that belong on this library&#8217;s classpath.</li>
 <span id="bdict-scala-specs"></span><h2>scala_specs<a class="headerlink" href="#scala-specs" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="scala_specs">
-<tt class="descname">scala_specs</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#scala_specs" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">scala_specs</tt><big>(</big><em>name</em>, <em>exclusives</em>, <em>address</em>, <em>sources=None</em>, <em>sources_rel_path=None</em>, <em>provides=None</em>, <em>excludes=None</em>, <em>resources=None</em>, <em>configurations=None</em><big>)</big><a class="headerlink" href="#scala_specs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tests a Scala library.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> &#8211; The name of this module target, addressable via pants via the portion of the spec
-following the colon</li>
-<li><strong>sources</strong> (<tt class="docutils literal"><span class="pre">Fileset</span></tt> or list of strings) &#8211; Source code files to compile. Paths are relative to the
-BUILD file&#8217;s directory.</li>
-<li><strong>java_sources</strong> (<em>target spec or list of target specs</em>) &#8211; Java libraries this library has a <em>circular</em>
-dependency on.
-Prefer using <tt class="docutils literal"><span class="pre">dependencies</span></tt> to express non-circular dependencies.</li>
-<li><strong>provides</strong> &#8211; The <tt class="docutils literal"><span class="pre">artifact</span></tt>
-to publish that represents this target outside the repo.</li>
+<li><strong>configurations</strong> (<em>tuple of strings</em>) &#8211; One or more ivy configurations to resolve for this target.
+This parameter is not intended for general use.</li>
+<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
+build file defines the target address.</li>
 <li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
-<li><strong>excludes</strong> &#8211; List of <a class="reference internal" href="#bdict-exclude"><em>exclude</em></a>s
-to filter this target&#8217;s transitive dependencies against.</li>
-<li><strong>resources</strong> &#8211; An optional list of Resources that should be in this target&#8217;s classpath.</li>
-<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags.
+See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -2321,30 +2382,31 @@ to filter this target&#8217;s transitive dependencies against.</li>
 <span id="bdict-scalac-plugin"></span><h2>scalac_plugin<a class="headerlink" href="#scalac-plugin" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="scalac_plugin">
-<tt class="descname">scalac_plugin</tt><big>(</big><em>classname=None</em>, <em>plugin=None</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#scalac_plugin" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">scalac_plugin</tt><big>(</big><em>name</em>, <em>exclusives</em>, <em>address</em>, <em>sources=None</em>, <em>sources_rel_path=None</em>, <em>provides=None</em>, <em>excludes=None</em>, <em>resources=None</em>, <em>configurations=None</em>, <em>java_sources=None</em>, <em>classname=None</em>, <em>plugin=None</em><big>)</big><a class="headerlink" href="#scalac_plugin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Defines a target that produces a scalac_plugin.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> &#8211; The name of this module target, addressable via pants via the portion of the
-spec following the colon - required.</li>
 <li><strong>classname</strong> &#8211; The fully qualified plugin class name - required.</li>
 <li><strong>plugin</strong> &#8211; The name of the plugin which defaults to name if not supplied.</li>
-<li><strong>sources</strong> (<tt class="docutils literal"><span class="pre">Fileset</span></tt> or list of strings) &#8211; Source code files to compile. Paths are relative to the
-BUILD file&#8217;s directory.</li>
 <li><strong>java_sources</strong> (<em>target spec or list of target specs</em>) &#8211; Java libraries this library has a <em>circular</em>
 dependency on.
+If you don&#8217;t have the particular problem of circular dependencies
+forced by splitting interdependent java and scala into multiple targets,
+don&#8217;t use this at all.
 Prefer using <tt class="docutils literal"><span class="pre">dependencies</span></tt> to express non-circular dependencies.</li>
-<li><strong>provides</strong> &#8211; The <tt class="docutils literal"><span class="pre">artifact</span></tt>
-to publish that represents this target outside the repo.</li>
-<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
-<li><strong>excludes</strong> &#8211; List of <a class="reference internal" href="#bdict-exclude"><em>exclude</em></a>s
-to filter this target&#8217;s transitive dependencies against.</li>
 <li><strong>resources</strong> &#8211; An optional list of paths (DEPRECATED) or <tt class="docutils literal"><span class="pre">resources</span></tt>
 targets containing resources that belong on this library&#8217;s classpath.</li>
-<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
+<li><strong>provides</strong> &#8211; An optional Dependency object indicating the The ivy artifact to export.</li>
+<li><strong>configurations</strong> (<em>tuple of strings</em>) &#8211; One or more ivy configurations to resolve for this target.
+This parameter is not intended for general use.</li>
+<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
+build file defines the target address.</li>
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags.
+See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -2436,7 +2498,7 @@ The <tt class="docutils literal"><span class="pre">source_root</span></tt> comma
 <span id="bdict-target"></span><h2>target<a class="headerlink" href="#target" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt>
-<tt class="descname">target</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big></dt>
+<tt class="descname">target</tt><big>(</big><em>name</em>, <em>exclusives=None</em><big>)</big></dt>
 <dd><p>A set of dependencies that may be depended upon,
 as if depending upon the set of dependencies directly.</p>
 <p>NB: This class is commonly referred to by the alias &#8216;target&#8217; in BUILD files.</p>
@@ -2446,10 +2508,10 @@ as if depending upon the set of dependencies directly.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
-build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
+build file defines the target address.</li>
 <li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
-<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags. See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a>
-for details.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags.
+See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
 </td>
 </tr>
@@ -2480,20 +2542,20 @@ for details.</li>
 <span id="bdict-wiki"></span><h2>wiki<a class="headerlink" href="#wiki" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt>
-<tt class="descname">wiki</tt><big>(</big><em>name</em>, <em>url_builder</em>, <em>**kwargs</em><big>)</big></dt>
+<tt class="descname">wiki</tt><big>(</big><em>name</em>, <em>exclusives</em>, <em>name</em>, <em>url_builder=None</em><big>)</big></dt>
 <dd><p>Target that identifies a wiki where pages can be published.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
-build file defines the <a class="reference internal" href="target_addresses.html"><em>target address</em></a>.</li>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>url_builder</strong> &#8211; Function that accepts a page target and an optional wiki config dict.</li>
+<li><strong>name</strong> (<em>string</em>) &#8211; The name of this target, which combined with this
+build file defines the target address.</li>
+<li><strong>dependencies</strong> (<em>list of target specs</em>) &#8211; Other targets that this target depends on.</li>
+<li><strong>exclusives</strong> &#8211; An optional map of exclusives tags.
+See <a class="reference internal" href="build_files.html#howto-check-exclusives"><em>Tag Incompatibilities with exclusives</em></a> for details.</li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A tuple of (alias, fully qualified url).</p>
 </td>
 </tr>
 </tbody>

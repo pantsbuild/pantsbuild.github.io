@@ -63,22 +63,12 @@
     ga('create', 'UA-39101739-2', 'auto');
     ga('send', 'pageview');
 
-    // Show the travis-ci status graphic.
+    // Show the travis-ci status graphic
     $('.wy-breadcrumbs').append(
-      '<div style="float: right; padding: 1px;">' +
-        '<a href="https://travis-ci.org/pantsbuild/pants">' +
-          '<img src="https://travis-ci.org/pantsbuild/pants.png?branch=master">' +
-        '</a>' +
-      '</div>');
-
-    // Show the coveralls status graphic.
-    $('.wy-breadcrumbs').append(
-      '<div style="float: right; padding: 1px;">' +
-        '<a href="https://coveralls.io/r/pantsbuild/pants?branch=master">' +
-          '<img src="https://coveralls.io/repos/pantsbuild/pants/badge.png?branch=master"' +
-          '     alt="Coverage Status">' +
-        '</a>' +
-      '</div>');
+      '<div style="float: right;">' +
+      '<a href="https://travis-ci.org/pantsbuild/pants">' +
+      '<img src="https://travis-ci.org/pantsbuild/pants.png?branch=master">' +
+      '</a></div>');
   });
 </script>
 <style type="text/css">
@@ -164,6 +154,7 @@ body a.icon-home:hover{
 <li class="toctree-l1"><a class="reference internal" href="page.html">README Files and Markdown</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="page.html#markdown-to-html">Markdown to HTML</a></li>
 <li class="toctree-l2"><a class="reference internal" href="page.html#link-to-another-page">Link to Another <tt class="docutils literal"><span class="pre">page</span></tt></a></li>
+<li class="toctree-l2"><a class="reference internal" href="page.html#include-a-file-snippet">Include a File Snippet</a></li>
 <li class="toctree-l2"><a class="reference internal" href="page.html#publishing">Publishing</a></li>
 </ul>
 </li>
@@ -234,6 +225,8 @@ body a.icon-home:hover{
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installing Pants</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="install.html#virtualenv-based-installation">Virtualenv-based Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#system-wide-installation">System-wide Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="install.html#pex-based-installation">PEX-based Installation</a></li>
 </ul>
 </li>
@@ -407,10 +400,50 @@ describes how to make this work for Python code.</p>
 via a library that uses pip-style specifications (name and version-range).</p>
 <div class="section" id="rdparty-python">
 <h2>3rdparty/python<a class="headerlink" href="#rdparty-python" title="Permalink to this headline">¶</a></h2>
-<p><strong>The Python part of 3rdparty is in 3rdparty/python/BUILD</strong>.</p>
-<p>In this <tt class="docutils literal"><span class="pre">BUILD</span></tt> file, you want a <tt class="docutils literal"><span class="pre">python_requirement</span></tt> like:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">python_requirement</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;beautifulsoup&quot;</span><span class="p">,</span>
-                   <span class="n">requirement</span><span class="o">=</span><span class="s">&quot;BeautifulSoup==3.2.0&quot;</span><span class="p">)</span>
+<p>To keep all of your code depending on the same versions of third-party
+Python artifacts, you might use the idiom of keeping them in a directory
+tree under <tt class="docutils literal"><span class="pre">3rdparty/python</span></tt>. If your organization has many such
+dependencies, you might arrange them in several directories: this can
+ease later &#8220;git detective work&#8221; when finding out who changed a version.</p>
+<p><strong>pip-style requirements.txt:</strong></p>
+<p>To define some third-party dependencies, use a
+<a class="reference internal" href="build_dictionary.html#bdict-python-requirements"><em>python_requirements</em></a>
+in your <tt class="docutils literal"><span class="pre">BUILD</span></tt> file and make a pip <tt class="docutils literal"><span class="pre">requirements.txt</span></tt> file in the
+same directory.</p>
+<p>E.g, your <tt class="docutils literal"><span class="pre">3rdparty/python/BUILD</span></tt> file might look like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># see/edit requirements.txt in this directory to change deps.</span>
+<span class="n">python_requirements</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>...with <tt class="docutils literal"><span class="pre">3rdparty/python/requirements.txt</span></tt> like:</p>
+<div class="highlight-python"><div class="highlight"><pre>ansicolors==1.0.2
+
+antlr_python_runtime==3.1.3
+--allow-external antlr-python-runtime
+--allow-unverified antlr-python-runtime
+
+argparse==1.2.1
+coverage&gt;=3.7,&lt;3.8
+Markdown==2.1.1
+mock==1.0.1
+</pre></div>
+</div>
+<p><tt class="docutils literal"><span class="pre">python_requirements</span></tt> defines a named target for each
+line in the <tt class="docutils literal"><span class="pre">requirements.txt</span></tt> line. For example, a line like
+<tt class="docutils literal"><span class="pre">ansicolors==1.0.2</span></tt> in <tt class="docutils literal"><span class="pre">requirements.txt</span></tt> defines a target named
+<tt class="docutils literal"><span class="pre">ansicolors</span></tt> that pulls in ansicolors version 1.0.2.</p>
+<p><strong>python_requirement_library and python_requirement:</strong></p>
+<p>A <tt class="docutils literal"><span class="pre">BUILD</span></tt> file can also define requirements without a <tt class="docutils literal"><span class="pre">requirements.txt</span></tt>
+file. Set up a
+<a class="reference internal" href="build_dictionary.html#bdict-python-requirement-library"><em>python_requirement_library</em></a> with one
+or more
+<a class="reference internal" href="build_dictionary.html#bdict-python-requirement"><em>python_requirement</em></a>s like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">python_requirement_library</span><span class="p">(</span>
+  <span class="n">name</span><span class="o">=</span><span class="s">&#39;beautifulsoup&#39;</span><span class="p">,</span>
+  <span class="n">requirements</span><span class="o">=</span><span class="p">[</span>
+    <span class="n">python_requirement</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;beautifulsoup&#39;</span><span class="p">,</span>
+                       <span class="n">requirement</span><span class="o">=</span><span class="s">&#39;BeautifulSoup==3.2.0&#39;</span><span class="p">),</span>
+  <span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -418,18 +451,16 @@ via a library that uses pip-style specifications (name and version-range).</p>
 <h2>Your Code&#8217;s BUILD File<a class="headerlink" href="#your-code-s-build-file" title="Permalink to this headline">¶</a></h2>
 <p>In your code&#8217;s <tt class="docutils literal"><span class="pre">BUILD</span></tt> file, introduce a dependency on the <tt class="docutils literal"><span class="pre">3rdparty</span></tt>
 target:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># src/python/scrape_html/BUILD</span>
-<span class="n">python_binary</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;scrape_html&quot;</span><span class="p">,</span>
-  <span class="n">source</span> <span class="o">=</span> <span class="s">&quot;scrape_html.py&quot;</span><span class="p">,</span>
-  <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s">&#39;3rdparty/python:beautifulsoup&#39;</span><span class="p">,</span>
-  <span class="p">]</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">python_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;greet&#39;</span><span class="p">,</span>
+  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
+    <span class="s">&#39;3rdparty/python:ansicolors&#39;</span><span class="p">,</span>
+  <span class="p">],</span>
+  <span class="n">sources</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s">&#39;*.py&#39;</span><span class="p">),</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 <p>Then in your Python code, you can <tt class="docutils literal"><span class="pre">import</span></tt> from that package:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># src/python/scrape_html/scrape_html.py</span>
-<span class="kn">from</span> <span class="nn">BeautifulSoup</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">colors</span> <span class="kn">import</span> <span class="n">green</span>
 </pre></div>
 </div>
 </div>
