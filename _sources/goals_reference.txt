@@ -64,9 +64,11 @@ goal.
   * :ref:`gref_goal_run-dirty` - Run a binary target, skipping compilation.
   * :ref:`gref_goal_server` - Run the pants reporting server.
   * :ref:`gref_goal_sign` - None
+  * :ref:`gref_goal_sitegen` - Generate static web site.
   * :ref:`gref_goal_sort` - Topologically sort the targets.
-  * :ref:`gref_goal_targets` - List all target types.
+  * :ref:`gref_goal_targets` - List target types and BUILD file symbols (python_tests, jar, etc).
   * :ref:`gref_goal_test` - Test compiled code.
+  * :ref:`gref_goal_thrift-linter` - Check thrift files for non-recommended usage patterns.
 
 
 .. _gref_goal_bench:
@@ -80,7 +82,7 @@ bench
 
 *
   **bench**
-  Implemented by ``pants.backend.jvm.tasks.benchmark_run.BenchmarkRun``
+  Implemented by ``abc.BenchmarkRun_bench``
 
 
 
@@ -108,13 +110,12 @@ bench
 **Other command-line options:**
 
   `Common`_
-  :ref:`gen:thrift <gref_cli_genthrift>`
-  :ref:`gen:scrooge <gref_cli_genscrooge>`
-  :ref:`gen:protoc <gref_cli_genprotoc>`
-  :ref:`gen:aapt <gref_cli_genaapt>`
+  :ref:`gen.thrift <gref_cli_genthrift>`
+  :ref:`gen.scrooge <gref_cli_genscrooge>`
+  :ref:`gen.protoc <gref_cli_genprotoc>`
+  :ref:`gen.aapt <gref_cli_genaapt>`
   :ref:`check-exclusives <gref_cli_checkexclusives>`
-  :ref:`ivy <gref_cli_ivy>`
-  :ref:`jvm <gref_cli_jvm>`
+  :ref:`resolve.ivy <gref_cli_resolveivy>`
 
 
 
@@ -129,8 +130,8 @@ Create a jvm binary jar.
 .. _gref_cli_binarypythonbinarycreate:
 
 *
-  **binary:python-binary-create**
-  Implemented by ``pants.backend.python.tasks.python_binary_create.PythonBinaryCreate``
+  **binary.python-binary-create**
+  Implemented by ``abc.PythonBinaryCreate_binary.python-binary-create``
 
 
 
@@ -141,21 +142,19 @@ Create a jvm binary jar.
 
 
 
-* Implemented by ``pants.backend.jvm.tasks.binary_create.BinaryCreate``
+* Implemented by ``abc.BinaryCreate_binary``
 
 
-  Creates a runnable monolithic binary deploy jar.
 
 
 
 .. _gref_cli_binarydup:
 
 *
-  **binary:dup**
-  Implemented by ``pants.backend.jvm.tasks.detect_duplicates.DuplicateDetector``
+  **binary.dup**
+  Implemented by ``abc.DuplicateDetector_binary.dup``
 
 
-  Detect classes and resources with the same qualified name on the classpath.
 
   * | ``--binary-dup-fail-fast/--no-binary-dup-fail-fast``
     |
@@ -179,13 +178,12 @@ Create a jvm binary jar.
 **Other command-line options:**
 
   `Common`_
-  :ref:`gen:thrift <gref_cli_genthrift>`
-  :ref:`gen:scrooge <gref_cli_genscrooge>`
-  :ref:`gen:protoc <gref_cli_genprotoc>`
-  :ref:`gen:aapt <gref_cli_genaapt>`
+  :ref:`gen.thrift <gref_cli_genthrift>`
+  :ref:`gen.scrooge <gref_cli_genscrooge>`
+  :ref:`gen.protoc <gref_cli_genprotoc>`
+  :ref:`gen.aapt <gref_cli_genaapt>`
   :ref:`check-exclusives <gref_cli_checkexclusives>`
-  :ref:`ivy <gref_cli_ivy>`
-  :ref:`jvm <gref_cli_jvm>`
+  :ref:`resolve.ivy <gref_cli_resolveivy>`
 
 
 
@@ -197,7 +195,7 @@ bootstrap
 Bootstrap tools needed for building.
 
 
-* Implemented by ``pants.backend.jvm.tasks.bootstrap_jvm_tools.BootstrapJvmTools``
+* Implemented by ``abc.BootstrapJvmTools_bootstrap.bootstrap-jvm-tools``
 
 
 
@@ -217,10 +215,9 @@ builddict
 
 
 
-* Implemented by ``pants.backend.core.tasks.builddictionary.BuildBuildDictionary``
+* Implemented by ``abc.BuildBuildDictionary_builddict``
 
 
-  Generate documentation for the Sphinx site.
 
 
 
@@ -242,7 +239,7 @@ buildlint
 
 *
   **buildlint**
-  Implemented by ``pants.backend.core.tasks.build_lint.BuildLint``
+  Implemented by ``abc.BuildLint_buildlint``
 
 
 
@@ -265,13 +262,12 @@ buildlint
 **Other command-line options:**
 
   `Common`_
-  :ref:`gen:thrift <gref_cli_genthrift>`
-  :ref:`gen:scrooge <gref_cli_genscrooge>`
-  :ref:`gen:protoc <gref_cli_genprotoc>`
-  :ref:`gen:aapt <gref_cli_genaapt>`
+  :ref:`gen.thrift <gref_cli_genthrift>`
+  :ref:`gen.scrooge <gref_cli_genscrooge>`
+  :ref:`gen.protoc <gref_cli_genprotoc>`
+  :ref:`gen.aapt <gref_cli_genaapt>`
   :ref:`check-exclusives <gref_cli_checkexclusives>`
-  :ref:`ivy <gref_cli_ivy>`
-  :ref:`jvm <gref_cli_jvm>`
+  :ref:`resolve.ivy <gref_cli_resolveivy>`
 
 
 
@@ -287,7 +283,7 @@ Create an application bundle from binary targets.
 
 *
   **bundle**
-  Implemented by ``pants.backend.jvm.tasks.bundle_create.BundleCreate``
+  Implemented by ``abc.BundleCreate_bundle``
 
 
 
@@ -309,11 +305,10 @@ Create an application bundle from binary targets.
 .. _gref_cli_bundledup:
 
 *
-  **bundle:dup**
-  Implemented by ``pants.backend.jvm.tasks.detect_duplicates.DuplicateDetector``
+  **bundle.dup**
+  Implemented by ``abc.DuplicateDetector_bundle.dup``
 
 
-  Detect classes and resources with the same qualified name on the classpath.
 
   * | ``--bundle-dup-fail-fast/--no-bundle-dup-fail-fast``
     |
@@ -336,14 +331,10 @@ Create an application bundle from binary targets.
 .. _gref_cli_bundleapk:
 
 *
-  **bundle:apk**
-  Implemented by ``pants.backend.android.tasks.aapt_builder.AaptBuilder``
+  **bundle.apk**
+  Implemented by ``abc.AaptBuilder_bundle.apk``
 
 
-  Build an android bundle with compiled code and assets.
-  
-  This class gathers compiled classes (an Android dex archive) and packages it with the
-  target's resource files. The output is an unsigned .apk, an Android application package file.
 
   * | ``--bundle-apk-sdk-path``
       ``string``
@@ -372,13 +363,12 @@ Create an application bundle from binary targets.
 **Other command-line options:**
 
   `Common`_
-  :ref:`gen:thrift <gref_cli_genthrift>`
-  :ref:`gen:scrooge <gref_cli_genscrooge>`
-  :ref:`gen:protoc <gref_cli_genprotoc>`
-  :ref:`gen:aapt <gref_cli_genaapt>`
+  :ref:`gen.thrift <gref_cli_genthrift>`
+  :ref:`gen.scrooge <gref_cli_genscrooge>`
+  :ref:`gen.protoc <gref_cli_genprotoc>`
+  :ref:`gen.aapt <gref_cli_genaapt>`
   :ref:`check-exclusives <gref_cli_checkexclusives>`
-  :ref:`ivy <gref_cli_ivy>`
-  :ref:`jvm <gref_cli_jvm>`
+  :ref:`resolve.ivy <gref_cli_resolveivy>`
   :ref:`dex <gref_cli_dex>`
 
 
@@ -395,21 +385,9 @@ Print the targets changed since some prior commit.
 
 *
   **changed**
-  Implemented by ``pants.backend.core.tasks.what_changed.WhatChanged``
+  Implemented by ``abc.WhatChanged_changed``
 
 
-  Emits the targets that have been modified since a given commit.
-
-  * | ``--changed-sep``
-      ``string``
-      (Default: ``\n``)
-    |
-      String to use to separate results.
-
-  * | ``--changed-output-file``
-      ``string``
-    |
-      Specifies the file to store the console output to.
 
   * | ``--changed-parent``
       ``string``
@@ -442,21 +420,9 @@ Check for exclusivity violations.
 
 *
   **check-exclusives**
-  Implemented by ``pants.backend.core.tasks.check_exclusives.CheckExclusives``
+  Implemented by ``abc.CheckExclusives_check-exclusives``
 
 
-  Computes transitive exclusive maps.
-  
-  This computes transitive exclusive tags for a dependency graph rooted
-  with a set of build targets specified by a user. If this process produces
-  any collisions where a single target contains multiple tag values for a single
-  exclusives key, then it generates an error and the compilation will fail.
-  
-  See :ref:`howto_check_exclusives` to see how folks use this.
-  
-  Data about exclusives is provided to other tasks via data build products.
-  If the build data product 'exclusives_groups' is required, then an
-  ExclusivesMapping object will be created.
 
   * | ``--check-exclusives-error_on_collision/--no-check-exclusives-error_on_collision``
       (Default: ``True``)
@@ -469,10 +435,10 @@ Check for exclusivity violations.
 **Other command-line options:**
 
   `Common`_
-  :ref:`gen:thrift <gref_cli_genthrift>`
-  :ref:`gen:scrooge <gref_cli_genscrooge>`
-  :ref:`gen:protoc <gref_cli_genprotoc>`
-  :ref:`gen:aapt <gref_cli_genaapt>`
+  :ref:`gen.thrift <gref_cli_genthrift>`
+  :ref:`gen.scrooge <gref_cli_genscrooge>`
+  :ref:`gen.protoc <gref_cli_genprotoc>`
+  :ref:`gen.aapt <gref_cli_genaapt>`
 
 
 
@@ -488,20 +454,9 @@ Find references to outdated artifacts.
 
 *
   **check_published_deps**
-  Implemented by ``pants.backend.jvm.tasks.check_published_deps.CheckPublishedDeps``
+  Implemented by ``abc.CheckPublishedDeps_check_published_deps``
 
 
-
-  * | ``--check_published_deps-sep``
-      ``string``
-      (Default: ``\n``)
-    |
-      String to use to separate results.
-
-  * | ``--check_published_deps-output-file``
-      ``string``
-    |
-      Specifies the file to store the console output to.
 
   * | ``--check_published_deps-print-uptodate/--no-check_published_deps-print-uptodate``
     |
@@ -527,11 +482,10 @@ Clean all build output.
 .. _gref_cli_cleanallngkillall:
 
 *
-  **clean-all:ng-killall**
-  Implemented by ``pants.backend.jvm.tasks.nailgun_task.NailgunKillall``
+  **clean-all.ng-killall**
+  Implemented by ``abc.NailgunKillall_clean-all.ng-killall``
 
 
-  A task to manually kill nailguns.
 
   * | ``--clean-all-ng-killall-everywhere``
     |
@@ -539,17 +493,15 @@ Clean all build output.
 
 
 
-* Implemented by ``pants.backend.core.tasks.clean.Invalidator``
-
-
-  Invalidate the entire build.
+* Implemented by ``abc.Invalidator_clean-all.invalidate``
 
 
 
-* Implemented by ``pants.backend.core.tasks.clean.Cleaner``
 
 
-  Clean all current build products.
+* Implemented by ``abc.Cleaner_clean-all``
+
+
 
 
 
@@ -558,7 +510,7 @@ Clean all build output.
 
   `Common`_
   :ref:`ng-killall <gref_cli_ngkillall>`
-  :ref:`invalidate:ng-killall <gref_cli_invalidatengkillall>`
+  :ref:`invalidate.ng-killall <gref_cli_invalidatengkillall>`
 
 
 
@@ -573,11 +525,10 @@ Clean all build output in a background process.
 .. _gref_cli_cleanallasyncngkillall:
 
 *
-  **clean-all-async:ng-killall**
-  Implemented by ``pants.backend.jvm.tasks.nailgun_task.NailgunKillall``
+  **clean-all-async.ng-killall**
+  Implemented by ``abc.NailgunKillall_clean-all-async.ng-killall``
 
 
-  A task to manually kill nailguns.
 
   * | ``--clean-all-async-ng-killall-everywhere``
     |
@@ -585,17 +536,15 @@ Clean all build output in a background process.
 
 
 
-* Implemented by ``pants.backend.core.tasks.clean.Invalidator``
-
-
-  Invalidate the entire build.
+* Implemented by ``abc.Invalidator_clean-all-async.invalidate``
 
 
 
-* Implemented by ``pants.backend.core.tasks.clean.AsyncCleaner``
 
 
-  Clean all current build products in a background process.
+* Implemented by ``abc.AsyncCleaner_clean-all-async``
+
+
 
 
 
@@ -604,7 +553,7 @@ Clean all build output in a background process.
 
   `Common`_
   :ref:`ng-killall <gref_cli_ngkillall>`
-  :ref:`invalidate:ng-killall <gref_cli_invalidatengkillall>`
+  :ref:`invalidate.ng-killall <gref_cli_invalidatengkillall>`
 
 
 
@@ -616,130 +565,9 @@ compile
 Compile source code.
 
 
-.. _gref_cli_jvm:
-
-*
-  **jvm**
-  Implemented by ``pants.backend.core.tasks.group_task.SingletonGroupTask``
+* Implemented by ``abc.SingletonGroupTask_compile.jvm``
 
 
-
-  * | ``--compile-scala-warnings/--no-compile-scala-warnings``
-      (Default: ``True``)
-    |
-      Compile with all configured warnings enabled.
-
-  * | ``--compile-scala-partition-size-hint``
-      ``int``
-      (Default: ``-1``)
-    |
-      Roughly how many source files to attempt to compile together. Set to a large number to compile all sources together. Set this to 0 to compile target-by-target. Default is set in pants.ini.
-
-  * | ``--compile-scala-missing-deps``
-      ``choice``
-      (Default: ``warn``)
-    |
-      One of off, warn, fatal. Check for missing dependencies in scalacode. Reports actual dependencies A -> B where there is no transitive BUILD file dependency path from A to B.If fatal, missing deps are treated as a build error.
-
-  * | ``--compile-scala-missing-direct-deps``
-      ``choice``
-      (Default: ``off``)
-    |
-      One of off, warn, fatal. Check for missing direct dependencies in scala code. Reports actual dependencies A -> B where there is no direct BUILD file dependency path from A to B. This is a very strict check, as in practice it is common to rely on transitive, non-direct dependencies, e.g., due to type inference or when the main target in a BUILD file is modified to depend on other targets in the same BUILD file as an implementation detail. It may still be useful to set it to fatal temorarily, to detect these.
-
-  * | ``--compile-scala-unnecessary-deps``
-      ``choice``
-      (Default: ``off``)
-    |
-      One of off, warn, fatal. Check for declared dependencies in scala code that are not needed. This is a very strict check. For example, generated code will often legitimately have BUILD dependencies that are unused in practice.
-
-  * | ``--compile-scala-delete-scratch/--no-compile-scala-delete-scratch``
-      (Default: ``True``)
-    |
-      Leave intermediate scratch files around, for debugging build problems.
-
-  * | ``--compile-scala-plugins``
-      ``string``
-    |
-      Use these scalac plugins. Default is set in pants.ini.
-
-  * | ``--compile-apt-warnings/--no-compile-apt-warnings``
-      (Default: ``True``)
-    |
-      Compile with all configured warnings enabled.
-
-  * | ``--compile-apt-partition-size-hint``
-      ``int``
-      (Default: ``-1``)
-    |
-      Roughly how many source files to attempt to compile together. Set to a large number to compile all sources together. Set this to 0 to compile target-by-target. Default is set in pants.ini.
-
-  * | ``--compile-apt-missing-deps``
-      ``choice``
-      (Default: ``warn``)
-    |
-      One of off, warn, fatal. Check for missing dependencies in javacode. Reports actual dependencies A -> B where there is no transitive BUILD file dependency path from A to B.If fatal, missing deps are treated as a build error.
-
-  * | ``--compile-apt-missing-direct-deps``
-      ``choice``
-      (Default: ``off``)
-    |
-      One of off, warn, fatal. Check for missing direct dependencies in java code. Reports actual dependencies A -> B where there is no direct BUILD file dependency path from A to B. This is a very strict check, as in practice it is common to rely on transitive, non-direct dependencies, e.g., due to type inference or when the main target in a BUILD file is modified to depend on other targets in the same BUILD file as an implementation detail. It may still be useful to set it to fatal temorarily, to detect these.
-
-  * | ``--compile-apt-unnecessary-deps``
-      ``choice``
-      (Default: ``off``)
-    |
-      One of off, warn, fatal. Check for declared dependencies in java code that are not needed. This is a very strict check. For example, generated code will often legitimately have BUILD dependencies that are unused in practice.
-
-  * | ``--compile-apt-delete-scratch/--no-compile-apt-delete-scratch``
-      (Default: ``True``)
-    |
-      Leave intermediate scratch files around, for debugging build problems.
-
-  * | ``--compile-apt-args``
-      ``string``
-    |
-      Pass these extra args to javac.
-
-  * | ``--compile-java-warnings/--no-compile-java-warnings``
-      (Default: ``True``)
-    |
-      Compile with all configured warnings enabled.
-
-  * | ``--compile-java-partition-size-hint``
-      ``int``
-      (Default: ``-1``)
-    |
-      Roughly how many source files to attempt to compile together. Set to a large number to compile all sources together. Set this to 0 to compile target-by-target. Default is set in pants.ini.
-
-  * | ``--compile-java-missing-deps``
-      ``choice``
-      (Default: ``warn``)
-    |
-      One of off, warn, fatal. Check for missing dependencies in javacode. Reports actual dependencies A -> B where there is no transitive BUILD file dependency path from A to B.If fatal, missing deps are treated as a build error.
-
-  * | ``--compile-java-missing-direct-deps``
-      ``choice``
-      (Default: ``off``)
-    |
-      One of off, warn, fatal. Check for missing direct dependencies in java code. Reports actual dependencies A -> B where there is no direct BUILD file dependency path from A to B. This is a very strict check, as in practice it is common to rely on transitive, non-direct dependencies, e.g., due to type inference or when the main target in a BUILD file is modified to depend on other targets in the same BUILD file as an implementation detail. It may still be useful to set it to fatal temorarily, to detect these.
-
-  * | ``--compile-java-unnecessary-deps``
-      ``choice``
-      (Default: ``off``)
-    |
-      One of off, warn, fatal. Check for declared dependencies in java code that are not needed. This is a very strict check. For example, generated code will often legitimately have BUILD dependencies that are unused in practice.
-
-  * | ``--compile-java-delete-scratch/--no-compile-java-delete-scratch``
-      (Default: ``True``)
-    |
-      Leave intermediate scratch files around, for debugging build problems.
-
-  * | ``--compile-java-args``
-      ``string``
-    |
-      Pass these extra args to javac.
 
 
 
@@ -747,12 +575,12 @@ Compile source code.
 **Other command-line options:**
 
   `Common`_
-  :ref:`gen:thrift <gref_cli_genthrift>`
-  :ref:`gen:scrooge <gref_cli_genscrooge>`
-  :ref:`gen:protoc <gref_cli_genprotoc>`
-  :ref:`gen:aapt <gref_cli_genaapt>`
+  :ref:`gen.thrift <gref_cli_genthrift>`
+  :ref:`gen.scrooge <gref_cli_genscrooge>`
+  :ref:`gen.protoc <gref_cli_genprotoc>`
+  :ref:`gen.aapt <gref_cli_genaapt>`
   :ref:`check-exclusives <gref_cli_checkexclusives>`
-  :ref:`ivy <gref_cli_ivy>`
+  :ref:`resolve.ivy <gref_cli_resolveivy>`
 
 
 
@@ -768,21 +596,9 @@ Print the target's dependees.
 
 *
   **dependees**
-  Implemented by ``pants.backend.core.tasks.dependees.ReverseDepmap``
+  Implemented by ``abc.ReverseDepmap_dependees``
 
 
-  Outputs all targets whose dependencies include at least one of the input targets.
-
-  * | ``--dependees-sep``
-      ``string``
-      (Default: ``\n``)
-    |
-      String to use to separate results.
-
-  * | ``--dependees-output-file``
-      ``string``
-    |
-      Specifies the file to store the console output to.
 
   * | ``--dependees-transitive/--no-dependees-transitive``
     |
@@ -818,21 +634,9 @@ Print the target's dependencies.
 
 *
   **dependencies**
-  Implemented by ``pants.backend.jvm.tasks.dependencies.Dependencies``
+  Implemented by ``abc.Dependencies_dependencies``
 
 
-  Generates a textual list (using the target format) for the dependency set of a target.
-
-  * | ``--dependencies-sep``
-      ``string``
-      (Default: ``\n``)
-    |
-      String to use to separate results.
-
-  * | ``--dependencies-output-file``
-      ``string``
-    |
-      Specifies the file to store the console output to.
 
   * | ``--dependencies-internal-only``
     |
@@ -863,22 +667,9 @@ Depict the target's dependencies.
 
 *
   **depmap**
-  Implemented by ``pants.backend.jvm.tasks.depmap.Depmap``
+  Implemented by ``abc.Depmap_depmap``
 
 
-  Generates either a textual dependency tree or a graphviz digraph dot file for the dependency
-  set of a target.
-
-  * | ``--depmap-sep``
-      ``string``
-      (Default: ``\n``)
-    |
-      String to use to separate results.
-
-  * | ``--depmap-output-file``
-      ``string``
-    |
-      Specifies the file to store the console output to.
 
   * | ``--depmap-internal-only``
     |
@@ -932,10 +723,9 @@ Detect duplicate classes and resources on the classpath.
 
 *
   **detect-duplicates**
-  Implemented by ``pants.backend.jvm.tasks.detect_duplicates.DuplicateDetector``
+  Implemented by ``abc.DuplicateDetector_detect-duplicates``
 
 
-  Detect classes and resources with the same qualified name on the classpath.
 
   * | ``--detect-duplicates-fail-fast/--no-detect-duplicates-fail-fast``
     |
@@ -959,13 +749,12 @@ Detect duplicate classes and resources on the classpath.
 **Other command-line options:**
 
   `Common`_
-  :ref:`gen:thrift <gref_cli_genthrift>`
-  :ref:`gen:scrooge <gref_cli_genscrooge>`
-  :ref:`gen:protoc <gref_cli_genprotoc>`
-  :ref:`gen:aapt <gref_cli_genaapt>`
+  :ref:`gen.thrift <gref_cli_genthrift>`
+  :ref:`gen.scrooge <gref_cli_genscrooge>`
+  :ref:`gen.protoc <gref_cli_genprotoc>`
+  :ref:`gen.aapt <gref_cli_genaapt>`
   :ref:`check-exclusives <gref_cli_checkexclusives>`
-  :ref:`ivy <gref_cli_ivy>`
-  :ref:`jvm <gref_cli_jvm>`
+  :ref:`resolve.ivy <gref_cli_resolveivy>`
 
 
 
@@ -980,10 +769,9 @@ dex
 
 *
   **dex**
-  Implemented by ``pants.backend.android.tasks.dx_compile.DxCompile``
+  Implemented by ``abc.DxCompile_dex``
 
 
-  Compile java classes into dex files, Dalvik executables.
 
   * | ``--dex-sdk-path``
       ``string``
@@ -1006,13 +794,12 @@ dex
 **Other command-line options:**
 
   `Common`_
-  :ref:`gen:thrift <gref_cli_genthrift>`
-  :ref:`gen:scrooge <gref_cli_genscrooge>`
-  :ref:`gen:protoc <gref_cli_genprotoc>`
-  :ref:`gen:aapt <gref_cli_genaapt>`
+  :ref:`gen.thrift <gref_cli_genthrift>`
+  :ref:`gen.scrooge <gref_cli_genscrooge>`
+  :ref:`gen.protoc <gref_cli_genprotoc>`
+  :ref:`gen.aapt <gref_cli_genaapt>`
   :ref:`check-exclusives <gref_cli_checkexclusives>`
-  :ref:`ivy <gref_cli_ivy>`
-  :ref:`jvm <gref_cli_jvm>`
+  :ref:`resolve.ivy <gref_cli_resolveivy>`
 
 
 
@@ -1027,8 +814,8 @@ Create documentation.
 .. _gref_cli_docjavadoc:
 
 *
-  **doc:javadoc**
-  Implemented by ``pants.backend.jvm.tasks.javadoc_gen.JavadocGen``
+  **doc.javadoc**
+  Implemented by ``abc.JavadocGen_doc.javadoc``
 
 
 
@@ -1062,8 +849,8 @@ Create documentation.
 .. _gref_cli_docscaladoc:
 
 *
-  **doc:scaladoc**
-  Implemented by ``pants.backend.jvm.tasks.scaladoc_gen.ScaladocGen``
+  **doc.scaladoc**
+  Implemented by ``abc.ScaladocGen_doc.scaladoc``
 
 
 
@@ -1098,13 +885,12 @@ Create documentation.
 **Other command-line options:**
 
   `Common`_
-  :ref:`gen:thrift <gref_cli_genthrift>`
-  :ref:`gen:scrooge <gref_cli_genscrooge>`
-  :ref:`gen:protoc <gref_cli_genprotoc>`
-  :ref:`gen:aapt <gref_cli_genaapt>`
+  :ref:`gen.thrift <gref_cli_genthrift>`
+  :ref:`gen.scrooge <gref_cli_genscrooge>`
+  :ref:`gen.protoc <gref_cli_genprotoc>`
+  :ref:`gen.aapt <gref_cli_genaapt>`
   :ref:`check-exclusives <gref_cli_checkexclusives>`
-  :ref:`ivy <gref_cli_ivy>`
-  :ref:`jvm <gref_cli_jvm>`
+  :ref:`resolve.ivy <gref_cli_resolveivy>`
 
 
 
@@ -1120,7 +906,7 @@ Create an Eclipse project from the given targets.
 
 *
   **eclipse**
-  Implemented by ``pants.backend.jvm.tasks.eclipse_gen.EclipseGen``
+  Implemented by ``abc.EclipseGen_eclipse``
 
 
 
@@ -1190,13 +976,12 @@ Create an Eclipse project from the given targets.
 **Other command-line options:**
 
   `Common`_
-  :ref:`gen:thrift <gref_cli_genthrift>`
-  :ref:`gen:scrooge <gref_cli_genscrooge>`
-  :ref:`gen:protoc <gref_cli_genprotoc>`
-  :ref:`gen:aapt <gref_cli_genaapt>`
+  :ref:`gen.thrift <gref_cli_genthrift>`
+  :ref:`gen.scrooge <gref_cli_genscrooge>`
+  :ref:`gen.protoc <gref_cli_genprotoc>`
+  :ref:`gen.aapt <gref_cli_genaapt>`
   :ref:`check-exclusives <gref_cli_checkexclusives>`
-  :ref:`ivy <gref_cli_ivy>`
-  :ref:`jvm <gref_cli_jvm>`
+  :ref:`resolve.ivy <gref_cli_resolveivy>`
   :ref:`jar <gref_cli_jar>`
 
 
@@ -1213,7 +998,7 @@ Create an Ensime project from the given targets.
 
 *
   **ensime**
-  Implemented by ``pants.backend.jvm.tasks.ensime_gen.EnsimeGen``
+  Implemented by ``abc.EnsimeGen_ensime``
 
 
 
@@ -1289,13 +1074,12 @@ Create an Ensime project from the given targets.
 **Other command-line options:**
 
   `Common`_
-  :ref:`gen:thrift <gref_cli_genthrift>`
-  :ref:`gen:scrooge <gref_cli_genscrooge>`
-  :ref:`gen:protoc <gref_cli_genprotoc>`
-  :ref:`gen:aapt <gref_cli_genaapt>`
+  :ref:`gen.thrift <gref_cli_genthrift>`
+  :ref:`gen.scrooge <gref_cli_genscrooge>`
+  :ref:`gen.protoc <gref_cli_genprotoc>`
+  :ref:`gen.aapt <gref_cli_genaapt>`
   :ref:`check-exclusives <gref_cli_checkexclusives>`
-  :ref:`ivy <gref_cli_ivy>`
-  :ref:`jvm <gref_cli_jvm>`
+  :ref:`resolve.ivy <gref_cli_resolveivy>`
   :ref:`jar <gref_cli_jar>`
 
 
@@ -1308,28 +1092,9 @@ filedeps
 Print out the source and BUILD files the target depends on.
 
 
-.. _gref_cli_filedeps:
-
-*
-  **filedeps**
-  Implemented by ``pants.backend.jvm.tasks.filedeps.FileDeps``
+* Implemented by ``abc.FileDeps_filedeps``
 
 
-  List all transitive file dependencies of the targets specified on the command line.
-  
-  Files are listed with absolute paths and any BUILD files implied in the transitive closure of
-  targets are also included.
-
-  * | ``--filedeps-sep``
-      ``string``
-      (Default: ``\n``)
-    |
-      String to use to separate results.
-
-  * | ``--filedeps-output-file``
-      ``string``
-    |
-      Specifies the file to store the console output to.
 
 
 
@@ -1348,25 +1113,9 @@ filemap
 Outputs a mapping from source file to owning target.
 
 
-.. _gref_cli_filemap:
-
-*
-  **filemap**
-  Implemented by ``pants.backend.core.tasks.filemap.Filemap``
+* Implemented by ``abc.Filemap_filemap``
 
 
-  Outputs a mapping from source file to the target that owns the source file.
-
-  * | ``--filemap-sep``
-      ``string``
-      (Default: ``\n``)
-    |
-      String to use to separate results.
-
-  * | ``--filemap-output-file``
-      ``string``
-    |
-      Specifies the file to store the console output to.
 
 
 
@@ -1389,21 +1138,9 @@ Filter the input targets based on various criteria.
 
 *
   **filter**
-  Implemented by ``pants.backend.core.tasks.filter.Filter``
+  Implemented by ``abc.Filter_filter``
 
 
-  Filters targets based on various criteria.
-
-  * | ``--filter-sep``
-      ``string``
-      (Default: ``\n``)
-    |
-      String to use to separate results.
-
-  * | ``--filter-output-file``
-      ``string``
-    |
-      Specifies the file to store the console output to.
 
   * | ``--filter-type``
       ``string``
@@ -1445,8 +1182,8 @@ Generate code.
 .. _gref_cli_genthrift:
 
 *
-  **gen:thrift**
-  Implemented by ``pants.backend.codegen.tasks.apache_thrift_gen.ApacheThriftGen``
+  **gen.thrift**
+  Implemented by ``abc.ApacheThriftGen_gen.thrift``
 
 
 
@@ -1465,8 +1202,8 @@ Generate code.
 .. _gref_cli_genscrooge:
 
 *
-  **gen:scrooge**
-  Implemented by ``pants.backend.codegen.tasks.scrooge_gen.ScroogeGen``
+  **gen.scrooge**
+  Implemented by ``abc.ScroogeGen_gen.scrooge``
 
 
 
@@ -1479,8 +1216,8 @@ Generate code.
 .. _gref_cli_genprotoc:
 
 *
-  **gen:protoc**
-  Implemented by ``pants.backend.codegen.tasks.protobuf_gen.ProtobufGen``
+  **gen.protoc**
+  Implemented by ``abc.ProtobufGen_gen.protoc``
 
 
 
@@ -1491,41 +1228,31 @@ Generate code.
 
 
 
-* Implemented by ``pants.backend.codegen.tasks.antlr_gen.AntlrGen``
+* Implemented by ``abc.AntlrGen_gen.antlr``
 
 
 
 
 
-* Implemented by ``pants.backend.codegen.tasks.ragel_gen.RagelGen``
+* Implemented by ``abc.RagelGen_gen.ragel``
 
 
 
 
 
-* Implemented by ``pants.backend.codegen.tasks.jaxb_gen.JaxbGen``
+* Implemented by ``abc.JaxbGen_gen.jaxb``
 
 
-  Generates java source files from jaxb schema (.xsd).
 
 
 
 .. _gref_cli_genaapt:
 
 *
-  **gen:aapt**
-  Implemented by ``pants.backend.android.tasks.aapt_gen.AaptGen``
+  **gen.aapt**
+  Implemented by ``abc.AaptGen_gen.aapt``
 
 
-  Handle the processing of resources for Android targets with the
-  Android Asset Packaging Tool (aapt).
-  
-  The aapt tool supports 6 major commands: [dump, list, add, remove, crunch, package]
-  For right now, pants is only supporting 'package'. More to come as we support Release builds
-  (crunch, at minimum).
-  
-  Commands and flags for aapt can be seen here:
-  https://android.googlesource.com/platform/frameworks/base/+/master/tools/aapt/Command.cpp
 
   * | ``--gen-aapt-sdk-path``
       ``string``
@@ -1565,32 +1292,9 @@ goals
 List all documented goals.
 
 
-.. _gref_cli_goals:
-
-*
-  **goals**
-  Implemented by ``pants.backend.core.tasks.list_goals.ListGoals``
+* Implemented by ``abc.ListGoals_goals``
 
 
-
-  * | ``--goals-sep``
-      ``string``
-      (Default: ``\n``)
-    |
-      String to use to separate results.
-
-  * | ``--goals-output-file``
-      ``string``
-    |
-      Specifies the file to store the console output to.
-
-  * | ``--goals-all``
-    |
-      List all goals even if no description is available.
-
-  * | ``--goals-graph``
-    |
-      Generate a graphviz graph of installed goals.
 
 
 
@@ -1613,7 +1317,7 @@ Create an IntelliJ IDEA project from the given targets.
 
 *
   **idea**
-  Implemented by ``pants.backend.jvm.tasks.idea_gen.IdeaGen``
+  Implemented by ``abc.IdeaGen_idea``
 
 
 
@@ -1727,12 +1431,12 @@ Create an IntelliJ IDEA project from the given targets.
 **Other command-line options:**
 
   `Common`_
-  :ref:`gen:thrift <gref_cli_genthrift>`
-  :ref:`gen:scrooge <gref_cli_genscrooge>`
-  :ref:`gen:protoc <gref_cli_genprotoc>`
-  :ref:`gen:aapt <gref_cli_genaapt>`
+  :ref:`gen.thrift <gref_cli_genthrift>`
+  :ref:`gen.scrooge <gref_cli_genscrooge>`
+  :ref:`gen.protoc <gref_cli_genprotoc>`
+  :ref:`gen.aapt <gref_cli_genaapt>`
   :ref:`check-exclusives <gref_cli_checkexclusives>`
-  :ref:`ivy <gref_cli_ivy>`
+  :ref:`resolve.ivy <gref_cli_resolveivy>`
 
 
 
@@ -1743,11 +1447,9 @@ imports
 
 
 
-* Implemented by ``pants.backend.jvm.tasks.ivy_imports.IvyImports``
+* Implemented by ``abc.IvyImports_imports.ivy-imports``
 
 
-  Resolves a jar of .proto files for each target in the context which has imports (ie, for each
-  JavaProtobufLibrary target).
 
 
 
@@ -1769,11 +1471,10 @@ Invalidate all targets.
 .. _gref_cli_invalidatengkillall:
 
 *
-  **invalidate:ng-killall**
-  Implemented by ``pants.backend.jvm.tasks.nailgun_task.NailgunKillall``
+  **invalidate.ng-killall**
+  Implemented by ``abc.NailgunKillall_invalidate.ng-killall``
 
 
-  A task to manually kill nailguns.
 
   * | ``--invalidate-ng-killall-everywhere``
     |
@@ -1781,10 +1482,9 @@ Invalidate all targets.
 
 
 
-* Implemented by ``pants.backend.core.tasks.clean.Invalidator``
+* Implemented by ``abc.Invalidator_invalidate``
 
 
-  Invalidate the entire build.
 
 
 
@@ -1807,10 +1507,9 @@ jar
 
 *
   **jar**
-  Implemented by ``pants.backend.jvm.tasks.jar_create.JarCreate``
+  Implemented by ``abc.JarCreate_jar``
 
 
-  Jars jvm libraries and optionally their sources and their docs.
 
   * | ``--jar-compressed/--no-jar-compressed``
       (Default: ``True``)
@@ -1823,13 +1522,12 @@ jar
 **Other command-line options:**
 
   `Common`_
-  :ref:`gen:thrift <gref_cli_genthrift>`
-  :ref:`gen:scrooge <gref_cli_genscrooge>`
-  :ref:`gen:protoc <gref_cli_genprotoc>`
-  :ref:`gen:aapt <gref_cli_genaapt>`
+  :ref:`gen.thrift <gref_cli_genthrift>`
+  :ref:`gen.scrooge <gref_cli_genscrooge>`
+  :ref:`gen.protoc <gref_cli_genprotoc>`
+  :ref:`gen.aapt <gref_cli_genaapt>`
   :ref:`check-exclusives <gref_cli_checkexclusives>`
-  :ref:`ivy <gref_cli_ivy>`
-  :ref:`jvm <gref_cli_jvm>`
+  :ref:`resolve.ivy <gref_cli_resolveivy>`
 
 
 
@@ -1841,10 +1539,9 @@ killserver
 Kill the reporting server.
 
 
-* Implemented by ``pants.backend.core.tasks.reporting_server.KillServer``
+* Implemented by ``abc.KillServer_killserver``
 
 
-  Kills the reporting server.
 
 
 
@@ -1867,23 +1564,9 @@ List available BUILD targets.
 
 *
   **list**
-  Implemented by ``pants.backend.core.tasks.listtargets.ListTargets``
+  Implemented by ``abc.ListTargets_list``
 
 
-  Lists all targets matching the target specs.
-  
-  If no targets are specified, lists all targets in the workspace.
-
-  * | ``--list-sep``
-      ``string``
-      (Default: ``\n``)
-    |
-      String to use to separate results.
-
-  * | ``--list-output-file``
-      ``string``
-    |
-      Specifies the file to store the console output to.
 
   * | ``--list-provides``
     |
@@ -1920,7 +1603,7 @@ Generate html from markdown docs.
 
 *
   **markdown**
-  Implemented by ``pants.backend.core.tasks.markdown_to_html.MarkdownToHtml``
+  Implemented by ``abc.MarkdownToHtml_markdown``
 
 
 
@@ -1959,28 +1642,9 @@ minimize
 Print the minimal cover of the given targets.
 
 
-.. _gref_cli_minimize:
-
-*
-  **minimize**
-  Implemented by ``pants.backend.core.tasks.minimal_cover.MinimalCover``
+* Implemented by ``abc.MinimalCover_minimize``
 
 
-  Outputs a minimal covering set of targets.
-  
-  For a given set of input targets, the output targets transitive dependency set will include all
-  the input targets without gaps.
-
-  * | ``--minimize-sep``
-      ``string``
-      (Default: ``\n``)
-    |
-      String to use to separate results.
-
-  * | ``--minimize-output-file``
-      ``string``
-    |
-      Specifies the file to store the console output to.
 
 
 
@@ -2003,10 +1667,9 @@ Kill running nailgun servers.
 
 *
   **ng-killall**
-  Implemented by ``pants.backend.jvm.tasks.nailgun_task.NailgunKillall``
+  Implemented by ``abc.NailgunKillall_ng-killall``
 
 
-  A task to manually kill nailguns.
 
   * | ``--ng-killall-everywhere``
     |
@@ -2029,24 +1692,9 @@ path
 Find a dependency path from one target to another.
 
 
-.. _gref_cli_path:
-
-*
-  **path**
-  Implemented by ``pants.backend.core.tasks.paths.Path``
+* Implemented by ``abc.Path_path``
 
 
-
-  * | ``--path-sep``
-      ``string``
-      (Default: ``\n``)
-    |
-      String to use to separate results.
-
-  * | ``--path-output-file``
-      ``string``
-    |
-      Specifies the file to store the console output to.
 
 
 
@@ -2065,24 +1713,9 @@ pathdeps
 Print out all paths containing BUILD files the target depends on.
 
 
-.. _gref_cli_pathdeps:
-
-*
-  **pathdeps**
-  Implemented by ``pants.backend.core.tasks.pathdeps.PathDeps``
+* Implemented by ``abc.PathDeps_pathdeps``
 
 
-
-  * | ``--pathdeps-sep``
-      ``string``
-      (Default: ``\n``)
-    |
-      String to use to separate results.
-
-  * | ``--pathdeps-output-file``
-      ``string``
-    |
-      Specifies the file to store the console output to.
 
 
 
@@ -2101,24 +1734,9 @@ paths
 Find all dependency paths from one target to another.
 
 
-.. _gref_cli_paths:
-
-*
-  **paths**
-  Implemented by ``pants.backend.core.tasks.paths.Paths``
+* Implemented by ``abc.Paths_paths``
 
 
-
-  * | ``--paths-sep``
-      ``string``
-      (Default: ``\n``)
-    |
-      String to use to separate results.
-
-  * | ``--paths-output-file``
-      ``string``
-    |
-      Specifies the file to store the console output to.
 
 
 
@@ -2141,7 +1759,7 @@ Print the symbols provided by the given targets.
 
 *
   **provides**
-  Implemented by ``pants.backend.jvm.tasks.provides.Provides``
+  Implemented by ``abc.Provides_provides``
 
 
 
@@ -2159,13 +1777,12 @@ Print the symbols provided by the given targets.
 **Other command-line options:**
 
   `Common`_
-  :ref:`gen:thrift <gref_cli_genthrift>`
-  :ref:`gen:scrooge <gref_cli_genscrooge>`
-  :ref:`gen:protoc <gref_cli_genprotoc>`
-  :ref:`gen:aapt <gref_cli_genaapt>`
+  :ref:`gen.thrift <gref_cli_genthrift>`
+  :ref:`gen.scrooge <gref_cli_genscrooge>`
+  :ref:`gen.protoc <gref_cli_genprotoc>`
+  :ref:`gen.aapt <gref_cli_genaapt>`
   :ref:`check-exclusives <gref_cli_checkexclusives>`
-  :ref:`ivy <gref_cli_ivy>`
-  :ref:`jvm <gref_cli_jvm>`
+  :ref:`resolve.ivy <gref_cli_resolveivy>`
   :ref:`jar <gref_cli_jar>`
 
 
@@ -2182,64 +1799,9 @@ Publish artifacts.
 
 *
   **publish**
-  Implemented by ``pants.backend.jvm.tasks.jar_publish.JarPublish``
+  Implemented by ``abc.JarPublish_publish``
 
 
-  Publish jars to a maven repository.
-  
-  At a high-level, pants uses `Apache Ivy <http://ant.apache.org/ivy/>`_ to
-  publish artifacts to Maven-style repositories. Pants performs prerequisite
-  tasks like compiling, creating jars, and generating ``pom.xml`` files then
-  invokes Ivy to actually publish the artifacts, so publishing is largely
-  configured in ``ivysettings.xml``. ``BUILD`` and ``pants.ini`` files
-  primarily provide linkage between publishable targets and the
-  Ivy ``resolvers`` used to publish them.
-  
-  The following target types are publishable: :ref:`bdict_java_library`,
-  :ref:`bdict_scala_library`, :ref:`bdict_java_thrift_library`,
-  :ref:`bdict_annotation_processor`.
-  Targets to publish and their dependencies must be publishable target
-  types and specify the ``provides`` argument. One exception is
-  :ref:`bdict_jar`\s - pants will generate a pom file that
-  depends on the already-published jar.
-  
-  Example usage: ::
-  
-     # By default pants will perform a dry-run.
-     ./pants goal clean-all publish src/java/com/twitter/mybird
-  
-     # Actually publish.
-     ./pants goal clean-all publish src/java/com/twitter/mybird --no-publish-dryrun
-  
-  Please see ``./pants goal publish -h`` for a detailed description of all
-  publishing options.
-  
-  Publishing can be configured in ``pants.ini`` as follows.
-  
-  ``jar-publish`` section:
-  
-  * ``repos`` - Required dictionary of settings for repos that may be pushed to.
-  * ``ivy_jvmargs`` - Optional list of JVM command-line args when invoking Ivy.
-  * ``restrict_push_branches`` - Optional list of branches to restrict publishing to.
-  
-  Example pants.ini jar-publish repos dictionary: ::
-  
-     repos = {
-       # repository target name is paired with this key
-       'myrepo': {
-         # ivysettings.xml resolver to use for publishing
-         'resolver': 'maven.twttr.com',
-         # ivy configurations to publish
-         'confs': ['default', 'sources', 'javadoc'],
-         # address of a Credentials target to use when publishing
-         'auth': 'address/of/credentials:target',
-         # help message if unable to initialize the Credentials target.
-         'help': 'Please check your credentials and try again.',
-       },
-     }
-  
-  Additionally the ``ivy`` section ``ivy_settings`` property specifies which
-  Ivy settings file to use when publishing is required.
 
   * | ``--publish-dryrun/--no-publish-dryrun``
       (Default: ``True``)
@@ -2255,6 +1817,12 @@ Publish artifacts.
       ``string``
     |
       Publishes jars to a maven repository on the local filesystem at the specified path.
+
+  * | ``--publish-scm-push-attempts``
+      ``int``
+      (Default: ``5``)
+    |
+      Number of times to try pushing the pushdb to the SCM before aborting
 
   * | ``--publish-local-snapshot/--no-publish-local-snapshot``
       (Default: ``True``)
@@ -2303,16 +1871,15 @@ Publish artifacts.
 **Other command-line options:**
 
   `Common`_
-  :ref:`gen:thrift <gref_cli_genthrift>`
-  :ref:`gen:scrooge <gref_cli_genscrooge>`
-  :ref:`gen:protoc <gref_cli_genprotoc>`
-  :ref:`gen:aapt <gref_cli_genaapt>`
+  :ref:`gen.thrift <gref_cli_genthrift>`
+  :ref:`gen.scrooge <gref_cli_genscrooge>`
+  :ref:`gen.protoc <gref_cli_genprotoc>`
+  :ref:`gen.aapt <gref_cli_genaapt>`
   :ref:`check-exclusives <gref_cli_checkexclusives>`
-  :ref:`ivy <gref_cli_ivy>`
-  :ref:`jvm <gref_cli_jvm>`
+  :ref:`resolve.ivy <gref_cli_resolveivy>`
   :ref:`jar <gref_cli_jar>`
-  :ref:`doc:javadoc <gref_cli_docjavadoc>`
-  :ref:`doc:scaladoc <gref_cli_docscaladoc>`
+  :ref:`doc.javadoc <gref_cli_docjavadoc>`
+  :ref:`doc.scaladoc <gref_cli_docscaladoc>`
 
 
 
@@ -2327,8 +1894,8 @@ Run a REPL.
 .. _gref_cli_replpythonrepl:
 
 *
-  **repl:python-repl**
-  Implemented by ``pants.backend.python.tasks.python_repl.PythonRepl``
+  **repl.python-repl**
+  Implemented by ``abc.PythonRepl_repl.python-repl``
 
 
 
@@ -2346,8 +1913,8 @@ Run a REPL.
 .. _gref_cli_replscalarepl:
 
 *
-  **repl:scala-repl**
-  Implemented by ``pants.backend.jvm.tasks.scala_repl.ScalaRepl``
+  **repl.scala-repl**
+  Implemented by ``abc.ScalaRepl_repl.scala-repl``
 
 
 
@@ -2367,13 +1934,12 @@ Run a REPL.
 **Other command-line options:**
 
   `Common`_
-  :ref:`gen:thrift <gref_cli_genthrift>`
-  :ref:`gen:scrooge <gref_cli_genscrooge>`
-  :ref:`gen:protoc <gref_cli_genprotoc>`
-  :ref:`gen:aapt <gref_cli_genaapt>`
+  :ref:`gen.thrift <gref_cli_genthrift>`
+  :ref:`gen.scrooge <gref_cli_genscrooge>`
+  :ref:`gen.protoc <gref_cli_genprotoc>`
+  :ref:`gen.aapt <gref_cli_genaapt>`
   :ref:`check-exclusives <gref_cli_checkexclusives>`
-  :ref:`ivy <gref_cli_ivy>`
-  :ref:`jvm <gref_cli_jvm>`
+  :ref:`resolve.ivy <gref_cli_resolveivy>`
 
 
 
@@ -2385,23 +1951,9 @@ repl-dirty
 Run a REPL, skipping compilation.
 
 
-.. _gref_cli_scalarepldirty:
-
-*
-  **scala-repl-dirty**
-  Implemented by ``pants.backend.jvm.tasks.scala_repl.ScalaRepl``
+* Implemented by ``abc.ScalaRepl_repl-dirty.scala-repl-dirty``
 
 
-
-  * | ``--scala-repl-dirty-jvmargs``
-      ``string``
-    |
-      Run the repl in a jvm with these extra jvm args.
-
-  * | ``--scala-repl-dirty-args``
-      ``string``
-    |
-      run the repl in a jvm with extra args.
 
 
 
@@ -2409,6 +1961,7 @@ Run a REPL, skipping compilation.
 **Other command-line options:**
 
   `Common`_
+  :ref:`repl-dirty.scala-repl-dirty <gref_cli_repldirtyscalarepldirty>`
 
 
 
@@ -2420,46 +1973,9 @@ resolve
 Resolve dependencies and produce dependency reports.
 
 
-.. _gref_cli_ivy:
-
-*
-  **ivy**
-  Implemented by ``pants.backend.jvm.tasks.ivy_resolve.IvyResolve``
+* Implemented by ``abc.IvyResolve_resolve.ivy``
 
 
-
-  * | ``--ivy-override``
-      ``string``
-    |
-      Specifies a jar dependency override in the form:
-      [org]#[name]=(revision|url)
-      
-      For example, to specify 2 overrides:
-      --ivy-override=com.foo#bar=0.1.2 \
-      --ivy-override=com.baz#spam=file:///tmp/spam.jar
-
-  * | ``--ivy-report/--no-ivy-report``
-    |
-      Generate an ivy resolve html report
-
-  * | ``--ivy-open/--no-ivy-open``
-    |
-      Attempt to open the generated ivy resolve report in a browser (implies --ivy-report).
-
-  * | ``--ivy-outdir``
-      ``string``
-    |
-      Emit ivy report outputs in to this directory.
-
-  * | ``--ivy-args``
-      ``string``
-    |
-      Pass these extra args to ivy.
-
-  * | ``--ivy-mutable-pattern``
-      ``string``
-    |
-      If specified, all artifact revisions matching this pattern will be treated as mutable unless a matching artifact explicitly marks mutable as False.
 
 
 
@@ -2467,11 +1983,12 @@ Resolve dependencies and produce dependency reports.
 **Other command-line options:**
 
   `Common`_
-  :ref:`gen:thrift <gref_cli_genthrift>`
-  :ref:`gen:scrooge <gref_cli_genscrooge>`
-  :ref:`gen:protoc <gref_cli_genprotoc>`
-  :ref:`gen:aapt <gref_cli_genaapt>`
+  :ref:`gen.thrift <gref_cli_genthrift>`
+  :ref:`gen.scrooge <gref_cli_genscrooge>`
+  :ref:`gen.protoc <gref_cli_genprotoc>`
+  :ref:`gen.aapt <gref_cli_genaapt>`
   :ref:`check-exclusives <gref_cli_checkexclusives>`
+  :ref:`resolve.ivy <gref_cli_resolveivy>`
 
 
 
@@ -2482,7 +1999,7 @@ resources
 
 
 
-* Implemented by ``pants.backend.core.tasks.prepare_resources.PrepareResources``
+* Implemented by ``abc.PrepareResources_resources.prepare``
 
 
 
@@ -2503,25 +2020,9 @@ roots
 Print the workspace's source roots and associated target types.
 
 
-.. _gref_cli_roots:
-
-*
-  **roots**
-  Implemented by ``pants.backend.core.tasks.roots.ListRoots``
+* Implemented by ``abc.ListRoots_roots``
 
 
-  List the registered source roots of the repo.
-
-  * | ``--roots-sep``
-      ``string``
-      (Default: ``\n``)
-    |
-      String to use to separate results.
-
-  * | ``--roots-output-file``
-      ``string``
-    |
-      Specifies the file to store the console output to.
 
 
 
@@ -2543,8 +2044,8 @@ Run a binary target.
 .. _gref_cli_runpythonrun:
 
 *
-  **run:python-run**
-  Implemented by ``pants.backend.python.tasks.python_run.PythonRun``
+  **run.python-run**
+  Implemented by ``abc.PythonRun_run.python-run``
 
 
 
@@ -2558,8 +2059,8 @@ Run a binary target.
 .. _gref_cli_runjvmrun:
 
 *
-  **run:jvm-run**
-  Implemented by ``pants.backend.jvm.tasks.jvm_run.JvmRun``
+  **run.jvm-run**
+  Implemented by ``abc.JvmRun_run.jvm-run``
 
 
 
@@ -2588,13 +2089,12 @@ Run a binary target.
 **Other command-line options:**
 
   `Common`_
-  :ref:`gen:thrift <gref_cli_genthrift>`
-  :ref:`gen:scrooge <gref_cli_genscrooge>`
-  :ref:`gen:protoc <gref_cli_genprotoc>`
-  :ref:`gen:aapt <gref_cli_genaapt>`
+  :ref:`gen.thrift <gref_cli_genthrift>`
+  :ref:`gen.scrooge <gref_cli_genscrooge>`
+  :ref:`gen.protoc <gref_cli_genprotoc>`
+  :ref:`gen.aapt <gref_cli_genaapt>`
   :ref:`check-exclusives <gref_cli_checkexclusives>`
-  :ref:`ivy <gref_cli_ivy>`
-  :ref:`jvm <gref_cli_jvm>`
+  :ref:`resolve.ivy <gref_cli_resolveivy>`
 
 
 
@@ -2606,32 +2106,9 @@ run-dirty
 Run a binary target, skipping compilation.
 
 
-.. _gref_cli_jvmrundirty:
-
-*
-  **jvm-run-dirty**
-  Implemented by ``pants.backend.jvm.tasks.jvm_run.JvmRun``
+* Implemented by ``abc.JvmRun_run-dirty.jvm-run-dirty``
 
 
-
-  * | ``--jvm-run-dirty-jvmargs``
-      ``string``
-    |
-      Run binary in a jvm with these extra jvm args.
-
-  * | ``--jvm-run-dirty-args``
-      ``string``
-    |
-      Run binary with these main() args.
-
-  * | ``--jvm-run-dirty-debug/--no-jvm-run-dirty-debug``
-    |
-      Run binary with a debugger
-
-  * | ``--jvm-run-dirty-only-write-cmd-line``
-      ``string``
-    |
-      Instead of running, just write the cmd line to this file
 
 
 
@@ -2639,6 +2116,7 @@ Run a binary target, skipping compilation.
 **Other command-line options:**
 
   `Common`_
+  :ref:`run-dirty.jvm-run-dirty <gref_cli_rundirtyjvmrundirty>`
 
 
 
@@ -2654,10 +2132,9 @@ Run the pants reporting server.
 
 *
   **server**
-  Implemented by ``pants.backend.core.tasks.reporting_server.RunServer``
+  Implemented by ``abc.RunServer_server``
 
 
-  Runs the reporting server.
 
   * | ``--server-port``
       ``int``
@@ -2694,10 +2171,9 @@ sign
 
 *
   **sign**
-  Implemented by ``pants.backend.android.tasks.jarsigner_task.JarsignerTask``
+  Implemented by ``abc.JarsignerTask_sign``
 
 
-  Sign Android packages with keystore.
 
   * | ``--sign-build-type``
       ``string``
@@ -2710,17 +2186,46 @@ sign
 **Other command-line options:**
 
   `Common`_
-  :ref:`gen:thrift <gref_cli_genthrift>`
-  :ref:`gen:scrooge <gref_cli_genscrooge>`
-  :ref:`gen:protoc <gref_cli_genprotoc>`
-  :ref:`gen:aapt <gref_cli_genaapt>`
+  :ref:`gen.thrift <gref_cli_genthrift>`
+  :ref:`gen.scrooge <gref_cli_genscrooge>`
+  :ref:`gen.protoc <gref_cli_genprotoc>`
+  :ref:`gen.aapt <gref_cli_genaapt>`
   :ref:`check-exclusives <gref_cli_checkexclusives>`
-  :ref:`ivy <gref_cli_ivy>`
-  :ref:`jvm <gref_cli_jvm>`
+  :ref:`resolve.ivy <gref_cli_resolveivy>`
   :ref:`dex <gref_cli_dex>`
   :ref:`bundle <gref_cli_bundle>`
-  :ref:`bundle:dup <gref_cli_bundledup>`
-  :ref:`bundle:apk <gref_cli_bundleapk>`
+  :ref:`bundle.dup <gref_cli_bundledup>`
+  :ref:`bundle.apk <gref_cli_bundleapk>`
+
+
+
+.. _gref_goal_sitegen:
+
+sitegen
+-----------------------------------------------------------------------------
+
+Generate static web site.
+
+
+.. _gref_cli_sitegen:
+
+*
+  **sitegen**
+  Implemented by ``abc.SiteGen_sitegen``
+
+
+
+  * | ``--sitegen-config-path``
+      ``string``
+    |
+      Path to .json file describing site structure.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
 
 
 
@@ -2736,20 +2241,9 @@ Topologically sort the targets.
 
 *
   **sort**
-  Implemented by ``pants.backend.core.tasks.sorttargets.SortTargets``
+  Implemented by ``abc.SortTargets_sort``
 
 
-
-  * | ``--sort-sep``
-      ``string``
-      (Default: ``\n``)
-    |
-      String to use to separate results.
-
-  * | ``--sort-output-file``
-      ``string``
-    |
-      Specifies the file to store the console output to.
 
   * | ``--sort-reverse/--no-sort-reverse``
     |
@@ -2769,38 +2263,21 @@ Topologically sort the targets.
 targets
 -----------------------------------------------------------------------------
 
-List all target types.
+List target types and BUILD file symbols (python_tests, jar, etc).
 
 
 .. _gref_cli_targets:
 
 *
   **targets**
-  Implemented by ``pants.backend.core.tasks.targets_help.TargetsHelp``
+  Implemented by ``abc.TargetsHelp_targets``
 
 
-  Provides online help for installed targets.
-  
-  This task provides online help modes for installed targets. Without args,
-  all installed targets are listed with their one-line description.
-  An optional flag allows users to specify a target they want detailed
-  help about.
-
-  * | ``--targets-sep``
-      ``string``
-      (Default: ``\n``)
-    |
-      String to use to separate results.
-
-  * | ``--targets-output-file``
-      ``string``
-    |
-      Specifies the file to store the console output to.
 
   * | ``--targets-details``
       ``string``
     |
-      Display detailed information about the specific target type.
+      Display details about the specific target type or BUILD symbol.
 
 
 
@@ -2822,8 +2299,8 @@ Test compiled code.
 .. _gref_cli_testpytest:
 
 *
-  **test:pytest**
-  Implemented by ``pants.backend.python.tasks.pytest_run.PytestRun``
+  **test.pytest**
+  Implemented by ``abc.PytestRun_test.pytest``
 
 
 
@@ -2847,8 +2324,8 @@ Test compiled code.
 .. _gref_cli_testjunit:
 
 *
-  **test:junit**
-  Implemented by ``pants.backend.jvm.tasks.junit_run.JUnitRun``
+  **test.junit**
+  Implemented by ``abc.JUnitRun_test.junit``
 
 
 
@@ -2949,8 +2426,8 @@ Test compiled code.
 .. _gref_cli_testspecs:
 
 *
-  **test:specs**
-  Implemented by ``pants.backend.jvm.tasks.specs_run.SpecsRun``
+  **test.specs**
+  Implemented by ``abc.SpecsRun_test.specs``
 
 
 
@@ -2983,13 +2460,41 @@ Test compiled code.
 **Other command-line options:**
 
   `Common`_
-  :ref:`gen:thrift <gref_cli_genthrift>`
-  :ref:`gen:scrooge <gref_cli_genscrooge>`
-  :ref:`gen:protoc <gref_cli_genprotoc>`
-  :ref:`gen:aapt <gref_cli_genaapt>`
+  :ref:`gen.thrift <gref_cli_genthrift>`
+  :ref:`gen.scrooge <gref_cli_genscrooge>`
+  :ref:`gen.protoc <gref_cli_genprotoc>`
+  :ref:`gen.aapt <gref_cli_genaapt>`
   :ref:`check-exclusives <gref_cli_checkexclusives>`
-  :ref:`ivy <gref_cli_ivy>`
-  :ref:`jvm <gref_cli_jvm>`
+  :ref:`resolve.ivy <gref_cli_resolveivy>`
+
+
+
+.. _gref_goal_thrift-linter:
+
+thrift-linter
+-----------------------------------------------------------------------------
+
+Check thrift files for non-recommended usage patterns.
+
+
+.. _gref_cli_thriftlinter:
+
+*
+  **thrift-linter**
+  Implemented by ``abc.ThriftLinter_thrift-linter``
+
+
+
+  * | ``--thrift-linter-strict/--no-thrift-linter-strict``
+    |
+      Fail the goal if thrift errors are found.
+
+
+
+
+**Other command-line options:**
+
+  `Common`_
 
 
 
@@ -3043,4 +2548,7 @@ These command-line flags are available with all Pants goals.
 
   ``--print-exception-stacktrace``
   Print to console the full exception stack trace if encountered.
+
+  ``--fail-fast``
+  When parsing specs, will stop on the first erronous BUILD file encountered. Otherwise, will parse all builds in a spec and then throw an Exception.
 
