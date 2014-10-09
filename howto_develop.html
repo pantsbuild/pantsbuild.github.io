@@ -289,7 +289,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-tests">python_tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-thrift-library">python_thrift_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#repository">Repository</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#resources">resources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#bdict-resources">resources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#rglobs">rglobs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#scala-library">scala_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#scala-specs">scala_specs</a></li>
@@ -420,11 +420,11 @@ wanted instructions for using Pants to develop other programs, please see
 <p>Notice this invocation specifies the <tt class="docutils literal"><span class="pre">PANTS_DEV</span></tt> environment variable.
 By defining <tt class="docutils literal"><span class="pre">PANTS_DEV</span></tt> pants will be run from sources.</p>
 </div>
-<div class="section" id="building-a-pants-pex">
-<h2>Building a Pants PEX<a class="headerlink" href="#building-a-pants-pex" title="Permalink to this headline">¶</a></h2>
-<p>While you can build a Pants PEX in the usual Python way, the <tt class="docutils literal"><span class="pre">./pants</span></tt>
-wrapper provides some extra conveniences. If you call it without the
-<tt class="docutils literal"><span class="pre">PANTS_DEV=1</span></tt> environment described above, it</p>
+<div class="section" id="building-a-pants-pex-for-testing">
+<h2>Building a Pants PEX for Testing<a class="headerlink" href="#building-a-pants-pex-for-testing" title="Permalink to this headline">¶</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">./pants</span></tt> wrapper provides a convenient way to produce a <tt class="docutils literal"><span class="pre">.pex</span></tt> file for testing pants
+on your local workstation.  If you call it without the <tt class="docutils literal"><span class="pre">PANTS_DEV=1</span></tt> environment described above,
+it</p>
 <blockquote>
 <div><ul class="simple">
 <li>Checks the source tree&#8217;s top directory for a <tt class="docutils literal"><span class="pre">pants.pex</span></tt> and runs it
@@ -436,9 +436,12 @@ directory, and runs that.</li>
 <p>It looks something like:</p>
 <div class="highlight-python"><div class="highlight"><pre>$ rm pants.pex
 $ ./pants goal my-new-feature
-Build operating on targets: OrderedSet([PythonBinary(src/python/pants/BUILD:pants)])
-Building PythonBinary PythonBinary(src/python/pants/BUILD:pants):
-Wrote /Users/travis/src/science/dist/pants.pex
+Building pants.pex to /Users/zundel/Src/Pants/pants.pex...
+...
+Build operating on top level addresses: set([BuildFileAddress(/Users/pantsdev/Src/pants/src/python/pants/bin/BUILD, pants_local_binary)])
+Building PythonBinary PythonBinary(BuildFileAddress(/Users/pantsdev/Src/pants/src/python/pants/bin/BUILD, pants_local_binary)):
+Wrote /Users/pantsdev/Src/pants/dist/pants_local_binary.pex
+/Users/pantsdev/Src/Pants/dist/pants_local_binary.pex -&gt; /Users/pantsdev/Src/Pants/pants.pex
 AMAZING NEW FEATURE PRINTS HERE
 $ ls pants.pex # gets moved here, though originally &quot;Wrote&quot; to ./dist/
 pants.pex
@@ -452,6 +455,47 @@ between trying the generated <tt class="docutils literal"><span class="pre">pant
 as inspired by its misbehaviors. When the fixed source code is in a
 consistent state, remove <tt class="docutils literal"><span class="pre">pants.pex</span></tt> so that it will get replaced
 on the next <tt class="docutils literal"><span class="pre">./pants</span></tt> run.</p>
+</div>
+<div class="section" id="building-a-pants-pex-for-production">
+<h2>Building a Pants PEX for Production<a class="headerlink" href="#building-a-pants-pex-for-production" title="Permalink to this headline">¶</a></h2>
+<p>Most of the time, you will probably want to use an official published version of pants.
+But what if you want to let some of your internal users try out the latest and greatest
+unreleased code?  What if you want to create a custom build of pants with some
+unpublished patches?  In that case, you want to build a production ready version of
+pants including dependencies for all platforms, not just your development environment.</p>
+<p>The following command will create a locally built <tt class="docutils literal"><span class="pre">pants.pex</span></tt> for all platforms:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ ./pants goal binary src/python/pants/bin:pants
+...
+SUCCESS
+</pre></div>
+</div>
+<p>The resulting <tt class="docutils literal"><span class="pre">pants.pex</span></tt> will be in the <tt class="docutils literal"><span class="pre">dist/</span></tt> directory:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ ls -l dist/pants.pex
+-rwxr-xr-x  1 pantsdev  pantsdev  5561254 Oct  8 09:52 dist/pants.pex
+</pre></div>
+</div>
+<p>You can see that the pex contains bundled dependencies for both mac and linux:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ unzip -l dist/pants.pex | grep -e &#39;macos\|linux&#39;
+</pre></div>
+</div>
+<p>You can distribute the resulting <tt class="docutils literal"><span class="pre">pants.pex</span></tt> file to your users via your favorite method.
+A user can just copy this pex to the top of their Pants workspace and use it:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ cp /mnt/fd0/pants.pex .
+$ ./pants.pex goal test examples/tests/java/com/pants/examples/hello/greet:
+</pre></div>
+</div>
+<p>There are some parameters in <tt class="docutils literal"><span class="pre">src/python/pants/bin/BUILD</span></tt> that you may want to tweak for your
+production distribution.  For example, you may want to update the list of supported platforms:</p>
+<div class="highlight-python"><div class="highlight"><pre> platforms=[
+  &#39;linux-x86_64&#39;,
+  &#39;macosx-10.4-x86_64&#39;,
+],
+</pre></div>
+</div>
+<p>Or you may want to force the Python interpreter to be a specific version:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">PANTS_COMPATIBILITY</span> <span class="o">=</span> <span class="s">&#39;CPython&gt;=2.7,&lt;2.8&#39;</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="testing">
 <h2>Testing<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h2>

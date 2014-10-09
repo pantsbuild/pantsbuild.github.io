@@ -339,14 +339,48 @@ buildfile_path
 bundle
 -------------------------------------------------------------------------------
 
-.. py:function:: bundle(cls, parse_context)
+.. py:function:: bundle(parse_context, rel_path=None, mapper=None, relative_to=None)
+
+ A set of files to include in an application bundle.
+ 
+ To learn about application bundles, see
+ `bundles <JVMProjects.html#jvm-bundles>`_.
+ Looking for Java-style resources accessible via the ``Class.getResource`` API?
+ Those are `resources <build_dictionary.html#resources>`_.
+ 
+ Files added to the bundle will be included when bundling an application target.
+ By default relative paths are preserved. For example, to include ``config``
+ and ``scripts`` directories: ::
+ 
+   bundles=[
+     bundle().add(rglobs('config/*', 'scripts/*')),
+   ]
+ 
+ To include files relative to some path component use the ``relative_to`` parameter.
+ The following places the contents of ``common/config`` in a  ``config`` directory
+ in the bundle. ::
+ 
+   bundles=[
+     bundle(relative_to='common').add(globs('common/config/*'))
+   ]
 
 
+ :param rel_path: Base path of the "source" file paths. By default, path of the
+   BUILD file. Useful for assets that don't live in the source code repo.
+ :param mapper: Function that takes a path string and returns a path string. Takes a path in
+   the source tree, returns a path to use in the resulting bundle. By default, an identity
+   mapper.
+ :param string relative_to: Set up a simple mapping from source path to bundle path.
+   E.g., ``relative_to='common'`` removes that prefix from all files in the application bundle.
 
- Return a factory method that can create bundles rooted at the parse context path.
+ Implemented by ``pants.backend.jvm.targets.jvm_binary.Bundle``
 
- Implemented by ``pants.backend.jvm.targets.jvm_binary.factory``
+**Methods:**
 
+ .. py:method:: add(*filesets)
+
+  Add files to the bundle, where ``filesets`` is a filename, ``globs``, or ``rglobs``.
+  Note this is a variable length param and may be specified any number of times.
 
 .. _bdict_ConfluencePublish:
 
@@ -586,7 +620,7 @@ jar_library
 jar_rules
 -------------------------------------------------------------------------------
 
-.. py:function:: jar_rules(rules=None, default_dup_action=&lt;object object at 0x1027df870&gt;)
+.. py:function:: jar_rules(rules=None, default_dup_action=&lt;object object at 0x10190c790&gt;)
 
  A set of rules for packaging up a deploy jar.
  
@@ -1886,13 +1920,23 @@ Skip
 source_root
 -------------------------------------------------------------------------------
 
-.. py:function:: source_root(cls, parse_context)
+.. py:function:: source_root(rel_path)
+
+ Allows registration of a source root for a set of targets.
+ 
+ A source root is the base path sources for a particular language are found relative to.
+ Generally compilers or interpreters for the source will expect sources relative to a base path
+ and a source root allows calculation of the correct relative paths.
+ 
+ E.g., a Java compiler probably expects to find ``.java`` files for
+ ``package com.twitter.common.net`` in ``*something*/com/twitter/common/net``.
+ The ``source_root`` command specifies that *something*.
+ 
+ It is illegal to have nested source roots.
 
 
 
- Creates a ``SourceRoot`` valid for the given ``ParseContext``.
-
- Implemented by ``pants.base.source_root.factory``
+ Implemented by ``pants.base.source_root.SourceRoot``
 
 
 .. _bdict_target:
