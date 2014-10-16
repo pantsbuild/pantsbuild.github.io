@@ -214,7 +214,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="publish.html#troubleshooting">Troubleshooting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="publish.html#want-to-publish-something-publish-many-things">Want to Publish Something? Publish Many Things</a></li>
 <li class="toctree-l2"><a class="reference internal" href="publish.html#test-with-a-fake-local-publish">Test with a Fake Local &#8220;Publish&#8221;</a></li>
-<li class="toctree-l2"><a class="reference internal" href="publish.html#appendix-a-adding-extra-artifacts-to-the-publish">Appendix A: Adding extra artifacts to the publish</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publish.html#setting-up-your-workspace">Setting Up Your Workspace</a></li>
 </ul>
 </li>
 </ul>
@@ -231,8 +231,9 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="setup_repo.html#configuring-with-pants-ini">Configuring with <tt class="docutils literal"><span class="pre">pants.ini</span></tt></a></li>
 <li class="toctree-l2"><a class="reference internal" href="setup_repo.html#configure-code-layout-with-source-root">Configure Code Layout with <cite>source_root</cite></a></li>
 <li class="toctree-l2"><a class="reference internal" href="setup_repo.html#top-level-build-for-tree-global-config">Top-level <cite>BUILD.*</cite> for tree-global config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup_repo.html#integrate-new-tools-via-a-pants-plugin">Integrate New Tools via a Pants Plugin</a></li>
 <li class="toctree-l2"><a class="reference internal" href="setup_repo.html#build-in-the-source-tree-for-special-targets">BUILD.* in the source tree for special targets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="setup_repo.html#restricting-publish-to-release-branch">Restricting Publish to &#8220;Release Branch&#8221;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup_repo.html#enabling-pants-publish">Enabling Pants Publish</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installing Pants</a><ul>
@@ -435,6 +436,45 @@ worry - you&#8217;ll get a chance to abort the publish just before its comitted 
 ./build-support/bin/publish_docs.sh -opd sirois-test-site
 </pre></div>
 </div>
+</div>
+<div class="section" id="x-references">
+<h2>X-References<a class="headerlink" href="#x-references" title="Permalink to this headline">¶</a></h2>
+<p><strong>This describes a feature that is not yet &#8220;live&#8221;.</strong>
+If your doc has a link like <tt class="docutils literal"><span class="pre">&lt;a</span> <span class="pre">xref=&quot;bdict_java_library&quot;&gt;java_library&lt;/a&gt;</span></tt>,
+it links to the BUILD Dictionary entry for <tt class="docutils literal"><span class="pre">java_library</span></tt>. To set up
+a short-hand link like this...</p>
+<p>Define the destination of the link with an <tt class="docutils literal"><span class="pre">xmark</span></tt> anchor, e.g.,
+<tt class="docutils literal"><span class="pre">&lt;a</span> <span class="pre">xmark=&quot;bdict_java_library&quot;&gt;</span> <span class="pre">&lt;/a&gt;</span></tt>. The <tt class="docutils literal"><span class="pre">xmark</span></tt> attribute
+(here, <tt class="docutils literal"><span class="pre">bdict_java_library</span></tt>) must be unique within the doc set.</p>
+<p>Link to the destination with an <tt class="docutils literal"><span class="pre">xref</span></tt>, e.g.,
+<tt class="docutils literal"><span class="pre">&lt;a</span> <span class="pre">xref=&quot;bdict_java_library&quot;&gt;java_library&lt;/a&gt;</span></tt>.</p>
+</div>
+<div class="section" id="doc-site-config">
+<h2>Doc Site Config<a class="headerlink" href="#doc-site-config" title="Permalink to this headline">¶</a></h2>
+<p><strong>This describes a feature that is not yet &#8220;live&#8221;.</strong>
+The site generator takes &#8220;raw&#8221; <tt class="docutils literal"><span class="pre">.html</span></tt> files, &#8220;wraps&#8221; them in a template
+with some navigation UI, and writes out the resulting <tt class="docutils literal"><span class="pre">.html</span></tt> files.</p>
+<p>You configure this with <tt class="docutils literal"><span class="pre">src/python/pants/docs/docsite.json</span></tt>:</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">sources</span></tt>:</dt>
+<dd>Map of pages to the <tt class="docutils literal"><span class="pre">.html</span></tt> files they&#8217;re generated from. E.g.,
+<tt class="docutils literal"><span class="pre">&quot;build_dictionary&quot;:</span> <span class="pre">&quot;dist/builddict/build_dictionary.html&quot;,</span></tt> means
+to generate the site&#8217;s /build_dictionary.html page, the site generator
+should get the &#8220;raw&#8221; file <tt class="docutils literal"><span class="pre">dist/builddict/build_dictionary.html</span></tt> and
+apply the template to it.</dd>
+<dt><tt class="docutils literal"><span class="pre">tree</span></tt>:</dt>
+<dd>Outline structure of the site. Each node of the tree is a dict.
+Each node-dict can have a <tt class="docutils literal"><span class="pre">page</span></tt>, a page defined in <tt class="docutils literal"><span class="pre">sources</span></tt> above.
+Each node-dict can have a <tt class="docutils literal"><span class="pre">children</span></tt>, a list of more nodes.</dd>
+<dt><tt class="docutils literal"><span class="pre">template</span></tt>:</dt>
+<dd>Path to mustache template to apply to each page.</dd>
+<dt><tt class="docutils literal"><span class="pre">extras</span></tt>:</dt>
+<dd>Map of &#8220;extra&#8221; files to copy over. Handy for graphics, stylesheets, and such.</dd>
+<dt><tt class="docutils literal"><span class="pre">outdir</span></tt>:</dt>
+<dd>Path to which to write the generated site.</dd>
+</dl>
+<p>To add a page and have it show up in the side navigation UI, add the page
+to the <tt class="docutils literal"><span class="pre">sources</span></tt> dict and to the <tt class="docutils literal"><span class="pre">tree</span></tt> hierarchy.</p>
 </div>
 </div>
 

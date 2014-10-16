@@ -213,7 +213,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#want-to-publish-something-publish-many-things">Want to Publish Something? Publish Many Things</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#test-with-a-fake-local-publish">Test with a Fake Local &#8220;Publish&#8221;</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#appendix-a-adding-extra-artifacts-to-the-publish">Appendix A: Adding extra artifacts to the publish</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#setting-up-your-workspace">Setting Up Your Workspace</a></li>
 </ul>
 </li>
 </ul>
@@ -230,8 +230,9 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="setup_repo.html#configuring-with-pants-ini">Configuring with <tt class="docutils literal"><span class="pre">pants.ini</span></tt></a></li>
 <li class="toctree-l2"><a class="reference internal" href="setup_repo.html#configure-code-layout-with-source-root">Configure Code Layout with <cite>source_root</cite></a></li>
 <li class="toctree-l2"><a class="reference internal" href="setup_repo.html#top-level-build-for-tree-global-config">Top-level <cite>BUILD.*</cite> for tree-global config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup_repo.html#integrate-new-tools-via-a-pants-plugin">Integrate New Tools via a Pants Plugin</a></li>
 <li class="toctree-l2"><a class="reference internal" href="setup_repo.html#build-in-the-source-tree-for-special-targets">BUILD.* in the source tree for special targets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="setup_repo.html#restricting-publish-to-release-branch">Restricting Publish to &#8220;Release Branch&#8221;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup_repo.html#enabling-pants-publish">Enabling Pants Publish</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installing Pants</a><ul>
@@ -536,13 +537,13 @@ to get a user&#8217;s username and password on an artifact repository machine.
 To make this work:</p>
 <ul>
 <li><p class="first">Each user needs a <tt class="docutils literal"><span class="pre">~/.netrc</span></tt> file with a section that looks like</p>
-<div class="highlight-python"><div class="highlight"><pre>machine our-artifacts.archimedes.org
+<div class="highlight-python"><div class="highlight"><pre>machine maven.twttr.com
   login sandy
   password myamazingpa$sword
 </pre></div>
 </div>
 </li>
-<li><p class="first">One of your top-level <tt class="docutils literal"><span class="pre">BUILD</span></tt> files needs a target that represents
+<li><p class="first">One of your <tt class="docutils literal"><span class="pre">BUILD</span></tt> files needs a target that represents
 <tt class="docutils literal"><span class="pre">netrc</span></tt> auth:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">netrc</span> <span class="o">=</span> <span class="n">netrc</span><span class="p">()</span>
 
@@ -553,15 +554,17 @@ To make this work:</p>
 </pre></div>
 </div>
 </li>
-<li><p class="first">Your <tt class="docutils literal"><span class="pre">pants.ini</span></tt> file&#8217;s <tt class="docutils literal"><span class="pre">'auth'</span></tt> section for that repository should
+<li><p class="first">Your <tt class="docutils literal"><span class="pre">'auth'</span></tt> section for that repository should
 refer to that target:</p>
 <div class="highlight-python"><div class="highlight"><pre>[jar-publish]
 workdir: %(pants_workdir)s/publish
 repos: {
-    &#39;external&#39;: {
-      &#39;resolver&#39;: &#39;art.archimedes.org&#39;,
+    &#39;public&#39;: {
+      # ivysettings.xml resolver to use for publishing
+      # this resolver&#39;s address should match root of ivysettings resolver
+      &#39;resolver&#39;: &#39;maven.twttr.com&#39;,
       &#39;confs&#39;: [&#39;default&#39;, &#39;sources&#39;, &#39;docs&#39;, &#39;changelog&#39;],
-      &#39;auth&#39;: &#39;BUILD.archimedes:netrc&#39;,
+      &#39;auth&#39;: &#39;build-support:netrc&#39;,
       &#39;help&#39;: &#39;Configure your ~/.netrc for artifact repo access!&#39;
     },
 }
@@ -718,83 +721,11 @@ locally-published artifact. If the artifact is a jar, then in the
 <a class="reference internal" href="build_dictionary.html#bdict-jar"><em>jar target</em></a>,
 set <tt class="docutils literal"><span class="pre">mutable=True</span></tt> and change the version number.</p>
 </div>
-<div class="section" id="appendix-a-adding-extra-artifacts-to-the-publish">
-<h2>Appendix A: Adding extra artifacts to the publish<a class="headerlink" href="#appendix-a-adding-extra-artifacts-to-the-publish" title="Permalink to this headline">¶</a></h2>
-<p>Pants supports &#8220;publish plugins&#8221;, which allow end-users to add additional,
-arbitrary files to be published along with the primary artifact. For example,
-let&#8217;s say that along with publishing your jar full of class files, you would
-also like to publish a companion file that contains some metadata &#8211; code
-coverage info, source git repository, java version that created the jar, etc.
-To accomplish this, you&#8217;ll first need to write a custom task, which creates any
-additional files (jar or otherwise) that you would like to publish. Next,
-you&#8217;ll create a <tt class="docutils literal"><span class="pre">publish_extras</span></tt> section under <tt class="docutils literal"><span class="pre">[jar-publish]</span></tt> in
-pants.ini, and add a key for the new product type. Your custom task will create
-the extra file(s) that you want to publish, and write the path to the products
-map under the key that you have defined in pants.ini. The publishing code will
-loop over all keys found in pants.ini, and consult the product map. If pants
-finds a file for the current key, it will gather it up, and bundle it in with
-the rest of the files being published.</p>
-<p>An example of a custom task is supplied in the
-<tt class="docutils literal"><span class="pre">examples/src/python/example/pants_publish_plugin</span></tt> directory. To use it, add
-the following to your pants.ini:</p>
-<div class="highlight-python"><div class="highlight"><pre>[jar-publish]
-publish_extras: {
-    &#39;extra_test_jar_example&#39;: {
-      &#39;override_name&#39;: &#39;{target_provides_name}-extra_example&#39;,
-      &#39;classifier&#39;: &#39;classy&#39;,
-      &#39;extension&#39;: &#39;jar&#39;,
-    },
-  }
-
-[backends]
-packages: [
-    &#39;example.pants_publish_plugin&#39;,
-  ]
-</pre></div>
-</div>
-<p>In the above configuration example, the string &#8216;extra_test_jar_example&#8217; is a
-key into the product map. In this case, the example task will add additional
-files for publishing to the product map under this key. And <tt class="docutils literal"><span class="pre">jar_publish.py</span></tt>
-will examine the product map, looking for all keys defined here, and publishing
-any additional files found.</p>
-<div class="section" id="constructing-a-name-for-your-extra-artifact">
-<h3>Constructing a name for your extra artifact:<a class="headerlink" href="#constructing-a-name-for-your-extra-artifact" title="Permalink to this headline">¶</a></h3>
-<p>By default, pants uses the following scheme when publishing artifacts:</p>
-<div class="highlight-python"><div class="highlight"><pre>[artifactId]-[version](-[classifier]).[ext]
-</pre></div>
-</div>
-<p>The pants plugin publishing system allows a customization of the artifact
-identifier, classifier, and file extension. To customize the name of your extra
-object, you can supply some extra parameters in the <tt class="docutils literal"><span class="pre">pants.ini</span></tt> file:</p>
-<blockquote>
-<div><ul class="simple">
-<li><tt class="docutils literal"><span class="pre">override_name</span></tt> &#8211; allows customization of the name (<tt class="docutils literal"><span class="pre">artifactId</span></tt>) of
-the additional file published. Specifying a string will completely override
-the name, or include &#8216;<tt class="docutils literal"><span class="pre">{target_provides_name}</span></tt>&#8216; to tack an addition on to
-the pre-existing artifact name. Defaults to the pre-existing artifact name.</li>
-<li><tt class="docutils literal"><span class="pre">classifier</span></tt> &#8211; the maven classifier. Can be any arbitrary string, or
-leave this unspecified for nothing.</li>
-<li><tt class="docutils literal"><span class="pre">extension</span></tt> &#8211; the filename extension. Defaults to &#8220;jar&#8221;.</li>
-</ul>
-</div></blockquote>
-<p><strong>Note:</strong> You must supply a non-default value for at least one of the above
-parameters, otherwise your extra publish artifact won&#8217;t have a unique name.
-With the above config in your pants.ini, invoke pants like this, to do a test
-publish:</p>
-<div class="highlight-python"><div class="highlight"><pre>WRAPPER_SRCPATH=examples/src/python PANTS_DEV=1 ./pants goal publish examples/src/java/com/pants/examples/hello/greet --no-publish-dryrun --publish-local=~/tmp
-</pre></div>
-</div>
-<p>Now if you examine the <tt class="docutils literal"><span class="pre">/tmp</span></tt> directory, you&#8217;ll notice that an extra jar has
-been published for the <tt class="docutils literal"><span class="pre">greet</span></tt> target:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ ls -1 /tmp/com/pants/examples/hello-greet/0.0.1-SNAPSHOT/|grep example
-hello-greet-extra_example-0.0.1-SNAPSHOT-classy.jar
-hello-greet-extra_example-0.0.1-SNAPSHOT-classy.jar.md5
-hello-greet-extra_example-0.0.1-SNAPSHOT-classy.jar.sha1
-</pre></div>
-</div>
-<p>This example task should provide a rough starting guide, and can be tailored to
-suit a more specific situation.</p>
-</div>
+<div class="section" id="setting-up-your-workspace">
+<h2>Setting Up Your Workspace<a class="headerlink" href="#setting-up-your-workspace" title="Permalink to this headline">¶</a></h2>
+<p>To get Pants publish working in the first place,
+someone needs to <a class="reference internal" href="setup_repo.html#setup-publish"><em>configure your codebase</em></a> to register one
+or more artifact repositories and, optionally, enable some features.</p>
 </div>
 </div>
 

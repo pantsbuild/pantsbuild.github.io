@@ -46,7 +46,7 @@
 
   
     <link rel="top" title="pants 0.1 documentation" href="index.html"/>
-        <link rel="next" title="Installing Pants" href="install.html"/>
+        <link rel="next" title="Develop a Task to Publish “Extra” Artifacts" href="dev_tasks_publish_extras.html"/>
         <link rel="prev" title="Hello Pants Build" href="announce_201409.html"/>
  
 <script type="text/javascript">
@@ -213,7 +213,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="publish.html#troubleshooting">Troubleshooting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="publish.html#want-to-publish-something-publish-many-things">Want to Publish Something? Publish Many Things</a></li>
 <li class="toctree-l2"><a class="reference internal" href="publish.html#test-with-a-fake-local-publish">Test with a Fake Local &#8220;Publish&#8221;</a></li>
-<li class="toctree-l2"><a class="reference internal" href="publish.html#appendix-a-adding-extra-artifacts-to-the-publish">Appendix A: Adding extra artifacts to the publish</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publish.html#setting-up-your-workspace">Setting Up Your Workspace</a></li>
 </ul>
 </li>
 </ul>
@@ -230,8 +230,9 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="#configuring-with-pants-ini">Configuring with <tt class="docutils literal"><span class="pre">pants.ini</span></tt></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#configure-code-layout-with-source-root">Configure Code Layout with <cite>source_root</cite></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#top-level-build-for-tree-global-config">Top-level <cite>BUILD.*</cite> for tree-global config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#integrate-new-tools-via-a-pants-plugin">Integrate New Tools via a Pants Plugin</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#build-in-the-source-tree-for-special-targets">BUILD.* in the source tree for special targets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#restricting-publish-to-release-branch">Restricting Publish to &#8220;Release Branch&#8221;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#enabling-pants-publish">Enabling Pants Publish</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installing Pants</a><ul>
@@ -511,6 +512,21 @@ distribute code to different organizations, and want different configuration
 for them, you might put the relevant config code in <cite>./BUILD.something</cite>.
 You can give that file to some people and not-give it to others.</p>
 </div>
+<div class="section" id="integrate-new-tools-via-a-pants-plugin">
+<h2>Integrate New Tools via a Pants Plugin<a class="headerlink" href="#integrate-new-tools-via-a-pants-plugin" title="Permalink to this headline">¶</a></h2>
+<p>Pants knows how to build many things, but maybe you need it to learn a new tool.
+Maybe your organization has a custom linter, a custom code generator,
+or some other custom tool. Maybe your organization uses a tool that, while
+not custom, has not yet been integrated with Pants.</p>
+<ul class="simple">
+<li>If your organization has some custom tools to integrate,
+set up a <a class="reference internal" href="howto_plugin.html"><em>Pants plugin</em></a>.</li>
+<li>If you want to integrate with a not-custom tool, you
+still want to set up a Pants plugin (or perhaps add abilities
+to an existing plugin), but it might make sense to
+<a class="reference internal" href="howto_contribute.html"><em>get your changes in upstream</em></a>.</li>
+</ul>
+</div>
 <div class="section" id="build-in-the-source-tree-for-special-targets">
 <h2>BUILD.* in the source tree for special targets<a class="headerlink" href="#build-in-the-source-tree-for-special-targets" title="Permalink to this headline">¶</a></h2>
 <p>If you distribute code to different organizations, you might want to expose some
@@ -537,12 +553,79 @@ as a convenient way to send many many tests to the fleet</p>
 they complain about how long it takes), you might put this in a <cite>BUILD.foo</cite>
 file and hold back this file when mirroring for the public repository.</p>
 </div>
+<div class="section" id="enabling-pants-publish">
+<span id="setup-publish"></span><h2>Enabling Pants Publish<a class="headerlink" href="#enabling-pants-publish" title="Permalink to this headline">¶</a></h2>
+<p>Pants can <a class="reference internal" href="publish.html"><em>ease &#8220;publishing&#8221;</em></a>:
+uploading versioned compiled artifacts.
+There are some special things to set up to enable and customize publishing.</p>
+<div class="section" id="tell-pants-about-your-artifact-repository">
+<h3>Tell Pants about your Artifact Repository<a class="headerlink" href="#tell-pants-about-your-artifact-repository" title="Permalink to this headline">¶</a></h3>
+<p>To tell Pants which artifact repsitory to publish to,</p>
+<p>Create a <a class="reference internal" href="howto_plugin.html"><em>plugin</em></a> if you haven&#8217;t already.
+Register it with Pants.</p>
+<p>In the plugin, define and register a <tt class="docutils literal"><span class="pre">Repository</span></tt> in a BUILD file
+alias as shown in
+<a class="reference external" href="https://github.com/pantsbuild/pants/blob/master/src/python/internal_backend/repositories/register.py">src/python/internal_backend/repositories/register.py</a>.</p>
+<p><tt class="docutils literal"><span class="pre">BUILD</span></tt> targets can use this Repository&#8217;s alias as the
+<tt class="docutils literal"><span class="pre">repo</span></tt> parameter to an <a class="reference internal" href="build_dictionary.html#bdict-artifact"><em>artifact</em></a>.
+For example, the <tt class="docutils literal"><span class="pre">src/java/com/pants/examples/hello/greet/BUILD</span></tt>
+refers to the <tt class="docutils literal"><span class="pre">public</span></tt> repostiory defined above.
+(Notice it&#8217;s a Python object, not a string.)</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">provides</span> <span class="o">=</span> <span class="n">artifact</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s">&#39;com.pants.examples&#39;</span><span class="p">,</span>
+                    <span class="n">name</span><span class="o">=</span><span class="s">&#39;hello-greet&#39;</span><span class="p">,</span>
+                    <span class="n">repo</span><span class="o">=</span><span class="n">public</span><span class="p">,)</span>
+</pre></div>
+</div>
+<p>If you get an error that the repo name (here, <tt class="docutils literal"><span class="pre">public</span></tt>) isn&#8217;t defined,
+your plugin didn&#8217;t register with Pants successfully. Make sure you bootstrap
+Pants in a way that loads your <tt class="docutils literal"><span class="pre">register.py</span></tt>.</p>
+<p>In your config file (usually <tt class="docutils literal"><span class="pre">pants.ini</span></tt>), set up a
+<tt class="docutils literal"><span class="pre">[jar-publish]</span></tt> section. In that section, create a <tt class="docutils literal"><span class="pre">dict</span></tt> called <tt class="docutils literal"><span class="pre">repos</span></tt>.
+It should contain a section for each Repository:</p>
+<div class="highlight-python"><div class="highlight"><pre>repos: {
+  &#39;public&#39;: {  # must match the alias above
+    &#39;resolver&#39;: &#39;maven.twttr.com&#39;, # must match URL above and &lt;url&gt; name
+                                   # in ivysettings.xml
+    &#39;confs&#39;: [&#39;default&#39;, &#39;sources&#39;, &#39;docs&#39;, &#39;changelog&#39;],
+    # &#39;auth&#39;: &#39;build-support:netrc&#39;,
+    # &#39;help&#39;: &#39;Configure your ~/.netrc for artifactory access.
+  },
+  &#39;testing&#39;: { # this key must match the alias name above
+    &#39;resolver&#39;: &#39;maven.twttr.com&#39;,
+    &#39;confs&#39;: [&#39;default&#39;, &#39;sources&#39;, &#39;docs&#39;, &#39;changelog&#39;],
+    # &#39;auth&#39;: &#39;build-support:netrc&#39;,
+    # &#39;help&#39;: &#39;Configure your ~/.netrc for artifactory access.
+  },
+}
+</pre></div>
+</div>
+</div>
 <div class="section" id="restricting-publish-to-release-branch">
-<span id="setup-publish-restrict-branch"></span><h2>Restricting Publish to &#8220;Release Branch&#8221;<a class="headerlink" href="#restricting-publish-to-release-branch" title="Permalink to this headline">¶</a></h2>
+<span id="setup-publish-restrict-branch"></span><h3>Restricting Publish to &#8220;Release Branch&#8221;<a class="headerlink" href="#restricting-publish-to-release-branch" title="Permalink to this headline">¶</a></h3>
 <p>Your organization might have a notion of a special &#8220;release branch&#8221;: you want
 <a class="reference internal" href="publish.html"><em>artifact publishing</em></a>
 to happen on this source control branch, which you maintain
-extra-carefully. You can set this branch using the restrict_push_branches option.</p>
+extra-carefully.
+You can set this branch using the restrict_push_branches option
+of the <tt class="docutils literal"><span class="pre">[jar-publish]</span></tt> section of your config file (usually <tt class="docutils literal"><span class="pre">pants.ini</span></tt>).</p>
+</div>
+<div class="section" id="task-to-publish-extra-artifacts">
+<h3>Task to Publish &#8220;Extra&#8221; Artifacts<a class="headerlink" href="#task-to-publish-extra-artifacts" title="Permalink to this headline">¶</a></h3>
+<p>Pants supports &#8220;publish plugins&#8221;, which allow end-users to add additional,
+arbitrary files to be published along with the primary artifact. For example,
+let&#8217;s say that along with publishing your jar full of class files, you would
+also like to publish a companion file that contains some metadata &#8211; code
+coverage info, source git repository, java version that created the jar, etc.
+By developing a <a class="reference internal" href="dev_tasks.html"><em>task</em></a> in a <a class="reference internal" href="howto_plugin.html"><em>plugin</em></a>,
+you give Pants a new ability. See
+:doc:` &lt;dev_task_publish_extras&gt;` to find out how to develop a special
+Task to include &#8220;extra&#8221; data with published artifacts.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="dev_tasks_publish_extras.html">Develop a Task to Publish &#8220;Extra&#8221; Artifacts</a></li>
+</ul>
+</div>
+</div>
 </div>
 </div>
 
@@ -551,7 +634,7 @@ extra-carefully. You can set this branch using the restrict_push_branches option
   
     <div class="rst-footer-buttons">
       
-        <a href="install.html" class="btn btn-neutral float-right" title="Installing Pants"/>Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="dev_tasks_publish_extras.html" class="btn btn-neutral float-right" title="Develop a Task to Publish “Extra” Artifacts"/>Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
         <a href="announce_201409.html" class="btn btn-neutral" title="Hello Pants Build"><span class="icon icon-circle-arrow-left"></span> Previous</a>

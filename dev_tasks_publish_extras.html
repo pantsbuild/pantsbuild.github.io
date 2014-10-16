@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Python 3rdparty Pattern &mdash; pants 0.1 documentation</title>
+  <title>Develop a Task to Publish “Extra” Artifacts &mdash; pants 0.1 documentation</title>
   
 
   
@@ -46,9 +46,9 @@
 
   
     <link rel="top" title="pants 0.1 documentation" href="index.html"/>
-        <link rel="up" title="Third-Party Dependencies" href="3rdparty.html"/>
-        <link rel="next" title="Using Pants with Thrift Dependencies" href="ThriftDeps.html"/>
-        <link rel="prev" title="JVM 3rdparty Pattern" href="3rdparty_jvm.html"/>
+        <link rel="up" title="Set up Your Source Tree for Pants" href="setup_repo.html"/>
+        <link rel="next" title="Installing Pants" href="install.html"/>
+        <link rel="prev" title="Set up Your Source Tree for Pants" href="setup_repo.html"/>
  
 <script type="text/javascript">
   // In a plain template, we'd put this in the footer block.
@@ -194,10 +194,10 @@ body a.icon-home:hover{
 </ul>
 </li>
 </ul>
-<ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="3rdparty.html">Third-Party Dependencies</a><ul class="current">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="3rdparty.html">Third-Party Dependencies</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="3rdparty_jvm.html">JVM 3rdparty Pattern</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="">Python 3rdparty Pattern</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3rdparty_py.html">Python 3rdparty Pattern</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="ThriftDeps.html">Using Pants with Thrift Dependencies</a><ul>
@@ -226,14 +226,14 @@ body a.icon-home:hover{
 </ul>
 </li>
 </ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="setup_repo.html">Set up Your Source Tree for Pants</a><ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="setup_repo.html">Set up Your Source Tree for Pants</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="setup_repo.html#configuring-with-pants-ini">Configuring with <tt class="docutils literal"><span class="pre">pants.ini</span></tt></a></li>
 <li class="toctree-l2"><a class="reference internal" href="setup_repo.html#configure-code-layout-with-source-root">Configure Code Layout with <cite>source_root</cite></a></li>
 <li class="toctree-l2"><a class="reference internal" href="setup_repo.html#top-level-build-for-tree-global-config">Top-level <cite>BUILD.*</cite> for tree-global config</a></li>
 <li class="toctree-l2"><a class="reference internal" href="setup_repo.html#integrate-new-tools-via-a-pants-plugin">Integrate New Tools via a Pants Plugin</a></li>
 <li class="toctree-l2"><a class="reference internal" href="setup_repo.html#build-in-the-source-tree-for-special-targets">BUILD.* in the source tree for special targets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="setup_repo.html#enabling-pants-publish">Enabling Pants Publish</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="setup_repo.html#enabling-pants-publish">Enabling Pants Publish</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installing Pants</a><ul>
@@ -399,85 +399,88 @@ body a.icon-home:hover{
         <div class="rst-content">
           <ul class="wy-breadcrumbs">
   <li><a href="index.html">Docs</a> &raquo;</li>
-  <li><a href="">Python 3rdparty Pattern</a></li>
+  <li><a href="">Develop a Task to Publish &#8220;Extra&#8221; Artifacts</a></li>
   
 </ul>
 <hr/>
 
           
-  <div class="section" id="python-3rdparty-pattern">
-<h1>Python 3rdparty Pattern<a class="headerlink" href="#python-3rdparty-pattern" title="Permalink to this headline">¶</a></h1>
-<p>In general, we use <a class="reference internal" href="3rdparty.html"><em>the 3rdparty idiom</em></a> to organize
-dependencies on code from outside the source tree. This document
-describes how to make this work for Python code.</p>
-<p>Your Python code can pull in code written elsewhere. Pants fetches code
-via a library that uses pip-style specifications (name and version-range).</p>
-<div class="section" id="rdparty-python">
-<h2>3rdparty/python<a class="headerlink" href="#rdparty-python" title="Permalink to this headline">¶</a></h2>
-<p>To keep all of your code depending on the same versions of third-party
-Python artifacts, you might use the idiom of keeping them in a directory
-tree under <tt class="docutils literal"><span class="pre">3rdparty/python</span></tt>. If your organization has many such
-dependencies, you might arrange them in several directories: this can
-ease later &#8220;git detective work&#8221; when finding out who changed a version.</p>
-<p><strong>pip-style requirements.txt:</strong></p>
-<p>To define some third-party dependencies, use a
-<a class="reference internal" href="build_dictionary.html#bdict-python-requirements"><em>python_requirements</em></a>
-in your <tt class="docutils literal"><span class="pre">BUILD</span></tt> file and make a pip <tt class="docutils literal"><span class="pre">requirements.txt</span></tt> file in the
-same directory.</p>
-<p>E.g, your <tt class="docutils literal"><span class="pre">3rdparty/python/BUILD</span></tt> file might look like:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># see/edit requirements.txt in this directory to change deps.</span>
-<span class="n">python_requirements</span><span class="p">()</span>
-</pre></div>
-</div>
-<p>...with <tt class="docutils literal"><span class="pre">3rdparty/python/requirements.txt</span></tt> like:</p>
-<div class="highlight-python"><div class="highlight"><pre>ansicolors==1.0.2
+  <div class="section" id="develop-a-task-to-publish-extra-artifacts">
+<h1>Develop a Task to Publish &#8220;Extra&#8221; Artifacts<a class="headerlink" href="#develop-a-task-to-publish-extra-artifacts" title="Permalink to this headline">¶</a></h1>
+<p>Pants supports &#8220;publish plugins&#8221;, which allow end-users to add additional,
+arbitrary files to be published along with the primary artifact. For example,
+let&#8217;s say that along with publishing your jar full of class files, you would
+also like to publish a companion file that contains some metadata &#8211; code
+coverage info, source git repository, java version that created the jar, etc.
+To accomplish this, you&#8217;ll first need to write a custom task, which creates any
+additional files (jar or otherwise) that you would like to publish. Next,
+you&#8217;ll create a <tt class="docutils literal"><span class="pre">publish_extras</span></tt> section under <tt class="docutils literal"><span class="pre">[jar-publish]</span></tt> in
+pants.ini, and add a key for the new product type. Your custom task will create
+the extra file(s) that you want to publish, and write the path to the products
+map under the key that you have defined in pants.ini. The publishing code will
+loop over all keys found in pants.ini, and consult the product map. If pants
+finds a file for the current key, it will gather it up, and bundle it in with
+the rest of the files being published.</p>
+<p>An example of a custom task is supplied in the
+<tt class="docutils literal"><span class="pre">examples/src/python/example/pants_publish_plugin</span></tt> directory. To use it, add
+the following to your pants.ini:</p>
+<div class="highlight-python"><div class="highlight"><pre>[jar-publish]
+publish_extras: {
+    &#39;extra_test_jar_example&#39;: {
+      &#39;override_name&#39;: &#39;{target_provides_name}-extra_example&#39;,
+      &#39;classifier&#39;: &#39;classy&#39;,
+      &#39;extension&#39;: &#39;jar&#39;,
+    },
+  }
 
-antlr_python_runtime==3.1.3
---allow-external antlr-python-runtime
---allow-unverified antlr-python-runtime
-
-argparse==1.2.1
-coverage&gt;=3.7,&lt;3.8
-docutils&gt;=0.12,&lt;0.13
-Markdown==2.1.1
-mock==1.0.1
+[backends]
+packages: [
+    &#39;example.pants_publish_plugin&#39;,
+  ]
 </pre></div>
 </div>
-<p><tt class="docutils literal"><span class="pre">python_requirements</span></tt> defines a named target for each
-line in the <tt class="docutils literal"><span class="pre">requirements.txt</span></tt> line. For example, a line like
-<tt class="docutils literal"><span class="pre">ansicolors==1.0.2</span></tt> in <tt class="docutils literal"><span class="pre">requirements.txt</span></tt> defines a target named
-<tt class="docutils literal"><span class="pre">ansicolors</span></tt> that pulls in ansicolors version 1.0.2.</p>
-<p><strong>python_requirement_library and python_requirement:</strong></p>
-<p>A <tt class="docutils literal"><span class="pre">BUILD</span></tt> file can also define requirements without a <tt class="docutils literal"><span class="pre">requirements.txt</span></tt>
-file. Set up a
-<a class="reference internal" href="build_dictionary.html#bdict-python-requirement-library"><em>python_requirement_library</em></a> with one
-or more
-<a class="reference internal" href="build_dictionary.html#bdict-python-requirement"><em>python_requirement</em></a>s like:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">python_requirement_library</span><span class="p">(</span>
-  <span class="n">name</span><span class="o">=</span><span class="s">&#39;beautifulsoup&#39;</span><span class="p">,</span>
-  <span class="n">requirements</span><span class="o">=</span><span class="p">[</span>
-    <span class="n">python_requirement</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;beautifulsoup&#39;</span><span class="p">,</span>
-                       <span class="n">requirement</span><span class="o">=</span><span class="s">&#39;BeautifulSoup==3.2.0&#39;</span><span class="p">),</span>
-  <span class="p">])</span>
+<p>In the above configuration example, the string &#8216;extra_test_jar_example&#8217; is a
+key into the product map. In this case, the example task will add additional
+files for publishing to the product map under this key. And <tt class="docutils literal"><span class="pre">jar_publish.py</span></tt>
+will examine the product map, looking for all keys defined here, and publishing
+any additional files found.</p>
+<div class="section" id="constructing-a-name-for-your-extra-artifact">
+<h2>Constructing a name for your extra artifact:<a class="headerlink" href="#constructing-a-name-for-your-extra-artifact" title="Permalink to this headline">¶</a></h2>
+<p>By default, pants uses the following scheme when publishing artifacts:</p>
+<div class="highlight-python"><div class="highlight"><pre>[artifactId]-[version](-[classifier]).[ext]
 </pre></div>
 </div>
-</div>
-<div class="section" id="your-code-s-build-file">
-<h2>Your Code&#8217;s BUILD File<a class="headerlink" href="#your-code-s-build-file" title="Permalink to this headline">¶</a></h2>
-<p>In your code&#8217;s <tt class="docutils literal"><span class="pre">BUILD</span></tt> file, introduce a dependency on the <tt class="docutils literal"><span class="pre">3rdparty</span></tt>
-target:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">python_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;greet&#39;</span><span class="p">,</span>
-  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
-    <span class="s">&#39;3rdparty/python:ansicolors&#39;</span><span class="p">,</span>
-  <span class="p">],</span>
-  <span class="n">sources</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s">&#39;*.py&#39;</span><span class="p">),</span>
-<span class="p">)</span>
+<p>The pants plugin publishing system allows a customization of the artifact
+identifier, classifier, and file extension. To customize the name of your extra
+object, you can supply some extra parameters in the <tt class="docutils literal"><span class="pre">pants.ini</span></tt> file:</p>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="docutils literal"><span class="pre">override_name</span></tt> &#8211; allows customization of the name (<tt class="docutils literal"><span class="pre">artifactId</span></tt>) of
+the additional file published. Specifying a string will completely override
+the name, or include &#8216;<tt class="docutils literal"><span class="pre">{target_provides_name}</span></tt>&#8216; to tack an addition on to
+the pre-existing artifact name. Defaults to the pre-existing artifact name.</li>
+<li><tt class="docutils literal"><span class="pre">classifier</span></tt> &#8211; the maven classifier. Can be any arbitrary string, or
+leave this unspecified for nothing.</li>
+<li><tt class="docutils literal"><span class="pre">extension</span></tt> &#8211; the filename extension. Defaults to &#8220;jar&#8221;.</li>
+</ul>
+</div></blockquote>
+<p><strong>Note:</strong> You must supply a non-default value for at least one of the above
+parameters, otherwise your extra publish artifact won&#8217;t have a unique name.
+With the above config in your pants.ini, invoke pants like this, to do a test
+publish:</p>
+<div class="highlight-python"><div class="highlight"><pre>WRAPPER_SRCPATH=examples/src/python PANTS_DEV=1 ./pants goal publish examples/src/java/com/pants/examples/hello/greet --no-publish-dryrun --publish-local=~/tmp
 </pre></div>
 </div>
-<p>Then in your Python code, you can <tt class="docutils literal"><span class="pre">import</span></tt> from that package:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">colors</span> <span class="kn">import</span> <span class="n">green</span>
+<p>Now if you examine the <tt class="docutils literal"><span class="pre">/tmp</span></tt> directory, you&#8217;ll notice that an extra jar has
+been published for the <tt class="docutils literal"><span class="pre">greet</span></tt> target:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ ls -1 /tmp/com/pants/examples/hello-greet/0.0.1-SNAPSHOT/|grep example
+hello-greet-extra_example-0.0.1-SNAPSHOT-classy.jar
+hello-greet-extra_example-0.0.1-SNAPSHOT-classy.jar.md5
+hello-greet-extra_example-0.0.1-SNAPSHOT-classy.jar.sha1
 </pre></div>
 </div>
+<p>This example task should provide a rough starting guide, and can be tailored to
+suit a more specific situation.</p>
 </div>
 </div>
 
@@ -486,10 +489,10 @@ target:</p>
   
     <div class="rst-footer-buttons">
       
-        <a href="ThriftDeps.html" class="btn btn-neutral float-right" title="Using Pants with Thrift Dependencies"/>Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="install.html" class="btn btn-neutral float-right" title="Installing Pants"/>Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="3rdparty_jvm.html" class="btn btn-neutral" title="JVM 3rdparty Pattern"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="setup_repo.html" class="btn btn-neutral" title="Set up Your Source Tree for Pants"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
