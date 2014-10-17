@@ -1,641 +1,267 @@
-
-
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html lang="en">
+
+<!--
+  Copyright 2014 Pants project contributors (see CONTRIBUTORS.md).
+  Licensed under the Apache License, Version 2.0 (see LICENSE).
+-->
+
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
+  <title>JVM 3rdparty Pattern</title>
+  <link rel="stylesheet" href="s.css">
+  <script src="s.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <title>JVM 3rdparty Pattern &mdash; pants 0.1 documentation</title>
-  
-
-  
-  
-    <link rel="shortcut icon" href="_static/pants-logo.ico"/>
-  
-
-  
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
-
-  
-  
-
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:'./',
-        VERSION:'0.1',
-        COLLAPSE_INDEX:false,
-        FILE_SUFFIX:'.html',
-        HAS_SOURCE:  true
-      };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-
-    
-
-  
-
-  
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
-
-  
-    <link rel="top" title="pants 0.1 documentation" href="index.html"/>
-        <link rel="up" title="Third-Party Dependencies" href="3rdparty.html"/>
-        <link rel="next" title="Python 3rdparty Pattern" href="3rdparty_py.html"/>
-        <link rel="prev" title="Third-Party Dependencies" href="3rdparty.html"/>
- 
-<script type="text/javascript">
-  // In a plain template, we'd put this in the footer block.
-  // In the read-the-docs template, there is no footer. So use jQuery ready:
-  $(document).ready(function() {
-    // Ping Google analytics
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-    ga('create', 'UA-39101739-2', 'auto');
-    ga('send', 'pageview');
-
-    // Show the travis-ci status graphic.
-    $('.wy-breadcrumbs').append(
-      '<div style="float: right; padding: 1px;">' +
-        '<a href="https://travis-ci.org/pantsbuild/pants">' +
-          '<img src="https://travis-ci.org/pantsbuild/pants.png?branch=master">' +
-        '</a>' +
-      '</div>');
-
-    // Show the coveralls status graphic.
-    $('.wy-breadcrumbs').append(
-      '<div style="float: right; padding: 1px;">' +
-        '<a href="https://coveralls.io/r/pantsbuild/pants?branch=master">' +
-          '<img src="https://coveralls.io/repos/pantsbuild/pants/badge.png?branch=master"' +
-          '     alt="Coverage Status">' +
-        '</a>' +
-      '</div>');
-  });
-</script>
-<style type="text/css">
-/* Shoehorn in pants logo */
-body .icon-home:before {
-   content: "";
-}
-
-body .icon-home{
-  background: transparent url(./_static/pants-logo.ico) center left no-repeat;
-  background-position-x: 5px;
-  padding-left: 40px;
-  padding-right: 35px;
-  line-height: 40px;
-}
-
-body a.icon-home:hover{
-  background: #3d8cbf url(./_static/pants-logo.ico) center left no-repeat;
-  background-position-x: 5px;
-}
-
-</style>
-
-
-  <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
-
+  <link rel="shortcut icon" href="logo.ico">
 </head>
 
-<body class="wy-body-for-nav">
+<body>
 
-  <div class="wy-grid-for-nav">
-
-    
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-nav-search">
-        <a href="index.html" class="icon icon-home"> pants</a>
-        <form class="wy-form" action="search.html" method="get">
-  <input type="text" name="q" placeholder="Search docs" />
-  <input type="hidden" name="check_keywords" value="yes" />
-  <input type="hidden" name="area" value="default" />
-</form>
-      </div>
-
-      <div class="wy-menu wy-menu-vertical" data-spy="affix">
-        
-        
-            <ul>
-<li class="toctree-l1"><a class="reference internal" href="first_concepts.html">Pants Conceptual Overview</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="first_concepts.html#goals-and-targets">Goals and Targets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="first_concepts.html#target-types">Target Types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="first_concepts.html#what-pants-does">What Pants Does</a></li>
-<li class="toctree-l2"><a class="reference internal" href="first_concepts.html#next-step">Next Step</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="first_tutorial.html">First Tutorial</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="first_tutorial.html#invoking-pants">Invoking Pants</a></li>
-<li class="toctree-l2"><a class="reference internal" href="first_tutorial.html#build-files">BUILD Files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="first_tutorial.html#the-usual-commands">The Usual Commands</a></li>
-<li class="toctree-l2"><a class="reference internal" href="first_tutorial.html#next">Next</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="target_addresses.html">Target Addresses</a></li>
-<li class="toctree-l1"><a class="reference internal" href="JVMProjects.html">JVM Projects with Pants</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="JVMProjects.html#relevant-goals-and-targets">Relevant Goals and Targets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="JVMProjects.html#build-for-a-simple-binary">BUILD for a Simple Binary</a></li>
-<li class="toctree-l2"><a class="reference internal" href="JVMProjects.html#the-usual-commands-jvm">The Usual Commands: JVM</a></li>
-<li class="toctree-l2"><a class="reference internal" href="JVMProjects.html#toolchain">Toolchain</a></li>
-<li class="toctree-l2"><a class="reference internal" href="JVMProjects.html#java7-vs-java6-which-java">Java7 vs Java6, Which Java</a></li>
-<li class="toctree-l2"><a class="reference internal" href="JVMProjects.html#bundles-deploy-able-runnable-file-trees">Bundles: Deploy-able Runnable File Trees</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="python-readme.html">Python Projects with Pants</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="python-readme.html#relevant-goals-and-targets">Relevant Goals and Targets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="python-readme.html#build-for-a-simple-binary">BUILD for a Simple Binary</a></li>
-<li class="toctree-l2"><a class="reference internal" href="python-readme.html#handling-python-requirement">Handling <tt class="docutils literal"><span class="pre">python_requirement</span></tt></a></li>
-<li class="toctree-l2"><a class="reference internal" href="python-readme.html#pex-contents">PEX Contents</a></li>
-<li class="toctree-l2"><a class="reference internal" href="python-readme.html#repl-and-environment-manipulation-with-pants-py">REPL and environment manipulation with <cite>pants py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="python-readme.html#python-binary-entry-point">python_binary entry_point</a></li>
-<li class="toctree-l2"><a class="reference internal" href="python-readme.html#more-about-python-tests">More About Python Tests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="python-readme.html#manipulating-pex-behavior-with-environment-variables">Manipulating PEX behavior with environment variables</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="page.html">README Files and Markdown</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="page.html#markdown-to-html">Markdown to HTML</a></li>
-<li class="toctree-l2"><a class="reference internal" href="page.html#link-to-another-page">Link to Another <tt class="docutils literal"><span class="pre">page</span></tt></a></li>
-<li class="toctree-l2"><a class="reference internal" href="page.html#include-a-file-snippet">Include a File Snippet</a></li>
-<li class="toctree-l2"><a class="reference internal" href="page.html#publishing">Publishing</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="build_files.html">BUILD files</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="build_files.html#debugging-a-build-file">Debugging a BUILD File</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_files.html#default-target">Default Target</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_files.html#the-1-1-1-rule">The 1:1:1 Rule</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_files.html#avoid-rglobs">Avoid rglobs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_files.html#define-separate-targets-for-interface-and-implementation">Define Separate Targets for Interface and Implementation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_files.html#depend-on-api-in-library-targets-implementation-in-binary-targets">Depend on API in Library Targets, Implementation in Binary Targets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_files.html#which-build-files-are-executed-and-how">Which <tt class="docutils literal"><span class="pre">BUILD</span></tt> Files are &#8220;Executed&#8221;? (and how?)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_files.html#id1">BUILD.* files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_files.html#tag-incompatibilities-with-exclusives">Tag Incompatibilities with exclusives</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_files.html#what-happened-to-the-pants-wrapper-around-targets">What happened to the pants() wrapper around targets?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_files.html#using-an-older-version-of-pants">Using an older version of Pants?</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="invoking.html">Invoking Pants Build</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="invoking.html#rc-files">rc files</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="tshoot.html">Troubleshooting</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="tshoot.html#maximum-verbosity">Maximum Verbosity</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tshoot.html#scrub-the-environment">Scrub the Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tshoot.html#nailgun-5-seconds">Nailgun 5 seconds</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tshoot.html#questions-issues-bug-reports">Questions, Issues, Bug Reports</a></li>
-</ul>
-</li>
-</ul>
-<ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="3rdparty.html">Third-Party Dependencies</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="">JVM 3rdparty Pattern</a></li>
-<li class="toctree-l2"><a class="reference internal" href="3rdparty_py.html">Python 3rdparty Pattern</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="ThriftDeps.html">Using Pants with Thrift Dependencies</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="ThriftDeps.html#generating-code">Generating Code</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ThriftDeps.html#thrift-example">Thrift Example</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ThriftDeps.html#publishing">Publishing</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="publish.html">Publishing Artifacts</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="publish.html#life-of-a-publish">Life of a Publish</a></li>
-<li class="toctree-l2"><a class="reference internal" href="publish.html#how-to">How To</a></li>
-<li class="toctree-l2"><a class="reference internal" href="publish.html#restricting-to-release-branch">Restricting to &#8220;Release Branch&#8221;</a></li>
-<li class="toctree-l2"><a class="reference internal" href="publish.html#authenticating-to-the-artifact-repository">Authenticating to the Artifact Repository</a></li>
-<li class="toctree-l2"><a class="reference internal" href="publish.html#troubleshooting">Troubleshooting</a></li>
-<li class="toctree-l2"><a class="reference internal" href="publish.html#want-to-publish-something-publish-many-things">Want to Publish Something? Publish Many Things</a></li>
-<li class="toctree-l2"><a class="reference internal" href="publish.html#test-with-a-fake-local-publish">Test with a Fake Local &#8220;Publish&#8221;</a></li>
-<li class="toctree-l2"><a class="reference internal" href="publish.html#setting-up-your-workspace">Setting Up Your Workspace</a></li>
-</ul>
-</li>
-</ul>
+<div class="mainflow">
+<nav class="breadcrumbs">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="with_emacs.html">Ensime With Pants</a></li>
-<li class="toctree-l1"><a class="reference internal" href="with_intellij.html">Using Pants with IntelliJ IDEA</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="with_intellij.html#pants-build-plugin-for-intellij">Pants Build Plugin for IntelliJ</a></li>
-<li class="toctree-l2"><a class="reference internal" href="with_intellij.html#generating-idea-project">Generating IDEA Project</a></li>
+<li><a href="index.html">Pants Build System</a>
+<li><a href="3rdparty.html">Third-Party Dependencies</a>
+<li><a href="3rdparty_jvm.html">JVM 3rdparty Pattern</a>
 </ul>
-</li>
-</ul>
+</nav>
+
+<nav class="pagetoc">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="setup_repo.html">Set up Your Source Tree for Pants</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="setup_repo.html#configuring-with-pants-ini">Configuring with <tt class="docutils literal"><span class="pre">pants.ini</span></tt></a></li>
-<li class="toctree-l2"><a class="reference internal" href="setup_repo.html#configure-code-layout-with-source-root">Configure Code Layout with <cite>source_root</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="setup_repo.html#top-level-build-for-tree-global-config">Top-level <cite>BUILD.*</cite> for tree-global config</a></li>
-<li class="toctree-l2"><a class="reference internal" href="setup_repo.html#integrate-new-tools-via-a-pants-plugin">Integrate New Tools via a Pants Plugin</a></li>
-<li class="toctree-l2"><a class="reference internal" href="setup_repo.html#build-in-the-source-tree-for-special-targets">BUILD.* in the source tree for special targets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="setup_repo.html#enabling-pants-publish">Enabling Pants Publish</a></li>
+<li class="toc-h1"><a href="#3rdpartyjvm">3rdparty/jvm ¶</a></li>
+<li class="toc-h1"><a href="#your-codes-build-file">Your Code's BUILD File ¶</a></li>
+<li class="toc-h1"><a href="#round-trip-dependencies">&quot;Round Trip&quot; Dependencies ¶</a></li>
+<li class="toc-h1"><a href="#troubleshooting-a-jvm-dependencies-problem">Troubleshooting a JVM Dependencies Problem ¶</a></li>
+<li class="toc-h1"><a href="#using-a-snapshot-jvm-dependency">Using a SNAPSHOT JVM Dependency ¶</a></li>
 </ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="install.html">Installing Pants</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="install.html#virtualenv-based-installation">Virtualenv-based Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="install.html#system-wide-installation">System-wide Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="install.html#pex-based-installation">PEX-based Installation</a></li>
-</ul>
-</li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="build_dictionary.html">BUILD Dictionary</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#android-binary">android_binary</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#android-resources">android_resources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#annotation-processor">annotation_processor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#artifact">artifact</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#benchmark">benchmark</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#buildfile-path">buildfile_path</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#bundle">bundle</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#confluencepublish">ConfluencePublish</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#credentials">credentials</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#dependencies">dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#duplicate">Duplicate</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#egg">egg</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#bdict-exclude">exclude</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#get-buildroot">get_buildroot</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#globs">globs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jar">jar</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jar-library">jar_library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jar-rules">jar_rules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-agent">java_agent</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-antlr-library">java_antlr_library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-library">java_library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-protobuf-library">java_protobuf_library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-ragel-library">java_ragel_library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-tests">java_tests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#java-thrift-library">java_thrift_library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jaxb-library">jaxb_library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#junit-tests">junit_tests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jvm-app">jvm_app</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#jvm-binary">jvm_binary</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#keystore">keystore</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#maven-layout">maven_layout</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#netrc">netrc</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#page">page</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#pants">pants</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#pants-version">pants_version</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-antlr-library">python_antlr_library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-binary">python_binary</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-library">python_library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-requirement">python_requirement</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#bdict-python-requirement-library">python_requirement_library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-requirements">python_requirements</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-test-suite">python_test_suite</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-tests">python_tests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-thrift-library">python_thrift_library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#repository">Repository</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#bdict-resources">resources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#rglobs">rglobs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#scala-library">scala_library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#scala-specs">scala_specs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#scala-tests">scala_tests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#scalac-plugin">scalac_plugin</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#bdict-setup-py">setup_py</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#bdict-skip">Skip</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#source-root">source_root</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#target">target</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#wiki">Wiki</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#wiki-artifact">wiki_artifact</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#zglobs">zglobs</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="goals_reference.html">Goals Reference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#bench">bench</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#binary">binary</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#bootstrap">bootstrap</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#builddict">builddict</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#buildlint">buildlint</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#bundle">bundle</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#changed">changed</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#check-exclusives">check-exclusives</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#check-published-deps">check_published_deps</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#clean-all">clean-all</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#clean-all-async">clean-all-async</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#compile">compile</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#dependees">dependees</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#dependencies">dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#depmap">depmap</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#detect-duplicates">detect-duplicates</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#dex">dex</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#doc">doc</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#eclipse">eclipse</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#ensime">ensime</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#filedeps">filedeps</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#filemap">filemap</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#filter">filter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#gen">gen</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#goals">goals</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#gref-goal-idea">idea</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#imports">imports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#invalidate">invalidate</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#jar">jar</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#killserver">killserver</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#list">list</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#markdown">markdown</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#minimize">minimize</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#ng-killall">ng-killall</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#path">path</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#pathdeps">pathdeps</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#paths">paths</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#provides">provides</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#publish">publish</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#repl">repl</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#repl-dirty">repl-dirty</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#resolve">resolve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#resources">resources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#roots">roots</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#run">run</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#run-dirty">run-dirty</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#server">server</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#sign">sign</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#sitegen">sitegen</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#sort">sort</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#targets">targets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#test">test</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#thrift-linter">thrift-linter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="goals_reference.html#common">Common</a></li>
-</ul>
-</li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="dev.html">Pants Developer Center</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="howto_contribute.html">Pants Contributors Guide</a></li>
-<li class="toctree-l2"><a class="reference internal" href="howto_ask.html">How To Ask</a></li>
-<li class="toctree-l2"><a class="reference internal" href="howto_develop.html">Pants Developers Guide</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dev_tasks.html">Task Developer&#8217;s Guide</a></li>
-<li class="toctree-l2"><a class="reference internal" href="howto_plugin.html">Developing a Pants Plugin</a></li>
-<li class="toctree-l2"><a class="reference internal" href="howto_customize.html">Custom Pants for Your Site</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intellij.html">Pants Development with IntelliJ IDEA</a></li>
-<li class="toctree-l2"><a class="reference internal" href="internals.html">Pants Internals</a></li>
-<li class="toctree-l2"><a class="reference internal" href="release.html">Release Process</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docs.html">About the documentation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="credits.html">Credits</a></li>
-</ul>
-</li>
-</ul>
+</nav>
 
-        
-      </div>
-      &nbsp;
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top">
-        <i data-toggle="wy-nav-top" class="icon icon-reorder"></i>
-        <a href="/">pants</a>
-      </nav>
-
-
-      
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <ul class="wy-breadcrumbs">
-  <li><a href="index.html">Docs</a> &raquo;</li>
-  <li><a href="">JVM 3rdparty Pattern</a></li>
-  
-</ul>
-<hr/>
-
-          
-  <div class="section" id="jvm-3rdparty-pattern">
-<h1>JVM 3rdparty Pattern<a class="headerlink" href="#jvm-3rdparty-pattern" title="Permalink to this headline">¶</a></h1>
-<p>In general, we use <a class="reference internal" href="3rdparty.html"><em>the 3rdparty idiom</em></a> to organize
+<!-- main content start -->
+<body>
+<!-- generated by pants! -->
+<div class="h-plus-pilcrow"><h1 id="jvm-3rdparty-pattern">JVM 3rdparty Pattern<a class="pilcrow-link" href="#jvm-3rdparty-pattern"> ¶</a></h1></div>
+<p>In general, we use the 3rdparty idiom \&lt;3rdparty&gt; to organize
 dependencies on code from outside the source tree. This document
 describes how to make this work for JVM (Java or Scala) code.</p>
-<p>Your JVM code can pull in code written elsewhere.
-Pants uses <a class="reference external" href="http://ant.apache.org/ivy/">Ivy</a>, a tool based on Maven&#8217;s
-jar-sharing. You should know the
-(<a class="reference external" href="http://maven.apache.org/guides/mini/guide-central-repository-upload.html">Maven/Ivy groupId, artifactId, and version</a>)
+<p>Your JVM code can pull in code written elsewhere. Pants uses
+<a href="http://ant.apache.org/ivy/">Ivy</a>, a tool based on Maven's jar-sharing.
+You should know the (<a href="http://maven.apache.org/guides/mini/guide-central-repository-upload.html">Maven/Ivy groupId, artifactId, and
+version</a>)
 you want to use.</p>
 <p>The 3rdparty pattern described here eases avoiding diamond dependency
-problems and version conflicts. If your code depends on artifacts
-<tt class="docutils literal"><span class="pre">foo</span></tt> and <tt class="docutils literal"><span class="pre">bar</span></tt>; and if <tt class="docutils literal"><span class="pre">foo</span></tt> and <tt class="docutils literal"><span class="pre">bar</span></tt> depend on different versions
-of the <tt class="docutils literal"><span class="pre">baz</span></tt> artifact; then some code will be linked together with a
-version of <tt class="docutils literal"><span class="pre">baz</span></tt> it didn&#8217;t &#8220;expect.&#8221; Tracking versioned
-dependencies in one place makes it easier to reason about them.</p>
-<div class="section" id="rdparty-jvm">
-<h2>3rdparty/jvm<a class="headerlink" href="#rdparty-jvm" title="Permalink to this headline">¶</a></h2>
-<p><strong>The JVM part of 3rdparty is organized by org (Maven groupId)</strong> Under there,
-see if there&#8217;s already a <tt class="docutils literal"><span class="pre">3rdparty/jvm/path/to/org/BUILD</span></tt> file.
-If there isn&#8217;t, then you want to create one. E.g., to import
-<tt class="docutils literal"><span class="pre">com.sun.jersey-apache-client</span></tt>, look in <tt class="docutils literal"><span class="pre">3rdparty/jvm/com/sun</span></tt>
-for a likely-looking <tt class="docutils literal"><span class="pre">BUILD</span></tt> file&#8211;in this example,
-<tt class="docutils literal"><span class="pre">3rdparty/jvm/com/google/sun/jersey/BUILD</span></tt>.</p>
-<p>In the appropriate <tt class="docutils literal"><span class="pre">BUILD</span></tt> file, you want to find a
-<a class="reference internal" href="build_dictionary.html#bdict-jar-library"><em>jar_library</em></a> with the <a class="reference internal" href="build_dictionary.html#bdict-jar"><em>jar</em></a>s you want:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c">#</span>
-
-<span class="n">jar_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;hamcrest-core&#39;</span><span class="p">,</span>
-            <span class="n">jars</span> <span class="o">=</span> <span class="p">[</span> <span class="n">jar</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s">&#39;org.hamcrest&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;hamcrest-core&#39;</span><span class="p">,</span> <span class="n">rev</span><span class="o">=</span><span class="s">&#39;1.3&#39;</span><span class="p">)</span> <span class="p">])</span>
-
-<span class="n">jar_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;junit&#39;</span><span class="p">,</span>
-            <span class="n">jars</span> <span class="o">=</span> <span class="p">[</span>
-              <span class="n">jar</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s">&#39;junit&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;junit-dep&#39;</span><span class="p">,</span> <span class="n">rev</span><span class="o">=</span><span class="s">&#39;4.11&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">with_sources</span><span class="p">(),</span>
-            <span class="p">],</span>
-            <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
-              <span class="s">&#39;:hamcrest-core&#39;</span><span class="p">,</span>
-            <span class="p">],</span>
-           <span class="p">)</span>
-</pre></div>
-</div>
-<p>Here, the
-<a class="reference internal" href="build_dictionary.html#bdict-jar-library"><em>jar_library</em></a>s&#8217;s name defines a target address that other build
-targets can refer to. The <a class="reference internal" href="build_dictionary.html#bdict-jar"><em>jar</em></a>s refer to jars known
-to your Ivy resolver.</p>
-<p>If there&#8217;s already a <tt class="docutils literal"><span class="pre">jar</span></tt> importing the code you want but with a
-<em>different</em> version, then you probably want to talk to other folks in your
-organization to agree on one version. (If there&#8217;s already a <tt class="docutils literal"><span class="pre">jar</span></tt> importing
-the code you want with the version you want, then great. Leave it there.)</p>
-<p>(You don&#8217;t <em>need</em> a tree of <tt class="docutils literal"><span class="pre">BUILD</span></tt> files; you could instead have, e.g., one
-<tt class="docutils literal"><span class="pre">3rdparty/jvm/BUILD</span></tt> file. In a large organization, a tree can ease some
-things. For example, <tt class="docutils literal"><span class="pre">git</span> <span class="pre">log</span></tt> quickly answers questions like &#8220;Who set up
-this dependency? Who cares if I bump the version?&#8221;)</p>
-<p>Additionally, some families of jars have different groupId&#8217;s but are logically
-part of the same project, or need to have their rev&#8217;s kept in sync. For example,
-(<tt class="docutils literal"><span class="pre">com.fasterxml.jackson.core</span></tt>, <tt class="docutils literal"><span class="pre">com.fasterxml.jackson.dataformat</span></tt>).
-Sometimes it makes sense to define these in a single build file,
-such as <tt class="docutils literal"><span class="pre">3rdparty/jvm/com/fasterxml/jackson/BUILD</span></tt> for the jackson family of jars.</p>
-</div>
-<div class="section" id="your-code-s-build-file">
-<h2>Your Code&#8217;s BUILD File<a class="headerlink" href="#your-code-s-build-file" title="Permalink to this headline">¶</a></h2>
-<p>To set up your code to import the external jar, you add a
-dependency to the appropriate Java target[s] in your <tt class="docutils literal"><span class="pre">BUILD</span></tt> file
-and add <tt class="docutils literal"><span class="pre">import</span></tt> statements in your Java code.</p>
-<p>For example, your <tt class="docutils literal"><span class="pre">BUILD</span></tt> file might have</p>
-<div class="highlight-python"><div class="highlight"><pre>  dependencies=[
-    &#39;3rdparty:junit&#39;,
-</pre></div>
-</div>
+problems and version conflicts. If your code depends on artifacts <code>foo</code>
+and <code>bar</code>; and if <code>foo</code> and <code>bar</code> depend on different versions of the
+<code>baz</code> artifact; then some code will be linked together with a version of
+<code>baz</code> it didn't "expect." Tracking versioned dependencies in one place
+makes it easier to reason about them.</p>
+<div class="h-plus-pilcrow"><h2 id="3rdpartyjvm">3rdparty/jvm<a class="pilcrow-link" href="#3rdpartyjvm"> ¶</a></h2></div>
+<p><strong>The JVM part of 3rdparty is organized by org (Maven groupId)</strong> Under
+there, see if there's already a <code>3rdparty/jvm/path/to/org/BUILD</code> file.
+If there isn't, then you want to create one. E.g., to import
+<code>com.sun.jersey-apache-client</code>, look in <code>3rdparty/jvm/com/sun</code> for a
+likely-looking <code>BUILD</code> file--in this example,
+<code>3rdparty/jvm/com/google/sun/jersey/BUILD</code>.</p>
+<p>In the appropriate <code>BUILD</code> file, you want to find a bdict_jar_library
+with the bdict_jars you want:</p>
+<p>Here, the bdict_jar_librarys's name defines a target address that
+other build targets can refer to. The bdict_jars refer to jars known to
+your Ivy resolver.</p>
+<p>If there's already a <code>jar</code> importing the code you want but with a
+<em>different</em> version, then you probably want to talk to other folks in
+your organization to agree on one version. (If there's already a <code>jar</code>
+importing the code you want with the version you want, then great. Leave
+it there.)</p>
+<p>(You don't <em>need</em> a tree of <code>BUILD</code> files; you could instead have, e.g.,
+one <code>3rdparty/jvm/BUILD</code> file. In a large organization, a tree can ease
+some things. For example, <code>git log</code> quickly answers questions like "Who
+set up this dependency? Who cares if I bump the version?")</p>
+<p>Additionally, some families of jars have different groupId's but are
+logically part of the same project, or need to have their rev's kept in
+sync. For example, (<code>com.fasterxml.jackson.core</code>,
+<code>com.fasterxml.jackson.dataformat</code>). Sometimes it makes sense to define
+these in a single build file, such as
+<code>3rdparty/jvm/com/fasterxml/jackson/BUILD</code> for the jackson family of
+jars.</p>
+<div class="h-plus-pilcrow"><h2 id="your-codes-build-file">Your Code's BUILD File<a class="pilcrow-link" href="#your-codes-build-file"> ¶</a></h2></div>
+<p>To set up your code to import the external jar, you add a dependency to
+the appropriate Java target[s] in your <code>BUILD</code> file and add <code>import</code>
+statements in your Java code.</p>
+<p>For example, your <code>BUILD</code> file might have</p>
 <p>And your Java code might have:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">org.junit.Test</span><span class="p">;</span>
+<div class="codehilite"><pre>import org.junit.Test;
 </pre></div>
-</div>
-</div>
-<div class="section" id="round-trip-dependencies">
-<h2>&#8220;Round Trip&#8221; Dependencies<a class="headerlink" href="#round-trip-dependencies" title="Permalink to this headline">¶</a></h2>
-<p>Depending on your workspace&#8217;s relation with the rest of the world, you might
-want to look out for &#8220;round trip&#8221; dependencies.
-You can publish an artifact <em>near</em> generated from your workspace&#8217;s source code
-and consume a third-party artifact <em>far</em> that depends on <em>near</em>.
-If you&#8217;re not careful, you might depend on two versions of the <em>near</em> code:
-the local source code and an artifact you published a while ago.
-When consuming such third-party artifacts, exclude dependencies that
-&#8220;collide&#8221; with source code and depend on local source:</p>
-<div class="highlight-python"><div class="highlight"><pre>jar_library(name=&#39;far&#39;,
+<div class="h-plus-pilcrow"><h2 id="round-trip-dependencies">"Round Trip" Dependencies<a class="pilcrow-link" href="#round-trip-dependencies"> ¶</a></h2></div>
+<p>Depending on your workspace's relation with the rest of the world, you
+might want to look out for "round trip" dependencies. You can publish an
+artifact <em>near</em> generated from your workspace's source code and consume
+a third-party artifact <em>far</em> that depends on <em>near</em>. If you're not
+careful, you might depend on two versions of the <em>near</em> code: the local
+source code and an artifact you published a while ago. When consuming
+such third-party artifacts, exclude dependencies that "collide" with
+source code and depend on local source:</p>
+<div class="codehilite"><pre>jar_library(name='far',
   jars=[
     # exclude conflicting dep:
-    jar(org=&#39;org.archie&#39;, name=&#39;far&#39;, rev=&#39;0.0.18&#39;).with_sources()
-      .exclude(org=&#39;org.archimedes&#39;, name=&#39;near&#39;)
+    jar(org='org.archie', name='far', rev='0.0.18').with_sources()
+      .exclude(org='org.archimedes', name='near')
   ]
   dependencies=[
     # and re-include local version of source manually:
-    &#39;util/near&#39;,
+    'util/near',
   ]
 )
 </pre></div>
-</div>
-</div>
-<div class="section" id="troubleshooting-a-jvm-dependencies-problem">
-<h2>Troubleshooting a JVM Dependencies Problem<a class="headerlink" href="#troubleshooting-a-jvm-dependencies-problem" title="Permalink to this headline">¶</a></h2>
-<p>If you&#8217;re working in JVM (Java or Scala) and suspect you&#8217;re pulling in
-different versions of some package, you can dump your dependency &#8220;tree&#8221;
-with versions with an Ivy resolve report. To generate a report for
-a target such as the <tt class="docutils literal"><span class="pre">hello/main</span></tt> example:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ ./pants goal resolve examples/src/java/com/pants/examples/hello/main --ivy-open
+<div class="h-plus-pilcrow"><h2 id="troubleshooting-a-jvm-dependencies-problem">Troubleshooting a JVM Dependencies Problem<a class="pilcrow-link" href="#troubleshooting-a-jvm-dependencies-problem"> ¶</a></h2></div>
+<p>If you're working in JVM (Java or Scala) and suspect you're pulling in
+different versions of some package, you can dump your dependency "tree"
+with versions with an Ivy resolve report. To generate a report for a
+target such as the <code>hello/main</code> example:</p>
+<div class="codehilite"><pre>$ ./pants goal resolve examples/src/java/com/pants/examples/hello/main --ivy-open
 </pre></div>
-</div>
-<p>Ivy&#8217;s report shows which things depend on which versions. You can see which
-package is pulling in the package-version you didn&#8217;t expect. (It might not
-be clear which version you want to use; but at least you&#8217;ll know what&#8217;s
-causing the problem.)</p>
+<p>Ivy's report shows which things depend on which versions. You can see
+which package is pulling in the package-version you didn't expect. (It
+might not be clear which version you want to use; but at least you'll
+know what's causing the problem.)</p>
 <p><strong>If you notice a small number of wrong-version things,</strong> then in a JVM
-target, you can depend on a <tt class="docutils literal"><span class="pre">jar</span></tt> that specifies a version and
-sets <tt class="docutils literal"><span class="pre">force=True</span></tt> to <em>force</em> using that version:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">scala_library</span><span class="p">(</span>
-  <span class="n">name</span> <span class="o">=</span> <span class="s">&quot;loadtest&quot;</span><span class="p">,</span>
-  <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s">&#39;3rdparty/bijection:bijection-scrooge&#39;</span><span class="p">,</span>
-    <span class="c"># our 3rdparty/BUILD still has 6.1.4 as the default version, but</span>
-    <span class="c"># finagle-[core|thrift] version 6.1.4 is superceded (evicted) by</span>
-    <span class="c"># version 6.4.1</span>
-    <span class="c"># Force inclusion of version 6.1.4, until we&#39;re bumped to finagle 6.4.1+</span>
-    <span class="n">jar</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s">&#39;com.twitter&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;iago&#39;</span><span class="p">,</span> <span class="n">rev</span><span class="o">=</span><span class="s">&#39;0.6.3&#39;</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
-    <span class="n">jar</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s">&#39;com.twitter&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;finagle-core&#39;</span><span class="p">,</span> <span class="n">rev</span><span class="o">=</span><span class="s">&#39;6.1.4&#39;</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
-    <span class="n">jar</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s">&#39;com.twitter&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;finagle-thrift&#39;</span><span class="p">,</span> <span class="n">rev</span><span class="o">=</span><span class="s">&#39;6.1.4&#39;</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
-  <span class="p">],</span>
-  <span class="n">sources</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;LoadTestRecordProcessor.scala&quot;</span><span class="p">])</span>
+target, you can depend on a <code>jar</code> that specifies a version and sets
+<code>force=True</code> to <em>force</em> using that version:</p>
+<div class="codehilite"><pre>scala_library(
+  name = "loadtest",
+  dependencies = [
+    '3rdparty/bijection:bijection-scrooge',
+    # our 3rdparty/BUILD still has 6.1.4 as the default version, but
+    # finagle-[core|thrift] version 6.1.4 is superceded (evicted) by
+    # version 6.4.1
+    # Force inclusion of version 6.1.4, until we're bumped to finagle 6.4.1+
+    jar(org='com.twitter', name='iago', rev='0.6.3', force=True),
+    jar(org='com.twitter', name='finagle-core', rev='6.1.4', force=True),
+    jar(org='com.twitter', name='finagle-thrift', rev='6.1.4', force=True),
+  ],
+  sources = ["LoadTestRecordProcessor.scala"])
 </pre></div>
-</div>
-<p><strong>If you notice that one &#8220;foreign&#8221; dependency pulls in mostly wrong things,</strong>
-tell Pants not to pull in its dependencies. In your <tt class="docutils literal"><span class="pre">3rdparty/.../BUILD</span></tt>
-file, call the <tt class="docutils literal"><span class="pre">jar</span></tt>&#8216;s <tt class="docutils literal"><span class="pre">intransitive</span></tt> method; then carefully add
-hand-picked versions:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">jar_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;retro-naming-factory&quot;</span><span class="p">,</span>
-  <span class="n">jars</span><span class="o">=</span><span class="p">[</span>
-    <span class="n">jar</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s">&#39;retro&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;retro-factory&#39;</span><span class="p">,</span> <span class="n">rev</span><span class="o">=</span><span class="s">&#39;5.0.18&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">intransitive</span><span class="p">(),</span>
-  <span class="p">],</span>
-  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
-    <span class="c"># Don&#39;t use retro&#39;s expected (old, incompatible) common-logging</span>
-    <span class="c"># version, yipe; use the same version we use everywhere else:</span>
-    <span class="s">&#39;3rdparty/jvm/common-logging&#39;</span><span class="p">,</span>
-  <span class="p">])</span>
+<p><strong>If you notice that one "foreign" dependency pulls in mostly wrong
+things,</strong> tell Pants not to pull in its dependencies. In your
+<code>3rdparty/.../BUILD</code> file, call the <code>jar</code>'s <code>intransitive</code> method; then
+carefully add hand-picked versions:</p>
+<div class="codehilite"><pre>jar_library(name="retro-naming-factory",
+  jars=[
+    jar(org='retro', name='retro-factory', rev='5.0.18').intransitive(),
+  ],
+  dependencies=[
+    # Don't use retro's expected (old, incompatible) common-logging
+    # version, yipe; use the same version we use everywhere else:
+'3rdparty/jvm/common-logging',
+  ])
 </pre></div>
-</div>
 <p><strong>If you notice a small number of transitive dependencies to exclude</strong>
-Rather than mark the <tt class="docutils literal"><span class="pre">jar</span></tt> intransitive, you can <tt class="docutils literal"><span class="pre">exclude</span></tt> some
+Rather than mark the <code>jar</code> intransitive, you can <code>exclude</code> some
 transitive dependencies from JVM targets:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">java_library</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&#39;loadtest&#39;</span><span class="p">,</span>
-  <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s">&#39;3rdparty/storm:storm&#39;</span><span class="p">,</span>
-  <span class="p">],</span>
-  <span class="n">sources</span> <span class="o">=</span> <span class="n">globs</span><span class="p">(</span><span class="s">&#39;*.java&#39;</span><span class="p">),</span>
-  <span class="n">excludes</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">exclude</span><span class="p">(</span><span class="s">&#39;org.sonatype.sisu.inject&#39;</span><span class="p">,</span> <span class="s">&#39;cglib&#39;</span><span class="p">)</span>
-  <span class="p">]</span>
-<span class="p">)</span>
+<div class="codehilite"><pre>java_library(name = 'loadtest',
+  dependencies = [
+    '3rdparty/storm:storm',
+  ],
+  sources = globs('*.java'),
+  excludes = [
+    exclude('org.sonatype.sisu.inject', 'cglib')
+  ]
+)
 </pre></div>
-</div>
-<p><strong>If you notice a missing dependency</strong>, check for a naming conflict. When bringing in multiple jars
-with the same org, name, and version, only the first reference will win, and subsequent references
-will be silently discarded. One way that this can occur is with dependencies that use a classifier
-to differentiate themselves. Consider this example:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">jar_library</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&#39;stanford-corenlp&#39;</span><span class="p">,</span>
-  <span class="n">jars</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">jar</span><span class="p">(</span><span class="n">org</span> <span class="o">=</span> <span class="s">&#39;edu.stanford.nlp&#39;</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;stanford-corenlp&#39;</span><span class="p">,</span> <span class="n">rev</span> <span class="o">=</span> <span class="s">&#39;3.3.1&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">with_sources</span><span class="p">(),</span>
-    <span class="n">jar</span><span class="p">(</span><span class="n">org</span> <span class="o">=</span> <span class="s">&#39;edu.stanford.nlp&#39;</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;stanford-corenlp&#39;</span><span class="p">,</span> <span class="n">rev</span> <span class="o">=</span> <span class="s">&#39;3.3.1&#39;</span><span class="p">,</span> <span class="n">classifier</span><span class="o">=</span><span class="s">&#39;models&#39;</span><span class="p">)</span>
-  <span class="p">]</span>
-<span class="p">)</span>
+<p><strong>If you notice a missing dependency</strong>, check for a naming conflict.
+When bringing in multiple jars with the same org, name, and version,
+only the first reference will win, and subsequent references will be
+silently discarded. One way that this can occur is with dependencies
+that use a classifier to differentiate themselves. Consider this
+example:</p>
+<div class="codehilite"><pre>jar_library(name = 'stanford-corenlp',
+  jars = [
+    jar(org = 'edu.stanford.nlp', name = 'stanford-corenlp', rev = '3.3.1').with_sources(),
+    jar(org = 'edu.stanford.nlp', name = 'stanford-corenlp', rev = '3.3.1', classifier='models')
+  ]
+)
 </pre></div>
-</div>
-<p>In the above example, the <tt class="docutils literal"><span class="pre">edu.stanford.nlp.stanford-corenlp-3.3.1-models.jar</span></tt> will be silently
-skipped by pants. To bring both jars in, use the <tt class="docutils literal"><span class="pre">.with_artifacts()</span></tt> method of the
-<a class="reference internal" href="build_dictionary.html#bdict-jar"><em>jar</em></a>. Using this method, the above example would be transformed into:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">jar_library</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&#39;stanford-corenlp&#39;</span><span class="p">,</span>
-  <span class="n">jars</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">jar</span><span class="p">(</span><span class="n">org</span> <span class="o">=</span> <span class="s">&#39;edu.stanford.nlp&#39;</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;stanford-corenlp&#39;</span><span class="p">,</span> <span class="n">rev</span> <span class="o">=</span> <span class="s">&#39;3.3.1&#39;</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">with_sources</span><span class="p">()</span><span class="o">.</span><span class="n">with_artifact</span><span class="p">(</span><span class="n">classifier</span><span class="o">=</span><span class="s">&#39;models&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">with_artifact</span><span class="p">(</span><span class="n">classifier</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">),</span>
-  <span class="p">]</span>
-<span class="p">)</span>
+<p>In the above example, the
+<code>edu.stanford.nlp.stanford-corenlp-3.3.1-models.jar</code> will be silently
+skipped by pants. To bring both jars in, use the <code>.with_artifacts()</code>
+method of the bdict_jar. Using this method, the above example would be
+transformed into:</p>
+<div class="codehilite"><pre>jar_library(name = 'stanford-corenlp',
+  jars = [
+    jar(org = 'edu.stanford.nlp', name = 'stanford-corenlp', rev = '3.3.1')
+    .with_sources().with_artifact(classifier='models').with_artifact(classifier=''),
+  ]
+)
 </pre></div>
-</div>
-<p>And as a result, both jars will now be brought into the target&#8217;s classpath.</p>
-</div>
-<div class="section" id="using-a-snapshot-jvm-dependency">
-<h2>Using a SNAPSHOT JVM Dependency<a class="headerlink" href="#using-a-snapshot-jvm-dependency" title="Permalink to this headline">¶</a></h2>
-<p id="test-3rdparty-jvm-snapshot">Sometimes your code depends on a buggy external JVM dependency. You think you&#8217;ve fixed the
-external code, but want to test locally before uploading it to make sure.
-To do this, in the <tt class="docutils literal"><span class="pre">jar</span></tt> dependency for the artifact, specify the <tt class="docutils literal"><span class="pre">url</span></tt> attribute
-to point to the local file and change the <tt class="docutils literal"><span class="pre">rev</span></tt>. If you are actively making changes
-to the dependency, you can also use the <tt class="docutils literal"><span class="pre">mutable</span></tt> jar attribute to re-import the file
-each time pants is run (otherwise, pants will cache it):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">jar_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;checkstyle&#39;</span><span class="p">,</span>
-  <span class="n">jars</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">jar</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s">&#39;com.puppycrawl.tools&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;checkstyle&#39;</span><span class="p">,</span> <span class="n">rev</span><span class="o">=</span><span class="s">&#39;5.5-SNAPSHOT&#39;</span><span class="p">,</span>
-        <span class="n">url</span><span class="o">=</span><span class="s">&#39;file:///Users/pantsdev/Src/checkstyle/checkstyle.jar&#39;</span><span class="p">,</span>
-        <span class="n">mutable</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
-  <span class="p">],</span>
-<span class="p">)</span>
+<p>And as a result, both jars will now be brought into the target's
+classpath.</p>
+<div class="h-plus-pilcrow"><h2 id="using-a-snapshot-jvm-dependency">Using a SNAPSHOT JVM Dependency<a class="pilcrow-link" href="#using-a-snapshot-jvm-dependency"> ¶</a></h2></div>
+<p>Sometimes your code depends on a buggy external JVM dependency. You
+think you've fixed the external code, but want to test locally before
+uploading it to make sure. To do this, in the <code>jar</code> dependency for the
+artifact, specify the <code>url</code> attribute to point to the local file and
+change the <code>rev</code>. If you are actively making changes to the dependency,
+you can also use the <code>mutable</code> jar attribute to re-import the file each
+time pants is run (otherwise, pants will cache it):</p>
+<div class="codehilite"><pre>jar_library(name='checkstyle',
+  jars = [
+    jar(org='com.puppycrawl.tools', name='checkstyle', rev='5.5-SNAPSHOT',
+        url='file:///Users/pantsdev/Src/checkstyle/checkstyle.jar',
+        mutable=True),
+  ],
+)
 </pre></div>
-</div>
-</div>
-</div>
+</body>
+<!-- main content end -->
 
+</div> <!-- end of mainflow -->
 
-          <footer>
-  
-    <div class="rst-footer-buttons">
-      
-        <a href="3rdparty_py.html" class="btn btn-neutral float-right" title="Python 3rdparty Pattern"/>Next <span class="icon icon-circle-arrow-right"></span></a>
-      
-      
-        <a href="3rdparty.html" class="btn btn-neutral" title="Third-Party Dependencies"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-      
-    </div>
-  
-
-  <hr/>
-
-  <p>
-      &copy; Copyright 2014, Pants project contributors.
-  </p>
-
-  <a href="https://www.github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="http://readthedocs.org">Read the Docs</a>
-</footer>
-        </div>
-      </div>
-
-    </section>
-
+<nav class="bignav">
+  <div class="bignav-logo">
+    <a href="index.html">
+      <img src="logo.ico" alt="[pantsbuild logo]">
+    </a>
   </div>
-  
+  <form class="search" action="https://www.google.com/search">
+  <input name="as_q" class="query">
+  <input name="as_sitesearch" value="pantsbuild.github.io" type="hidden">
+  <input value="Search" type=submit class="button">
+  </form>
+
+<div class="site-toc">
+<ul>
+<li class="toc-h1 ">
+<a href="java/hello.html">HelloMain</a>
+</li>
+<li class="toc-h2 ">
+<a href="testproject/page.html">Why does this page exist?</a>
+</li>
+<li class="toc-h1 ">
+<a href="3rdparty.html">Third-Party Dependencies</a>
+</li>
+<li class="toc-h2 ">
+<a href="3rdparty_py.html">Python 3rdparty Pattern</a>
+</li>
+<li class="toc-h2 toc-here">
+JVM 3rdparty Pattern
+</li>
+<li class="toc-h1 ">
+<a href="build_dictionary.html">Pants BUILD Dictionary</a>
+</li>
+<li class="toc-h1 ">
+<a href="goals_reference.html">Pants Goals Reference</a>
+</li>
+</ul>
+</div>
+</nav>
+
+<div class="ci-status">
+<a href="https://travis-ci.org/pantsbuild/pants">
+<img src="https://travis-ci.org/pantsbuild/pants.png?branch=master"
+     alt="Are the tests passing?" title="Are the tests passing?"></a><br>
+<a href="https://coveralls.io/r/pantsbuild/pants?branch=master">
+<img src="https://coveralls.io/repos/pantsbuild/pants/badge.png?branch=master"
+     alt="Test Coverage Status" title="Test Coverage Status"></a>
+</div>
 
 </body>
 </html>
+
