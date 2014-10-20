@@ -407,195 +407,173 @@ body a.icon-home:hover{
           
   <div class="section" id="task-developer-s-guide">
 <h1>Task Developer&#8217;s Guide<a class="headerlink" href="#task-developer-s-guide" title="Permalink to this headline">¶</a></h1>
-<p>This page documents how to develop pants tasks, enabling you to teach pants
-how to do things it does not already know how to do today. This page makes
-more sense if you know the concepts from <a class="reference internal" href="internals.html"><em>Pants Internals</em></a>.</p>
-<div class="section" id="pagerank-example">
-<h2>PageRank Example<a class="headerlink" href="#pagerank-example" title="Permalink to this headline">¶</a></h2>
-<p>Let&#8217;s dive in an look at a fully-functional task.
-Generating reports its a common user request, as folks often want to learn
-more about their builds. Target dependencies and dependees are a couple
-examples. Let&#8217;s explore how to generate a new report, such as running PageRank
-over the targets graph. Perhaps you&#8217;re just curious to see what the most
-popular targets are, or maybe you want to use that information to focus
-testing efforts.</p>
-<p>Let&#8217;s remind ourselves of the simplified
-<a class="reference external" href="http://www.cs.princeton.edu/~chazelle/courses/BIB/pagerank.htm">PageRank algorithm</a></p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">PR</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">d</span><span class="p">)</span> <span class="o">+</span> <span class="n">d</span> <span class="p">(</span><span class="n">PR</span><span class="p">(</span><span class="n">T1</span><span class="p">)</span><span class="o">/</span><span class="n">C</span><span class="p">(</span><span class="n">T1</span><span class="p">)</span> <span class="o">+</span> <span class="o">...</span> <span class="o">+</span> <span class="n">PR</span><span class="p">(</span><span class="n">Tn</span><span class="p">)</span><span class="o">/</span><span class="n">C</span><span class="p">(</span><span class="n">Tn</span><span class="p">))</span>
-</pre></div>
+<p>In Pants, code that does &#8220;real build work&#8221;
+(e.g., downloads prebuilt artifacts, compiles Java code, runs tests)
+lives in <em>Tasks</em>. To add a feature to Pants so that it can, e.g.,
+compile a new language, you want to write a new Task.</p>
+<p>This page documents how to develop a Pants Task, enabling you to teach pants
+how to do things it does not already know how to do today.
+To see the Tasks that are built into Pants, look over
+<tt class="docutils literal"><span class="pre">src/python/pants/backend/*/tasks/*.py</span></tt>.
+The code makes more sense if you know the concepts from <a class="reference internal" href="internals.html"><em>Pants Internals</em></a>.
+The rest of this page introduces some concepts especially useful when
+defining a Task.</p>
+<div class="section" id="hello-task">
+<h2>Hello Task<a class="headerlink" href="#hello-task" title="Permalink to this headline">¶</a></h2>
+<p>To implement a Task, you define a subclass of
+<a class="reference external" href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/backend/core/tasks/task.py">pants.backend.core.tasks.task.Task</a>
+and define an <tt class="docutils literal"><span class="pre">execute</span></tt> method for that class.
+The <tt class="docutils literal"><span class="pre">execute</span></tt> method does the work.</p>
+<p>The Task can see (and affect) the state of the build via its
+<tt class="docutils literal"><span class="pre">.context</span></tt> member, a
+<a class="reference external" href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/goal/context.py">pants.goal.context.Context.</a></p>
+<p><strong>Which targets to act on?</strong> A typical Task wants to act on all &#8220;in play&#8221;
+targets that match some predicate. Here, &#8220;&#8216;in play&#8217; targets&#8221; means those
+targets the user specified on the command line, the targets needed to build
+those targets, the targets needed to build <em>those</em> targets, etc. Call
+<tt class="docutils literal"><span class="pre">self.context.targets()</span></tt> to get these.  This method takes an optional
+parameter, a predicate function; this is useful for filtering just those
+targets that match some criteria.</p>
 </div>
-<p>Where <tt class="docutils literal"><span class="pre">T</span></tt> are our targets, and dependencies are analogous to inbound links.
-To perform such a calculation we simply need to walk the targets graph to
-identify all target dependees, then perform the above calculation some number
-of iterations, and finally display the results.</p>
-<p>Now let&#8217;s look at PageRank. First, notice we subclass <tt class="docutils literal"><span class="pre">ConsoleTask</span></tt> which
-provides conveniences when generating reports. Also, notice we don&#8217;t define
-an explicit constructor as there&#8217;s no configuration to setup nor do we need
-to register product requirements. We implement <tt class="docutils literal"><span class="pre">console_output</span></tt> as
-required by <tt class="docutils literal"><span class="pre">ConsoleTask</span></tt> which parses the targets graph, calculates
-pagerank, then returns the report lines.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># coding=utf-8</span>
-<span class="c"># Copyright 2014 Pants project contributors (see CONTRIBUTORS.md).</span>
-<span class="c"># Licensed under the Apache License, Version 2.0 (see LICENSE).</span>
-
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="p">(</span><span class="n">nested_scopes</span><span class="p">,</span> <span class="n">generators</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">with_statement</span><span class="p">,</span>
-                        <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">)</span>
-
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
-
-<span class="kn">from</span> <span class="nn">pants</span> <span class="kn">import</span> <span class="n">is_concrete</span>  <span class="c"># XXX This target doesn&#39;t exist</span>
-<span class="kn">from</span> <span class="nn">pants.backend.core.tasks.console_task</span> <span class="kn">import</span> <span class="n">ConsoleTask</span>
-
-
-<span class="k">class</span> <span class="nc">PageRank</span><span class="p">(</span><span class="n">ConsoleTask</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;Measure how &quot;depended-upon&quot; the targets are.&quot;&quot;&quot;</span>
-
-  <span class="k">def</span> <span class="nf">console_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
-    <span class="n">dependencies_by_target</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
-    <span class="n">dependees_by_target</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>When processing dependencies we populate the maps by walking a filtered
-targets graph. It&#8217;s quite common for tasks to only know how to handle
-specific target types.</p>
-<div class="highlight-python"><div class="highlight"><pre>    self._calc_deps(targets, dependencies_by_target, dependees_by_target)
-    self._pagerank(dependees_by_target, dependencies_by_target, pagerank_by_target)
-    return self._report(pagerank_by_target)
-
-  def _calc_deps(self, targets, dependencies_by_target, dependees_by_target):
-    for target in filter(lambda x: hasattr(x, &quot;dependencies&quot;), targets):
-      if not dependencies_by_target.has_key(target):
-        for dependency in target.dependencies:
-          for resolved in dependency.resolve():
-            if is_concrete(resolved):
-              dependencies_by_target[target].add(resolved)
-</pre></div>
-</div>
-<p>Now let&#8217;s calculate pagerank.</p>
-<div class="highlight-python"><div class="highlight"><pre>      for dependency in target.dependencies:
-        for resolved in dependency.resolve():
-          if is_concrete(resolved):
-            dependees_by_target[resolved].add(target)
-
-  def _pagerank(self, dependees_by_target, dependencies_by_target, pagerank_by_target):
-    &quot;&quot;&quot;Calculate PageRank.&quot;&quot;&quot;
-    d = 0.85
-</pre></div>
-</div>
-<p>And finally return the report lines.</p>
-<div class="highlight-python"><div class="highlight"><pre>      <span class="k">for</span> <span class="n">target</span><span class="p">,</span> <span class="n">dependees</span> <span class="ow">in</span> <span class="n">dependees_by_target</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
-        <span class="n">contributions</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span>
-          <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">pagerank_by_target</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">dependencies_by_target</span><span class="p">[</span><span class="n">t</span><span class="p">]),</span> <span class="n">dependees</span><span class="p">)</span>
-        <span class="n">pagerank_by_target</span><span class="p">[</span><span class="n">target</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">d</span><span class="p">)</span> <span class="o">+</span> <span class="n">d</span> <span class="o">*</span> <span class="nb">sum</span><span class="p">(</span><span class="n">contributions</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Let&#8217;s see the report in action! Here we&#8217;ll look at the most popular
-target dependencies. As expected, foundational jars and targets
-are identified. Let&#8217;s say we wanted to restrict this report to
-internal or external-only targets. Well... that&#8217;s your homework :)</p>
-<div class="highlight-python"><div class="highlight"><pre>$ ./pants goal pagerank src/java/com/twitter/common/:: | head
-8.283371 - com.google.code.findbugs-jsr305-1.3.9
-7.433371 - javax.inject-javax.inject-1
-7.433371 - com.google.guava-guava-14.0.1
-3.107220 - commons-lang-commons-lang-2.5
-2.537617 - com.google.inject-guice-3.0
-2.519704 - JavaLibrary(src/java/com/twitter/common/base/BUILD:base)
-2.205346 - javax.servlet-servlet-api-2.5
-2.042915 - org.hamcrest-hamcrest-core-1.2
-1.898855 - org.slf4j-slf4j-jdk14-1.6.1
-1.898855 - org.slf4j-slf4j-api-1.6.1
-</pre></div>
-</div>
-<p>As you can see, generating reports is quite simple. We have the opportunity
-to configure the task, and implement a simple interface that processes the
-targets graph and generates a report on what it finds out.</p>
-</div>
-<div class="section" id="core-concepts">
-<h2>Core Concepts<a class="headerlink" href="#core-concepts" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="task-base-class">
-<h3>Task Base Class<a class="headerlink" href="#task-base-class" title="Permalink to this headline">¶</a></h3>
-<p>Let&#8217;s examine the Task class, which is the &#8220;abstract class&#8221;
-we&#8217;ll need to subclass. The following simplified example highlights
-the most useful methods.</p>
-<ul class="simple">
-<li><tt class="xref py py-class docutils literal"><span class="pre">pants.tasks.__init__.Task</span></tt> - This is the base class
-used to implement all the stuff pants knows how to do. When instantiating
-a task it has the opportunity to perform setup actions, or fetch
-configuration info from the context or <tt class="docutils literal"><span class="pre">pants.ini</span></tt>. If it needs
-products produced by some other task it must register interest in
-those products (e.g.: &#8220;I&#8217;m a java compiler, I need java sources.&#8221;).</li>
-<li><tt class="xref py py-meth docutils literal"><span class="pre">pants.tasks.__init__.Task.execute()</span></tt> - Do some work.
-This is where the task does its thing. In addition to anything stashed
-away during instantiation, it has access to the targets graph.</li>
-<li><tt class="xref py py-meth docutils literal"><span class="pre">pants.tasks.__init__.Task.setup_parser()</span></tt> - Specify
-command-line flags. These are useful for functionality that may be
-modified per-invocation. Use <tt class="docutils literal"><span class="pre">pants.ini</span></tt> for configuration that
-should always be used in the repo.</li>
-</ul>
-</div>
-<div class="section" id="targets-graph-traversal">
-<h3>Targets Graph Traversal<a class="headerlink" href="#targets-graph-traversal" title="Permalink to this headline">¶</a></h3>
-<p>Many tasks involve traversing the targets graph looking for targets of
-particular types, and taking actions on those targets. For this reason
-its important to understand now to navigate the targets graph.</p>
-<p>The targets graph is provided to your
-<tt class="xref py py-meth docutils literal"><span class="pre">pants.tasks.__init__.Task.execute()</span></tt> method, and you have
-exclusive access to read and/or mutate it in place during execution.
-Its provided as the list of <em>active concrete targets</em>. <em>Active</em> meaning
-these targets are reachable by one or more <tt class="docutils literal"><span class="pre">target_roots</span></tt> specified on
-the command-line; <em>concrete</em> meaning all targets resolve to themselves,
-with any intermediate bags of <tt class="docutils literal"><span class="pre">dependencies</span></tt> removed.</p>
-<p>Let&#8217;s explore how to collect all targets of a particular type.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
-  <span class="n">interesting_targets</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-  <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">:</span>
-    <span class="n">target</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">interesting_targets</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">t</span><span class="p">),</span>
-                <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">FooLibrary</span><span class="p">))</span>
-</pre></div>
-</div>
-<p>First we need to iterate over <tt class="docutils literal"><span class="pre">targets</span></tt>, which are the active concrete targets.
-Then we <tt class="docutils literal"><span class="pre">walk</span></tt> each concrete target, providing as the first parameter
-a callable that each walked target will be passed to. We also provide a callable
-as the optional second parameter which filters the targets.</p>
-<p>Traversing the targets graph is key to task development, as most tasks perform
-some operation on the targets &#8220;in play.&#8221; We iterate over the active concrete
-targets, <tt class="docutils literal"><span class="pre">walk</span></tt>ing each one with our visiting callable. By walking the
-targets graph you can identify exactly which targets are necessary to implement
-your task.</p>
-</div>
-<div class="section" id="task-installation">
-<h3>Task Installation<a class="headerlink" href="#task-installation" title="Permalink to this headline">¶</a></h3>
-<p>Tasks must be installed before they are available for use.
-Fortunately this is a simple process. They are installed
-in <tt class="docutils literal"><span class="pre">register.py</span></tt> as follows:</p>
+<div class="section" id="task-installation-associate-task-with-goal-s">
+<h2>Task Installation: Associate Task with Goal[s]<a class="headerlink" href="#task-installation-associate-task-with-goal-s" title="Permalink to this headline">¶</a></h2>
+<p>Defining a Task is nice, but doesn&#8217;t hook it up so users can get to it.
+<em>Install</em> a task to make it available to users. To do this,
+you register it with Pants, associating it with a goal.
+A plugin&#8217;s <tt class="docutils literal"><span class="pre">register.py</span></tt> registers goals in its <tt class="docutils literal"><span class="pre">register_goals</span></tt>
+function. Here&#8217;s an excerpt from
+<a class="reference external" href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/backend/jvm/register.py">Pants&#8217; own JVM backend</a>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">register_goals</span><span class="p">():</span>
-  <span class="kn">from</span> <span class="nn">pants.backend.core.tasks.pagerank</span> <span class="kn">import</span> <span class="n">PageRank</span>
-  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;pagerank&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">PageRank</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">()</span><span class="o">.</span><span class="n">with_description</span><span class="p">(</span><span class="s">&#39;PageRank the given targets.&#39;</span><span class="p">)</span>
+  <span class="n">ng_killall</span> <span class="o">=</span> <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;ng-killall&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">NailgunKillall</span><span class="p">)</span>
+  <span class="n">ng_killall</span><span class="o">.</span><span class="n">install</span><span class="p">()</span><span class="o">.</span><span class="n">with_description</span><span class="p">(</span><span class="s">&#39;Kill running nailgun servers.&#39;</span><span class="p">)</span>
+
+  <span class="n">Goal</span><span class="o">.</span><span class="n">by_name</span><span class="p">(</span><span class="s">&#39;invalidate&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="n">ng_killall</span><span class="p">,</span> <span class="n">first</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+  <span class="n">Goal</span><span class="o">.</span><span class="n">by_name</span><span class="p">(</span><span class="s">&#39;clean-all&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="n">ng_killall</span><span class="p">,</span> <span class="n">first</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+  <span class="n">Goal</span><span class="o">.</span><span class="n">by_name</span><span class="p">(</span><span class="s">&#39;clean-all-async&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="n">ng_killall</span><span class="p">,</span> <span class="n">first</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;bootstrap-jvm-tools&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">BootstrapJvmTools</span>
+  <span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s">&#39;bootstrap&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">with_description</span><span class="p">(</span><span class="s">&#39;Bootstrap tools needed for building.&#39;</span><span class="p">)</span>
+
+  <span class="c"># Dependency resolution.</span>
+  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;ivy&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">IvyResolve</span><span class="p">,</span>
+       <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;gen&#39;</span><span class="p">,</span> <span class="s">&#39;check-exclusives&#39;</span><span class="p">,</span> <span class="s">&#39;bootstrap&#39;</span><span class="p">]</span>
+  <span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s">&#39;resolve&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">with_description</span><span class="p">(</span><span class="s">&#39;Resolve dependencies and produce dependency reports.&#39;</span><span class="p">)</span>
+
+  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;ivy-imports&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">IvyImports</span><span class="p">,</span>
+       <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;bootstrap&#39;</span><span class="p">]</span>
+  <span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s">&#39;imports&#39;</span><span class="p">)</span>
 </pre></div>
+</div>
+<p>That <tt class="docutils literal"><span class="pre">task(...)</span></tt> is a name for <tt class="docutils literal"><span class="pre">pants.goal.task_registrar.TaskRegistrar</span></tt>.
+Calling its <tt class="docutils literal"><span class="pre">install</span></tt> method installs the task in a goal with the same name.
+To install a task in goal <tt class="docutils literal"><span class="pre">foo</span></tt>, use <tt class="docutils literal"><span class="pre">Goal.by_name('foo').install</span></tt>.
+You can install more than one task in a goal; e.g., there are separate tasks
+to run Java tests and Python tests; but both are in the <tt class="docutils literal"><span class="pre">test</span></tt> goal.</p>
+</div>
+<div class="section" id="product-types-and-require-data-why-test-comes-after-compile">
+<h2>product_types and require_data: Why &#8220;test&#8221; comes after &#8220;compile&#8221;<a class="headerlink" href="#product-types-and-require-data-why-test-comes-after-compile" title="Permalink to this headline">¶</a></h2>
+<p>It might only make sense to run your Task after some other Task has finished.
+E.g., Pants has separate tasks to compile Java code and run Java tests; it
+only makes sense to run those tests after compiling. To tell Pants about
+these inter-task dependencies...</p>
+<p>The &#8220;early&#8221; task class defines a <tt class="docutils literal"><span class="pre">product_types</span></tt> class method that
+returns a list of strings:</p>
+<div class="highlight-python"><div class="highlight"><pre>  <span class="nd">@classmethod</span>
+  <span class="k">def</span> <span class="nf">product_types</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="s">&#39;ivy_imports&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>The &#8220;late&#8221; task defines a <tt class="docutils literal"><span class="pre">prepare</span></tt> method that calls
+<tt class="docutils literal"><span class="pre">round_manager.require_data</span></tt> to &#8220;require&#8221; one of those
+same strings:</p>
+<div class="highlight-python"><div class="highlight"><pre>  <span class="k">def</span> <span class="nf">prepare</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">round_manager</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">ProtobufGen</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">prepare</span><span class="p">(</span><span class="n">round_manager</span><span class="p">)</span>
+    <span class="n">round_manager</span><span class="o">.</span><span class="n">require_data</span><span class="p">(</span><span class="s">&#39;ivy_imports&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Pants uses this information to determine which tasks must run
+frist to prepare data required by other tasks. (If one task requires
+data that no task provides, Pants errors out.)</p>
+</div>
+<div class="section" id="products-map-how-one-task-uses-products-of-another">
+<h2>Products Map: how one task uses products of another<a class="headerlink" href="#products-map-how-one-task-uses-products-of-another" title="Permalink to this headline">¶</a></h2>
+<p>One task might need the products of another. E.g., the Java test runner
+task uses Java <tt class="docutils literal"><span class="pre">.class</span></tt> files that the Java compile task produces.
+Pants tasks keep track of this in a
+<a class="reference external" href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/goal/products.py">pants.goal.products.ProductMapping.</a></p>
+<p>The <tt class="docutils literal"><span class="pre">ProductMapping</span></tt> is basically a dict.
+Calling <tt class="docutils literal"><span class="pre">self.context.products.get('jar_dependencies')</span></tt> looks up
+<tt class="docutils literal"><span class="pre">jar_dependencies</span></tt> in that dict. Tasks can set/change the value stored
+at that key; later tasks can read (and perhaps further change) that value.
+That value might be, say, a dictionary that maps target specs to file paths.</p>
+<div class="section" id="require-data-is-required">
+<h3>require_data, is_required<a class="headerlink" href="#require-data-is-required" title="Permalink to this headline">¶</a></h3>
+<p>It might &#8220;expensive&#8221; for a task to generate some not-always-useful product.
+E.g., if Ivy takes a while to compute jar dependencies but they&#8217;re not always
+needed, then it might make sense to skip generating them in most cases.
+In one tasks&#8217;s <tt class="docutils literal"><span class="pre">__init__</span></tt>, it can call
+<tt class="docutils literal"><span class="pre">self.context.products.isrequired('jar_dependencies')</span></tt> to say it needs that
+data.
+The Ivy task uses <tt class="docutils literal"><span class="pre">if</span> <span class="pre">self.context.products.isrequired('jar_dependencies'):</span></tt>
+to find out if another task needs this data.</p>
 </div>
 </div>
 <div class="section" id="task-configuration">
-<h3>Task Configuration<a class="headerlink" href="#task-configuration" title="Permalink to this headline">¶</a></h3>
-<p>Tasks may be configured in two ways, through a configuration file checked
-into the repo, and via command-line flags.</p>
-<p>The configuration file is always called <tt class="docutils literal"><span class="pre">pants.ini</span></tt> and is a standard
+<h2>Task Configuration<a class="headerlink" href="#task-configuration" title="Permalink to this headline">¶</a></h2>
+<p>Tasks may be configured in two ways:</p>
+<ul class="simple">
+<li>a configuration file</li>
+<li>command-line flags</li>
+</ul>
+<p>The configuration file is normally called <tt class="docutils literal"><span class="pre">pants.ini</span></tt> and is a standard
 <tt class="docutils literal"><span class="pre">ini</span></tt> file loaded with <tt class="docutils literal"><span class="pre">ConfigParser</span></tt>. During instantiation, tasks have
-access to a <tt class="xref py py-class docutils literal"><span class="pre">pants.base.config.Config</span></tt>
-to read these settings.</p>
+access to a <tt class="docutils literal"><span class="pre">pants.base.config.Config</span></tt> to read these settings.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="c"># Let&#39;s read mykey from the mytask pants.ini section.</span>
 <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;mytask&#39;</span><span class="p">,</span> <span class="s">&#39;mykey&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Command-line flag values are also available during task instantiation.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># Access a command-line flag the task defined.</span>
-<span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">myflag</span>
+<p>To define a command-line flag, handle your Task&#8217;s <tt class="docutils literal"><span class="pre">register_options</span></tt> class
+method and call the passed-in <tt class="docutils literal"><span class="pre">register</span></tt> function:</p>
+<div class="highlight-python"><div class="highlight"><pre>  <span class="nd">@classmethod</span>
+  <span class="k">def</span> <span class="nf">register_options</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">register</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">ListGoals</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">register_options</span><span class="p">(</span><span class="n">register</span><span class="p">)</span>
+    <span class="n">register</span><span class="p">(</span><span class="s">&#39;--graph&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&#39;store_true&#39;</span><span class="p">,</span>
+             <span class="n">help</span><span class="o">=</span><span class="s">&#39;Generate a graphviz graph of installed goals.&#39;</span><span class="p">,</span>
+             <span class="n">legacy</span><span class="o">=</span><span class="s">&#39;goal_list_graph&#39;</span><span class="p">)</span>
+    <span class="n">register</span><span class="p">(</span><span class="s">&#39;--all&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&#39;store_true&#39;</span><span class="p">,</span>
+             <span class="n">help</span><span class="o">=</span><span class="s">&#39;List all goals even if no description is available.&#39;</span><span class="p">,</span>
+             <span class="n">legacy</span><span class="o">=</span><span class="s">&#39;goal_list_all&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Option values are available via <tt class="docutils literal"><span class="pre">self.get_options()</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre># Did user pass in the --all CLI flag (or set it in .ini)?
+if self.get_options().all:
 </pre></div>
 </div>
 </div>
+<div class="section" id="grouptask">
+<h2>GroupTask<a class="headerlink" href="#grouptask" title="Permalink to this headline">¶</a></h2>
+<p>Some <tt class="docutils literal"><span class="pre">Task</span></tt>s are grouped together under a parent <tt class="docutils literal"><span class="pre">GroupTask</span></tt>.
+Specifically, the JVM compile tasks:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">jvm_compile</span> <span class="o">=</span> <span class="n">GroupTask</span><span class="o">.</span><span class="n">named</span><span class="p">(</span>
+<span class="s">&#39;jvm-compilers&#39;</span><span class="p">,</span>
+<span class="n">product_type</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;classes_by_target&#39;</span><span class="p">,</span> <span class="s">&#39;classes_by_source&#39;</span><span class="p">],</span>
+<span class="n">flag_namespace</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;compile&#39;</span><span class="p">])</span>
+
+<span class="n">jvm_compile</span><span class="o">.</span><span class="n">add_member</span><span class="p">(</span><span class="n">ScalaCompile</span><span class="p">)</span>
+<span class="n">jvm_compile</span><span class="o">.</span><span class="n">add_member</span><span class="p">(</span><span class="n">AptCompile</span><span class="p">)</span>
+<span class="n">jvm_compile</span><span class="o">.</span><span class="n">add_member</span><span class="p">(</span><span class="n">JavaCompile</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>A <tt class="docutils literal"><span class="pre">GroupTask</span></tt> allows its constituent tasks to &#8216;claim&#8217; targets for processing, and can iterate
+between those tasks until all work is done. This allows, e.g., Java code to depend on Scala code
+which itself depends on some other Java code.</p>
+</div>
 <div class="section" id="jvm-tool-bootstrapping">
-<h3>JVM Tool Bootstrapping<a class="headerlink" href="#jvm-tool-bootstrapping" title="Permalink to this headline">¶</a></h3>
-<p>If you want to integrate an existing JVM-based tool with a pants task, you need
-to be able to bootstrap it, i.e., fetch it and create a classpath with which to run it.</p>
+<h2>JVM Tool Bootstrapping<a class="headerlink" href="#jvm-tool-bootstrapping" title="Permalink to this headline">¶</a></h2>
+<p>If you want to integrate an existing JVM-based tool with a pants task, Pants
+must be able to bootstrap it. That is, a running Pants will need to fetch
+the tool and create a classpath with which to run it.</p>
 <p>Your job as a task
 developer is to set up the arguments passed to your tool (e.g.: source file names
 to compile) and do something useful after the tool has run. For example, a code
@@ -603,49 +581,17 @@ generation tool would identify targets that own IDL sources, pass those sources
 as arguments to the code generator, create targets of the correct type to own
 generated sources, and mutate the targets graph rewriting dependencies on targets
 owning IDL sources to point at targets that own the generated code.</p>
-<p>Tools are specified by targets in a special BUILD.tools file in the root of
-your workspace. To bootstrap it you register that target under some key
-in the task&#8217;s __init__ method. Then, a special bootstrapping task will use Ivy
-to resolve those targets. Then, in your execute() method you can get the
-classpath for the tool using its registration key.</p>
-<p><a class="reference external" href="http://www.scalastyle.org/">Scalastyle</a> is a tool that enforces style policies
-for scala code. Let&#8217;s examine a simplified task that uses this tool. This example has been
-condensed from the Scalastyle task provided by pants; please see its sources for a real-world
-example, including exemplary configuration and error handling (which your task will have too,
-right :)</p>
-<div class="highlight-python"><div class="highlight"><pre>class Scalastyle(NailgunTask):
-  def __init__(self, *args, **kwargs):
-    super(Scalastyle, self).__init__(*args, **kwargs)
-    self._scalastyle_config = self.context.config.get_required(&#39;scalastyle, &#39;config&#39;)
-    self._scalastyle_bootstrap_key = &#39;scalastyle&#39;
-    self.register_jvm_tool(self._scalastyle_bootstrap_key, [&#39;:scalastyle&#39;])
-
-  def execute(self, targets):
-    srcs = get_scala_sources(targets)
-    cp = self._jvm_tool_bootstrapper.get_jvm_tool_classpath(self._scalastyle_bootstrap_key)
-    result = self.runjava(main=&#39;org.scalastyle.Main&#39;,
-                          classpath=cp,
-                          args=[&#39;-c&#39;, self._scalastyle_config] + srcs)
-    if result != 0:
-      raise TaskError(&#39;java %s ... exited non-zero (%i)&#39; % (&#39;org.scalastyle.Main&#39;, result))
-</pre></div>
-</div>
-<p>Notice how we subclass <tt class="docutils literal"><span class="pre">NailgunTask</span></tt>. This takes advantage of
-<a class="reference external" href="http://www.martiansoftware.com/nailgun/">Nailgun</a> to speed up any tool with
-a fixed classpath.
-Our constructor is straightforward, simply identifying the configuration file and
-registering the tool.
-Our <tt class="docutils literal"><span class="pre">execute</span></tt> magically finds all the scala sources to check (we&#8217;re focusing on
-bootstrapping here), and fetches the classpath to use. Pay attention to the <tt class="docutils literal"><span class="pre">runjava</span></tt> line -
-that&#8217;s where the tool classpath is used. We simply say what main to execute, with what
-classpath, and what program args to use. As Scalastyle is a barrier in our build, we fail
-the build if files do not conform to the configured policy.</p>
-<p>Note that the above description was a slight simplification. The bootstrapping task doesn&#8217;t
-actually invoke Ivy. Instead it creates a callback that invokes Ivy in just the right
-way. This callback is called lazily on demand, the first time you call get_jvm_tool_classpath()
-with a given key. This lazy invocation improves performance - we only invoke Ivy when we know
-we really do need to use the tool.</p>
-</div>
+<p>The <a class="reference external" href="http://www.scalastyle.org/">Scalastyle</a> tool enforces style policies
+for scala code. The
+<a class="reference external" href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/backend/jvm/tasks/scalastyle.py">Pants Scalastyle task</a>
+shows some useful idioms for JVM tasks.</p>
+<ul class="simple">
+<li>Inherit <tt class="docutils literal"><span class="pre">NailgunTask</span></tt> to avoid starting up a new JVM.</li>
+<li>Specify the tool executable as a Pants <tt class="docutils literal"><span class="pre">jar</span></tt>; Pants knows how to download
+and run those.</li>
+<li>Let organizations/users override the jar in <tt class="docutils literal"><span class="pre">pants.ini</span></tt>; it makes it
+easy to use/test a new version.</li>
+</ul>
 </div>
 </div>
 
