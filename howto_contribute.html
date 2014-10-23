@@ -280,6 +280,7 @@ body a.icon-home:hover{
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#page">page</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#pants">pants</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#pants-version">pants_version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#prep-command">prep_command</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-antlr-library">python_antlr_library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-binary">python_binary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="build_dictionary.html#python-library">python_library</a></li>
@@ -457,9 +458,31 @@ conversation there to vet the proposal. Once the group agrees it&#8217;s worth
 a spike you can file a github issue and assign it to yourself.</p>
 </div>
 <div class="section" id="getting-pants-source-code">
-<h3>Getting Pants Source Code<a class="headerlink" href="#getting-pants-source-code" title="Permalink to this headline">¶</a></h3>
-<p>After deciding on the change you&#8217;d like to make we&#8217;ll need to get the code.</p>
+<span id="download-source-code"></span><h3>Getting Pants Source Code<a class="headerlink" href="#getting-pants-source-code" title="Permalink to this headline">¶</a></h3>
+<p>If you just want to compile and look at the source code, the easiest way is to clone the repo.</p>
 <div class="highlight-python"><div class="highlight"><pre>git clone https://github.com/pantsbuild/pants
+</pre></div>
+</div>
+<p>If you would like to start developing patches and contributing them back, you will want to
+create a fork of the repo using the <a class="reference external" href="https://help.github.com/articles/fork-a-repo/">instructions on github.com</a>.  With this setup, you can push branches and run
+Travis-CI before your change is committed.</p>
+<p>If you&#8217;ve already cloned your repo without forking, you don&#8217;t have to re-checkout your repo.  First,
+create the fork on github.  Make a note the clone url of your fork.  Then run the following
+commands:</p>
+<div class="highlight-python"><div class="highlight"><pre>git remote remove origin
+git remote add origin &lt;url-to-clone-your-fork&gt;
+git remote add upstream  https://github.com/pantsbuild/pants
+</pre></div>
+</div>
+<p>After this change, <tt class="docutils literal"><span class="pre">git</span> <span class="pre">push</span></tt> and <tt class="docutils literal"><span class="pre">git</span> <span class="pre">pull</span></tt> will go to your fork.  You can get
+the latest changes from the <tt class="docutils literal"><span class="pre">pantsbuild/pants</span></tt> repo&#8217;s master branch
+using the <a class="reference external" href="https://help.github.com/articles/syncing-a-fork/">syncing a fork</a> instructions
+on github.</p>
+<p><strong>Pro tip:</strong> If you want your local master branch to be an exact copy of the <tt class="docutils literal"><span class="pre">pantsbuild/pants</span></tt> repo&#8217;s
+master branch, use these commands:</p>
+<div class="highlight-python"><div class="highlight"><pre>git co master
+git fetch upstream
+git reset --hard upstream/master
 </pre></div>
 </div>
 </div>
@@ -510,7 +533,9 @@ Subsequent runs use your cached login credentials.</p>
 <p>At the provided URL, there&#8217;s a web form. To get your change reviewed,
 you must fill in the change description, reviewers, testing done, etc.
 To make sure it gets seen, add <tt class="docutils literal"><span class="pre">pants-reviews</span></tt> to the Groups field
-and a specific reviewer to the People field.</p>
+and a specific reviewer to the People field.  If you have created a
+<a class="reference external" href="_dev_run_all_tests">pull request</a> on github to run Travis-CI, put the pull request
+number in the Bug field and your git branch name in the Branch field.</p>
 <p>When the review looks good, publish it.
 An email will be sent to the <tt class="docutils literal"><span class="pre">pants-reviews</span></tt> mailing list and the reviewers
 will take a look. (For your first review, double-check that the mail got sent;
