@@ -8,7 +8,7 @@
 
 <head>
   <meta charset="utf-8" />
-  <title>Python 3rdparty Pattern</title>
+  <title>Pants for Maven Experts</title>
   <link rel="stylesheet" href="s.css">
   <script src="s.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,15 +21,15 @@
 <nav class="breadcrumbs">
 <ul>
 <li><a href="index.html">Welcome to the Pants build system.</a>
-<li><a href="python-readme.html">Python Projects with Pants</a>
-<li><a href="3rdparty_py.html">Python 3rdparty Pattern</a>
+<li><a href="JVMProjects.html">JVM Projects with Pants</a>
+<li><a href="from_maven.html">Pants for Maven Experts</a>
 </ul>
 </nav>
 
 <nav class="pagetoc">
 <ul>
-<li class="toc-h1"><a href="#3rdpartypython">3rdparty/python</a></li>
-<li class="toc-h1"><a href="#your-codes-build-file">Your Code's BUILD File</a></li>
+<li class="toc-h1"><a href="#pants-equivalents">Pants Equivalents</a></li>
+<li class="toc-h1"><a href="#depending-on-source-not-jars">Depending on Source, not Jars</a></li>
 </ul>
 </nav>
 
@@ -103,113 +103,104 @@
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h1 id="python-3rdparty-pattern">Python 3rdparty Pattern</h1></td>
+<td class="h-plus-pilcrow-holder"><h1 id="pants-for-maven-experts">Pants for Maven Experts</h1></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#python-3rdparty-pattern">¶</a>
+<a class="pilcrow-link" href="#pants-for-maven-experts">¶</a>
 </div></td>
 </tr>
 </tbody>
 </table>
 
-<p>In general, we use the
-<a href="3rdparty.html">3rdparty idiom</a> to organize
-dependencies on code from outside the source tree. This document
-describes how to make this work for Python code.</p>
-<p>Your Python code can pull in code written elsewhere. Pants fetches code
-via a library that uses pip-style specifications (name and
-version-range).</p>
+<p>If you're used to Maven and learning Pants, you're part of a growing
+crowd. Here are some things that helped other folks come up to speed.</p>
+<p>The good news is that Pants and Maven are pretty similar. Both tools use
+several configuration-snippet files near in source code directories to
+specify how to build those directories' source code. Both tools use the
+configuration-snippet files to build up a model of your source code,
+then execute tasks in a lifecycle over that model. Pants targets tend to
+be finer-grained than Maven's projects; but if you use subprojects in
+Maven, Pants targets might feel familiar. Both expect code to be laid
+out in directories in a consistent way. If you're used to Maven's
+commands, many of Pants' goals will feel eerily familiar.</p>
+<p>Pants uses Ivy to manage artifact fetching and publishing; Ivy's
+behavior here is pretty similar to Maven.</p>
+<p>Three Pants features that especially confuse Maven experts as they move
+to pants are</p>
+<ul>
+<li>Pants has a first-class mechanism for targets depending on other
+    targets on the local file system</li>
+<li>Pants targets do not specify version numbers; versions are only
+    determined during release</li>
+<li>BUILD files are python code that pants evaluates dynamically.</li>
+</ul>
+<p>The first two points are a significant departure from Maven's handling
+of inter-project dependencies. The last point isn't necessary for
+understanding how to read and write most BUILD files, but is helpful to
+be aware of.</p>
+<p>Folks switching a Maven-built codebase to Pants often encounter another
+source of confusion: they uncover lurking jar-dependency version
+conflicts. JVM projects can inadvertently end up relying on classpath
+order for correctness; any two build tools will order their classpaths
+differently. If your project depends on two versions of the same jar
+(all too easy to do with transitive dependencies), then your Maven build
+chose one version, but Pants might end up choosing another: Pants is
+likely to generate a differently-ordered <code>CLASSPATH</code> than Maven did. You
+can fix these, making your build configuration more robust along the
+way; see
+<a href="3rdparty_jvm.html">JVM 3rdparty Pattern</a>
+for advice.</p>
 
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h2 id="3rdpartypython">3rdparty/python</h2></td>
+<td class="h-plus-pilcrow-holder"><h2 id="pants-equivalents">Pants Equivalents</h2></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#3rdpartypython">¶</a>
+<a class="pilcrow-link" href="#pants-equivalents">¶</a>
 </div></td>
 </tr>
 </tbody>
 </table>
 
-<p>To keep all of your code depending on the same versions of third-party
-Python artifacts, you might use the idiom of keeping them in a directory
-tree under <code>3rdparty/python</code>. If your organization has many such
-dependencies, you might arrange them in several directories: this can
-ease later "git detective work" when finding out who changed a version.</p>
-<p><strong>pip-style requirements.txt:</strong></p>
-<p>To define some third-party dependencies, use a
-<a href="build_dictionary.html#bdict_python_requirements" xref="bdict_python_requirements">python_requirements</a> in your <code>BUILD</code>
-file and make a pip <code>requirements.txt</code> file in the same directory.</p>
-<p>E.g, your <code>3rdparty/python/BUILD</code> file might look like:</p>
-<p>
-<div class="md-included-snippet"><div class="codehilite"><pre><span class="c"># see/edit requirements.txt in this directory to change deps.</span>
-<span class="n">python_requirements</span><span class="p">()</span>
-</pre></div></div>
-</p>
-<p>...with <code>3rdparty/python/requirements.txt</code> like:</p>
-<p>
-<div class="md-included-snippet"><div class="codehilite"><pre>ansicolors==1.0.2
-
-antlr_python_runtime==3.1.3
---allow-external antlr-python-runtime
---allow-unverified antlr-python-runtime
-
-argparse==1.2.1
-coverage&gt;=3.7,&lt;3.8
-docutils&gt;=0.12,&lt;0.13
-Markdown==2.1.1
-mock==1.0.1
-</pre></div></div>
-</p>
-<p><code>python_requirements</code> defines a named target for each line in the
-<code>requirements.txt</code> line. For example, a line like <code>ansicolors==1.0.2</code> in
-<code>requirements.txt</code> defines a target named <code>ansicolors</code> that pulls in
-ansicolors version 1.0.2.</p>
-<p><strong>python_requirement_library and python_requirement:</strong></p>
-<p>A <code>BUILD</code> file can also define requirements without a <code>requirements.txt</code>
-file. Set up a
-<a href="build_dictionary.html#bdict_python_requirement_library" xref="bdict_python_requirement_library"><code>python_requirement_library</code></a>
-with one or more
-<a href="build_dictionary.html#bdict_python_requirement" xref="bdict_python_requirement"><code>python_requirement</code></a>s
-like:</p>
-<div class="codehilite"><pre><span class="n">python_requirement_library</span><span class="p">(</span>
-  <span class="n">name</span><span class="o">=</span><span class="s">'beautifulsoup'</span><span class="p">,</span>
-  <span class="n">requirements</span><span class="o">=</span><span class="p">[</span>
-    <span class="n">python_requirement</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'beautifulsoup'</span><span class="p">,</span>
-                       <span class="n">requirement</span><span class="o">=</span><span class="s">'BeautifulSoup==3.2.0'</span><span class="p">),</span>
-  <span class="p">])</span>
-</pre></div>
+<p><code>exec:java</code> run a binary<br>
+<code>goal run</code></br></p>
+<p><code>-Xdebug</code> run a binary in the debugger<br>
+<code>goal run --jvm-run-debug</code></br></p>
+<p><code>-Dtest=com.foo.BarSpec -Dmaven.surefire.debug=true test</code> run one test in the debugger<br>
+<code>goal test --test-junit-debug --test-junit-test=com.foo.BarSpec</code> or
+<code>goal test --test-specs-debug --test-specs-test=com.foo.BarSpec</code></br></p>
 
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h2 id="your-codes-build-file">Your Code's BUILD File</h2></td>
+<td class="h-plus-pilcrow-holder"><h2 id="depending-on-source-not-jars">Depending on Source, not Jars</h2></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#your-codes-build-file">¶</a>
+<a class="pilcrow-link" href="#depending-on-source-not-jars">¶</a>
 </div></td>
 </tr>
 </tbody>
 </table>
 
-<p>In your code's <code>BUILD</code> file, introduce a dependency on the <code>3rdparty</code>
-target:</p>
-<p>
-<div class="md-included-snippet"><div class="codehilite"><pre><span class="n">python_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'greet'</span><span class="p">,</span>
-  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
-    <span class="s">'3rdparty/python:ansicolors'</span><span class="p">,</span>
-  <span class="p">],</span>
-  <span class="n">sources</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s">'*.py'</span><span class="p">),</span>
-<span class="p">)</span>
-</pre></div></div>
-</p>
-<p>Then in your Python code, you can <code>import</code> from that package:</p>
-<div class="codehilite"><pre><span class="kn">from</span> <span class="nn">colors</span> <span class="kn">import</span> <span class="n">green</span>
-</pre></div>
+<p>Pants arose in an environment of a big multi-project repo. Several teams
+contributed code to the same source tree; projects depended on each
+other. Getting those dependencies to work with Maven was tricky. As the
+number of engineers grew, it wasn't so easy to have one team ask another
+team to release a new jar. Using snapshot dependencies mostly worked,
+but it wasn't always clear what needed rebuilding when pulling fresh
+code from origin; if you weren't sure and didn't want to investigate,
+the safe thing was to rebuild everything your project depended upon.
+Alas, for a big tree of Scala code, that might take 45 minutes.</p>
+<p>Pants has a first-class concept of "depend on whatever version of this
+project is defined on disk," and caches targets based on their
+fingerprints (i.e. SHAs of the contents of the files and command line
+options used to build the target). When code changes (e.g., after a git
+pull), pants recompiles only those targets whose source files have
+differing contents.</p>
 
 <!-- main content end -->
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-dist/markdown/html/examples/src/python/example/3rdparty_py.html 2014-10-24T15:36:52.901268
+dist/markdown/html/examples/src/java/com/pants/examples/from_maven.html 2014-10-24T15:36:53.033802
 </div>
 
 </div> <!-- end of mainflow -->
@@ -243,14 +234,14 @@ dist/markdown/html/examples/src/python/example/3rdparty_py.html 2014-10-24T15:36
 <li class="toc-h2 ">
 <a href="3rdparty_jvm.html">JVM 3rdparty Pattern</a>
 </li>
-<li class="toc-h2 ">
-<a href="from_maven.html">Pants for Maven Experts</a>
+<li class="toc-h2 toc-here">
+Pants for Maven Experts
 </li>
 <li class="toc-h1 ">
 <a href="python-readme.html">Python Projects with Pants</a>
 </li>
-<li class="toc-h2 toc-here">
-Python 3rdparty Pattern
+<li class="toc-h2 ">
+<a href="3rdparty_py.html">Python 3rdparty Pattern</a>
 </li>
 <li class="toc-h2 ">
 <a href="pex_design.html">PEX Design</a>
@@ -276,8 +267,8 @@ Python 3rdparty Pattern
 <li class="toc-h2 ">
 <a href="3rdparty_jvm.html">JVM 3rdparty Pattern</a>
 </li>
-<li class="toc-h2 toc-here">
-Python 3rdparty Pattern
+<li class="toc-h2 ">
+<a href="3rdparty_py.html">Python 3rdparty Pattern</a>
 </li>
 <li class="toc-h1 ">
 <a href="ThriftDeps.html">Using Pants with Thrift Dependencies</a>

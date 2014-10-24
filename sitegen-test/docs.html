@@ -8,7 +8,7 @@
 
 <head>
   <meta charset="utf-8" />
-  <title>Python 3rdparty Pattern</title>
+  <title>About the documentation</title>
   <link rel="stylesheet" href="s.css">
   <script src="s.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,15 +21,17 @@
 <nav class="breadcrumbs">
 <ul>
 <li><a href="index.html">Welcome to the Pants build system.</a>
-<li><a href="python-readme.html">Python Projects with Pants</a>
-<li><a href="3rdparty_py.html">Python 3rdparty Pattern</a>
+<li><a href="dev.html">Pants Developer Center</a>
+<li><a href="docs.html">About the documentation</a>
 </ul>
 </nav>
 
 <nav class="pagetoc">
 <ul>
-<li class="toc-h1"><a href="#3rdpartypython">3rdparty/python</a></li>
-<li class="toc-h1"><a href="#your-codes-build-file">Your Code's BUILD File</a></li>
+<li class="toc-h1"><a href="#generating-the-site">Generating the site</a></li>
+<li class="toc-h1"><a href="#publishing-the-site">Publishing the site</a></li>
+<li class="toc-h1"><a href="#x-references">X-References</a></li>
+<li class="toc-h1"><a href="#doc-site-config">Doc Site Config</a></li>
 </ul>
 </nav>
 
@@ -103,113 +105,123 @@
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h1 id="python-3rdparty-pattern">Python 3rdparty Pattern</h1></td>
+<td class="h-plus-pilcrow-holder"><h1 id="about-the-documentation">About the documentation</h1></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#python-3rdparty-pattern">¶</a>
+<a class="pilcrow-link" href="#about-the-documentation">¶</a>
 </div></td>
 </tr>
 </tbody>
 </table>
 
-<p>In general, we use the
-<a href="3rdparty.html">3rdparty idiom</a> to organize
-dependencies on code from outside the source tree. This document
-describes how to make this work for Python code.</p>
-<p>Your Python code can pull in code written elsewhere. Pants fetches code
-via a library that uses pip-style specifications (name and
-version-range).</p>
+<p>Pants documentation is generated from markdown sources and some
+reflection code by Pants itself.</p>
 
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h2 id="3rdpartypython">3rdparty/python</h2></td>
+<td class="h-plus-pilcrow-holder"><h2 id="generating-the-site">Generating the site</h2></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#3rdpartypython">¶</a>
+<a class="pilcrow-link" href="#generating-the-site">¶</a>
 </div></td>
 </tr>
 </tbody>
 </table>
 
-<p>To keep all of your code depending on the same versions of third-party
-Python artifacts, you might use the idiom of keeping them in a directory
-tree under <code>3rdparty/python</code>. If your organization has many such
-dependencies, you might arrange them in several directories: this can
-ease later "git detective work" when finding out who changed a version.</p>
-<p><strong>pip-style requirements.txt:</strong></p>
-<p>To define some third-party dependencies, use a
-<a href="build_dictionary.html#bdict_python_requirements" xref="bdict_python_requirements">python_requirements</a> in your <code>BUILD</code>
-file and make a pip <code>requirements.txt</code> file in the same directory.</p>
-<p>E.g, your <code>3rdparty/python/BUILD</code> file might look like:</p>
-<p>
-<div class="md-included-snippet"><div class="codehilite"><pre><span class="c"># see/edit requirements.txt in this directory to change deps.</span>
-<span class="n">python_requirements</span><span class="p">()</span>
-</pre></div></div>
-</p>
-<p>...with <code>3rdparty/python/requirements.txt</code> like:</p>
-<p>
-<div class="md-included-snippet"><div class="codehilite"><pre>ansicolors==1.0.2
-
-antlr_python_runtime==3.1.3
---allow-external antlr-python-runtime
---allow-unverified antlr-python-runtime
-
-argparse==1.2.1
-coverage&gt;=3.7,&lt;3.8
-docutils&gt;=0.12,&lt;0.13
-Markdown==2.1.1
-mock==1.0.1
-</pre></div></div>
-</p>
-<p><code>python_requirements</code> defines a named target for each line in the
-<code>requirements.txt</code> line. For example, a line like <code>ansicolors==1.0.2</code> in
-<code>requirements.txt</code> defines a target named <code>ansicolors</code> that pulls in
-ansicolors version 1.0.2.</p>
-<p><strong>python_requirement_library and python_requirement:</strong></p>
-<p>A <code>BUILD</code> file can also define requirements without a <code>requirements.txt</code>
-file. Set up a
-<a href="build_dictionary.html#bdict_python_requirement_library" xref="bdict_python_requirement_library"><code>python_requirement_library</code></a>
-with one or more
-<a href="build_dictionary.html#bdict_python_requirement" xref="bdict_python_requirement"><code>python_requirement</code></a>s
-like:</p>
-<div class="codehilite"><pre><span class="n">python_requirement_library</span><span class="p">(</span>
-  <span class="n">name</span><span class="o">=</span><span class="s">'beautifulsoup'</span><span class="p">,</span>
-  <span class="n">requirements</span><span class="o">=</span><span class="p">[</span>
-    <span class="n">python_requirement</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'beautifulsoup'</span><span class="p">,</span>
-                       <span class="n">requirement</span><span class="o">=</span><span class="s">'BeautifulSoup==3.2.0'</span><span class="p">),</span>
-  <span class="p">])</span>
+<p>A script encapsulates all that needs to be done. To generate and preview
+changes, just:</p>
+<div class="codehilite"><pre><span class="c"># This publishes the docs **locally** and opens (-o) them in your browser for review</span>
+./build-support/bin/publish_docs.sh -o
 </pre></div>
 
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h2 id="your-codes-build-file">Your Code's BUILD File</h2></td>
+<td class="h-plus-pilcrow-holder"><h2 id="publishing-the-site">Publishing the site</h2></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#your-codes-build-file">¶</a>
+<a class="pilcrow-link" href="#publishing-the-site">¶</a>
 </div></td>
 </tr>
 </tbody>
 </table>
 
-<p>In your code's <code>BUILD</code> file, introduce a dependency on the <code>3rdparty</code>
-target:</p>
-<p>
-<div class="md-included-snippet"><div class="codehilite"><pre><span class="n">python_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'greet'</span><span class="p">,</span>
-  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
-    <span class="s">'3rdparty/python:ansicolors'</span><span class="p">,</span>
-  <span class="p">],</span>
-  <span class="n">sources</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s">'*.py'</span><span class="p">),</span>
-<span class="p">)</span>
-</pre></div></div>
-</p>
-<p>Then in your Python code, you can <code>import</code> from that package:</p>
-<div class="codehilite"><pre><span class="kn">from</span> <span class="nn">colors</span> <span class="kn">import</span> <span class="n">green</span>
+<p>Use the same script as for generating the site, but request it also be
+published. Don't worry - you'll get a chance to abort the publish just
+before its comitted remotely:</p>
+<div class="codehilite"><pre><span class="c"># This publishes the docs locally and opens (-o) them in your browser for review</span>
+<span class="c"># and then prompts you to confirm you want to publish these docs remotely before</span>
+<span class="c"># proceeding to publish to http://pantsbuild.github.io</span>
+./build-support/bin/publish_docs.sh -op
 </pre></div>
+<p>If you'd like to publish remotely for others to preview your changes
+easily, there is a -d option that will create a copy of the site in a
+subdir of <a href="http://pantsbuild.github.io/">http://pantsbuild.github.io/</a>:</p>
+<div class="codehilite"><pre># This publishes the docs locally and opens (-o) them in your browser for review
+# and then prompts you to confirm you want to publish these docs remotely before
+# proceeding to publish to http://pantsbuild.github.io/sirois-test-site
+./build-support/bin/publish_docs.sh -opd sirois-test-site
+</pre></div>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="x-references">X-References</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#x-references">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>If your doc has a
+link like <code>&lt;a xref="bdict_java_library"&gt;java_library&lt;/a&gt;</code>, it links to
+the BUILD Dictionary entry for <code>java_library</code>. To set up a short-hand
+link like this...</p>
+<p>Define the destination of the link with an <code>xmark</code> anchor, e.g.,
+<code>&lt;a xmark="bdict_java_library"&gt; &lt;/a&gt;</code>. The <code>xmark</code> attribute (here,
+<code>bdict_java_library</code>) must be unique within the doc set.</p>
+<p>Link to the destination with an <code>xref</code>, e.g.,
+<code>&lt;a xref="bdict_java_library"&gt;java_library&lt;/a&gt;</code>.</p>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="doc-site-config">Doc Site Config</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#doc-site-config">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>The site generator
+takes "raw" <code>.html</code> files, "wraps" them in a template with some
+navigation UI, and writes out the resulting <code>.html</code> files.</p>
+<p>You configure this with <code>src/python/pants/docs/docsite.json</code>:</p>
+<p><code>sources</code>:<br>
+Map of pages to the <code>.html</code> files they're generated from. E.g.,
+<code>"build_dictionary": "dist/builddict/build_dictionary.html",</code> means to
+generate the site's /build_dictionary.html page, the site generator
+should get the "raw" file <code>dist/builddict/build_dictionary.html</code> and
+apply the template to it.</br></p>
+<p><code>tree</code>:<br>
+Outline structure of the site. Each node of the tree is a dict. Each
+node-dict can have a <code>page</code>, a page defined in <code>sources</code> above. Each
+node-dict can have a <code>children</code>, a list of more nodes.</br></p>
+<p><code>template</code>:<br>
+Path to mustache template to apply to each page.</br></p>
+<p><code>extras</code>:<br>
+Map of "extra" files to copy over. Handy for graphics, stylesheets, and
+such.</br></p>
+<p><code>outdir</code>:<br>
+Path to which to write the generated site.</br></p>
+<p>To add a page and have it show up in the side navigation UI, add the
+page to the <code>sources</code> dict and to the <code>tree</code> hierarchy.</p>
 
 <!-- main content end -->
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-dist/markdown/html/examples/src/python/example/3rdparty_py.html 2014-10-24T15:36:52.901268
+dist/markdown/html/src/python/pants/docs/docs.html 2014-10-24T15:36:52.935915
 </div>
 
 </div> <!-- end of mainflow -->
@@ -249,8 +261,8 @@ dist/markdown/html/examples/src/python/example/3rdparty_py.html 2014-10-24T15:36
 <li class="toc-h1 ">
 <a href="python-readme.html">Python Projects with Pants</a>
 </li>
-<li class="toc-h2 toc-here">
-Python 3rdparty Pattern
+<li class="toc-h2 ">
+<a href="3rdparty_py.html">Python 3rdparty Pattern</a>
 </li>
 <li class="toc-h2 ">
 <a href="pex_design.html">PEX Design</a>
@@ -276,8 +288,8 @@ Python 3rdparty Pattern
 <li class="toc-h2 ">
 <a href="3rdparty_jvm.html">JVM 3rdparty Pattern</a>
 </li>
-<li class="toc-h2 toc-here">
-Python 3rdparty Pattern
+<li class="toc-h2 ">
+<a href="3rdparty_py.html">Python 3rdparty Pattern</a>
 </li>
 <li class="toc-h1 ">
 <a href="ThriftDeps.html">Using Pants with Thrift Dependencies</a>
@@ -336,8 +348,8 @@ Python 3rdparty Pattern
 <li class="toc-h2 ">
 <a href="release.html">Release Process</a>
 </li>
-<li class="toc-h2 ">
-<a href="docs.html">About the documentation</a>
+<li class="toc-h2 toc-here">
+About the documentation
 </li>
 <li class="toc-h2 ">
 <a href="credits.html">Credits</a>

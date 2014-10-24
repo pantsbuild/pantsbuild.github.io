@@ -8,7 +8,7 @@
 
 <head>
   <meta charset="utf-8" />
-  <title>Welcome to the Pants build system.</title>
+  <title>Pants Conceptual Overview</title>
   <link rel="stylesheet" href="s.css">
   <script src="s.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,19 +21,16 @@
 <nav class="breadcrumbs">
 <ul>
 <li><a href="index.html">Welcome to the Pants build system.</a>
+<li><a href="first_concepts.html">Pants Conceptual Overview</a>
 </ul>
 </nav>
 
 <nav class="pagetoc">
 <ul>
-<li class="toc-h1"><a href="#getting-started-using-pants">Getting started using Pants</a></li>
-<li class="toc-h1"><a href="#troubleshooting">Troubleshooting</a></li>
-<li class="toc-h1"><a href="#pants-patterns">Pants Patterns</a></li>
-<li class="toc-h1"><a href="#using-pants-with">Using Pants With...</a></li>
-<li class="toc-h1"><a href="#news">News</a></li>
-<li class="toc-h1"><a href="#advanced-documentation">Advanced Documentation</a></li>
-<li class="toc-h1"><a href="#pants-reference-documentation">Pants Reference Documentation</a></li>
-<li class="toc-h1"><a href="#contributing-to-pants">Contributing to Pants</a></li>
+<li class="toc-h1"><a href="#goals-and-targets">Goals and Targets</a></li>
+<li class="toc-h1"><a href="#target-types">Target Types</a></li>
+<li class="toc-h1"><a href="#what-pants-does">What Pants Does</a></li>
+<li class="toc-h1"><a href="#next-step">Next Step</a></li>
 </ul>
 </nav>
 
@@ -107,164 +104,181 @@
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h1 id="welcome-to-the-pants-build-system">Welcome to the Pants build system.</h1></td>
+<td class="h-plus-pilcrow-holder"><h1 id="pants-conceptual-overview">Pants Conceptual Overview</h1></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#welcome-to-the-pants-build-system">¶</a>
+<a class="pilcrow-link" href="#pants-conceptual-overview">¶</a>
 </div></td>
 </tr>
 </tbody>
 </table>
 
-<p>Pants is a build system for software projects in a variety of languages.
-It works particularly well for a source code repository that contains
-many distinct projects.</p>
+<p>Pants is a build system for software. It works particularly well for a
+source code repository that contains many distinct but interdependent
+pieces.</p>
+<p>Pants is similar to <code>make</code>, <code>maven</code>, <code>ant</code>, <code>gradle</code>, <code>sbt</code>, etc.; but
+pants pursues different design goals. Pants optimizes for</p>
+<ul>
+<li>building multiple, dependent things from source</li>
+<li>building code in a variety of languages</li>
+<li>speed of build execution</li>
+</ul>
+<p>A Pants build "sees" only the target it's building and the transitive
+dependencies of that target. This approach works well for a big
+repository containing several things; a tool that builds everything
+would bog down.</p>
 
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h2 id="getting-started-using-pants">Getting started using Pants</h2></td>
+<td class="h-plus-pilcrow-holder"><h2 id="goals-and-targets">Goals and Targets</h2></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#getting-started-using-pants">¶</a>
+<a class="pilcrow-link" href="#goals-and-targets">¶</a>
 </div></td>
 </tr>
 </tbody>
 </table>
 
-<p>Tutorials and basic concepts. How to use Pants to build things. How to
-configure build-able things in BUILD files.</p>
-<ul>
-<li><a href="first_concepts.html">Pants Conceptual Overview</a></li>
-<li><a href="first_tutorial.html">First Tutorial</a></li>
-<li><a href="target_addresses.html">Target Addresses</a></li>
-<li><a href="JVMProjects.html">JVM Projects</a></li>
-<li><a href="python-readme.html">Python Projects</a></li>
-<li><a href="page.html">README Files and Markdown</a></li>
-<li><a href="build_files.html">Pants Conceptual Overview</a></li>
-<li><a href="invoking.html">Invoking Pants Build</a></li>
-<li><a href="tshoot.html">Troubleshooting</a></li>
-</ul>
+<p>To use Pants, you must understand a few concepts:</p>
+<p><strong>Goals</strong> are the "verbs" of Pants.<br>
+When you invoke Pants, you name goals on the command line to say what
+Pants should do. For example, to run tests, you would invoke Pants with
+the <code>test</code> goal. To create a bundle--an archive containing a runnable
+binary and resource files--you would invoke Pants with the <code>bundle</code>
+goal. These goals are built into Pants.</br></p>
+<p><strong>Targets</strong> are the "nouns" of Pants, things pants can act upon.<br>
+You annotate your source code with <code>BUILD</code> files to define these
+targets. For example, if your <code>tests/com/twitter/mybird/</code> directory
+contains JUnit tests, you have a <code>tests/com/twitter/mybird/BUILD</code> file
+with a <code>junit_tests</code> target definition. As you change your source code,
+you'll occasionally change the set of Targets by editing <code>BUILD</code> files.
+E.g., if you refactor some code, moving part of it to a new directory,
+you'll probably set up a new <code>BUILD</code> file with a target to build that
+new directory's code.</br></p>
+<p>When you invoke Pants, you specify goals and targets: the actions to
+take, and the things to carry out those actions upon. Together, your
+chosen goals and targets determine what Pants produces. Invoking the
+<code>bundle</code> goal produces an archive; invoking the <code>test</code> goal displays
+test results on the console. Assuming you didn't duplicate code between
+folders, targets in <code>tests/com/twitter/mybird/</code> will have different code
+than those in <code>tests/com/twitter/otherbird/</code>.</p>
+<p>Goals can "depend" on other goals. For example, there are <code>test</code> and
+<code>compile</code> goals. If you invoke Pants with the <code>test</code> goal, Pants "knows"
+it must compile tests before it can run them, and does so. (This can be
+confusing: you can invoke the <code>test</code> goal on a target that isn't
+actually a test. You might think this would be a no-op. But since Pants
+knows it must compile things before it tests them, it will compile the
+target.)</p>
+<p>Targets can "depend" on other targets. For example, if your <code>foo</code> code
+imports code from another target <code>bar</code>, then <code>foo</code> depends on <code>bar</code>. You
+specify this dependency in <code>foo</code>'s target definition in its <code>BUILD</code>
+file. If you invoke Pants to compile <code>foo</code>, it "knows" it also needs to
+compile <code>bar</code>, and does so.</p>
 
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h2 id="troubleshooting">Troubleshooting</h2></td>
+<td class="h-plus-pilcrow-holder"><h2 id="target-types">Target Types</h2></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#troubleshooting">¶</a>
+<a class="pilcrow-link" href="#target-types">¶</a>
 </div></td>
 </tr>
 </tbody>
 </table>
 
-<ul>
-<li>Something that usually works just failed? See
-    <a href="tshoot.html">Troubleshooting</a></li>
-<li>Publishing can fail in more ways. See
-    <a href="publish.html">Publishing Artifacts</a>.</li>
-</ul>
+<p>Each Pants build target has a <em>type</em>, such as <code>java_library</code> or
+<code>python_binary</code>. Pants uses the type to determine how to apply goals to
+that target.</p>
+<p><strong>Library Targets</strong><br>
+To define an "importable" thing, you want a library target type, such as
+<code>java_library</code> or <code>python_library</code>. Another target whose code imports a
+library target's code should list the library target in its
+<code>dependencies</code>.</br></p>
+<p><strong>Binary Targets</strong><br>
+To define a "runnable" thing, you want a <code>jvm_binary</code> or <code>python_binary</code>
+target. A binary probably has a <code>main</code> and dependencies. (We encourage a
+binary's main to be separate from the libraries it uses to run, if any.)</br></p>
+<p><strong>External Dependencies</strong><br>
+Not everything's source code is in your repository. Your targets can
+depend on <code>.jar</code>s or <code>.eggs</code>s from elsewhere.</br></p>
+<p><strong>Test Targets</strong><br>
+To define a collection of tests, you want a <code>junit_tests</code>,
+<code>scala_specs</code>, <code>python_tests</code>, or <code>python_test_suite</code> target. The test
+target depends upon the targets whose code it tests. This isn't just
+logical, it's handy, too: you can compute dependencies to figure out
+what tests to run if you change some target's code.</br></p>
+<p>For a list of all Target types (and other things that can go in <code>BUILD</code>
+files), see the <a href="build_dictionary.html">BUILD Dictionary</a>.</p>
 
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h2 id="pants-patterns">Pants Patterns</h2></td>
+<td class="h-plus-pilcrow-holder"><h2 id="what-pants-does">What Pants Does</h2></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#pants-patterns">¶</a>
+<a class="pilcrow-link" href="#what-pants-does">¶</a>
 </div></td>
 </tr>
 </tbody>
 </table>
 
-<p>Common Pants build idioms.</p>
-<ul>
-<li><a href="3rdparty.html">Third-Party Dependencies</a></li>
-<li><a href="ThriftDeps.html">Thrift</a></li>
-<li><a href="publish.html">Publishing Artifacts</a></li>
-</ul>
+<p>When you invoke Pants, you specify goals (actions to take) and targets
+(things to act upon).</p>
+<p><strong>Pants plans a list of goals.</strong> You specify one or more goals on the
+command line. Pants knows that some goals depend on others. If you
+invoke Pants with, say, the <code>test</code> goal to test some code, Pants knows
+it must first compile code; before it can compile code, it needs to
+resolve artifact dependencies and generate code from IDL files (e.g.,
+Thrift). Pants thus generates a topologically-sorted list of goals, a
+<em>build execution plan</em>. This plan might look something like</p>
+<blockquote>
+<p>resolve-idl -&gt; gen -&gt; resolve -&gt; compile -&gt; resources -&gt; test</p>
+</blockquote>
+<p>Pants does <em>not</em> consider targets while planning; some of these goals
+might thus turn out to be no-ops. E.g., Pants might plan a <code>gen</code>
+(generate code) goal even if you don't, in fact, use any generated code.</p>
+<p><strong>Pants computes a target dependencies graph.</strong> It starts with the
+target[s] you specify on the command line. It notes which targets they
+depend on, which targets those targets depend on, which targets <em>those</em>
+targets depend on, and so on.</p>
+<p><strong>Pants then attempts to carry out its planned goals.</strong> It proceeds goal
+by goal. If it has a problem carrying out one goal, it does not continue
+to the other goals. (Thus, if you attempt to test targets <em>A</em> and <em>B</em>,
+but there's a compilation error in <em>A</em>, then Pants won't test <em>B</em> even
+if it compiled fine.)</p>
+<p>For each goal, Pants attempts to apply that goal to all targets in its
+computed dependency tree[s]. It starts with depended-upon targets and
+works its way up to depending targets. Each Pants target has a type;
+Pants uses this to determine how to apply a goal to that target. In many
+cases, applying a goal to a target is a no-op. In the more interesting
+cases, Pants does something. It probably invokes other tools. For
+example, depending on the code in the relevant targets, that "compile"
+goal might invoke <code>javac</code> a few times and <code>scalac</code>.</p>
+<p>Pants caches things it builds. Thus, if you change one source file and
+re-build, Pants probably doesn't "build the world." It just builds a few
+things. Pants keys its cache on hashed file contents. This is a
+straightforward way to build the right things after some files' contents
+change. (It <em>can</em> surprise you if you <code>touch</code> a file, start a compile,
+and nothing happens. If you want to, e.g., see <code>Foo.java</code>'s compile
+warnings again, instead of using <code>touch</code>, you might append a newline.)</p>
 
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h2 id="using-pants-with">Using Pants With...</h2></td>
+<td class="h-plus-pilcrow-holder"><h2 id="next-step">Next Step</h2></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#using-pants-with">¶</a>
+<a class="pilcrow-link" href="#next-step">¶</a>
 </div></td>
 </tr>
 </tbody>
 </table>
 
-<ul>
-<li><a href="with_emacs.html">Emacs and Ensime</a></li>
-<li><a href="with_intellij.html">IntelliJ IDEA</a></li>
-</ul>
-
-<table class="h-plus-pilcrow">
-<tbody>
-<tr>
-<td class="h-plus-pilcrow-holder"><h2 id="news">News</h2></td>
-<td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#news">¶</a>
-</div></td>
-</tr>
-</tbody>
-</table>
-
-<ul>
-<li><a href="announce_201409.html">2014-09-16 Announcement</a>
-  "Hello Pants Build"</li>
-</ul>
-
-<table class="h-plus-pilcrow">
-<tbody>
-<tr>
-<td class="h-plus-pilcrow-holder"><h2 id="advanced-documentation">Advanced Documentation</h2></td>
-<td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#advanced-documentation">¶</a>
-</div></td>
-</tr>
-</tbody>
-</table>
-
-<ul>
-<li><a href="announce_201409.html">Set up your Source Tree for Pants</a></li>
-<li><a href="install.html">Installing Pants</a></li>
-</ul>
-
-<table class="h-plus-pilcrow">
-<tbody>
-<tr>
-<td class="h-plus-pilcrow-holder"><h2 id="pants-reference-documentation">Pants Reference Documentation</h2></td>
-<td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#pants-reference-documentation">¶</a>
-</div></td>
-</tr>
-</tbody>
-</table>
-
-<ul>
-<li><a href="build_dictionary.html">BUILD Dictionary</a></li>
-<li><a href="goals_reference.html">Goals Reference</a></li>
-</ul>
-
-<table class="h-plus-pilcrow">
-<tbody>
-<tr>
-<td class="h-plus-pilcrow-holder"><h2 id="contributing-to-pants">Contributing to Pants</h2></td>
-<td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#contributing-to-pants">¶</a>
-</div></td>
-</tr>
-</tbody>
-</table>
-
-<p>How to develop Pants itself and contribute your changes.</p>
-<ul>
-<li><a href="dev.html">Pants Developer Center</a></li>
-</ul>
+<p>If you're ready to give Pants a try, go to
+<a href="first_tutorial.html">First Tutorial</a>.</p>
 
 <!-- main content end -->
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-dist/markdown/html/src/docs/index.html 2014-10-24T15:36:52.873763
+dist/markdown/html/src/docs/first_concepts.html 2014-10-24T15:36:52.745811
 </div>
 
 </div> <!-- end of mainflow -->
@@ -283,8 +297,8 @@ dist/markdown/html/src/docs/index.html 2014-10-24T15:36:52.873763
 
 <div class="site-toc">
 <ul>
-<li class="toc-h1 ">
-<a href="first_concepts.html">Pants Conceptual Overview</a>
+<li class="toc-h1 toc-here">
+Pants Conceptual Overview
 </li>
 <li class="toc-h1 ">
 <a href="first_tutorial.html">First Tutorial</a>
