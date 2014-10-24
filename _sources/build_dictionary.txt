@@ -44,6 +44,7 @@ targets; some are handy utilities.
   `page`_ |
   `pants`_ |
   `pants_version`_ |
+  `prep_command`_ |
   `python_antlr_library`_ |
   `python_binary`_ |
   `python_library`_ |
@@ -95,6 +96,7 @@ targets; some are handy utilities.
   `jvm_binary`_ |
   `keystore`_ |
   `page`_ |
+  `prep_command`_ |
   `Repository`_ |
   `resources`_ |
   `rglobs`_ |
@@ -112,6 +114,7 @@ targets; some are handy utilities.
   `ConfluencePublish`_ |
   `globs`_ |
   `page`_ |
+  `prep_command`_ |
   `python_binary`_ |
   `python_library`_ |
   `python_requirement`_ |
@@ -620,7 +623,7 @@ jar_library
 jar_rules
 -------------------------------------------------------------------------------
 
-.. py:function:: jar_rules(rules=None, default_dup_action=&lt;object object at 0x1032b1790&gt;)
+.. py:function:: jar_rules(rules=None, default_dup_action=&lt;object object at 0x1030cf680&gt;)
 
  A set of rules for packaging up a deploy jar.
  
@@ -1272,6 +1275,39 @@ pants_version
 
  Implemented by ``pants.base.build_environment.pants_version``
 
+
+.. _bdict_prep_command:
+
+prep_command
+-------------------------------------------------------------------------------
+
+.. py:function:: prep_command(name, payload, exclusives, prep_executable=None, prep_args=None, payload=None)
+
+ A command that must be run before some other target can be built.
+ 
+ For example, a script that sets up tunnels to database servers
+ might need to be run before running integration tests
+
+
+ :param executable:  The path to the executable that should be run.
+ :type name: string
+ :param name:  The name of this target, which combined with this
+   build file defines the target address.
+ :type dependencies:  list of target specs
+ :param dependencies:  Other targets that this target depends on.
+ :param exclusives:  An optional map of exclusives tags.
+    `Keeps incompatible changes apart
+    <build_files.html#howto-check-exclusives>`_.
+
+ Implemented by ``pants.backend.core.targets.prep_command.PrepCommand``
+
+**Methods:**
+
+ .. py:method:: with_description(description)
+
+  Set a human-readable description of this target.
+  
+  :param description: Descriptive string
 
 .. _bdict_python_antlr_library:
 
