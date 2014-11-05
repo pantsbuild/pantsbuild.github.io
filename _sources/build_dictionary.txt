@@ -19,6 +19,7 @@ targets; some are handy utilities.
   `ConfluencePublish`_ |
   `credentials`_ |
   `dependencies`_ |
+  `DirectoryReMapper`_ |
   `Duplicate`_ |
   `egg`_ |
   `exclude`_ |
@@ -79,6 +80,7 @@ targets; some are handy utilities.
   `bundle`_ |
   `ConfluencePublish`_ |
   `credentials`_ |
+  `DirectoryReMapper`_ |
   `Duplicate`_ |
   `exclude`_ |
   `globs`_ |
@@ -135,7 +137,7 @@ targets; some are handy utilities.
 android_binary
 -------------------------------------------------------------------------------
 
-.. py:function:: android_binary(name, payload, exclusives, address=None, payload=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, address=None, build_tools_version=u'19.1.0', manifest=None, build_type=None)
+.. py:function:: android_binary(name, build_type=None, build_tools_version=u'19.1.0', manifest=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, exclusives=None, tags=None)
 
  Produces an Android binary.
 
@@ -156,6 +158,7 @@ android_binary
  :type sources:  ``Fileset`` (from globs or rglobs) or list of strings
  :param sources:  Source code files to build. Paths are relative to the BUILD
     file's directory.
+ :param no_cache:  If True, this should not be stored in the artifact cache
  :type name: string
  :param name:  The name of this target, which combined with this
    build file defines the target address.
@@ -164,6 +167,10 @@ android_binary
  :param exclusives:  An optional map of exclusives tags.
     `Keeps incompatible changes apart
     <build_files.html#howto-check-exclusives>`_.
+ :param iterable<string> tags:  Arbitrary string tags that describe this target. Usable
+     by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+     and thus not used in fingerprinting, thus not suitable for anything that affects how
+     a particular target is built.
 
  Implemented by ``pants.backend.android.targets.android_binary.AndroidBinary``
 
@@ -180,7 +187,7 @@ android_binary
 android_resources
 -------------------------------------------------------------------------------
 
-.. py:function:: android_resources(name, payload, exclusives, address=None, payload=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, address=None, build_tools_version=u'19.1.0', manifest=None, resource_dir=None)
+.. py:function:: android_resources(name, resource_dir=None, build_tools_version=u'19.1.0', manifest=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, exclusives=None, tags=None)
 
  Processes android resources to generate R.java
 
@@ -201,6 +208,7 @@ android_resources
  :type sources:  ``Fileset`` (from globs or rglobs) or list of strings
  :param sources:  Source code files to build. Paths are relative to the BUILD
     file's directory.
+ :param no_cache:  If True, this should not be stored in the artifact cache
  :type name: string
  :param name:  The name of this target, which combined with this
    build file defines the target address.
@@ -209,6 +217,10 @@ android_resources
  :param exclusives:  An optional map of exclusives tags.
     `Keeps incompatible changes apart
     <build_files.html#howto-check-exclusives>`_.
+ :param iterable<string> tags:  Arbitrary string tags that describe this target. Usable
+     by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+     and thus not used in fingerprinting, thus not suitable for anything that affects how
+     a particular target is built.
 
  Implemented by ``pants.backend.android.targets.android_resources.AndroidResources``
 
@@ -225,7 +237,7 @@ android_resources
 annotation_processor
 -------------------------------------------------------------------------------
 
-.. py:function:: annotation_processor(name, payload, exclusives, address=None, payload=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, processors=None)
+.. py:function:: annotation_processor(name, processors=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, exclusives=None, tags=None)
 
  Produces a Java library containing one or more annotation processors.
 
@@ -245,6 +257,7 @@ annotation_processor
  :type sources:  ``Fileset`` (from globs or rglobs) or list of strings
  :param sources:  Source code files to build. Paths are relative to the BUILD
     file's directory.
+ :param no_cache:  If True, this should not be stored in the artifact cache
  :type name: string
  :param name:  The name of this target, which combined with this
    build file defines the target address.
@@ -253,6 +266,10 @@ annotation_processor
  :param exclusives:  An optional map of exclusives tags.
     `Keeps incompatible changes apart
     <build_files.html#howto-check-exclusives>`_.
+ :param iterable<string> tags:  Arbitrary string tags that describe this target. Usable
+     by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+     and thus not used in fingerprinting, thus not suitable for anything that affects how
+     a particular target is built.
 
  Implemented by ``pants.backend.jvm.targets.annotation_processor.AnnotationProcessor``
 
@@ -289,7 +306,7 @@ artifact
 benchmark
 -------------------------------------------------------------------------------
 
-.. py:function:: benchmark(name, payload, exclusives, address=None, payload=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, address=None, payload=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None)
+.. py:function:: benchmark(name, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, exclusives=None, tags=None)
 
  A caliper benchmark.
  
@@ -304,6 +321,7 @@ benchmark
  :type sources:  ``Fileset`` (from globs or rglobs) or list of strings
  :param sources:  Source code files to build. Paths are relative to the BUILD
     file's directory.
+ :param no_cache:  If True, this should not be stored in the artifact cache
  :type name: string
  :param name:  The name of this target, which combined with this
    build file defines the target address.
@@ -312,6 +330,10 @@ benchmark
  :param exclusives:  An optional map of exclusives tags.
     `Keeps incompatible changes apart
     <build_files.html#howto-check-exclusives>`_.
+ :param iterable<string> tags:  Arbitrary string tags that describe this target. Usable
+     by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+     and thus not used in fingerprinting, thus not suitable for anything that affects how
+     a particular target is built.
 
  Implemented by ``pants.backend.jvm.targets.benchmark.Benchmark``
 
@@ -392,6 +414,7 @@ ConfluencePublish
 
 .. py:function:: ConfluencePublish(*args, **kwargs)
 
+ A task to publish Page targets to Confluence wikis.
 
 
 
@@ -403,7 +426,7 @@ ConfluencePublish
 credentials
 -------------------------------------------------------------------------------
 
-.. py:function:: credentials(name, payload, exclusives, username=None, password=None)
+.. py:function:: credentials(name, username=None, password=None, exclusives=None, tags=None)
 
  Supplies credentials for a maven repository on demand.
  
@@ -422,6 +445,10 @@ credentials
  :param exclusives:  An optional map of exclusives tags.
     `Keeps incompatible changes apart
     <build_files.html#howto-check-exclusives>`_.
+ :param iterable<string> tags:  Arbitrary string tags that describe this target. Usable
+     by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+     and thus not used in fingerprinting, thus not suitable for anything that affects how
+     a particular target is built.
 
  Implemented by ``pants.backend.jvm.targets.credentials.Credentials``
 
@@ -443,6 +470,24 @@ dependencies
  Old name for `target`_
 
 
+
+
+.. _bdict_DirectoryReMapper:
+
+DirectoryReMapper
+-------------------------------------------------------------------------------
+
+.. py:function:: DirectoryReMapper(base, dest)
+
+ A mapper that maps files relative to a base directory into a destination directory.
+
+
+ The base directory files should be mapped from, and the dest they should be mapped to.
+ 
+ :param string base: the relative path to get_buildroot()
+ :param string dest: the dest path in the bundle
+
+ Implemented by ``pants.backend.jvm.targets.jvm_binary.DirectoryReMapper``
 
 
 .. _bdict_Duplicate:
@@ -593,7 +638,7 @@ jar
 jar_library
 -------------------------------------------------------------------------------
 
-.. py:function:: jar_library(name, payload, exclusives, payload=None, jars=None)
+.. py:function:: jar_library(name, jars=None, exclusives=None, tags=None)
 
  A set of jars that may be depended upon.
 
@@ -607,6 +652,10 @@ jar_library
  :param exclusives:  An optional map of exclusives tags.
     `Keeps incompatible changes apart
     <build_files.html#howto-check-exclusives>`_.
+ :param iterable<string> tags:  Arbitrary string tags that describe this target. Usable
+     by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+     and thus not used in fingerprinting, thus not suitable for anything that affects how
+     a particular target is built.
 
  Implemented by ``pants.backend.jvm.targets.jar_library.JarLibrary``
 
@@ -623,7 +672,7 @@ jar_library
 jar_rules
 -------------------------------------------------------------------------------
 
-.. py:function:: jar_rules(rules=None, default_dup_action=&lt;object object at 0x1030cf680&gt;)
+.. py:function:: jar_rules(rules=None, default_dup_action=&lt;object object at 0x10b35c350&gt;)
 
  A set of rules for packaging up a deploy jar.
  
@@ -658,7 +707,7 @@ jar_rules
 java_agent
 -------------------------------------------------------------------------------
 
-.. py:function:: java_agent(name, payload, exclusives, address, payload=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, name=None, sources=None, excludes=None, resources=None, exclusives=None, premain=None, agent_class=None, can_redefine=False, can_retransform=False, can_set_native_method_prefix=False)
+.. py:function:: java_agent(name, sources=None, excludes=None, resources=None, exclusives=None, premain=None, agent_class=None, can_redefine=False, can_retransform=False, can_set_native_method_prefix=False, sources_rel_path=None, provides=None, configurations=None, no_cache=False, tags=None)
 
  Defines a java agent entrypoint.
 
@@ -692,6 +741,7 @@ java_agent
  :type sources:  ``Fileset`` (from globs or rglobs) or list of strings
  :param sources:  Source code files to build. Paths are relative to the BUILD
     file's directory.
+ :param no_cache:  If True, this should not be stored in the artifact cache
  :type name: string
  :param name:  The name of this target, which combined with this
    build file defines the target address.
@@ -700,6 +750,10 @@ java_agent
  :param exclusives:  An optional map of exclusives tags.
     `Keeps incompatible changes apart
     <build_files.html#howto-check-exclusives>`_.
+ :param iterable<string> tags:  Arbitrary string tags that describe this target. Usable
+     by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+     and thus not used in fingerprinting, thus not suitable for anything that affects how
+     a particular target is built.
 
  Implemented by ``pants.backend.jvm.targets.java_agent.JavaAgent``
 
@@ -716,7 +770,7 @@ java_agent
 java_antlr_library
 -------------------------------------------------------------------------------
 
-.. py:function:: java_antlr_library(name, payload, exclusives, address=None, payload=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, name=None, sources=None, provides=None, excludes=None, compiler=u'antlr3', package=None)
+.. py:function:: java_antlr_library(name=None, sources=None, provides=None, excludes=None, compiler=u'antlr3', package=None, sources_rel_path=None, resources=None, configurations=None, no_cache=False, exclusives=None, tags=None)
 
  Generates a stub Java library from Antlr grammar files.
 
@@ -737,6 +791,7 @@ java_antlr_library
  :type sources:  ``Fileset`` (from globs or rglobs) or list of strings
  :param sources:  Source code files to build. Paths are relative to the BUILD
     file's directory.
+ :param no_cache:  If True, this should not be stored in the artifact cache
  :type name: string
  :param name:  The name of this target, which combined with this
    build file defines the target address.
@@ -745,6 +800,10 @@ java_antlr_library
  :param exclusives:  An optional map of exclusives tags.
     `Keeps incompatible changes apart
     <build_files.html#howto-check-exclusives>`_.
+ :param iterable<string> tags:  Arbitrary string tags that describe this target. Usable
+     by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+     and thus not used in fingerprinting, thus not suitable for anything that affects how
+     a particular target is built.
 
  Implemented by ``pants.backend.codegen.targets.java_antlr_library.JavaAntlrLibrary``
 
@@ -761,7 +820,7 @@ java_antlr_library
 java_library
 -------------------------------------------------------------------------------
 
-.. py:function:: java_library(name, payload, exclusives, address=None, payload=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None)
+.. py:function:: java_library(name, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, exclusives=None, tags=None)
 
  A collection of Java code.
  
@@ -785,6 +844,7 @@ java_library
  :type sources:  ``Fileset`` (from globs or rglobs) or list of strings
  :param sources:  Source code files to build. Paths are relative to the BUILD
     file's directory.
+ :param no_cache:  If True, this should not be stored in the artifact cache
  :type name: string
  :param name:  The name of this target, which combined with this
    build file defines the target address.
@@ -793,6 +853,10 @@ java_library
  :param exclusives:  An optional map of exclusives tags.
     `Keeps incompatible changes apart
     <build_files.html#howto-check-exclusives>`_.
+ :param iterable<string> tags:  Arbitrary string tags that describe this target. Usable
+     by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+     and thus not used in fingerprinting, thus not suitable for anything that affects how
+     a particular target is built.
 
  Implemented by ``pants.backend.jvm.targets.java_library.JavaLibrary``
 
@@ -809,7 +873,7 @@ java_library
 java_protobuf_library
 -------------------------------------------------------------------------------
 
-.. py:function:: java_protobuf_library(name, payload, exclusives, address=None, payload=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, payload=None, buildflags=None, imports=None)
+.. py:function:: java_protobuf_library(name, buildflags=None, imports=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, exclusives=None, tags=None)
 
  Generates a stub Java library from protobuf IDL files.
 
@@ -827,6 +891,7 @@ java_protobuf_library
  :type sources:  ``Fileset`` (from globs or rglobs) or list of strings
  :param sources:  Source code files to build. Paths are relative to the BUILD
     file's directory.
+ :param no_cache:  If True, this should not be stored in the artifact cache
  :type name: string
  :param name:  The name of this target, which combined with this
    build file defines the target address.
@@ -835,6 +900,10 @@ java_protobuf_library
  :param exclusives:  An optional map of exclusives tags.
     `Keeps incompatible changes apart
     <build_files.html#howto-check-exclusives>`_.
+ :param iterable<string> tags:  Arbitrary string tags that describe this target. Usable
+     by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+     and thus not used in fingerprinting, thus not suitable for anything that affects how
+     a particular target is built.
 
  Implemented by ``pants.backend.codegen.targets.java_protobuf_library.JavaProtobufLibrary``
 
@@ -851,7 +920,7 @@ java_protobuf_library
 java_ragel_library
 -------------------------------------------------------------------------------
 
-.. py:function:: java_ragel_library(name, payload, exclusives, address=None, payload=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None)
+.. py:function:: java_ragel_library(name, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, exclusives=None, tags=None)
 
  Generates a stub Java library from a Ragel file.
 
@@ -864,6 +933,7 @@ java_ragel_library
  :type sources:  ``Fileset`` (from globs or rglobs) or list of strings
  :param sources:  Source code files to build. Paths are relative to the BUILD
     file's directory.
+ :param no_cache:  If True, this should not be stored in the artifact cache
  :type name: string
  :param name:  The name of this target, which combined with this
    build file defines the target address.
@@ -872,6 +942,10 @@ java_ragel_library
  :param exclusives:  An optional map of exclusives tags.
     `Keeps incompatible changes apart
     <build_files.html#howto-check-exclusives>`_.
+ :param iterable<string> tags:  Arbitrary string tags that describe this target. Usable
+     by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+     and thus not used in fingerprinting, thus not suitable for anything that affects how
+     a particular target is built.
 
  Implemented by ``pants.backend.codegen.targets.java_ragel_library.JavaRagelLibrary``
 
@@ -900,7 +974,7 @@ java_tests
 java_thrift_library
 -------------------------------------------------------------------------------
 
-.. py:function:: java_thrift_library(name, payload, exclusives, address=None, payload=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, compiler=None, language=None, rpc_style=None, namespace_map=None, thrift_linter_strict=None)
+.. py:function:: java_thrift_library(name, compiler=None, language=None, rpc_style=None, namespace_map=None, thrift_linter_strict=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, exclusives=None, tags=None)
 
  Generates a stub Java or Scala library from thrift IDL files.
 
@@ -919,6 +993,7 @@ java_thrift_library
  :type sources:  ``Fileset`` (from globs or rglobs) or list of strings
  :param sources:  Source code files to build. Paths are relative to the BUILD
     file's directory.
+ :param no_cache:  If True, this should not be stored in the artifact cache
  :type name: string
  :param name:  The name of this target, which combined with this
    build file defines the target address.
@@ -927,6 +1002,10 @@ java_thrift_library
  :param exclusives:  An optional map of exclusives tags.
     `Keeps incompatible changes apart
     <build_files.html#howto-check-exclusives>`_.
+ :param iterable<string> tags:  Arbitrary string tags that describe this target. Usable
+     by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+     and thus not used in fingerprinting, thus not suitable for anything that affects how
+     a particular target is built.
 
  Implemented by ``pants.backend.codegen.targets.java_thrift_library.JavaThriftLibrary``
 
@@ -943,7 +1022,7 @@ java_thrift_library
 jaxb_library
 -------------------------------------------------------------------------------
 
-.. py:function:: jaxb_library(name, payload, exclusives, address=None, payload=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, payload=None, package=None, language=u'java')
+.. py:function:: jaxb_library(name, package=None, language=u'java', sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, exclusives=None, tags=None)
 
  Generates a stub Java library from jaxb xsd files.
 
@@ -963,6 +1042,7 @@ jaxb_library
  :type sources:  ``Fileset`` (from globs or rglobs) or list of strings
  :param sources:  Source code files to build. Paths are relative to the BUILD
     file's directory.
+ :param no_cache:  If True, this should not be stored in the artifact cache
  :type name: string
  :param name:  The name of this target, which combined with this
    build file defines the target address.
@@ -971,6 +1051,10 @@ jaxb_library
  :param exclusives:  An optional map of exclusives tags.
     `Keeps incompatible changes apart
     <build_files.html#howto-check-exclusives>`_.
+ :param iterable<string> tags:  Arbitrary string tags that describe this target. Usable
+     by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+     and thus not used in fingerprinting, thus not suitable for anything that affects how
+     a particular target is built.
 
  Implemented by ``pants.backend.codegen.targets.jaxb_library.JaxbLibrary``
 
@@ -987,7 +1071,7 @@ jaxb_library
 junit_tests
 -------------------------------------------------------------------------------
 
-.. py:function:: junit_tests(name, payload, exclusives, address=None, payload=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, sources=None)
+.. py:function:: junit_tests(name, sources=None, sources_rel_path=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, exclusives=None, tags=None)
 
  Tests JVM sources with JUnit.
 
@@ -1000,6 +1084,7 @@ junit_tests
  :type sources:  ``Fileset`` (from globs or rglobs) or list of strings
  :param sources:  Source code files to build. Paths are relative to the BUILD
     file's directory.
+ :param no_cache:  If True, this should not be stored in the artifact cache
  :type name: string
  :param name:  The name of this target, which combined with this
    build file defines the target address.
@@ -1008,6 +1093,10 @@ junit_tests
  :param exclusives:  An optional map of exclusives tags.
     `Keeps incompatible changes apart
     <build_files.html#howto-check-exclusives>`_.
+ :param iterable<string> tags:  Arbitrary string tags that describe this target. Usable
+     by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+     and thus not used in fingerprinting, thus not suitable for anything that affects how
+     a particular target is built.
 
  Implemented by ``pants.backend.jvm.targets.java_tests.JavaTests``
 
@@ -1024,7 +1113,7 @@ junit_tests
 jvm_app
 -------------------------------------------------------------------------------
 
-.. py:function:: jvm_app(name, payload, exclusives, name=None, payload=None, binary=None, bundles=None, basename=None)
+.. py:function:: jvm_app(name=None, binary=None, bundles=None, basename=None, exclusives=None, tags=None)
 
  A JVM-based application consisting of a binary plus "extra files".
  
@@ -1052,6 +1141,10 @@ jvm_app
  :param exclusives:  An optional map of exclusives tags.
     `Keeps incompatible changes apart
     <build_files.html#howto-check-exclusives>`_.
+ :param iterable<string> tags:  Arbitrary string tags that describe this target. Usable
+     by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+     and thus not used in fingerprinting, thus not suitable for anything that affects how
+     a particular target is built.
 
  Implemented by ``pants.backend.jvm.targets.jvm_binary.JvmApp``
 
@@ -1068,7 +1161,7 @@ jvm_app
 jvm_binary
 -------------------------------------------------------------------------------
 
-.. py:function:: jvm_binary(name, payload, exclusives, address=None, payload=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, main=None, basename=None, source=None, deploy_excludes=None, deploy_jar_rules=None)
+.. py:function:: jvm_binary(name, main=None, basename=None, source=None, deploy_excludes=None, deploy_jar_rules=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, exclusives=None, tags=None)
 
  Produces a JVM binary optionally identifying a launcher main class.
  
@@ -1110,12 +1203,17 @@ jvm_binary
    This parameter is not intended for general use.
  :param excludes:  List of `exclude <#exclude>`_\s to filter this target's
    transitive dependencies against.
+ :param no_cache:  If True, this should not be stored in the artifact cache
  :type name: string
  :param name:  The name of this target, which combined with this
    build file defines the target address.
  :param exclusives:  An optional map of exclusives tags.
     `Keeps incompatible changes apart
     <build_files.html#howto-check-exclusives>`_.
+ :param iterable<string> tags:  Arbitrary string tags that describe this target. Usable
+     by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+     and thus not used in fingerprinting, thus not suitable for anything that affects how
+     a particular target is built.
 
  Implemented by ``pants.backend.jvm.targets.jvm_binary.JvmBinary``
 
@@ -1132,7 +1230,7 @@ jvm_binary
 keystore
 -------------------------------------------------------------------------------
 
-.. py:function:: keystore(name, payload, exclusives, build_type=None, source=None, keystore_alias=None, keystore_password=None, key_password=None)
+.. py:function:: keystore(name, build_type=None, source=None, keystore_alias=None, keystore_password=None, key_password=None, exclusives=None, tags=None)
 
  Represents a keystore configuration
 
@@ -1155,6 +1253,10 @@ keystore
  :param exclusives:  An optional map of exclusives tags.
     `Keeps incompatible changes apart
     <build_files.html#howto-check-exclusives>`_.
+ :param iterable<string> tags:  Arbitrary string tags that describe this target. Usable
+     by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+     and thus not used in fingerprinting, thus not suitable for anything that affects how
+     a particular target is built.
 
  Implemented by ``pants.backend.android.targets.keystore.Keystore``
 
@@ -1207,7 +1309,7 @@ netrc
 page
 -------------------------------------------------------------------------------
 
-.. py:function:: page(name, payload, exclusives, address=None, payload=None, source=None, resources=None, provides=None)
+.. py:function:: page(name, source=None, links=None, resources=None, provides=None, exclusives=None, tags=None)
 
  Describes a single documentation page.
  
@@ -1229,6 +1331,11 @@ page
 
 
  :param source:  Source of the page in markdown format.
+ :type links:  List of target specs
+ :param links:  Other ``page`` targets that this `page` links to.
+ :type provides:  List of ``wiki_artifact``s
+ :param provides:  Optional "Addresses" at which this page is published.
+    E.g., a wiki location.
  :param resources:  An optional list of Resources objects.
  :type name: string
  :param name:  The name of this target, which combined with this
@@ -1238,6 +1345,10 @@ page
  :param exclusives:  An optional map of exclusives tags.
     `Keeps incompatible changes apart
     <build_files.html#howto-check-exclusives>`_.
+ :param iterable<string> tags:  Arbitrary string tags that describe this target. Usable
+     by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+     and thus not used in fingerprinting, thus not suitable for anything that affects how
+     a particular target is built.
 
  Implemented by ``pants.backend.core.targets.doc.Page``
 
@@ -1281,7 +1392,7 @@ pants_version
 prep_command
 -------------------------------------------------------------------------------
 
-.. py:function:: prep_command(name, payload, exclusives, prep_executable=None, prep_args=None, payload=None)
+.. py:function:: prep_command(name, prep_executable=None, prep_args=None, prep_environ=False, exclusives=None, tags=None)
 
  A command that must be run before some other target can be built.
  
@@ -1289,7 +1400,12 @@ prep_command
  might need to be run before running integration tests
 
 
- :param executable:  The path to the executable that should be run.
+ :param prep_executable:  The path to the executable that should be run.
+ :param prep_args:  A list of command-line args to the excutable.
+ :param prep_environ:  If True, the output of the command will be treated as
+   a  -separated list of key=value pairs to insert into the environment.
+   Note that this will pollute the environment for all future tests, so
+   avoid it if at all possible.
  :type name: string
  :param name:  The name of this target, which combined with this
    build file defines the target address.
@@ -1298,6 +1414,10 @@ prep_command
  :param exclusives:  An optional map of exclusives tags.
     `Keeps incompatible changes apart
     <build_files.html#howto-check-exclusives>`_.
+ :param iterable<string> tags:  Arbitrary string tags that describe this target. Usable
+     by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+     and thus not used in fingerprinting, thus not suitable for anything that affects how
+     a particular target is built.
 
  Implemented by ``pants.backend.core.targets.prep_command.PrepCommand``
 
@@ -1314,7 +1434,7 @@ prep_command
 python_antlr_library
 -------------------------------------------------------------------------------
 
-.. py:function:: python_antlr_library(name, payload, exclusives, address=None, payload=None, sources_rel_path=None, sources=None, resources=None, resource_targets=None, provides=None, compatibility=None, module=None, antlr_version=u'3.1.3')
+.. py:function:: python_antlr_library(name, module=None, antlr_version=u'3.1.3', sources_rel_path=None, sources=None, resources=None, resource_targets=None, provides=None, compatibility=None, exclusives=None, tags=None)
 
  Generates a stub Python library from Antlr grammar files.
 
@@ -1347,6 +1467,10 @@ python_antlr_library
  :param exclusives:  An optional map of exclusives tags.
     `Keeps incompatible changes apart
     <build_files.html#howto-check-exclusives>`_.
+ :param iterable<string> tags:  Arbitrary string tags that describe this target. Usable
+     by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+     and thus not used in fingerprinting, thus not suitable for anything that affects how
+     a particular target is built.
 
  Implemented by ``pants.backend.codegen.targets.python_antlr_library.PythonAntlrLibrary``
 
@@ -1363,7 +1487,7 @@ python_antlr_library
 python_binary
 -------------------------------------------------------------------------------
 
-.. py:function:: python_binary(name, payload, exclusives, address=None, payload=None, sources_rel_path=None, sources=None, resources=None, resource_targets=None, provides=None, compatibility=None, source=None, entry_point=None, inherit_path=False, zip_safe=True, always_write_cache=False, repositories=None, indices=None, ignore_errors=False, platforms=())
+.. py:function:: python_binary(name, source=None, entry_point=None, inherit_path=False, zip_safe=True, always_write_cache=False, repositories=None, indices=None, ignore_errors=False, platforms=(), sources_rel_path=None, sources=None, resources=None, resource_targets=None, provides=None, compatibility=None, exclusives=None, tags=None)
 
  Produces a Python binary.
  
@@ -1414,6 +1538,10 @@ python_binary
  :param exclusives:  An optional map of exclusives tags.
     `Keeps incompatible changes apart
     <build_files.html#howto-check-exclusives>`_.
+ :param iterable<string> tags:  Arbitrary string tags that describe this target. Usable
+     by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+     and thus not used in fingerprinting, thus not suitable for anything that affects how
+     a particular target is built.
 
  Implemented by ``pants.backend.python.targets.python_binary.PythonBinary``
 
@@ -1430,7 +1558,7 @@ python_binary
 python_library
 -------------------------------------------------------------------------------
 
-.. py:function:: python_library(name, payload, exclusives, address=None, payload=None, sources_rel_path=None, sources=None, resources=None, resource_targets=None, provides=None, compatibility=None, address=None, payload=None, sources_rel_path=None, sources=None, resources=None, resource_targets=None, provides=None, compatibility=None)
+.. py:function:: python_library(name, sources_rel_path=None, sources=None, resources=None, resource_targets=None, provides=None, compatibility=None, exclusives=None, tags=None)
 
  Produces a Python library.
 
@@ -1461,6 +1589,10 @@ python_library
  :param exclusives:  An optional map of exclusives tags.
     `Keeps incompatible changes apart
     <build_files.html#howto-check-exclusives>`_.
+ :param iterable<string> tags:  Arbitrary string tags that describe this target. Usable
+     by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+     and thus not used in fingerprinting, thus not suitable for anything that affects how
+     a particular target is built.
 
  Implemented by ``pants.backend.python.targets.python_library.PythonLibrary``
 
@@ -1508,7 +1640,7 @@ python_requirement
 python_requirement_library
 -------------------------------------------------------------------------------
 
-.. py:function:: python_requirement_library(name, payload, exclusives, payload=None, requirements=None)
+.. py:function:: python_requirement_library(name, requirements=None, exclusives=None, tags=None)
 
  Named target for some pip requirements.
 
@@ -1523,6 +1655,10 @@ python_requirement_library
  :param exclusives:  An optional map of exclusives tags.
     `Keeps incompatible changes apart
     <build_files.html#howto-check-exclusives>`_.
+ :param iterable<string> tags:  Arbitrary string tags that describe this target. Usable
+     by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+     and thus not used in fingerprinting, thus not suitable for anything that affects how
+     a particular target is built.
 
  Implemented by ``pants.backend.python.targets.python_requirement_library.PythonRequirementLibrary``
 
@@ -1585,7 +1721,7 @@ python_test_suite
 python_tests
 -------------------------------------------------------------------------------
 
-.. py:function:: python_tests(name, payload, exclusives, address=None, payload=None, sources_rel_path=None, sources=None, resources=None, resource_targets=None, provides=None, compatibility=None, coverage=None)
+.. py:function:: python_tests(name, coverage=None, sources_rel_path=None, sources=None, resources=None, resource_targets=None, provides=None, compatibility=None, exclusives=None, tags=None)
 
  Tests a Python library.
 
@@ -1618,6 +1754,10 @@ python_tests
  :param exclusives:  An optional map of exclusives tags.
     `Keeps incompatible changes apart
     <build_files.html#howto-check-exclusives>`_.
+ :param iterable<string> tags:  Arbitrary string tags that describe this target. Usable
+     by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+     and thus not used in fingerprinting, thus not suitable for anything that affects how
+     a particular target is built.
 
  Implemented by ``pants.backend.python.targets.python_tests.PythonTests``
 
@@ -1634,7 +1774,7 @@ python_tests
 python_thrift_library
 -------------------------------------------------------------------------------
 
-.. py:function:: python_thrift_library(name, payload, exclusives, address=None, payload=None, sources_rel_path=None, sources=None, resources=None, resource_targets=None, provides=None, compatibility=None)
+.. py:function:: python_thrift_library(name, sources_rel_path=None, sources=None, resources=None, resource_targets=None, provides=None, compatibility=None, exclusives=None, tags=None)
 
  Generates a stub Python library from thrift IDL files.
 
@@ -1665,6 +1805,10 @@ python_thrift_library
  :param exclusives:  An optional map of exclusives tags.
     `Keeps incompatible changes apart
     <build_files.html#howto-check-exclusives>`_.
+ :param iterable<string> tags:  Arbitrary string tags that describe this target. Usable
+     by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+     and thus not used in fingerprinting, thus not suitable for anything that affects how
+     a particular target is built.
 
  Implemented by ``pants.backend.codegen.targets.python_thrift_library.PythonThriftLibrary``
 
@@ -1697,7 +1841,7 @@ Repository
 resources
 -------------------------------------------------------------------------------
 
-.. py:function:: resources(name, payload, exclusives, address=None, payload=None, sources=None)
+.. py:function:: resources(name, sources=None, exclusives=None, tags=None)
 
  A set of files accessible as resources from the JVM classpath.
  
@@ -1719,6 +1863,10 @@ resources
  :param exclusives:  An optional map of exclusives tags.
     `Keeps incompatible changes apart
     <build_files.html#howto-check-exclusives>`_.
+ :param iterable<string> tags:  Arbitrary string tags that describe this target. Usable
+     by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+     and thus not used in fingerprinting, thus not suitable for anything that affects how
+     a particular target is built.
 
  Implemented by ``pants.backend.core.targets.resources.Resources``
 
@@ -1752,7 +1900,7 @@ rglobs
 scala_library
 -------------------------------------------------------------------------------
 
-.. py:function:: scala_library(name, payload, exclusives, address=None, payload=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, java_sources=None)
+.. py:function:: scala_library(name, java_sources=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, exclusives=None, tags=None)
 
  A collection of Scala code.
  
@@ -1782,6 +1930,7 @@ scala_library
  :type sources:  ``Fileset`` (from globs or rglobs) or list of strings
  :param sources:  Source code files to build. Paths are relative to the BUILD
     file's directory.
+ :param no_cache:  If True, this should not be stored in the artifact cache
  :type name: string
  :param name:  The name of this target, which combined with this
    build file defines the target address.
@@ -1790,6 +1939,10 @@ scala_library
  :param exclusives:  An optional map of exclusives tags.
     `Keeps incompatible changes apart
     <build_files.html#howto-check-exclusives>`_.
+ :param iterable<string> tags:  Arbitrary string tags that describe this target. Usable
+     by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+     and thus not used in fingerprinting, thus not suitable for anything that affects how
+     a particular target is built.
 
  Implemented by ``pants.backend.jvm.targets.scala_library.ScalaLibrary``
 
@@ -1806,7 +1959,7 @@ scala_library
 scala_specs
 -------------------------------------------------------------------------------
 
-.. py:function:: scala_specs(name, payload, exclusives, address=None, payload=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None)
+.. py:function:: scala_specs(name, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, exclusives=None, tags=None)
 
  Tests a Scala library.
 
@@ -1819,6 +1972,7 @@ scala_specs
  :type sources:  ``Fileset`` (from globs or rglobs) or list of strings
  :param sources:  Source code files to build. Paths are relative to the BUILD
     file's directory.
+ :param no_cache:  If True, this should not be stored in the artifact cache
  :type name: string
  :param name:  The name of this target, which combined with this
    build file defines the target address.
@@ -1827,6 +1981,10 @@ scala_specs
  :param exclusives:  An optional map of exclusives tags.
     `Keeps incompatible changes apart
     <build_files.html#howto-check-exclusives>`_.
+ :param iterable<string> tags:  Arbitrary string tags that describe this target. Usable
+     by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+     and thus not used in fingerprinting, thus not suitable for anything that affects how
+     a particular target is built.
 
  Implemented by ``pants.backend.jvm.targets.scala_tests.ScalaTests``
 
@@ -1855,7 +2013,7 @@ scala_tests
 scalac_plugin
 -------------------------------------------------------------------------------
 
-.. py:function:: scalac_plugin(name, payload, exclusives, address=None, payload=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, java_sources=None, classname=None, plugin=None)
+.. py:function:: scalac_plugin(name, classname=None, plugin=None, java_sources=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, exclusives=None, tags=None)
 
  Defines a target that produces a scalac_plugin.
 
@@ -1881,6 +2039,7 @@ scalac_plugin
  :type sources:  ``Fileset`` (from globs or rglobs) or list of strings
  :param sources:  Source code files to build. Paths are relative to the BUILD
     file's directory.
+ :param no_cache:  If True, this should not be stored in the artifact cache
  :type name: string
  :param name:  The name of this target, which combined with this
    build file defines the target address.
@@ -1889,6 +2048,10 @@ scalac_plugin
  :param exclusives:  An optional map of exclusives tags.
     `Keeps incompatible changes apart
     <build_files.html#howto-check-exclusives>`_.
+ :param iterable<string> tags:  Arbitrary string tags that describe this target. Usable
+     by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+     and thus not used in fingerprinting, thus not suitable for anything that affects how
+     a particular target is built.
 
  Implemented by ``pants.backend.jvm.targets.scalac_plugin.ScalacPlugin``
 
@@ -1980,7 +2143,7 @@ source_root
 target
 -------------------------------------------------------------------------------
 
-.. py:function:: target(name, payload, exclusives, name, address, build_graph, payload=None, exclusives=None)
+.. py:function:: target(name, exclusives=None, tags=None)
 
  A set of dependencies that may be depended upon,
  as if depending upon the set of dependencies directly.
@@ -1996,6 +2159,10 @@ target
  :param exclusives:  An optional map of exclusives tags.
     `Keeps incompatible changes apart
     <build_files.html#howto-check-exclusives>`_.
+ :param iterable<string> tags:  Arbitrary string tags that describe this target. Usable
+     by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+     and thus not used in fingerprinting, thus not suitable for anything that affects how
+     a particular target is built.
 
  Implemented by ``pants.backend.core.targets.dependencies.Dependencies``
 
