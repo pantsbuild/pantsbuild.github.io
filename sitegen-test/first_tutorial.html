@@ -164,19 +164,13 @@ invocation looks like</p>
 <p><code>./pants</code><br>
 That <code>./</code> isn't a typo. A source tree that's been set up with Pants
 build has a <code>pants</code> executable in its top-level directory.</br></p>
-<p>The first time you run <code>./pants</code>, it might take a while: it will
-probably auto-update by downloading the latest version.</p>
+<p>The first time you run <code>./pants</code>, it might take a while: it will probably auto-update by
+downloading the latest version.</p>
 <p><code>goal</code><br>
 Magic word that you use on most Pants command lines. We hope that
-someday we won't need to use this magic word anymore. As a rule of
-thumb, if you work with JVM code, you need <code>goal</code>; if you work with
-Python code, you leave it out.</br></p>
+someday we won't need to use this magic word anymore.</br></p>
 <p><code>test</code><br>
-<code>test</code> is a <em>goal</em>, a "verb" that Pants knows about. The <code>test</code> goal
-runs tests and reports results. (When working with Python code, you
-don't normally specify a goal on the command line. Instead Pants
-"figures out" what to do based on the targets. E.g., it runs tests on
-test targets.)</br></p>
+<code>test</code> is a <em>goal</em>, a "verb" that Pants knows about. The <code>test</code> goal runs tests and reports results.</br></p>
 <p>Some goals are <code>gen</code> (generate code from Thrift, Antlr, Protocol
 Buffer), <code>compile</code>, and <code>eclipse</code> (generate an Eclipse project). Pants
 knows that some of these goals depend on each other. E.g., in this
@@ -189,7 +183,7 @@ define these, you set up configuration files named <code>BUILD</code> in your
 source code file tree. (You'll see more about these later.)</br></p>
 <p>Targets can depend on other targets. E.g., a test suite target normally
 depends on another target containing the "library" code to test; to
-build the test code, Pants also must build the library code.</p>
+build and run the test code, Pants also first build the library code.</p>
 <p>You can specify more than one target on a command line. Pants will carry
 out its goals on all specified targets. E.g., you might use this to
 generate an Eclipse project based on Hello World's source and tests.</p>
@@ -301,19 +295,45 @@ some environment variables:
 </tbody>
 </table>
 
-<p>We told pants what target to build, but where are these defined?
-Scattered around the source tree are <code>BUILD</code> files. These <code>BUILD</code> files
-define targets. For example, this code snippet of
-<code>java/com/pants/examples/hello/main/BUILD</code> defines two targets: the app
-we ran and the binary that contains its code. These targets are named
-<code>main</code> (of type <code>jvm_app</code>) and and <code>main-bin</code> (of type <code>jvm_binary</code>):</p>
-<p>That <code>dependencies</code> is interesting. The <code>main-bin</code> build target depends
-on other build targets; its <code>dependencies</code> lists those. To build a
-runnable Java binary, we need to first compile its dependencies. The
-<code>main-bin</code> binary has two dependencies,
-<code>'examples/src/java/com/pants/examples/hello/greet'</code> is the <em>address</em> of
-another target. Addresses look, roughly, like <code>path/to/dir:targetname</code>.
-We can see this build target in the <code>.../hello/greet/BUILD</code> file:</p>
+<p>When we ran the <code>pants test</code> goal, we told pants what target to build, but where are these
+targets defined? Scattered around the source tree are <code>BUILD</code> files. These <code>BUILD</code> files
+define targets. For example, this code snippet of <code>java/com/pants/examples/hello/main/BUILD</code>
+defines two targets: the app we ran and the binary that contains its code.
+These targets are named <code>main</code> (of type <code>jvm_app</code>) and and <code>main-bin</code> (of type <code>jvm_binary</code>):</p>
+<p>
+<div class="md-included-snippet"><div class="codehilite"><pre><span class="n">jvm_app</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'main'</span><span class="p">,</span>
+  <span class="n">basename</span> <span class="o">=</span> <span class="s">'hello-example'</span><span class="p">,</span>
+  <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s">':main-bin'</span>
+  <span class="p">],</span>
+  <span class="n">bundles</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">bundle</span><span class="p">(</span><span class="n">relative_to</span><span class="o">=</span><span class="s">'config'</span><span class="p">)</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">globs</span><span class="p">(</span><span class="s">'config/*'</span><span class="p">))</span>
+  <span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c"># The binary, the "runnable" part:</span>
+
+<span class="n">jvm_binary</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">'main-bin'</span><span class="p">,</span>
+  <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s">'examples/src/java/com/pants/examples/hello/greet'</span><span class="p">,</span>
+  <span class="p">],</span>
+  <span class="n">resources</span><span class="o">=</span><span class="p">[</span>
+    <span class="s">'examples/src/resources/com/pants/example/hello'</span><span class="p">,</span>
+  <span class="p">],</span>
+  <span class="n">source</span> <span class="o">=</span> <span class="s">'HelloMain.java'</span><span class="p">,</span>
+  <span class="n">main</span> <span class="o">=</span> <span class="s">'com.pants.examples.hello.main.HelloMain'</span><span class="p">,</span>
+  <span class="n">basename</span> <span class="o">=</span> <span class="s">'hello-example'</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div></div>
+</p>
+<p>Those <code>dependencies</code> statements are interesting.
+The <code>main-bin</code> build target depends on other build targets;
+its <code>dependencies</code> lists those.
+To build a runnable Java binary, we need to first compile its dependencies.
+The <code>main-bin</code> binary's dependency,
+<code>'examples/src/java/com/pants/examples/hello/greet'</code>, is the <em>address</em> of
+another target. Addresses look, roughly, like <code>path/to/dir:targetname</code>. We can see this build
+target in the <code>.../hello/greet/BUILD</code> file:</p>
 <p>
 <div class="md-included-snippet"><div class="codehilite"><pre><span class="n">java_library</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">'greet'</span><span class="p">,</span>
   <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[],</span> <span class="c"># A more realistic example would depend on other libs,</span>
@@ -413,7 +433,7 @@ Get the list of goals:</br></p>
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-dist/markdown/html/src/docs/first_tutorial.html 2014-11-03T09:00:43.415405
+dist/markdown/html/src/docs/first_tutorial.html 2014-11-06T11:31:15.502844
 </div>
 
 </div> <!-- end of mainflow -->

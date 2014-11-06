@@ -231,10 +231,8 @@ directory):</p>
 <span class="p">)</span>
 </pre></div></div>
 </p>
-<p>This small program has just two dependencies. One is a library, a
-<code>java_library</code>, a compiled set of source code from this workspace. The
-other is a "third party" dependency, a pre-compiled artifact whose
-source lives somewhere outside the workspace.</p>
+<p>This small program has just one dependency. It is a library, a <code>java_library</code>, a compiled set of
+source code from this workspace.</p>
 
 <table class="h-plus-pilcrow">
 <tbody>
@@ -295,8 +293,10 @@ them:</p>
 <span class="p">)</span>
 </pre></div></div>
 </p>
-<p>As with other targets, this one depends on code that it imports. Thus, a
-typical test target depends on the library that it tests.</p>
+<p>As with other targets, this one depends on code that it imports. Thus, a typical test target
+depends the library that it tests and perhaps some others (here, <code>junit</code>).
+The dependency on <code>junit</code> is a "third party" dependency, a pre-compiled artifact whose source
+lives somewhere outside the workspace.</p>
 
 <table class="h-plus-pilcrow">
 <tbody>
@@ -313,7 +313,7 @@ typical test target depends on the library that it tests.</p>
 source, Pants invokes ivy to fetch such jars. To reduce the danger of
 version conflicts, we use the 3rdparty idiom: we keep references to
 these "third-party" jars together in <code>BUILD</code> files under the <code>3rdparty/</code>
-directory. Thus, the test has a <code>3rdparty:</code> dependency:</p>
+directory. Thus, the test has a <code>3rdparty</code> dependency:</p>
 <p>
 <div class="md-included-snippet"><div class="codehilite"><pre><span class="n">junit_tests</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'greet'</span><span class="p">,</span>
   <span class="n">sources</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s">'*.java'</span><span class="p">),</span>
@@ -337,7 +337,9 @@ directory. Thus, the test has a <code>3rdparty:</code> dependency:</p>
             <span class="p">],</span>
            <span class="p">)</span>
 </pre></div>
-<p>Those <a href="build_dictionary.html#bdict_jar" xref="bdict_jar"><code>jar()</code> things</a> are references to public jars.</p>
+<p>Those <a href="build_dictionary.html#bdict_jar" xref="bdict_jar"><code>jar()</code> things</a> are references to public jars.
+You can read more about
+<a href="3rdparty_jvm.html">JVM 3rdpart dependencies</a>.</p>
 
 <table class="h-plus-pilcrow">
 <tbody>
@@ -351,10 +353,9 @@ directory. Thus, the test has a <code>3rdparty:</code> dependency:</p>
 </table>
 
 <p><strong>Make sure code compiles and tests pass:</strong></p>
-<p>Use the <code>test</code> goal with the targets you're interested in. If they are
-test targets, Pants runs the tests. If they aren't test targets, Pants
-will still compile them since it knows it must compile before it can
-test.</p>
+<p>Use the <code>test</code> goal with the targets you're interested in. If they are test targets,
+Pants runs the tests. If they aren't test targets, Pants still compiles them since it knows it
+must compile before it can test.</p>
 <div class="codehilite"><pre><span class="nv">$ </span>./pants goal <span class="nb">test </span>examples/src/java/com/pants/examples/hello/:: examples/tests/java/com/pants/examples/hello/::
 </pre></div>
 <p>Output from the test run is written to <code>.pants.d/test/junit/</code>; you can
@@ -487,34 +488,34 @@ not-so-useful stub <code>.jar</code> files).)</p>
 <p>The generated bundle is basically a directory tree containing <code>.jar</code>s
 and extra files. The <code>.jar</code> in the top-level directory has a manifest so
 you can run it with <code>java -jar</code>:</p>
-<div class="codehilite"><pre><span class="nv">$ </span><span class="nb">cd </span>dist/main-bundle/
-<span class="nv">$ </span>java -jar main-bin.jar
+<div class="codehilite"><pre><span class="nv">$ </span><span class="nb">cd </span>dist/hello-example-bundle/
+<span class="nv">$ </span>java -jar hello-example.jar
 16:52:11 INFO : Hello, world!
 </pre></div>
 <p>The "bundle" is basically a tree of files:</p>
-<div class="codehilite"><pre><span class="nv">$ </span><span class="nb">cd </span>dist/main-bundle/
+<div class="codehilite"><pre><span class="nv">$ </span><span class="nb">cd </span>dist/hello-example-bundle/
 <span class="nv">$ </span>find .
 .
+./greetee.txt
+./hello-example.jar
 ./libs
-./libs/javax.activation-activation-1.1.jar
-./libs/javax.mail-mail-1.4.jar
-./libs/log4j-log4j-1.2.15.jar
-./log4j.properties
-./main-bin.jar
-<span class="nv">$ </span>jar -tf main-bin.jar
+<span class="nv">$ </span>jar -tf hello-example.jar
+META-INF/
+META-INF/MANIFEST.MF
 com/
 com/pants/
 com/pants/examples/
 com/pants/examples/hello/
-com/pants/examples/hello/greet/
-com/pants/examples/hello/greet/Greeting.class
 com/pants/examples/hello/main/
 com/pants/examples/hello/main/HelloMain.class
-META-INF/
-META-INF/MANIFEST.MF
+com/pants/example/
+com/pants/example/hello/
+com/pants/example/hello/world.txt
+com/pants/examples/hello/greet/
+com/pants/examples/hello/greet/Greeting.class
 </pre></div>
-<p>That <code>log4j.properties</code> file came from the <code>bundles=</code> parameter. The
-<code>libs/</code> directory contains 3rdparty jars. The jar in the top directory
+<p>That <code>greetee.txt</code> file came from the <code>bundles=</code> parameter.
+The <code>libs/</code> directory contains 3rdparty jars (if any). The <code>jar</code> in the top directory
 contains code compiled for this target.</p>
 <p><strong>Deploying a Bundle</strong></p>
 <p>Instead of just creating a directory tree, you can pass
@@ -528,7 +529,7 @@ you might want to exclude them from the archive.</p>
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-dist/markdown/html/examples/src/java/com/pants/examples/readme.html 2014-11-03T09:00:43.523006
+dist/markdown/html/examples/src/java/com/pants/examples/readme.html 2014-11-06T11:31:15.596028
 </div>
 
 </div> <!-- end of mainflow -->
