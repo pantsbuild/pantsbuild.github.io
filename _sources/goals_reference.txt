@@ -78,9 +78,44 @@ bench
 
 
 
-* Implemented by ``abc.BenchmarkRun_bench``
+.. _gref_cli_bench:
+
+*
+  **bench**
+  Implemented by ``pants.backend.jvm.tasks.benchmark_run.BenchmarkRun``
 
 
+
+  * | ``--jvm-options``
+      ``str``
+    |
+      Run the jvm with these extra jvm options.
+
+  * | ``--args``
+      ``str``
+    |
+      Run the jvm with these extra program args.
+
+  * | ``--[no-]debug``
+      ``bool``
+    |
+      Run the jvm under a debugger.
+
+  * | ``--confs``
+      ``str``
+      (Default: ``[u'default']``)
+    |
+      Use only these Ivy configurations of external deps.
+
+  * | ``--target``
+      ``str``
+    |
+      Name of the benchmark class. This is a mandatory argument.
+
+  * | ``--[no-]memory``
+      ``bool``
+    |
+      Enable memory profiling.
 
 
 
@@ -99,21 +134,55 @@ binary
 Create a jvm binary jar.
 
 
-* Implemented by ``abc.PythonBinaryCreate_binary_python_binary_create``
+.. _gref_cli_binarypythonbinarycreate:
+
+*
+  **binary.python-binary-create**
+  Implemented by ``pants.backend.python.tasks.python_binary_create.PythonBinaryCreate``
+
+
+
+  * | ``--timeout``
+      ``int``
+    |
+      Number of seconds to wait for http connections.
+
+
+
+.. _gref_cli_binary:
+
+*
+  **binary**
+  Implemented by ``pants.backend.jvm.tasks.binary_create.BinaryCreate``
 
 
 
 
 
-* Implemented by ``abc.BinaryCreate_binary``
+.. _gref_cli_binarydup:
+
+*
+  **binary.dup**
+  Implemented by ``pants.backend.jvm.tasks.detect_duplicates.DuplicateDetector``
 
 
 
+  * | ``--[no-]fail-fast``
+      ``bool``
+    |
+      Fail fast if duplicate classes/resources are found.
 
+  * | ``--excludes``
+      ``str``
+      (Default: ``[u'dependencies,license,notice,.DS_Store,notice.txt,cmdline.arg.info.txt.1,license.txt']``)
+    |
+      Case insensitive filenames (without directory) to exclude from duplicate check. Filenames can be specified in a comma-separated list or by using multiple instances of this flag.
 
-* Implemented by ``abc.DuplicateDetector_binary_dup``
-
-
+  * | ``--max-dups``
+      ``int``
+      (Default: ``10``)
+    |
+      Maximum number of duplicate classes to display per artifact.
 
 
 
@@ -132,7 +201,11 @@ bootstrap
 Bootstrap tools needed for building.
 
 
-* Implemented by ``abc.BootstrapJvmTools_bootstrap_bootstrap_jvm_tools``
+.. _gref_cli_bootstrapbootstrapjvmtools:
+
+*
+  **bootstrap.bootstrap-jvm-tools**
+  Implemented by ``pants.backend.jvm.tasks.bootstrap_jvm_tools.BootstrapJvmTools``
 
 
 
@@ -152,7 +225,11 @@ builddict
 
 
 
-* Implemented by ``abc.BuildBuildDictionary_builddict``
+.. _gref_cli_builddict:
+
+*
+  **builddict**
+  Implemented by ``pants.backend.core.tasks.builddictionary.BuildBuildDictionary``
 
 
 
@@ -172,9 +249,28 @@ buildlint
 
 
 
-* Implemented by ``abc.BuildLint_buildlint``
+.. _gref_cli_buildlint:
+
+*
+  **buildlint**
+  Implemented by ``pants.backend.core.tasks.build_lint.BuildLint``
 
 
+
+  * | ``--[no-]transitive``
+      ``bool``
+    |
+      Apply lint rules transitively to all dependency buildfiles.
+
+  * | ``--[no-]include-intransitive-deps``
+      ``bool``
+    |
+      Correct both simple missing dependencies and intransitive missing deps.
+
+  * | ``--action``
+      ``str``
+    |
+      diff=print out diffs, rewrite=apply changes to BUILD files directly.
 
 
 
@@ -193,21 +289,86 @@ bundle
 Create an application bundle from binary targets.
 
 
-* Implemented by ``abc.BundleCreate_bundle``
+.. _gref_cli_bundle:
+
+*
+  **bundle**
+  Implemented by ``pants.backend.jvm.tasks.bundle_create.BundleCreate``
 
 
 
+  * | ``--[no-]deployjar``
+      ``bool``
+    |
+      Expand 3rdparty jars into loose classfiles in the bundle's root dir. If unset, the root will contain internal classfiles only, and 3rdparty jars will go into the bundle's libs dir.
+
+  * | ``--archive``
+      ``str``
+    |
+      Create an archive of this type from the bundle.
+
+  * | ``--[no-]archive-prefix``
+      ``bool``
+    |
+      If --archive is specified, use the target basename as the path prefix.
 
 
-* Implemented by ``abc.DuplicateDetector_bundle_dup``
+
+.. _gref_cli_bundledup:
+
+*
+  **bundle.dup**
+  Implemented by ``pants.backend.jvm.tasks.detect_duplicates.DuplicateDetector``
 
 
 
+  * | ``--[no-]fail-fast``
+      ``bool``
+    |
+      Fail fast if duplicate classes/resources are found.
+
+  * | ``--excludes``
+      ``str``
+      (Default: ``[u'dependencies,license,notice,.DS_Store,notice.txt,cmdline.arg.info.txt.1,license.txt']``)
+    |
+      Case insensitive filenames (without directory) to exclude from duplicate check. Filenames can be specified in a comma-separated list or by using multiple instances of this flag.
+
+  * | ``--max-dups``
+      ``int``
+      (Default: ``10``)
+    |
+      Maximum number of duplicate classes to display per artifact.
 
 
-* Implemented by ``abc.AaptBuilder_bundle_apk``
+
+.. _gref_cli_bundleapk:
+
+*
+  **bundle.apk**
+  Implemented by ``pants.backend.android.tasks.aapt_builder.AaptBuilder``
 
 
+
+  * | ``--sdk-path``
+      ``str``
+    |
+      Use the Android SDK at this path.
+
+  * | ``--target-sdk``
+      ``str``
+    |
+      Use this Android SDK to compile resources. Overrides AndroidManifest.xml.
+
+  * | ``--build-tools-version``
+      ``str``
+    |
+      Use this Android build-tools version to compile resources.
+
+  * | ``--ignored-assets``
+      ``str``
+      (Default: ``!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir&gt;_*:!CVS:!thumbs.db:!picasa.ini:!*~:BUILD*``)
+    |
+      Patterns the aapt tools should ignore as they search the resource_dir.
 
 
 
@@ -226,9 +387,35 @@ changed
 Print the targets changed since some prior commit.
 
 
-* Implemented by ``abc.WhatChanged_changed``
+.. _gref_cli_changed:
+
+*
+  **changed**
+  Implemented by ``pants.backend.core.tasks.what_changed.WhatChanged``
 
 
+
+  * | ``--sep``
+      ``str``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+  * | ``--output-file``
+      ``str``
+    |
+      Write the console output to this file instead.
+
+  * | ``--parent``
+      ``str``
+      (Default: ``HEAD``)
+    |
+      Calculate changes against this tree-ish.
+
+  * | ``--[no-]files``
+      ``bool``
+    |
+      Show changed files instead of the targets that own them.
 
 
 
@@ -247,9 +434,19 @@ check-exclusives
 Check for exclusivity violations.
 
 
-* Implemented by ``abc.CheckExclusives_check_exclusives``
+.. _gref_cli_checkexclusives:
+
+*
+  **check-exclusives**
+  Implemented by ``pants.backend.core.tasks.check_exclusives.CheckExclusives``
 
 
+
+  * | ``--[no-]error-on-collision``
+      ``bool``
+      (Default: ``True``)
+    |
+      Abort the build if an exclusives collision is detected.
 
 
 
@@ -268,9 +465,29 @@ check_published_deps
 Find references to outdated artifacts.
 
 
-* Implemented by ``abc.CheckPublishedDeps_check_published_deps``
+.. _gref_cli_checkpublisheddeps:
+
+*
+  **check_published_deps**
+  Implemented by ``pants.backend.jvm.tasks.check_published_deps.CheckPublishedDeps``
 
 
+
+  * | ``--sep``
+      ``str``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+  * | ``--output-file``
+      ``str``
+    |
+      Write the console output to this file instead.
+
+  * | ``--[no-]print-uptodate``
+      ``bool``
+    |
+      Print up-to-date dependencies.
 
 
 
@@ -289,19 +506,36 @@ clean-all
 Clean all build output.
 
 
-* Implemented by ``abc.NailgunKillall_clean_all_ng_killall``
+.. _gref_cli_cleanallngkillall:
+
+*
+  **clean-all.ng-killall**
+  Implemented by ``pants.backend.jvm.tasks.nailgun_task.NailgunKillall``
+
+
+
+  * | ``--[no-]everywhere``
+      ``bool``
+    |
+      Kill all nailguns servers launched by pants for all workspaces on the system.
+
+
+
+.. _gref_cli_cleanallinvalidate:
+
+*
+  **clean-all.invalidate**
+  Implemented by ``pants.backend.core.tasks.clean.Invalidator``
 
 
 
 
 
-* Implemented by ``abc.Invalidator_clean_all_invalidate``
+.. _gref_cli_cleanall:
 
-
-
-
-
-* Implemented by ``abc.Cleaner_clean_all``
+*
+  **clean-all**
+  Implemented by ``pants.backend.core.tasks.clean.Cleaner``
 
 
 
@@ -322,19 +556,36 @@ clean-all-async
 [deprecated] Clean all build output in a background process.
 
 
-* Implemented by ``abc.NailgunKillall_clean_all_async_ng_killall``
+.. _gref_cli_cleanallasyncngkillall:
+
+*
+  **clean-all-async.ng-killall**
+  Implemented by ``pants.backend.jvm.tasks.nailgun_task.NailgunKillall``
+
+
+
+  * | ``--[no-]everywhere``
+      ``bool``
+    |
+      Kill all nailguns servers launched by pants for all workspaces on the system.
+
+
+
+.. _gref_cli_cleanallasyncinvalidate:
+
+*
+  **clean-all-async.invalidate**
+  Implemented by ``pants.backend.core.tasks.clean.Invalidator``
 
 
 
 
 
-* Implemented by ``abc.Invalidator_clean_all_async_invalidate``
+.. _gref_cli_cleanallasync:
 
-
-
-
-
-* Implemented by ``abc.AsyncCleaner_clean_all_async``
+*
+  **clean-all-async**
+  Implemented by ``pants.backend.core.register.AsyncCleaner``
 
 
 
@@ -355,15 +606,28 @@ compile
 Scala source code style check.
 
 
-* Implemented by ``abc.SingletonGroupTask_compile_jvm``
+.. _gref_cli_compilejvm:
+
+*
+  **compile.jvm**
+  Implemented by ``pants.backend.core.tasks.group_task.SingletonGroupTask``
 
 
 
 
 
-* Implemented by ``abc.Scalastyle_compile_scalastyle``
+.. _gref_cli_compilescalastyle:
+
+*
+  **compile.scalastyle**
+  Implemented by ``pants.backend.jvm.tasks.scalastyle.Scalastyle``
 
 
+
+  * | ``--[no-]skip``
+      ``bool``
+    |
+      Skip scalastyle.
 
 
 
@@ -382,9 +646,39 @@ dependees
 Print the target's dependees.
 
 
-* Implemented by ``abc.ReverseDepmap_dependees``
+.. _gref_cli_dependees:
+
+*
+  **dependees**
+  Implemented by ``pants.backend.core.tasks.dependees.ReverseDepmap``
 
 
+
+  * | ``--sep``
+      ``str``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+  * | ``--output-file``
+      ``str``
+    |
+      Write the console output to this file instead.
+
+  * | ``--[no-]transitive``
+      ``bool``
+    |
+      List transitive dependees.
+
+  * | ``--[no-]closed``
+      ``bool``
+    |
+      Include the input targets in the output along with the dependees.
+
+  * | ``--type``
+      ``str``
+    |
+      Identifies target types to include. Multiple type inclusions can be specified at once in a comma separated list or else by using multiple instances of this flag.
 
 
 
@@ -403,9 +697,34 @@ dependencies
 Print the target's dependencies.
 
 
-* Implemented by ``abc.Dependencies_dependencies``
+.. _gref_cli_dependencies:
+
+*
+  **dependencies**
+  Implemented by ``pants.backend.jvm.tasks.dependencies.Dependencies``
 
 
+
+  * | ``--sep``
+      ``str``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+  * | ``--output-file``
+      ``str``
+    |
+      Write the console output to this file instead.
+
+  * | ``--[no-]internal-only``
+      ``bool``
+    |
+      Specifies that only internal dependencies should be included in the graph output (no external jars).
+
+  * | ``--[no-]external-only``
+      ``bool``
+    |
+      Specifies that only external dependencies should be included in the graph output (only external jars).
 
 
 
@@ -424,9 +743,61 @@ depmap
 Depict the target's dependencies.
 
 
-* Implemented by ``abc.Depmap_depmap``
+.. _gref_cli_depmap:
+
+*
+  **depmap**
+  Implemented by ``pants.backend.jvm.tasks.depmap.Depmap``
 
 
+
+  * | ``--sep``
+      ``str``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+  * | ``--output-file``
+      ``str``
+    |
+      Write the console output to this file instead.
+
+  * | ``--[no-]internal-only``
+      ``bool``
+    |
+      Specifies that only internal dependencies should be included in the graph output (no external jars).
+
+  * | ``--[no-]external-only``
+      ``bool``
+    |
+      Specifies that only external dependencies should be included in the graph output (only external jars).
+
+  * | ``--[no-]minimal``
+      ``bool``
+    |
+      For a textual dependency tree, only prints a dependency the 1st time it is encountered.  For graph output this does nothing.
+
+  * | ``--[no-]graph``
+      ``bool``
+    |
+      Specifies the internal dependency graph should be output in the dot digraph format.
+
+  * | ``--[no-]project-info``
+      ``bool``
+    |
+      Produces a json object with info about the target, including source roots, dependencies, and paths to libraries for their targets and dependencies.
+
+  * | ``--[no-]project-info-formatted``
+      ``bool``
+      (Default: ``True``)
+    |
+      Causes project-info output to be a single line of JSON.
+
+  * | ``--separator``
+      ``str``
+      (Default: ``-``)
+    |
+      Specifies the separator to use between the org/name/rev components of a dependency's fully qualified name.
 
 
 
@@ -445,9 +816,30 @@ detect-duplicates
 Detect duplicate classes and resources on the classpath.
 
 
-* Implemented by ``abc.DuplicateDetector_detect_duplicates``
+.. _gref_cli_detectduplicates:
+
+*
+  **detect-duplicates**
+  Implemented by ``pants.backend.jvm.tasks.detect_duplicates.DuplicateDetector``
 
 
+
+  * | ``--[no-]fail-fast``
+      ``bool``
+    |
+      Fail fast if duplicate classes/resources are found.
+
+  * | ``--excludes``
+      ``str``
+      (Default: ``[u'dependencies,license,notice,.DS_Store,notice.txt,cmdline.arg.info.txt.1,license.txt']``)
+    |
+      Case insensitive filenames (without directory) to exclude from duplicate check. Filenames can be specified in a comma-separated list or by using multiple instances of this flag.
+
+  * | ``--max-dups``
+      ``int``
+      (Default: ``10``)
+    |
+      Maximum number of duplicate classes to display per artifact.
 
 
 
@@ -465,9 +857,28 @@ dex
 
 
 
-* Implemented by ``abc.DxCompile_dex``
+.. _gref_cli_dex:
+
+*
+  **dex**
+  Implemented by ``pants.backend.android.tasks.dx_compile.DxCompile``
 
 
+
+  * | ``--sdk-path``
+      ``str``
+    |
+      Use the Android SDK at this path.
+
+  * | ``--build-tools-version``
+      ``str``
+    |
+      Create the dex file using this version of the Android build tools.
+
+  * | ``--jvm-options``
+      ``str``
+    |
+      Run dx with these JVM options.
 
 
 
@@ -486,15 +897,127 @@ doc
 Create documentation.
 
 
-* Implemented by ``abc.JavadocGen_doc_javadoc``
+.. _gref_cli_docjavadoc:
+
+*
+  **doc.javadoc**
+  Implemented by ``pants.backend.jvm.tasks.javadoc_gen.JavadocGen``
 
 
 
+  * | ``--jvm-options``
+      ``str``
+    |
+      Run the jvm with these extra jvm options.
+
+  * | ``--args``
+      ``str``
+    |
+      Run the jvm with these extra program args.
+
+  * | ``--[no-]debug``
+      ``bool``
+    |
+      Run the jvm under a debugger.
+
+  * | ``--confs``
+      ``str``
+      (Default: ``[u'default']``)
+    |
+      Use only these Ivy configurations of external deps.
+
+  * | ``--[no-]include-codegen``
+      ``bool``
+    |
+      Create javadoc for generated code.
+
+  * | ``--[no-]transitive``
+      ``bool``
+      (Default: ``True``)
+    |
+      Create javadoc for the transitive closure of internal targets reachable from the roots specified on the command line.
+
+  * | ``--[no-]combined``
+      ``bool``
+    |
+      Generate javadoc for all targets combined, instead of each target individually.
+
+  * | ``--[no-]open``
+      ``bool``
+    |
+      Open the generated javadoc in a browser (implies --combined).
+
+  * | ``--[no-]ignore-failure``
+      ``bool``
+    |
+      Do not consider javadoc errors to be build errors.
+
+  * | ``--[no-]skip``
+      ``bool``
+    |
+      Skip javadoc generation.
 
 
-* Implemented by ``abc.ScaladocGen_doc_scaladoc``
+
+.. _gref_cli_docscaladoc:
+
+*
+  **doc.scaladoc**
+  Implemented by ``pants.backend.jvm.tasks.scaladoc_gen.ScaladocGen``
 
 
+
+  * | ``--jvm-options``
+      ``str``
+    |
+      Run the jvm with these extra jvm options.
+
+  * | ``--args``
+      ``str``
+    |
+      Run the jvm with these extra program args.
+
+  * | ``--[no-]debug``
+      ``bool``
+    |
+      Run the jvm under a debugger.
+
+  * | ``--confs``
+      ``str``
+      (Default: ``[u'default']``)
+    |
+      Use only these Ivy configurations of external deps.
+
+  * | ``--[no-]include-codegen``
+      ``bool``
+    |
+      Create scaladoc for generated code.
+
+  * | ``--[no-]transitive``
+      ``bool``
+      (Default: ``True``)
+    |
+      Create scaladoc for the transitive closure of internal targets reachable from the roots specified on the command line.
+
+  * | ``--[no-]combined``
+      ``bool``
+    |
+      Generate scaladoc for all targets combined, instead of each target individually.
+
+  * | ``--[no-]open``
+      ``bool``
+    |
+      Open the generated scaladoc in a browser (implies --combined).
+
+  * | ``--[no-]ignore-failure``
+      ``bool``
+    |
+      Do not consider scaladoc errors to be build errors.
+
+  * | ``--[no-]skip``
+      ``bool``
+    |
+      Skip scaladoc generation.
 
 
 
@@ -513,9 +1036,79 @@ eclipse
 Create an Eclipse project from the given targets.
 
 
-* Implemented by ``abc.EclipseGen_eclipse``
+.. _gref_cli_eclipse:
+
+*
+  **eclipse**
+  Implemented by ``pants.backend.jvm.tasks.eclipse_gen.EclipseGen``
 
 
+
+  * | ``--project-name``
+      ``str``
+      (Default: ``project``)
+    |
+      Specifies the name to use for the generated project.
+
+  * | ``--project-dir``
+      ``str``
+    |
+      Specifies the directory to output the generated project files to.
+
+  * | ``--project-cwd``
+      ``str``
+    |
+      Specifies the directory the generated project should use as the cwd for processes it launches.  Note that specifying this trumps --eclipse-project-dir and not all project related files will be stored there.
+
+  * | ``--[no-]intransitive``
+      ``bool``
+    |
+      Limits the sources included in the generated project to just those owned by the targets specified on the command line.
+
+  * | ``--[no-]python``
+      ``bool``
+    |
+      Adds python support to the generated project configuration.
+
+  * | ``--[no-]java``
+      ``bool``
+      (Default: ``True``)
+    |
+      Includes java sources in the project; otherwise compiles them and adds them to the project classpath.
+
+  * | ``--java-language-level``
+      ``int``
+      (Default: ``7``)
+    |
+      Sets the java language and jdk used to compile the project's java sources.
+
+  * | ``--java-jdk-name``
+      ``str``
+    |
+      Sets the jdk used to compile the project's java sources. If unset the default jdk name for the --java-language-level is used
+
+  * | ``--[no-]scala``
+      ``bool``
+      (Default: ``True``)
+    |
+      Includes scala sources in the project; otherwise compiles them and adds them to the project classpath.
+
+  * | ``--[no-]use-source-root``
+      ``bool``
+    |
+      Use source_root() settings to collapse sourcepaths in project and determine which paths are used for tests.  This is usually what you want if your repo  uses a maven style directory layout.
+
+  * | ``--[no-]infer-test-from-siblings``
+      ``bool``
+      (Default: ``True``)
+    |
+      When determining if a path should be added to the IDE, check to see if any of its sibling source_root() entries define test targets.  This is usually what you want so that resource directories under test source roots are picked up as test paths.
+
+  * | ``--version``
+      ``str``
+      (Default: ``3.6``)
+    |
+      The Eclipse version the project configuration should be generated for.
 
 
 
@@ -534,9 +1127,79 @@ ensime
 Create an Ensime project from the given targets.
 
 
-* Implemented by ``abc.EnsimeGen_ensime``
+.. _gref_cli_ensime:
+
+*
+  **ensime**
+  Implemented by ``pants.backend.jvm.tasks.ensime_gen.EnsimeGen``
 
 
+
+  * | ``--project-name``
+      ``str``
+      (Default: ``project``)
+    |
+      Specifies the name to use for the generated project.
+
+  * | ``--project-dir``
+      ``str``
+    |
+      Specifies the directory to output the generated project files to.
+
+  * | ``--project-cwd``
+      ``str``
+    |
+      Specifies the directory the generated project should use as the cwd for processes it launches.  Note that specifying this trumps --ensime-project-dir and not all project related files will be stored there.
+
+  * | ``--[no-]intransitive``
+      ``bool``
+    |
+      Limits the sources included in the generated project to just those owned by the targets specified on the command line.
+
+  * | ``--[no-]python``
+      ``bool``
+    |
+      Adds python support to the generated project configuration.
+
+  * | ``--[no-]java``
+      ``bool``
+      (Default: ``True``)
+    |
+      Includes java sources in the project; otherwise compiles them and adds them to the project classpath.
+
+  * | ``--java-language-level``
+      ``int``
+      (Default: ``7``)
+    |
+      Sets the java language and jdk used to compile the project's java sources.
+
+  * | ``--java-jdk-name``
+      ``str``
+    |
+      Sets the jdk used to compile the project's java sources. If unset the default jdk name for the --java-language-level is used
+
+  * | ``--[no-]scala``
+      ``bool``
+      (Default: ``True``)
+    |
+      Includes scala sources in the project; otherwise compiles them and adds them to the project classpath.
+
+  * | ``--[no-]use-source-root``
+      ``bool``
+    |
+      Use source_root() settings to collapse sourcepaths in project and determine which paths are used for tests.  This is usually what you want if your repo  uses a maven style directory layout.
+
+  * | ``--[no-]infer-test-from-siblings``
+      ``bool``
+      (Default: ``True``)
+    |
+      When determining if a path should be added to the IDE, check to see if any of its sibling source_root() entries define test targets.  This is usually what you want so that resource directories under test source roots are picked up as test paths.
+
+  * | ``--scala-language-level``
+      ``str``
+      (Default: ``2.10``)
+    |
+      Set the scala language level used for Ensime linting.
 
 
 
@@ -555,9 +1218,24 @@ filedeps
 Print out the source and BUILD files the target depends on.
 
 
-* Implemented by ``abc.FileDeps_filedeps``
+.. _gref_cli_filedeps:
+
+*
+  **filedeps**
+  Implemented by ``pants.backend.jvm.tasks.filedeps.FileDeps``
 
 
+
+  * | ``--sep``
+      ``str``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+  * | ``--output-file``
+      ``str``
+    |
+      Write the console output to this file instead.
 
 
 
@@ -576,9 +1254,24 @@ filemap
 Outputs a mapping from source file to owning target.
 
 
-* Implemented by ``abc.Filemap_filemap``
+.. _gref_cli_filemap:
+
+*
+  **filemap**
+  Implemented by ``pants.backend.core.tasks.filemap.Filemap``
 
 
+
+  * | ``--sep``
+      ``str``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+  * | ``--output-file``
+      ``str``
+    |
+      Write the console output to this file instead.
 
 
 
@@ -597,9 +1290,44 @@ filter
 Filter the input targets based on various criteria.
 
 
-* Implemented by ``abc.Filter_filter``
+.. _gref_cli_filter:
+
+*
+  **filter**
+  Implemented by ``pants.backend.core.tasks.filter.Filter``
 
 
+
+  * | ``--sep``
+      ``str``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+  * | ``--output-file``
+      ``str``
+    |
+      Write the console output to this file instead.
+
+  * | ``--type``
+      ``str``
+    |
+      Target types to include (optional '+' prefix) or exclude ('-' prefix).  Multiple type inclusions or exclusions can be specified in a comma-separated list or by using multiple instances of this flag.
+
+  * | ``--target``
+      ``str``
+    |
+      Targets to include (optional '+' prefix) or exclude ('-' prefix).  Multiple target inclusions or exclusions can be specified in a comma-separated list or by using multiple instances of this flag.
+
+  * | ``--ancestor``
+      ``str``
+    |
+      Dependency targets of targets to include (optional '+' prefix) or exclude ('-' prefix).  Multiple ancestor inclusions or exclusions can be specified in a comma-separated list or by using multiple instances of this flag.
+
+  * | ``--regex``
+      ``str``
+    |
+      Regex patterns of target addresses to include (optional '+' prefix) or exclude ('-' prefix).  Multiple target inclusions or exclusions can be specified in a comma-separated list or by using multiple instances of this flag.
 
 
 
@@ -618,45 +1346,114 @@ gen
 Generate code.
 
 
-* Implemented by ``abc.ApacheThriftGen_gen_thrift``
+.. _gref_cli_genthrift:
+
+*
+  **gen.thrift**
+  Implemented by ``pants.backend.codegen.tasks.apache_thrift_gen.ApacheThriftGen``
+
+
+
+  * | ``--version``
+      ``str``
+    |
+      Thrift compiler version.
+
+  * | ``--lang``
+      ``str``
+    |
+      Force generation of thrift code for these languages.
+
+
+
+.. _gref_cli_genscrooge:
+
+*
+  **gen.scrooge**
+  Implemented by ``pants.backend.codegen.tasks.scrooge_gen.ScroogeGen``
+
+
+
+  * | ``--[no-]verbose``
+      ``bool``
+    |
+      Emit verbose output.
+
+
+
+.. _gref_cli_genprotoc:
+
+*
+  **gen.protoc**
+  Implemented by ``pants.backend.codegen.tasks.protobuf_gen.ProtobufGen``
+
+
+
+  * | ``--lang``
+      ``str``
+    |
+      Force generation of protobuf code for these languages.
+
+
+
+.. _gref_cli_genantlr:
+
+*
+  **gen.antlr**
+  Implemented by ``pants.backend.codegen.tasks.antlr_gen.AntlrGen``
 
 
 
 
 
-* Implemented by ``abc.ScroogeGen_gen_scrooge``
+.. _gref_cli_genragel:
+
+*
+  **gen.ragel**
+  Implemented by ``pants.backend.codegen.tasks.ragel_gen.RagelGen``
 
 
 
 
 
-* Implemented by ``abc.ProtobufGen_gen_protoc``
+.. _gref_cli_genjaxb:
+
+*
+  **gen.jaxb**
+  Implemented by ``pants.backend.codegen.tasks.jaxb_gen.JaxbGen``
 
 
 
 
 
-* Implemented by ``abc.AntlrGen_gen_antlr``
+.. _gref_cli_genaapt:
+
+*
+  **gen.aapt**
+  Implemented by ``pants.backend.android.tasks.aapt_gen.AaptGen``
 
 
 
+  * | ``--sdk-path``
+      ``str``
+    |
+      Use the Android SDK at this path.
 
+  * | ``--target-sdk``
+      ``str``
+    |
+      Use this Android SDK to compile resources. Overrides AndroidManifest.xml.
 
-* Implemented by ``abc.RagelGen_gen_ragel``
+  * | ``--build-tools-version``
+      ``str``
+    |
+      Use this Android build-tools version to compile resources.
 
-
-
-
-
-* Implemented by ``abc.JaxbGen_gen_jaxb``
-
-
-
-
-
-* Implemented by ``abc.AaptGen_gen_aapt``
-
-
+  * | ``--ignored-assets``
+      ``str``
+      (Default: ``!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir&gt;_*:!CVS:!thumbs.db:!picasa.ini:!*~:BUILD*``)
+    |
+      Patterns the aapt tools should ignore as they search the resource_dir.
 
 
 
@@ -675,9 +1472,34 @@ goals
 List all documented goals.
 
 
-* Implemented by ``abc.ListGoals_goals``
+.. _gref_cli_goals:
+
+*
+  **goals**
+  Implemented by ``pants.backend.core.tasks.list_goals.ListGoals``
 
 
+
+  * | ``--sep``
+      ``str``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+  * | ``--output-file``
+      ``str``
+    |
+      Write the console output to this file instead.
+
+  * | ``--[no-]graph``
+      ``bool``
+    |
+      Generate a graphviz graph of installed goals.
+
+  * | ``--[no-]all``
+      ``bool``
+    |
+      List all goals even if no description is available.
 
 
 
@@ -696,9 +1518,130 @@ idea
 Create an IntelliJ IDEA project from the given targets.
 
 
-* Implemented by ``abc.IdeaGen_idea``
+.. _gref_cli_idea:
+
+*
+  **idea**
+  Implemented by ``pants.backend.jvm.tasks.idea_gen.IdeaGen``
 
 
+
+  * | ``--project-name``
+      ``str``
+      (Default: ``project``)
+    |
+      Specifies the name to use for the generated project.
+
+  * | ``--project-dir``
+      ``str``
+    |
+      Specifies the directory to output the generated project files to.
+
+  * | ``--project-cwd``
+      ``str``
+    |
+      Specifies the directory the generated project should use as the cwd for processes it launches.  Note that specifying this trumps --idea-project-dir and not all project related files will be stored there.
+
+  * | ``--[no-]intransitive``
+      ``bool``
+    |
+      Limits the sources included in the generated project to just those owned by the targets specified on the command line.
+
+  * | ``--[no-]python``
+      ``bool``
+    |
+      Adds python support to the generated project configuration.
+
+  * | ``--[no-]java``
+      ``bool``
+      (Default: ``True``)
+    |
+      Includes java sources in the project; otherwise compiles them and adds them to the project classpath.
+
+  * | ``--java-language-level``
+      ``int``
+      (Default: ``7``)
+    |
+      Sets the java language and jdk used to compile the project's java sources.
+
+  * | ``--java-jdk-name``
+      ``str``
+    |
+      Sets the jdk used to compile the project's java sources. If unset the default jdk name for the --java-language-level is used
+
+  * | ``--[no-]scala``
+      ``bool``
+      (Default: ``True``)
+    |
+      Includes scala sources in the project; otherwise compiles them and adds them to the project classpath.
+
+  * | ``--[no-]use-source-root``
+      ``bool``
+    |
+      Use source_root() settings to collapse sourcepaths in project and determine which paths are used for tests.  This is usually what you want if your repo  uses a maven style directory layout.
+
+  * | ``--[no-]infer-test-from-siblings``
+      ``bool``
+      (Default: ``True``)
+    |
+      When determining if a path should be added to the IDE, check to see if any of its sibling source_root() entries define test targets.  This is usually what you want so that resource directories under test source roots are picked up as test paths.
+
+  * | ``--version``
+      ``str``
+      (Default: ``11``)
+    |
+      The IntelliJ IDEA version the project config should be generated for.
+
+  * | ``--[no-]merge``
+      ``bool``
+      (Default: ``True``)
+    |
+      Merge any manual customizations in existing Intellij IDEA configuration. If False, manual customizations will be over-written.
+
+  * | ``--[no-]open``
+      ``bool``
+      (Default: ``True``)
+    |
+      Attempts to open the generated project in IDEA.
+
+  * | ``--[no-]bash``
+      ``bool``
+    |
+      Adds a bash facet to the generated project configuration.
+
+  * | ``--scala-language-level``
+      ``str``
+      (Default: ``2.9``)
+    |
+      Set the scala language level used for IDEA linting.
+
+  * | ``--scala-maximum-heap-size-mb``
+      ``str``
+      (Default: ``512``)
+    |
+      Sets the maximum heap size (in megabytes) for scalac.
+
+  * | ``--[no-]fsc``
+      ``bool``
+    |
+      If the project contains any scala targets this specifies the fsc compiler should be enabled.
+
+  * | ``--java-encoding``
+      ``str``
+      (Default: ``UTF-8``)
+    |
+      Sets the file encoding for java files in this project.
+
+  * | ``--java-maximum-heap-size-mb``
+      ``str``
+      (Default: ``512``)
+    |
+      Sets the maximum heap size (in megabytes) for javac.
+
+  * | ``--[no-]exclude-maven-target``
+      ``bool``
+    |
+      Exclude 'target' directories for directories containing pom.xml files.  These directories contain generated code andcopies of files staged for deployment.
 
 
 
@@ -716,7 +1659,11 @@ imports
 
 
 
-* Implemented by ``abc.IvyImports_imports_ivy_imports``
+.. _gref_cli_importsivyimports:
+
+*
+  **imports.ivy-imports**
+  Implemented by ``pants.backend.jvm.tasks.ivy_imports.IvyImports``
 
 
 
@@ -737,13 +1684,26 @@ invalidate
 Invalidate all targets.
 
 
-* Implemented by ``abc.NailgunKillall_invalidate_ng_killall``
+.. _gref_cli_invalidatengkillall:
+
+*
+  **invalidate.ng-killall**
+  Implemented by ``pants.backend.jvm.tasks.nailgun_task.NailgunKillall``
 
 
 
+  * | ``--[no-]everywhere``
+      ``bool``
+    |
+      Kill all nailguns servers launched by pants for all workspaces on the system.
 
 
-* Implemented by ``abc.Invalidator_invalidate``
+
+.. _gref_cli_invalidate:
+
+*
+  **invalidate**
+  Implemented by ``pants.backend.core.tasks.clean.Invalidator``
 
 
 
@@ -763,9 +1723,19 @@ jar
 
 
 
-* Implemented by ``abc.JarCreate_jar``
+.. _gref_cli_jar:
+
+*
+  **jar**
+  Implemented by ``pants.backend.jvm.tasks.jar_create.JarCreate``
 
 
+
+  * | ``--[no-]compressed``
+      ``bool``
+      (Default: ``True``)
+    |
+      Create compressed jars.
 
 
 
@@ -784,7 +1754,11 @@ killserver
 Kill the reporting server.
 
 
-* Implemented by ``abc.KillServer_killserver``
+.. _gref_cli_killserver:
+
+*
+  **killserver**
+  Implemented by ``pants.backend.core.tasks.reporting_server.KillServer``
 
 
 
@@ -805,9 +1779,40 @@ list
 List available BUILD targets.
 
 
-* Implemented by ``abc.ListTargets_list``
+.. _gref_cli_list:
+
+*
+  **list**
+  Implemented by ``pants.backend.core.tasks.listtargets.ListTargets``
 
 
+
+  * | ``--sep``
+      ``str``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+  * | ``--output-file``
+      ``str``
+    |
+      Write the console output to this file instead.
+
+  * | ``--[no-]provides``
+      ``bool``
+    |
+      List only targets that provide an artifact, displaying the columns specified by --provides-columns.
+
+  * | ``--provides-columns``
+      ``str``
+      (Default: ``address,artifact_id``)
+    |
+      Display these columns when --provides is specified. Available columns are: address, artifact_id, repo_name, repo_url, push_db_basedir
+
+  * | ``--[no-]documented``
+      ``bool``
+    |
+      Print only targets that are documented with a description.
 
 
 
@@ -826,9 +1831,36 @@ markdown
 Generate html from markdown docs.
 
 
-* Implemented by ``abc.MarkdownToHtml_markdown``
+.. _gref_cli_markdown:
+
+*
+  **markdown**
+  Implemented by ``pants.backend.core.tasks.markdown_to_html.MarkdownToHtml``
 
 
+
+  * | ``--code-style``
+      ``str``
+      (Default: ``friendly``)
+    |
+      Use this stylesheet for code highlights.
+
+  * | ``--[no-]open``
+      ``bool``
+    |
+      Open the generated documents in a browser.
+
+  * | ``--[no-]fragment``
+      ``bool``
+    |
+      Generate a fragment of html to embed in a page.
+
+  * | ``--extension``
+      ``str``
+      (Default: ``[u'.md', u'.markdown']``)
+      (Default: ``[u'.md', u'.markdown']``)
+    |
+      Process files with these extensions (as well as the standard extensions).
 
 
 
@@ -847,9 +1879,24 @@ minimize
 Print the minimal cover of the given targets.
 
 
-* Implemented by ``abc.MinimalCover_minimize``
+.. _gref_cli_minimize:
+
+*
+  **minimize**
+  Implemented by ``pants.backend.core.tasks.minimal_cover.MinimalCover``
 
 
+
+  * | ``--sep``
+      ``str``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+  * | ``--output-file``
+      ``str``
+    |
+      Write the console output to this file instead.
 
 
 
@@ -868,9 +1915,18 @@ ng-killall
 Kill running nailgun servers.
 
 
-* Implemented by ``abc.NailgunKillall_ng_killall``
+.. _gref_cli_ngkillall:
+
+*
+  **ng-killall**
+  Implemented by ``pants.backend.jvm.tasks.nailgun_task.NailgunKillall``
 
 
+
+  * | ``--[no-]everywhere``
+      ``bool``
+    |
+      Kill all nailguns servers launched by pants for all workspaces on the system.
 
 
 
@@ -889,9 +1945,24 @@ path
 Find a dependency path from one target to another.
 
 
-* Implemented by ``abc.Path_path``
+.. _gref_cli_path:
+
+*
+  **path**
+  Implemented by ``pants.backend.core.tasks.paths.Path``
 
 
+
+  * | ``--sep``
+      ``str``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+  * | ``--output-file``
+      ``str``
+    |
+      Write the console output to this file instead.
 
 
 
@@ -910,9 +1981,24 @@ pathdeps
 Print out all paths containing BUILD files the target depends on.
 
 
-* Implemented by ``abc.PathDeps_pathdeps``
+.. _gref_cli_pathdeps:
+
+*
+  **pathdeps**
+  Implemented by ``pants.backend.core.tasks.pathdeps.PathDeps``
 
 
+
+  * | ``--sep``
+      ``str``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+  * | ``--output-file``
+      ``str``
+    |
+      Write the console output to this file instead.
 
 
 
@@ -931,9 +2017,24 @@ paths
 Find all dependency paths from one target to another.
 
 
-* Implemented by ``abc.Paths_paths``
+.. _gref_cli_paths:
+
+*
+  **paths**
+  Implemented by ``pants.backend.core.tasks.paths.Paths``
 
 
+
+  * | ``--sep``
+      ``str``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+  * | ``--output-file``
+      ``str``
+    |
+      Write the console output to this file instead.
 
 
 
@@ -952,9 +2053,23 @@ provides
 Print the symbols provided by the given targets.
 
 
-* Implemented by ``abc.Provides_provides``
+.. _gref_cli_provides:
+
+*
+  **provides**
+  Implemented by ``pants.backend.jvm.tasks.provides.Provides``
 
 
+
+  * | ``--[no-]transitive``
+      ``bool``
+    |
+      Shows the symbols provided not just by the specified targets but by all their transitive dependencies.
+
+  * | ``--[no-]also-write-to-stdout``
+      ``bool``
+    |
+      Also write the provides information to stdout.
 
 
 
@@ -973,9 +2088,68 @@ publish
 Publish artifacts.
 
 
-* Implemented by ``abc.JarPublish_publish``
+.. _gref_cli_publish:
+
+*
+  **publish**
+  Implemented by ``pants.backend.jvm.tasks.jar_publish.JarPublish``
 
 
+
+  * | ``--[no-]dryrun``
+      ``bool``
+      (Default: ``True``)
+    |
+      Run through a push without actually pushing artifacts, editing publish dbs or otherwise writing data
+
+  * | ``--[no-]commit``
+      ``bool``
+      (Default: ``True``)
+    |
+      Commit the push db. Turn off for local testing.
+
+  * | ``--local``
+      ``str``
+    |
+      Publish jars to a maven repository on the local filesystem at this path.
+
+  * | ``--scm-push-attempts``
+      ``int``
+      (Default: ``5``)
+    |
+      Try pushing the pushdb to the SCM this many times before aborting.
+
+  * | ``--[no-]local-snapshot``
+      ``bool``
+      (Default: ``True``)
+    |
+      If --local is specified, publishes jars with -SNAPSHOT revision suffixes.
+
+  * | ``--named-snapshot``
+      ``str``
+    |
+      Publish all artifacts with the given snapshot name, replacing their version. This is not Semantic Versioning compatible, but is easier to consume in cases where many artifacts must align.
+
+  * | ``--[no-]transitive``
+      ``bool``
+      (Default: ``True``)
+    |
+      Publish the specified targets and all their internal dependencies transitively.
+
+  * | ``--[no-]force``
+      ``bool``
+    |
+      Force pushing jars even if there have been no changes since the last push.
+
+  * | ``--override``
+      ``str``
+    |
+      Specifies a published jar revision override in the form: ([org]#[name]|[target spec])=[new revision] For example, to specify 2 overrides: --override=com.foo.bar#baz=0.1.2  --override=src/java/com/foo/bar/qux=1.0.0
+
+  * | ``--restart-at``
+      ``str``
+    |
+      Restart a fail push at the given jar.  Jars can be identified by maven coordinate [org]#[name] or target. For example: --restart-at=com.twitter.common#quantity Or: --restart-at=src/java/com/twitter/common/base
 
 
 
@@ -994,15 +2168,54 @@ repl
 Run a REPL.
 
 
-* Implemented by ``abc.PythonRepl_repl_python_repl``
+.. _gref_cli_replpythonrepl:
+
+*
+  **repl.python-repl**
+  Implemented by ``pants.backend.python.tasks.python_repl.PythonRepl``
 
 
 
+  * | ``--timeout``
+      ``int``
+    |
+      Number of seconds to wait for http connections.
+
+  * | ``--[no-]ipython``
+      ``bool``
+    |
+      Run an IPython REPL instead of the standard python one.
 
 
-* Implemented by ``abc.ScalaRepl_repl_scala``
+
+.. _gref_cli_replscala:
+
+*
+  **repl.scala**
+  Implemented by ``pants.backend.jvm.tasks.scala_repl.ScalaRepl``
 
 
+
+  * | ``--jvm-options``
+      ``str``
+    |
+      Run the jvm with these extra jvm options.
+
+  * | ``--args``
+      ``str``
+    |
+      Run the jvm with these extra program args.
+
+  * | ``--[no-]debug``
+      ``bool``
+    |
+      Run the jvm under a debugger.
+
+  * | ``--confs``
+      ``str``
+      (Default: ``[u'default']``)
+    |
+      Use only these Ivy configurations of external deps.
 
 
 
@@ -1021,9 +2234,34 @@ repl-dirty
 Run a REPL, skipping compilation.
 
 
-* Implemented by ``abc.ScalaRepl_repl_dirty_scala_dirty``
+.. _gref_cli_repldirtyscaladirty:
+
+*
+  **repl-dirty.scala-dirty**
+  Implemented by ``pants.backend.jvm.tasks.scala_repl.ScalaRepl``
 
 
+
+  * | ``--jvm-options``
+      ``str``
+    |
+      Run the jvm with these extra jvm options.
+
+  * | ``--args``
+      ``str``
+    |
+      Run the jvm with these extra program args.
+
+  * | ``--[no-]debug``
+      ``bool``
+    |
+      Run the jvm under a debugger.
+
+  * | ``--confs``
+      ``str``
+      (Default: ``[u'default']``)
+    |
+      Use only these Ivy configurations of external deps.
 
 
 
@@ -1042,9 +2280,43 @@ resolve
 Resolve dependencies and produce dependency reports.
 
 
-* Implemented by ``abc.IvyResolve_resolve_ivy``
+.. _gref_cli_resolveivy:
+
+*
+  **resolve.ivy**
+  Implemented by ``pants.backend.jvm.tasks.ivy_resolve.IvyResolve``
 
 
+
+  * | ``--override``
+      ``str``
+    |
+      Specifies a jar dependency override in the form: [org]#[name]=(revision|url) Multiple overrides can be specified using repeated invocations of this flag. For example, to specify 2 overrides: --override=com.foo#bar=0.1.2 --override=com.baz#spam=file:///tmp/spam.jar
+
+  * | ``--[no-]report``
+      ``bool``
+    |
+      Generate an ivy resolve html report
+
+  * | ``--[no-]open``
+      ``bool``
+    |
+      Attempt to open the generated ivy resolve report in a browser (implies --report)
+
+  * | ``--outdir``
+      ``str``
+    |
+      Emit ivy report outputs in to this directory.
+
+  * | ``--args``
+      ``str``
+    |
+      Pass these extra args to ivy.
+
+  * | ``--mutable-pattern``
+      ``str``
+    |
+      If specified, all artifact revisions matching this pattern will be treated as mutable unless a matching artifact explicitly marks mutable as False.
 
 
 
@@ -1062,7 +2334,11 @@ resources
 
 
 
-* Implemented by ``abc.PrepareResources_resources_prepare``
+.. _gref_cli_resourcesprepare:
+
+*
+  **resources.prepare**
+  Implemented by ``pants.backend.core.tasks.prepare_resources.PrepareResources``
 
 
 
@@ -1083,9 +2359,24 @@ roots
 Print the workspace's source roots and associated target types.
 
 
-* Implemented by ``abc.ListRoots_roots``
+.. _gref_cli_roots:
+
+*
+  **roots**
+  Implemented by ``pants.backend.core.tasks.roots.ListRoots``
 
 
+
+  * | ``--sep``
+      ``str``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+  * | ``--output-file``
+      ``str``
+    |
+      Write the console output to this file instead.
 
 
 
@@ -1104,15 +2395,54 @@ run
 Run a binary target.
 
 
-* Implemented by ``abc.PythonRun_run_python_run``
+.. _gref_cli_runpythonrun:
+
+*
+  **run.python-run**
+  Implemented by ``pants.backend.python.tasks.python_run.PythonRun``
 
 
 
+  * | ``--timeout``
+      ``int``
+    |
+      Number of seconds to wait for http connections.
 
 
-* Implemented by ``abc.JvmRun_run_jvm``
+
+.. _gref_cli_runjvm:
+
+*
+  **run.jvm**
+  Implemented by ``pants.backend.jvm.tasks.jvm_run.JvmRun``
 
 
+
+  * | ``--jvm-options``
+      ``str``
+    |
+      Run the jvm with these extra jvm options.
+
+  * | ``--args``
+      ``str``
+    |
+      Run the jvm with these extra program args.
+
+  * | ``--[no-]debug``
+      ``bool``
+    |
+      Run the jvm under a debugger.
+
+  * | ``--confs``
+      ``str``
+      (Default: ``[u'default']``)
+    |
+      Use only these Ivy configurations of external deps.
+
+  * | ``--only-write-cmd-line``
+      ``str``
+    |
+      Instead of running, just write the cmd line to this file.
 
 
 
@@ -1131,9 +2461,39 @@ run-dirty
 Run a binary target, skipping compilation.
 
 
-* Implemented by ``abc.JvmRun_run_dirty_jvm_dirty``
+.. _gref_cli_rundirtyjvmdirty:
+
+*
+  **run-dirty.jvm-dirty**
+  Implemented by ``pants.backend.jvm.tasks.jvm_run.JvmRun``
 
 
+
+  * | ``--jvm-options``
+      ``str``
+    |
+      Run the jvm with these extra jvm options.
+
+  * | ``--args``
+      ``str``
+    |
+      Run the jvm with these extra program args.
+
+  * | ``--[no-]debug``
+      ``bool``
+    |
+      Run the jvm under a debugger.
+
+  * | ``--confs``
+      ``str``
+      (Default: ``[u'default']``)
+    |
+      Use only these Ivy configurations of external deps.
+
+  * | ``--only-write-cmd-line``
+      ``str``
+    |
+      Instead of running, just write the cmd line to this file.
 
 
 
@@ -1152,9 +2512,29 @@ server
 Run the pants reporting server.
 
 
-* Implemented by ``abc.RunServer_server``
+.. _gref_cli_server:
+
+*
+  **server**
+  Implemented by ``pants.backend.core.tasks.reporting_server.RunServer``
 
 
+
+  * | ``--port``
+      ``int``
+    |
+      Serve on this port. Leave unset to choose a free port automatically (recommended if using pants concurrently in multiple workspaces on the same host).
+
+  * | ``--allowed-clients``
+      ``str``
+      (Default: ``[u'127.0.0.1']``)
+    |
+      Only requests from these IPs may access this server. Useful for temporarily showing build results to a colleague. The special value ALL means any client may connect. Use with caution, as your source code is exposed to all allowed clients!
+
+  * | ``--[no-]open``
+      ``bool``
+    |
+      Attempt to open the server web ui in a browser.
 
 
 
@@ -1172,9 +2552,18 @@ sign
 
 
 
-* Implemented by ``abc.JarsignerTask_sign``
+.. _gref_cli_sign:
+
+*
+  **sign**
+  Implemented by ``pants.backend.android.tasks.jarsigner_task.JarsignerTask``
 
 
+
+  * | ``--build-type``
+      ``str``
+    |
+      Specifies the build type and keystore used to sign the package.
 
 
 
@@ -1193,9 +2582,18 @@ sitegen
 Generate static web site.
 
 
-* Implemented by ``abc.SiteGen_sitegen``
+.. _gref_cli_sitegen:
+
+*
+  **sitegen**
+  Implemented by ``internal_backend.sitegen.tasks.sitegen.SiteGen``
 
 
+
+  * | ``--config-path``
+      ``str``
+    |
+      Path to .json file describing site structure
 
 
 
@@ -1214,9 +2612,29 @@ sort
 Topologically sort the targets.
 
 
-* Implemented by ``abc.SortTargets_sort``
+.. _gref_cli_sort:
+
+*
+  **sort**
+  Implemented by ``pants.backend.core.tasks.sorttargets.SortTargets``
 
 
+
+  * | ``--sep``
+      ``str``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+  * | ``--output-file``
+      ``str``
+    |
+      Write the console output to this file instead.
+
+  * | ``--[no-]reverse``
+      ``bool``
+    |
+      Sort least-dependent to most-dependent.
 
 
 
@@ -1235,9 +2653,29 @@ targets
 List target types and BUILD file symbols (python_tests, jar, etc).
 
 
-* Implemented by ``abc.TargetsHelp_targets``
+.. _gref_cli_targets:
+
+*
+  **targets**
+  Implemented by ``pants.backend.core.tasks.targets_help.TargetsHelp``
 
 
+
+  * | ``--sep``
+      ``str``
+      (Default: ``\n``)
+    |
+      String to use to separate results.
+
+  * | ``--output-file``
+      ``str``
+    |
+      Write the console output to this file instead.
+
+  * | ``--details``
+      ``str``
+    |
+      Display details about the specific target type or BUILD symbol.
 
 
 
@@ -1256,27 +2694,206 @@ test
 Test compiled code.
 
 
-* Implemented by ``abc.RunPrepCommand_test_run_prep_command``
+.. _gref_cli_testrunprepcommand:
+
+*
+  **test.run_prep_command**
+  Implemented by ``pants.backend.core.tasks.run_prep_command.RunPrepCommand``
 
 
 
 
 
-* Implemented by ``abc.PytestRun_test_pytest``
+.. _gref_cli_testpytest:
+
+*
+  **test.pytest**
+  Implemented by ``pants.backend.python.tasks.pytest_run.PytestRun``
 
 
 
+  * | ``--timeout``
+      ``int``
+    |
+      Number of seconds to wait for http connections.
+
+  * | ``--[no-]fast``
+      ``bool``
+      (Default: ``True``)
+    |
+      Run all tests in a single chroot. If turned off, each test target will create a new chroot, which will be much slower.
+
+  * | ``--options``
+      ``str``
+    |
+      Pass these options to pytest.
 
 
-* Implemented by ``abc.JUnitRun_test_junit``
+
+.. _gref_cli_testjunit:
+
+*
+  **test.junit**
+  Implemented by ``pants.backend.jvm.tasks.junit_run.JUnitRun``
 
 
 
+  * | ``--jvm-options``
+      ``str``
+    |
+      Run the jvm with these extra jvm options.
+
+  * | ``--args``
+      ``str``
+    |
+      Run the jvm with these extra program args.
+
+  * | ``--[no-]debug``
+      ``bool``
+    |
+      Run the jvm under a debugger.
+
+  * | ``--confs``
+      ``str``
+      (Default: ``[u'default']``)
+    |
+      Use only these Ivy configurations of external deps.
+
+  * | ``--coverage-patterns``
+      ``str``
+    |
+      Restrict coverage measurement. Values are class name prefixes in dotted form with ? and * wildcards. If preceded with a - the pattern is excluded. For example, to include all code in com.pants.raven except claws and the eye you would use: %(flag)s=com.pants.raven.* %(flag)s=-com.pants.raven.claw %(flag)s=-com.pants.raven.Eye.
+
+  * | ``--[no-]coverage-console``
+      ``bool``
+      (Default: ``True``)
+    |
+      Output a simple coverage report to the console.
+
+  * | ``--[no-]coverage-xml``
+      ``bool``
+    |
+      Output an XML coverage report.
+
+  * | ``--[no-]coverage-html``
+      ``bool``
+    |
+      Output an HTML coverage report.
+
+  * | ``--[no-]coverage-html-open``
+      ``bool``
+    |
+      Open the generated HTML coverage report in a browser. Implies --coverage-html.
+
+  * | ``--[no-]skip``
+      ``bool``
+    |
+      Skip running junit.
+
+  * | ``--[no-]fail-fast``
+      ``bool``
+    |
+      Fail fast on the first test failure in a suite.
+
+  * | ``--batch-size``
+      ``int``
+      (Default: ``9223372036854775807``)
+    |
+      Run at most this many tests in a single test process.
+
+  * | ``--test``
+      ``str``
+    |
+      Force running of just these tests.  Tests can be specified using any of: [classname], [classname]#[methodname], [filename] or [filename]#[methodname]
+
+  * | ``--[no-]xml-report``
+      ``bool``
+    |
+      Output an XML report for the test run.
+
+  * | ``--[no-]per-test-timer``
+      ``bool``
+    |
+      Show progress and timer for each test.
+
+  * | ``--[no-]default-parallel``
+      ``bool``
+    |
+      Run classes without @TestParallel or @TestSerial annotations in parallel.
+
+  * | ``--parallel-threads``
+      ``int``
+    |
+      Number of threads to run tests in parallel. 0 for autoset.
+
+  * | ``--test-shard``
+      ``str``
+    |
+      Subset of tests to run, in the form M/N, 0 <= M < N. For example, 1/3 means run tests number 2, 5, 8, 11, ...
+
+  * | ``--[no-]suppress-output``
+      ``bool``
+      (Default: ``True``)
+    |
+      Redirect test output to files in .pants.d/test/junit. Implied by --xml-report.
+
+  * | ``--[no-]coverage``
+      ``bool``
+    |
+      Collect code coverage data.
+
+  * | ``--coverage-processor``
+      ``str``
+      (Default: ``emma``)
+    |
+      Which coverage subsystem to use.
 
 
-* Implemented by ``abc.SpecsRun_test_specs``
+
+.. _gref_cli_testspecs:
+
+*
+  **test.specs**
+  Implemented by ``pants.backend.jvm.tasks.specs_run.SpecsRun``
 
 
+
+  * | ``--jvm-options``
+      ``str``
+    |
+      Run the jvm with these extra jvm options.
+
+  * | ``--args``
+      ``str``
+    |
+      Run the jvm with these extra program args.
+
+  * | ``--[no-]debug``
+      ``bool``
+    |
+      Run the jvm under a debugger.
+
+  * | ``--confs``
+      ``str``
+      (Default: ``[u'default']``)
+    |
+      Use only these Ivy configurations of external deps.
+
+  * | ``--[no-]skip``
+      ``bool``
+    |
+      Skip running specs.
+
+  * | ``--test``
+      ``str``
+    |
+      Force running of just these specs.  Tests can be specified either by fully qualified classname or full file path.
+
+  * | ``--[no-]color``
+      ``bool``
+      (Default: ``True``)
+    |
+      Emit test result with ANSI terminal color codes.
 
 
 
@@ -1295,9 +2912,18 @@ thrift-linter
 Check thrift files for non-recommended usage patterns.
 
 
-* Implemented by ``abc.ThriftLinter_thrift_linter``
+.. _gref_cli_thriftlinter:
+
+*
+  **thrift-linter**
+  Implemented by ``pants.backend.codegen.tasks.thrift_linter.ThriftLinter``
 
 
+
+  * | ``--[no-]strict``
+      ``bool``
+    |
+      Fail the goal if thrift linter errors are found.
 
 
 
