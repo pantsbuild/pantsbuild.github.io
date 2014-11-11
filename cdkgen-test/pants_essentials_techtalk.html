@@ -3772,10 +3772,10 @@ Put all code in a single repo; choose what you want to build
 Simplifies dependency management by <em>eliminating versions for internal sources</em>.
 </li>
 <li class="slide">
-BUILD files define <span class="monospaced">Targets</span> - "nouns" describing things that can be built.
+<span class="monospaced">BUILD</span> files define <strong>Targets</strong> - "nouns" describing things that can be built.
 </li>
 <li class="slide">
-Pants provides <span class="monospaced">Goals</span> - "verbs" defining things the system can do.
+Pants provides <strong>Goals</strong> - "verbs" defining things the system can do.
 </li>
 </ul>
 </section>
@@ -4462,7 +4462,7 @@ They&#8217;re typed.
 They typically have dependencies.
 </li>
 <li>
-Each language has its own types: <span class="monospaced">java_library</span> <strong>vs</strong> <span class="monospaced">python_library</span>
+Each language has its own types: <span class="monospaced">java_library</span> <em>vs</em> <span class="monospaced">python_library</span>
 </li>
 </ul>
 </div></div>
@@ -4806,7 +4806,7 @@ vo0S68AAAAAASUVORK5CYII=" />
 <div class="content">
 <ul>
 <li>
-You give Pants one or more goals, like test
+You give Pants one or more goals, like <span class="monospaced">test</span>
 </li>
 <li>
 Within a goal might be a few tasks. E.g., <span class="monospaced">test</span> has <span class="monospaced">junit</span>, <span class="monospaced">pytest</span>.
@@ -4827,7 +4827,11 @@ Thus, Pants figures out order of operations.
 <!--slide-->
 <section class="slide slide0">
 <h2 class="section-slide">Let&#8217;s Walk Through a Build</h2>
-<p><span class="monospaced">./pants goal test examples/src/java/com/pants/examples/hello/main</span></p>
+<div class="listingblock">
+<div class="content"><div class="highlight"><pre>./pants goal <span class="nb">test</span>
+<span class="nb">  </span>examples/src/java/com/pants/examples/hello/main
+  examples/tests/java/com/pants/examples/hello/greet
+</pre></div></div></div>
 <div class="imageblock graphviz">
 <div class="content">
 <img alt="pants_essentials_techtalk__3.png"
@@ -5600,6 +5604,9 @@ gg==" />
 <li>
 <span class="monospaced">test</span> runs tests
 </li>
+<li>
+Not much happens to the <span class="monospaced">jvm_binary</span>.
+</li>
 </ul>
 </div></div>
 </section>
@@ -5633,21 +5640,21 @@ Command lines specify one or more goals, one or more targets, and options.
 <!--slide-->
 <section class="slide slide0">
 <h2 class="section-slide">Target Addresses</h2>
-<p>An Address is dir containing BUILD file + target name.</p>
+<p>An address is filesystem path to a BUILD file combined with a target name</p>
 <div class="listingblock">
 <div class="content">
 <pre><tt>path/to/mybird:mybird
 path/to/mybird  (target with same name as dir)
-:mybird  (relative to the current build file)</tt></pre>
+:mybird  (in the same build file)</tt></pre>
 </div></div>
 <p><strong>Command Line-only</strong> conveniences:</p>
 <div class="listingblock">
 <div class="content">
 <pre><tt>path/to/mybird/:mybird
-path/to/mybird/BUILD:mybird
 path/to/mybird/
 path/to/mybird: (wildcard)
-path/to/mybird:: (recursive wildcard)</tt></pre>
+path/to/mybird:: (recursive wildcard)
+path/to/mybird/BUILD:</tt></pre>
 </div></div>
 </section>
 
@@ -5657,7 +5664,10 @@ path/to/mybird:: (recursive wildcard)</tt></pre>
 <p>Here&#8217;s a simple library target. You might find this in <span class="monospaced">src/java/com/twitter/mybird/BUILD</span>.</p>
 <div class="listingblock">
 <div class="content"><div class="highlight"><pre><span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;mybird&#39;</span><span class="p">,</span>
-  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;3rdparty:guava&#39;</span><span class="p">,],</span>
+  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
+    <span class="s">&#39;3rdparty/jvm:guava&#39;</span><span class="p">,</span>
+    <span class="s">&#39;src/java/com/mycom/otherbird/common&#39;</span><span class="p">,</span>
+  <span class="p">],</span>
   <span class="n">sources</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s">&#39;*.java&#39;</span><span class="p">),</span>
 <span class="p">)</span>
 </pre></div></div></div>
@@ -5678,7 +5688,7 @@ path/to/mybird:: (recursive wildcard)</tt></pre>
 <span class="monospaced">junit_tests</span> - Tests a JVM library with JUnit.
 </li>
 <li>
-<span class="monospaced">jar_library</span> - Jar[s] from a maven repo
+<span class="monospaced">jar_library</span> - Jar(s) from a maven repo
 </li>
 <li>
 <span class="monospaced">jvm_binary</span> - A JVM binary optionally identifying a launcher main class.
@@ -5763,7 +5773,7 @@ jar_library(name='mybird',
 Recommended target addresses 3rdparty/$LANG/$ORG:$NAME
 </li>
 <li>
-All internal sources use same external library version. Eliminate diamond dependency issues.
+All internal sources use same external library version. Catch many diamond dependency issues.
 </li>
 <li>
 Aids discoverability, <span class="monospaced">git log</span> "detective work"
@@ -6107,7 +6117,7 @@ Note most likely the highest version number will end up on the classpath, which 
 Pants does <strong>not</strong> solve this. It does simplify dependency management.
 </li>
 <li>
-Each <span class="monospaced">jar</span> should be defined once for the whole repo, and everyone uses it.
+Instead, use this convention: Define each external jar once. Use this internal dependency in projects that need it.
 </li>
 </ul>
 </div></div>
@@ -6126,35 +6136,23 @@ Each <span class="monospaced">jar</span> should be defined once for the whole re
   rpc_style='finagle',
 )</tt></pre>
 </div></div>
-<p>Need to generate a few languages? Need a few <span class="monospaced">*_thrift_library</span> targets.</p>
+<p>Need to generate a few languages?<br>
+Use a few <span class="monospaced">*_thrift_library</span> targets.<br>
+(If your org has a standard set of languages to generate, might have a plugin
+with a <span class="monospaced">BUILD</span> helper function for this.)</p>
 </section>
 
 <!--slide-->
 <section class="slide slide0">
 <h2 class="section-slide">Deploy Bundles, jar-only case</h2>
-<p>Pants bundles have been suitable for launching on Aurora since day one.</p>
+<p>Want to upload something runnable to a server? Generate a bundle:</p>
 <div class="listingblock">
 <div class="content">
 <pre><tt># in mybird/BUILD
 jvm_binary(name='mybird-bin',
-  main='com.twitter.mybird.Main',
-  dependencies=['src/java/com/twitter/mybird'],
-)</tt></pre>
-</div></div>
-<div class="listingblock">
-<div class="content">
-<pre><tt>./pants goal bundle mybird:mybird-bin --bundle-archive=zip</tt></pre>
-</div></div>
-<p>The raw bundle and zip are created in the <span class="monospaced">dist</span> dir.</p>
-</section>
+  dependencies=['src/java/com/twitter/mybird'], ...
+)
 
-<!--slide-->
-<section class="slide slide0">
-<h2 class="section-slide">Deploy Bundles, jar and "extra stuff" case</h2>
-<p>Arbitrary files can be included in the bundle.</p>
-<div class="listingblock">
-<div class="content">
-<pre><tt># in mybird/BUILD
 jvm_app(name='mybird-app',
   binary=':mybird-bin',
   bundles=[bundle(relative_to='common').add(rglobs('common/*')),
@@ -6164,7 +6162,17 @@ jvm_app(name='mybird-app',
 <div class="content">
 <pre><tt>./pants goal bundle mybird:mybird-app --bundle-archive=zip</tt></pre>
 </div></div>
-<p>The raw bundle and zip are created in the <span class="monospaced">dist</span> dir.</p>
+<div class="sidebarblock">
+<div class="content">
+<ul>
+<li>
+<span class="monospaced">relative_to</span> means that <span class="monospaced">common/foo.ini</span> gets bundled at <span class="monospaced">./foo.ini</span>
+</li>
+<li>
+The raw bundle and zip are created in the <span class="monospaced">dist</span> dir.
+</li>
+</ul>
+</div></div>
 </section>
 
 <!--slide-->
@@ -6177,7 +6185,7 @@ Goals online help:<br>
   <span class="monospaced">./pants goal foo -h</span>
 </li>
 <li>
-Targets (and other BUILD things)<br>
+Targets (and other <span class="monospaced">BUILD</span> things)<br>
   <span class="monospaced">./pants goal targets</span><br>
   <span class="monospaced">./pants goal targets --targets-details=foo</span>
 </li>
