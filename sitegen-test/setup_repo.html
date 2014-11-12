@@ -28,12 +28,15 @@
 <nav class="pagetoc">
 <ul>
 <li class="toc-h1"><a href="#configuring-with-pantsini">Configuring with pants.ini</a></li>
-<li class="toc-h1"><a href="#configure-code-layout-with-source_root">Configure Code Layout with source_root</a></li>
+<li class="toc-h1"><a href="#configure-pants-own-runtime-dependencies">Configure Pants' own Runtime Dependencies</a></li>
+<li class="toc-h1"><a href="#configure-code-layout-with-source_root-maven_layout">Configure Code Layout with source_root, maven_layout</a></li>
 <li class="toc-h2"><a href="#organized-by-language">Organized by Language</a></li>
 <li class="toc-h2"><a href="#organized-by-project">Organized by Project</a></li>
-<li class="toc-h1"><a href="#top-level-build42-for-tree-global-config">Top-level BUILD.* for tree-global config</a></li>
+<li class="toc-h1"><a href="#setting-up-build-files">Setting up BUILD files</a></li>
+<li class="toc-h1"><a href="#build-and-environment-specific-config">BUILD.* and environment-specific config</a></li>
+<li class="toc-h1"><a href="#configure-jvm-artifact-publishing">Configure JVM Artifact Publishing</a></li>
 <li class="toc-h1"><a href="#integrate-new-tools-via-a-pants-plugin">Integrate New Tools via a Pants Plugin</a></li>
-<li class="toc-h1"><a href="#build42-in-the-source-tree-for-special-targets">BUILD.* in the source tree for special targets</a></li>
+<li class="toc-h1"><a href="#build-in-the-source-tree-for-special-targets">BUILD.* in the source tree for special targets</a></li>
 <li class="toc-h1"><a href="#enabling-pants-publish">Enabling Pants Publish</a></li>
 <li class="toc-h2"><a href="#tell-pants-about-your-artifact-repository">Tell Pants about your Artifact Repository</a></li>
 <li class="toc-h2"><a href="#restricting-publish-to-release-branch">Restricting Publish to &quot;Release Branch&quot;</a></li>
@@ -119,9 +122,9 @@
 </tbody>
 </table>
 
-<p><strong>As of September 2014, this is only possible for Pants experts.</strong> <strong>The
-Pants community is actively working to improve it.</strong> If you're setting
-up the Pants build tool to work in your source tree, you need to
+<p><strong>As of September 2014, this much more complex than it should be.</strong>
+<strong>The Pants community is actively working to simplify it.</strong>
+If you're setting up the Pants build tool to work in your source tree, you need to
 configure Pants' behavior. (Once it's set up, most folks should be able
 <a href="first_concepts.html">to use Pants as normal</a>
 and not worry about these things.)</p>
@@ -146,23 +149,23 @@ files</a>,
 parsed by
 <a href="http://docs.python.org/library/configparser.html">ConfigParser</a>. Thus,
 they look something like:</p>
-<div class="codehilite"><pre>[section]
-setting1: value1
-setting2: value2
+<div class="codehilite"><pre><span class="k">[section]</span>
+<span class="err">setting1:</span> <span class="err">value1</span>
+<span class="err">setting2:</span> <span class="err">value2</span>
 </pre></div>
 <p>The <code>[DEFAULT]</code> section is special: its values are available in other
 sections. It's thus handy for defining values that will be used in
 several contexts, as in these excerpts that define/use <code>thrift_workdir</code>:</p>
-<div class="codehilite"><pre>[DEFAULT]
-thrift_workdir: %(pants_workdir)s/thrift
+<div class="codehilite"><pre><span class="k">[DEFAULT]</span>
+<span class="err">thrift_workdir:</span> <span class="err">%(pants_workdir)s/thrift</span>
 
-[thrift-gen]
-workdir: %(thrift_workdir)s
+<span class="k">[thrift-gen]</span>
+<span class="err">workdir:</span> <span class="err">%(thrift_workdir)s</span>
 
-[java-compile]
-args: [
-  '-C-Tnowarnprefixes', '-C%(thrift_workdir)s',
-]
+<span class="k">[java-compile]</span>
+<span class="err">args:</span> <span class="err">[</span>
+  <span class="err">'-C-Tnowarnprefixes',</span> <span class="err">'-C%(thrift_workdir)s',</span>
+<span class="err">]</span>
 </pre></div>
 <p>It's also handy for defining values that are used in several contexts,
 since these values will be available in all those contexts. The code
@@ -172,9 +175,34 @@ that combines DEFAULT values with others is in Pants'
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h2 id="configure-code-layout-with-source_root">Configure Code Layout with <code>source_root</code></h2></td>
+<td class="h-plus-pilcrow-holder"><h2 id="configure-pants-own-runtime-dependencies">Configure Pants' own Runtime Dependencies</h2></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#configure-code-layout-with-source_root">¶</a>
+<a class="pilcrow-link" href="#configure-pants-own-runtime-dependencies">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Pants calls out to other tools. E.g., it uses <code>jmake</code> for part of Java compilation.
+Some special files in your workspace specify versions of these to fetch.
+When setting up your Pants repo, you want to copy these files over from a working Pants
+repo and perhaps change some version numbers to fit your situation.</p>
+<p><strong>JVM</strong> <code>BUILD.tools</code> has JVM dependencies. For example, when Pants fetches <code>jmake</code>, it looks in
+<code>BUILD.tools</code> for that target:</p>
+<p>
+<div class="md-included-snippet"><div class="codehilite"><pre><span class="n">jar_library</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">'jmake'</span><span class="p">,</span>
+            <span class="n">jars</span> <span class="o">=</span> <span class="p">[</span><span class="n">jar</span><span class="p">(</span><span class="n">org</span> <span class="o">=</span> <span class="s">'com.sun.tools'</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s">'jmake'</span><span class="p">,</span> <span class="n">rev</span> <span class="o">=</span> <span class="s">'1.3.8-3'</span><span class="p">)])</span>
+</pre></div></div>
+</p>
+<p><strong>Python</strong> <code>build-support/python/pants.requirements.txt</code> has Pants' runtime Python requirements,
+expressed as a <code>requirements.txt</code> file.</p>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="configure-code-layout-with-source_root-maven_layout">Configure Code Layout with <code>source_root</code>, <code>maven_layout</code></h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#configure-code-layout-with-source_root-maven_layout">¶</a>
 </div></td>
 </tr>
 </tbody>
@@ -207,7 +235,7 @@ for examples of using this style source tree.</p>
 
 <p>If your top-level <code>BUILD</code> file is <code>top/BUILD</code> and your main Java code is
 in <code>top/src/java/com/foo/</code> and your Java tests are in
-<code>top/src/javatest/com/foo/</code>, then your top-level BUILD file might look
+<code>top/src/javatest/com/foo/</code>, then your top-level <code>BUILD</code> file might look
 like:</p>
 <div class="codehilite"><pre><span class="c"># top/BUILD</span>
 <span class="n">source_root</span><span class="p">(</span><span class="s">'src/java'</span><span class="p">)</span>
@@ -235,7 +263,7 @@ under each source root:</p>
 
 <p>If your top-level <code>BUILD</code> file is <code>top/BUILD</code> and the Java code for your
 Theodore and Hank projects live in <code>top/theodore/src/java/com/foo/</code>,
-then your top-level BUILD file might not contain any <code>source_root</code>
+then your top-level <code>BUILD</code> file might not contain any <code>source_root</code>
 statements. Instead, <code>theodore/BUILD</code> and <code>hank/BUILD</code> might look like:</p>
 <div class="codehilite"><pre><span class="c"># top/(project)/BUILD</span>
 <span class="n">source_root</span><span class="p">(</span><span class="s">'src/java'</span><span class="p">)</span>
@@ -252,36 +280,62 @@ statements. Instead, <code>theodore/BUILD</code> and <code>hank/BUILD</code> mig
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h4 id="build42-and-environment-specific-config">BUILD.* and environment-specific config</h4></td>
+<td class="h-plus-pilcrow-holder"><h2 id="setting-up-build-files">Setting up <code>BUILD</code> files</h2></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#build42-and-environment-specific-config">¶</a>
+<a class="pilcrow-link" href="#setting-up-build-files">¶</a>
 </div></td>
 </tr>
 </tbody>
 </table>
 
-<p>When we said BUILD files were named <code>BUILD</code>, we really meant <code>BUILD</code> or
-<tt>BUILD.<em>something</em></tt>. If you have some rules that make sense for folks in
-one environment but not others, you might put them into a separate BUILD
-file named <tt>BUILD.<em>something</em></tt>.</p>
+<p>Pants is well-suited to large multi-project workspaces. You probably have a lot of code
+organized in a big directory tree. <a href="build_files.html">The usual BUILD file advice</a>
+applies here.</p>
+<p><a id="setup_mvn2pants" xmark="setup_mvn2pants"> </a></p>
+<p><strong>If you're converting a <code>mvn</code>-built workspace to use Pants</strong>, you can get a head start by using
+information from your <code>pom.xml</code> files. The <a href="https://github.com/ericzundel/mvn2pants"><code>mvn2pants</code></a>
+shows some scripts that convert <code>pom.xml</code> files into <code>BUILD</code> files; Square wrote and used these
+to convert some projects. This can get you up and running with Pants faster. Careful, though:
+Maven projects tend to be "coarser-grained" than Pants projects. Once you have things working,
+you'll probably want to replace the big automatically-generated targets with things that follow
+the 1:1:1 rule.</p>
 
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h2 id="top-level-build42-for-tree-global-config">Top-level BUILD.* for tree-global config</h2></td>
+<td class="h-plus-pilcrow-holder"><h2 id="build-and-environment-specific-config"><code>BUILD.*</code> and environment-specific config</h2></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#top-level-build42-for-tree-global-config">¶</a>
+<a class="pilcrow-link" href="#build-and-environment-specific-config">¶</a>
 </div></td>
 </tr>
 </tbody>
 </table>
 
-<p>When you invoke <code>./pants goal something src/foo:foo</code> it processes the
-code in src/foo/BUILD and the code in ./BUILD <em>and</em> ./BUILD.*. If you
-distribute code to different organizations, and want different
-configuration for them, you might put the relevant config code in
-./BUILD.something. You can give that file to some people and not give it
-to others.</p>
+<p>When we say <code>BUILD</code> files are named <code>BUILD</code>, we really mean <code>BUILD</code> or <tt>BUILD.<em>something</em></tt>.
+If you have some rules that make sense for folks in one environment but not others, you might put
+them into a separate BUILD file named <tt>BUILD.<em>something</em></tt>. For example, you might have
+some <code>BUILD</code> config that you'd like to ship with your open-source code but some other parts to
+keep internal. You can put open-source things in <code>BUILD.oss</code> and internal things in
+<code>BUILD.internal</code>. Pants "sees" both of these. When shipping open-source code, you can hold back
+the <code>BUILD.internal</code> file.</p>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="configure-jvm-artifact-publishing">Configure JVM Artifact Publishing</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#configure-jvm-artifact-publishing">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Pants uses <code>ivy</code> to publish artifacts. To specify where it should publish those artifacts,
+bring over a working <code>build-support/ivy/ivysettings.xml</code> file from a working Pants workspace
+and tweak to fit your situation. You can change the location of this file in <code>pants.ini</code>:</p>
+<div class="codehilite"><pre><span class="k">[ivy]</span>
+<span class="err">ivy_settings:</span> <span class="err">some/other/path/ivysettings.xml</span>
+</pre></div>
 
 <table class="h-plus-pilcrow">
 <tbody>
@@ -294,13 +348,12 @@ to others.</p>
 </tbody>
 </table>
 
-<p>Pants knows how to build many things, but maybe you need it to learn a
-new tool. Maybe your organization has a custom linter, a custom code
-generator, or some other custom tool. Maybe your organization uses a
-tool that, while not custom, has not yet been integrated with Pants.</p>
+<p>Pants knows how to build many things, but maybe you need it to learn a new tool.
+Maybe your organization has a custom linter, a custom code generator, or some other custom tool.
+Maybe your organization uses a tool that, while not custom, has not yet been integrated with Pants.</p>
 <ul>
-<li>If your organization has some custom tools to integrate,
-    set up a <a href="howto_plugin.html">Pants plugin</a>.</li>
+<li>If your organization has some custom tools to integrate, set up a
+    <a href="howto_plugin.html">Pants plugin</a>.</li>
 <li>If you want to integrate with a not-custom tool, you still want to
     set up a Pants plugin (or perhaps add abilities to an existing
     plugin), but it might make sense to
@@ -310,9 +363,9 @@ tool that, while not custom, has not yet been integrated with Pants.</p>
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h2 id="build42-in-the-source-tree-for-special-targets">BUILD.* in the source tree for special targets</h2></td>
+<td class="h-plus-pilcrow-holder"><h2 id="build-in-the-source-tree-for-special-targets"><code>BUILD.*</code> in the source tree for special targets</h2></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#build42-in-the-source-tree-for-special-targets">¶</a>
+<a class="pilcrow-link" href="#build-in-the-source-tree-for-special-targets">¶</a>
 </div></td>
 </tr>
 </tbody>
@@ -374,7 +427,7 @@ customize publishing.</p>
 <p>To tell Pants which artifact repsitory to publish to,</p>
 <p><a href="howto_plugin.html">Create a plugin</a>
 if you haven't already. Register it with Pants.</p>
-<p>In the plugin, define and register a <code>Repository</code> in a BUILD file alias
+<p>In the plugin, define and register a <code>Repository</code> in a <code>BUILD</code> file alias
 as shown in
 <a href="https://github.com/pantsbuild/pants/blob/master/src/python/internal_backend/repositories/register.py"><code>src/python/internal_backend/repositories/register.py</code></a>.</p>
 <p><code>BUILD</code> targets can use this Repository's alias as the <code>repo</code> parameter
@@ -456,7 +509,7 @@ develop a special Task to include "extra" data with published artifacts.</p>
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-dist/markdown/html/src/docs/setup_repo.html 2014-11-06T11:32:45.353165
+dist/markdown/html/src/docs/setup_repo.html 2014-11-12T08:49:52.045707
 </div>
 
 </div> <!-- end of mainflow -->
@@ -570,9 +623,6 @@ Set up Your Source Tree for Pants
 </li>
 <li class="toc-h2 ">
 <a href="howto_plugin.html">Developing a Pants Plugin</a>
-</li>
-<li class="toc-h2 ">
-<a href="howto_customize.html">Custom Pants for Your Site</a>
 </li>
 <li class="toc-h2 ">
 <a href="intellij.html">Pants Development with IntelliJ IDEA</a>

@@ -257,40 +257,60 @@ the goal was set up with the name "confluence", you invoke:</p>
 set its <code>provides</code> to something like:</p>
 <div class="codehilite"><pre><span class="n">page</span><span class="p">(</span><span class="o">...</span>
   <span class="n">provides</span><span class="o">=</span><span class="p">[</span>
-    <span class="n">wiki_artifact</span><span class="p">(</span><span class="n">wiki</span><span class="o">=</span><span class="s">'//:confluence'</span><span class="p">,</span>
+    <span class="n">wiki_artifact</span><span class="p">(</span><span class="n">wiki</span><span class="o">=</span><span class="n">confluence</span><span class="p">,</span>
       <span class="n">space</span><span class="o">=</span><span class="s">'ENG'</span><span class="p">,</span>
       <span class="n">title</span><span class="o">=</span><span class="s">'Pants Hello World Example'</span><span class="p">,</span>
       <span class="n">parent</span><span class="o">=</span><span class="s">'Examples'</span><span class="p">,</span>
     <span class="p">)</span>
   <span class="p">],)</span>
 </pre></div>
-<p>...assuming your workspace is set up with a wiki target named
-<code>confluence</code> in a top-level <code>BUILD</code> file (as described below).</p>
+<p>...assuming your workspace is set up for confluence publishing with a <code>Wiki</code> symbol named
+<code>confluence</code> set up as part of a plugin as described below:</p>
 <p><a id="page_setup_confluence" xmark="page_setup_confluence"></a></p>
 <p><strong>Setting up your workspace for Confluence publish</strong></p>
-<p>That <code>wiki</code> specifies some information about your wiki
-server. So far, the only kind of thing you can publish to is a
-Confluence wiki. You want to specify its target. Do this in one of the
-<code>BUILD</code> files that's always processed (probably a top-directory <code>BUILD</code>
-file). If your Confluence server lived at wiki.archie.org, the target
-would probably look something like:</p>
+<p>That <code>wiki</code> specifies some information about your wiki server. So far, the only kind of thing you
+can publish to is a Confluence wiki. To set up and register this symbol, set up a
+<a href="howto_plugin.html">Pants plugin</a> if your workspace doesn't already
+have one. In the plugin, define a <code>Wiki</code> and register it:</p>
 <div class="codehilite"><pre><span class="kn">import</span> <span class="nn">urllib</span>
 
-<span class="k">def</span> <span class="nf">confluence_url_builder</span><span class="p">(</span><span class="n">page</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
-  <span class="k">return</span> <span class="n">config</span><span class="p">[</span><span class="s">'title'</span><span class="p">],</span> <span class="s">'https://wiki.archie.org/display/</span><span class="si">%s</span><span class="s">/</span><span class="si">%s</span><span class="s">'</span> <span class="o">%</span> <span class="p">(</span>
-    <span class="n">config</span><span class="p">[</span><span class="s">'space'</span><span class="p">],</span>
-    <span class="n">urllib</span><span class="o">.</span><span class="n">quote_plus</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s">'title'</span><span class="p">]))</span>
+<span class="kn">from</span> <span class="nn">pants.backend.core.targets.doc</span> <span class="kn">import</span> <span class="n">Wiki</span>
 
-<span class="c"># Use this wiki target's address for the wiki= param in your wiki_artifacts</span>
-<span class="n">confluence</span> <span class="o">=</span> <span class="n">wiki</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">"confluence"</span><span class="p">,</span>
-                  <span class="n">url_builder</span><span class="o">=</span><span class="n">confluence_url_builder</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">confluence_url_builder</span><span class="p">(</span><span class="n">page</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+  <span class="n">title</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s">'title'</span><span class="p">]</span>
+  <span class="k">return</span> <span class="n">title</span><span class="p">,</span> <span class="s">'https://wiki.archie.org/display/</span><span class="si">%s</span><span class="s">/</span><span class="si">%s</span><span class="s">'</span> <span class="o">%</span> <span class="p">(</span>
+    <span class="n">config</span><span class="p">[</span><span class="s">'space'</span><span class="p">],</span>
+    <span class="n">urllib</span><span class="o">.</span><span class="n">quote_plus</span><span class="p">(</span><span class="n">title</span><span class="p">))</span>
+
+<span class="n">confluence_wiki</span> <span class="o">=</span> <span class="n">Wiki</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'confluence'</span><span class="p">,</span> <span class="n">url_builder</span><span class="o">=</span><span class="n">confluence_url_builder</span><span class="p">)</span>
+
+<span class="c"># in register.py:</span>
+<span class="k">def</span> <span class="nf">build_file_aliases</span><span class="p">():</span>
+  <span class="k">return</span> <span class="n">BuildFileAliases</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="c"># ...</span>
+    <span class="n">objects</span><span class="o">=</span><span class="p">{</span>
+      <span class="c"># ...</span>
+      <span class="s">'confluence'</span><span class="p">,</span> <span class="n">confluence_wiki</span><span class="p">},</span>
+  <span class="p">)</span>
 </pre></div>
-<p>You need to install a goal to enable publishing a doc to confluence. To
-do this, create a Pants plugin that installs a goal that subclasses
-ConfluencePublish.</p>
-<p>In your <code>pants.ini</code> file, add a section with the url of your wiki
-server. E.g., if your server is at wiki.archie.org, it would look like:</p>
-<div class="codehilite"><pre>[confluence-publish]
+<p>You need to install a goal to enable publishing a doc to confluence. To do this, in your Pants
+plugin, install a goal that subclasses <code>ConfluencePublish</code>:</p>
+<div class="codehilite"><pre><span class="kn">from</span> <span class="nn">pants.backend.core.tasks.confluence_publish</span> <span class="kn">import</span> <span class="n">ConfluencePublish</span>
+
+<span class="k">class</span> <span class="nc">ArchieConfluence</span><span class="p">(</span><span class="n">ConfluencePublish</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">wiki</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">confluence_wiki</span>
+  <span class="k">def</span> <span class="nf">api</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s">'confluence2'</span>
+
+<span class="c"># in register.py:</span>
+<span class="k">def</span> <span class="nf">register_goals</span><span class="p">():</span>
+  <span class="c"># ...</span>
+  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'confluence'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">ArchieConfluence</span><span class="p">,</span> <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s">'markdown'</span><span class="p">])</span><span class="o">.</span><span class="n">install</span><span class="p">()</span>
+</pre></div>
+<p>In your <code>pants.ini</code> file, add a section with the url of your wiki server. E.g., if your server
+is at wiki.archie.org, it would look like:</p>
+<div class="codehilite"><pre>[confluence]
 url: https://wiki.archie.org
 </pre></div>
 
@@ -298,7 +318,7 @@ url: https://wiki.archie.org
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-dist/markdown/html/examples/src/java/com/pants/examples/page.html 2014-11-06T11:32:45.729674
+dist/markdown/html/examples/src/java/com/pants/examples/page.html 2014-11-12T08:49:52.484190
 </div>
 
 </div> <!-- end of mainflow -->
@@ -412,9 +432,6 @@ README Files and Markdown
 </li>
 <li class="toc-h2 ">
 <a href="howto_plugin.html">Developing a Pants Plugin</a>
-</li>
-<li class="toc-h2 ">
-<a href="howto_customize.html">Custom Pants for Your Site</a>
 </li>
 <li class="toc-h2 ">
 <a href="intellij.html">Pants Development with IntelliJ IDEA</a>
