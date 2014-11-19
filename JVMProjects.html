@@ -154,7 +154,7 @@ packaged inside the jars themselves. If your application requires
 "extra stuff" (e.g.: start scripts, config files) use a <code>jvm_app</code>
 which allows you to include files in the bundle directory that
 supplement the binary jar and its dependencies. You can learn
-more about <a href="JVMProjects.html#jvm_bundles" xref="jvm_bundles">bundles</a></p>
+more about <a href="JVMProjects.html#jvm_bundles" pantsref="jvm_bundles">bundles</a></p>
 </blockquote>
 <p><strong>Runnable Binary</strong></p>
 <blockquote>
@@ -337,7 +337,7 @@ directory. Thus, the test has a <code>3rdparty</code> dependency:</p>
             <span class="p">],</span>
            <span class="p">)</span>
 </pre></div>
-<p>Those <a href="build_dictionary.html#bdict_jar" xref="bdict_jar"><code>jar()</code> things</a> are references to public jars.
+<p>Those <a href="build_dictionary.html#bdict_jar" pantsref="bdict_jar"><code>jar()</code> things</a> are references to public jars.
 You can read more about
 <a href="3rdparty_jvm.html">JVM 3rdpart dependencies</a>.</p>
 
@@ -365,27 +365,23 @@ other frameworks use other flags)</p>
 <div class="codehilite"><pre><span class="nv">$ </span>./pants goal <span class="nb">test </span>examples/tests/java/com/pants/examples/hello/:: --test-junit-test<span class="o">=</span>com.pants.examples.hello.greet.GreetingTest
 </pre></div>
 <p><strong>Packaging Binaries</strong></p>
-<p>To create a jar containing just the code built by a JVM target, use the
-jar goal:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants goal jar examples/src/java/com/pants/examples/hello/greet
-</pre></div>
-<p>To create a <a href="JVMProjects.html#jvm_bundles" xref="jvm_bundles">bundle</a> (a runnable thing and its
-dependencies, perhaps including helper files):</p>
+<p>To create a <a href="JVMProjects.html#jvm_bundles" pantsref="jvm_bundles">bundle</a> (a binary and its dependencies, perhaps
+including helper files):</p>
 <div class="codehilite"><pre><span class="nv">$ </span>./pants goal bundle examples/src/java/com/pants/examples/hello/main --bundle-archive<span class="o">=</span>zip
+   ...lots of build output...
+08:50:54 00:02       <span class="o">[</span>create-monolithic-jar<span class="o">]</span>
+08:50:54 00:02         <span class="o">[</span>add-internal-classes<span class="o">]</span>
+08:50:54 00:02         <span class="o">[</span>jar-tool<span class="o">]</span>
+                   created dist/hello-example.zip
+08:50:54 00:02     <span class="o">[</span>dup<span class="o">]</span>
+08:50:54 00:02     <span class="o">[</span>apk<span class="o">]</span>
+08:50:54 00:02       <span class="o">[</span>apk-bundle<span class="o">]</span>
+               SUCCESS
+<span class="err">$</span>
 </pre></div>
-<p>If your bundle is JVM, it's a zipfile which can run by means of an
-<code>unzip</code> and setting your <code>CLASSPATH</code> to <code>$BASEDIR/my_service.jar</code> (where
-<code>$BASEDIR is</code> the directory you've just unzipped).</p>
-<p><strong>Get Help</strong></p>
-<p>Get basic help:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants goal <span class="nb">help</span>
-</pre></div>
-<p>Get a list of goals:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants goal goals
-</pre></div>
-<p>Get help for one goal:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants goal <span class="nb">help </span>onegoal
-</pre></div>
+<p>This generates a zipfile with runnable contents; instead of a zipfile, we could have put the
+contents a directory tree, a giant jar, or something else.
+<a href="JVMProjects.html#jvm_bundles" pantsref="jvm_bundles">Learn more about bundles</a>.</p>
 
 <table class="h-plus-pilcrow">
 <tbody>
@@ -398,12 +394,11 @@ dependencies, perhaps including helper files):</p>
 </tbody>
 </table>
 
-<p>Pants uses <a href="http://ant.apache.org/ivy/">Ivy</a> to resolve <code>jar</code>
-dependencies. To change how Pants resolves these, use <code>--ivy-*</code>
-command-line parameters along with <code>--resolve-*</code> parameters.</p>
-<p>Pants uses <a href="https://github.com/martylamb/nailgun">Nailgun</a> to speed up
-compiles. It's a JVM daemon that runs in the background; this saves time
-for JVM startup and class loading.</p>
+<p>Pants uses <a href="http://ant.apache.org/ivy/">Ivy</a> to resolve <code>jar</code> dependencies. To change how Pants
+resolves these, configure <code>resolve.ivy</code>.</p>
+<p>Pants uses <a href="https://github.com/martylamb/nailgun">Nailgun</a> to speed up compiles. Nailgun is a
+JVM daemon that runs in the background. This means you don't need to start up a JVM and load
+classes for each JVM-based operation. Things go faster.</p>
 <p>Pants uses Jmake, a dependency tracking compiler facade.</p>
 
 <table class="h-plus-pilcrow">
@@ -435,7 +430,7 @@ Java version and are switching to another, you probably need to:</p>
 <p>so that the next build starts from scratch.</p>
 <p><strong>Note:</strong> Currently, pants is known to work with OpenJDK version 7 or greater,
 and Oracle JDK version 6 or greater.</p>
-<p><a id="jvm_bundles" xmark="jvm_bundles"></a></p>
+<p><a id="jvm_bundles" pantsmark="jvm_bundles"></a></p>
 
 <table class="h-plus-pilcrow">
 <tbody>
@@ -471,7 +466,7 @@ runnable binary and "bundles" of extra files:</p>
 <p>Here, we keep the extra files in a subdirectory, <code>config/</code> so that they
 don't clutter up this directory. (In this simple example, there's just
 one file, so there isn't actually much clutter.) By using the
-<a href="build_dictionary.html#bdict_bundle" xref="bdict_bundle"><code>bundle</code></a>'s
+<a href="build_dictionary.html#bdict_bundle" pantsref="bdict_bundle"><code>bundle</code></a>'s
 <code>relative_to</code> parameter, we "strip off" that
 subdirectory; in the generated bundle, these extra files will be in the
 top directory.</p>
@@ -484,6 +479,8 @@ not-so-useful stub <code>.jar</code> files).)</p>
 <p>Invoke <code>./pants goal bundle</code> on a JVM app or JVM binary target:</p>
 <div class="codehilite"><pre><span class="nv">$ </span>./pants goal bundle examples/src/java/com/pants/examples/hello/main:main
 </pre></div>
+<p>With options, you can tell Pants to archive the bundle in a zip, a tar, and some other common
+formats. See the <a href="goals_reference.html#gref_goal_bundle" pantsref="gref_goal_bundle">bundle help</a> for built-in choices.</p>
 <p><strong>Contents of a Bundle</strong></p>
 <p>The generated bundle is basically a directory tree containing <code>.jar</code>s
 and extra files. The <code>.jar</code> in the top-level directory has a manifest so
@@ -518,18 +515,40 @@ com/pants/examples/hello/greet/Greeting.class
 The <code>libs/</code> directory contains 3rdparty jars (if any). The <code>jar</code> in the top directory
 contains code compiled for this target.</p>
 <p><strong>Deploying a Bundle</strong></p>
-<p>Instead of just creating a directory tree, you can pass
-<code>--bundle-archive</code> to <code>./pants goal bundle</code> to generate an archive file
-(a zipped tarfile or some other format) instead. You can copy the
-archive somewhere, then unpack it on the destination machine. If there
-are some "standard jars" that are already on the destination machine,
-you might want to exclude them from the archive.</p>
+<p>Instead of just creating a directory tree, you can pass <code>--bundle-archive</code> to
+<code>./pants goal bundle</code> to generate an archive file (a <code>.zip</code>, monolithic <code>.jar</code>, or some other
+format) instead.</p>
+<p>To use such an archive, put it where you want it, unpack it, and run:</p>
+<div class="codehilite"><pre><span class="nv">$ </span>./pants goal bundle --bundle-archive<span class="o">=</span>zip examples/src/java/com/pants/examples/hello/main
+    ...lots of build output...
+10:14:26 00:01       <span class="o">[</span>create-monolithic-jar<span class="o">]</span>
+10:14:26 00:01         <span class="o">[</span>add-internal-classes<span class="o">]</span>
+10:14:26 00:01         <span class="o">[</span>jar-tool<span class="o">]</span>
+                   created dist/hello-example.zip
+10:14:26 00:01     <span class="o">[</span>dup<span class="o">]</span>
+10:14:26 00:01     <span class="o">[</span>apk<span class="o">]</span>
+10:14:26 00:01       <span class="o">[</span>apk-bundle<span class="o">]</span>
+               SUCCESS
+<span class="nv">$ </span><span class="c"># let's use it:</span>
+<span class="nv">$ </span>mkdir tmp; <span class="nb">cd </span>tmp
+<span class="nv">$ </span>unzip ../dist/hello-example.zip
+Archive:  ../dist/hello-example.zip
+  inflating: greetee.txt
+  inflating: hello-example.jar
+<span class="nv">$ </span>java -jar hello-example.jar
+Hello, Bundled-File World!
+Hello, Resource World!
+<span class="err">$</span>
+</pre></div>
+<p>You can copy the archive somewhere, then unpack it on the destination machine. If there
+are some "standard jars" that are already on the destination machine, you might want to exclude
+them from the archive.</p>
 
 <!-- main content end -->
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-dist/markdown/html/examples/src/java/com/pants/examples/readme.html 2014-11-17T10:53:59.415191
+dist/markdown/html/examples/src/java/com/pants/examples/readme.html 2014-11-19T11:08:11.494972
 </div>
 
 </div> <!-- end of mainflow -->
