@@ -209,10 +209,9 @@ instead of using Pants. Perhaps someone used Pants to publish an
 artifact but it failed to update the pushdb in source control. E.g.,
 merge conflicts can happen, and folks don't always recover from them
 correctly.</p>
-<p>In this situation, you probably want to pass <code>--publish-override</code> to
-specify a version to use instead of the automatically-computed
-already-existing version. Choose a version that's not already on the
-server. Pants records this version in the pushdb, so hopefully the
+<p>In this situation, you probably want to pass <code>goal publish --overrride=&lt;version&gt;</code> to specify a
+version to use instead of the automatically-computed already-existing version. Choose a version
+that's not already on the server. Pants records this version in the pushdb, so hopefully the
 next publisher won't have the same problem.</p>
 <p>Perhaps you are "racing" a colleague and just lost the race: they
 published an artifact with that name+version.</p>
@@ -252,7 +251,7 @@ fail, since Pants has lost track of the current version number.)</p>
     to-be-published artifact. See
     <a href="publish.html#publish_local_test" pantsref="publish_local_test">Test with a Fake Local "Publish"</a>.</li>
 <li>Start the publish:
-    <code>./pants goal publish --no-publish-dryrun [target]</code> Don't wander
+    <code>./pants goal publish --no-dryrun [target]</code> Don't wander
     off; Pants will ask for confirmation as it goes (making sure you
     aren't publishing artifact[s] you didn't mean to).</li>
 </ul>
@@ -349,10 +348,9 @@ and the <a href="build_dictionary.html#bdict_credentials" pantsref="bdict_creden
 </tbody>
 </table>
 
-<p>Sometimes publishing doesn't do what you want. The fix usually involves
-publishing again, perhaps passing <code>--publish-override</code> (override the
-version number to use), <code>--publish-force</code>, and/or
-<code>--publish-restart-at</code>. The following are some usual symptoms/questions:</p>
+<p>Sometimes publishing doesn't do what you want. The fix usually involves publishing again, perhaps
+passing <code>--override</code> (override the version number to use), <code>--force</code>, and/or <code>--restart-at</code>. The
+following are some usual symptoms/questions:</p>
 <p><a id="publish_version_exists" pantsmark="publish_version_exists"></a></p>
 
 <table class="h-plus-pilcrow">
@@ -373,12 +371,11 @@ that version of the artifact without updating the pushdb.</p>
 want to use. E.g., if you notice that versions up to 2.5.7 exist and you
 want to bump the patch version, you want to override the default version
 number and use 2.5.8 instead.</p>
-<p>Try publishing again, but pass <code>--publish-override</code> to specify the
-version number to use instead of incrementing the version number from
-the pushdb. Be sure to use a version number that has not already been
-published this time. For example, to override the default publish
-version number for the <code>org.archie</code> buoyancy artifact, you might pass
-<code>--publish-override=org.archie#buoyancy=2.5.8</code>.</p>
+<p>Try publishing again, but pass <code>--override</code> to specify the version number to use instead of
+incrementing the version number from the pushdb. Be sure to use a version number that has not
+already been published this time. For example, to override the default publish version number for
+the <code>org.archie</code> buoyancy artifact, you might pass
+<code>goal publish --override=org.archie#buoyancy=2.5.8</code>.</p>
 <p><a id="publish_pushdb_push" pantsmark="publish_pushdb_push"></a></p>
 
 <table class="h-plus-pilcrow">
@@ -392,8 +389,7 @@ version number for the <code>org.archie</code> buoyancy artifact, you might pass
 </tbody>
 </table>
 
-<p>You might successfully publish your artifact but then fail to push your
-pushdb change to origin:</p>
+<p>You might successfully publish your artifact but then fail to push your pushdb change to origin:</p>
 <div class="codehilite"><pre>To https://git.archimedes.org/owls
  ! [rejected]        master -&gt; master (non-fast-forward)
 error: failed to push some refs to 'https://git.archimedes.org/owls'
@@ -422,10 +418,9 @@ doesn't "remember" them.</p>
 git pull origin master
 ./pants goal publish &lt;your previous args&gt;
 </pre></div>
-<p>Since you uploaded new versioned artifacts but the reset pushdb doesn't
-"remember" that, you might get "Versioned Artifact Already Exists"
-errors: see the section above, and use <code>--publish-override</code> to set
-version numbers to avoid these.</p>
+<p>Since you uploaded new versioned artifacts but the reset pushdb doesn't "remember" that, you might
+get "Versioned Artifact Already Exists" errors: see the section above and use <code>--override</code> to
+set version numbers to avoid these.</p>
 <p><a id="publish_no_provides" pantsmark="publish_no_provides"></a></p>
 
 <table class="h-plus-pilcrow">
@@ -527,7 +522,7 @@ machine; then use that artifact from another codebase.</p>
 <p>For example, your other codebase might use Maven to build, perhaps with
 Maven configured to use <code>~/.m2/repository</code> as a local repo. You can make
 pants publish to that local repo with:</p>
-<div class="codehilite"><pre>./pants goal publish --no-publish-dryrun --publish-local<span class="o">=</span>~/.m2/repository
+<div class="codehilite"><pre>./pants goal publish --no-dryrun --local<span class="o">=</span>~/.m2/repository
 </pre></div>
 <p>In the other codebase, change the dependencies to pull in the new
 artifact.</p>
@@ -557,7 +552,7 @@ artifact repositories and, optionally, enable some features.</p>
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-dist/markdown/html/src/docs/publish.html 2014-11-19T11:08:11.411332
+dist/markdown/html/src/docs/publish.html 2014-11-21T16:11:35.881760
 </div>
 
 </div> <!-- end of mainflow -->
