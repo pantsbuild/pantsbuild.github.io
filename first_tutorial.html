@@ -27,9 +27,10 @@
 
 <nav class="pagetoc">
 <ul>
-<li class="toc-h1"><a href="#invoking-pants">Invoking Pants</a></li>
+<li class="toc-h1"><a href="#pants-command-line">Pants Command Line</a></li>
 <li class="toc-h2"><a href="#output">Output</a></li>
 <li class="toc-h2"><a href="#multiple-goals-multiple-targets">Multiple Goals, Multiple Targets</a></li>
+<li class="toc-h2"><a href="#command-line-options">Command-line Options</a></li>
 <li class="toc-h2"><a href="#help">Help</a></li>
 <li class="toc-h1"><a href="#build-files">BUILD Files</a></li>
 <li class="toc-h2"><a href="#anatomy-of-a-build-target">Anatomy of a BUILD Target</a></li>
@@ -147,9 +148,9 @@ are files in that directory.</p>
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h2 id="invoking-pants">Invoking Pants</h2></td>
+<td class="h-plus-pilcrow-holder"><h2 id="pants-command-line">Pants Command Line</h2></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#invoking-pants">¶</a>
+<a class="pilcrow-link" href="#pants-command-line">¶</a>
 </div></td>
 </tr>
 </tbody>
@@ -181,9 +182,9 @@ tests <em>and</em> run a binary, we could have said <code>./pants goal test run 
 This is a <em>build target</em>, a "build-able" thing in your source code. To
 define these, you set up configuration files named <code>BUILD</code> in your
 source code file tree. (You'll see more about these later.)</br></p>
-<p>Targets can depend on other targets. E.g., a test suite target normally
-depends on another target containing the "library" code to test; to
-build and run the test code, Pants also first build the library code.</p>
+<p>Targets can depend on other targets. E.g., a test target normally depends on another target
+containing "library" code to test; to build and run the test code, Pants also first builds the
+library code.</p>
 <p>You can specify more than one target on a command line. Pants will carry
 out its goals on all specified targets. E.g., you might use this to
 to run a few directories' worth of tests.</p>
@@ -230,7 +231,7 @@ the goals to all the targets, skipping things that wouldn't make sense.
 E.g., you could</p>
 <ul>
 <li>Invoke <code>test</code> and <code>run</code> goals to both run tests and run a binary.</li>
-<li>Specify both test-suite and binary targets.</li>
+<li>Specify both test and binary targets.</li>
 </ul>
 <p>In this example, it doesn't make sense to run a binary target as a test, so
 Pants doesn't do that.</p>
@@ -238,11 +239,52 @@ Pants doesn't do that.</p>
 <p><em>Goal-Target Mismatch</em></p>
 <p>One tricky side effect of this is accidental <em>goal-target mismatch</em>: You
 can invoke a goal that doesn't make sense for a target. E.g., you can
-invoke the <code>test</code> goal on a target that's not a test suite. Pants won't
+invoke the <code>test</code> goal on a target that's not actually a test target. Pants won't
 complain. It knows that it should compile code before it tests it; it
 will happily compile the build targets. If you're not watching closely,
 you might see a lot of output scrolling past and think it was running
 tests.</p>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="command-line-options">Command-line Options</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#command-line-options">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>You can specify some details of Pants' actions by means of command-line options. E.g., you could
+tell Pants to "fail fast" on the first <code>junit</code> test failure instead of running and reporting all
+<code>junit</code> tests like so:</p>
+<div class="codehilite"><pre><span class="nv">$ </span>./pants goal test.junit --fail-fast examples/tests/java/com/pants/examples/hello/greet:greet
+</pre></div>
+<p>Here, <code>test</code> has become <code>test.junit</code>. The <code>test</code> goal is made up of parts, or <em>tasks</em>: <code>test.junit</code>,
+<code>test.pytest</code>, and <code>test.specs</code>. We want to specify a flag to the <code>test.junit</code> task, so we
+specify that part on the command line. (Pants still runs the other parts of the <code>test</code> goal.
+The dotted notation tells Pants whre to apply options.)</p>
+<p>We entered the <code>--fail-fast</code> flag after <code>test.junit</code> but before the target. Command-line flags
+for a goal or task go immediately after that goal or task.</p>
+<p>You can specify options for more than one part of a goal. For example,</p>
+<div class="codehilite"><pre><span class="nv">$ </span>./pants goal test.junit --fail-fast test.pytest --options<span class="o">=</span><span class="s1">'-k seq'</span> examples/tests::
+</pre></div>
+<p>Here, the <code>--fail-fast</code> flag affects <code>test.junit</code> and <code>--options</code> affects <code>test.pytest</code>.</p>
+<p>Pants has some global options, options not associated with just one goal. For example,
+If you pass the global <code>-ldebug</code> flag after the word <code>goal</code> but before any particular goal or
+task, you get verbose debug-level logging for all goals:</p>
+<div class="codehilite"><pre><span class="nv">$ </span>./pants goal -ldebug <span class="nb">test </span>examples/tests/java/com/pants/examples/hello/greet:
+09:18:53 00:00 <span class="o">[</span>main<span class="o">]</span>
+               <span class="o">(</span>To run a reporting server: ./pants goal server<span class="o">)</span>
+09:18:53 00:00   <span class="o">[</span>bootstrap<span class="o">]</span>
+09:18:54 00:01   <span class="o">[</span>setup<span class="o">]</span>
+09:18:54 00:01     <span class="o">[</span>parse<span class="o">]</span>DEBUG<span class="o">]</span> Located Distribution<span class="o">(</span>u<span class="s1">'/Library/Java/JavaVirtualMachines/jdk1.7.0_60.jdk/Contents/Home/bin'</span>, <span class="nv">minimum_version</span><span class="o">=</span>None, <span class="nv">maximum_version</span><span class="o">=</span>None <span class="nv">jdk</span><span class="o">=</span>False<span class="o">)</span> <span class="k">for </span>constraints: minimum_version None, maximum_version None, jdk False
+DEBUG<span class="o">]</span> Selected protoc binary bootstrapped to: /Users/lhosken/.pants.d/bin/protobuf/mac/10.9/2.4.1/protoc
+DEBUG<span class="o">]</span> Selected thrift binary bootstrapped to: /Users/lhosken/.pants.d/bin/thrift/mac/10.9/0.5.0-finagle/thrift
+   ...lots of build output...
+</pre></div>
+<p>For details about the Pants command line, see <a href="invoking.html">Invoking Pants</a>.</p>
 
 <table class="h-plus-pilcrow">
 <tbody>
@@ -255,31 +297,42 @@ tests.</p>
 </tbody>
 </table>
 
-<p>To get help about a Pants goal, invoke <tt>./pants goal <em>goalname</em> -h</tt>.
-This lists the many command-line options you can pass for that goal.
-E.g.,</p>
+<p>To get help about a Pants goal, invoke <tt>./pants goal <em>goalname</em> -h</tt>. This lists
+command-line options for that goal. E.g.,</p>
 <div class="codehilite"><pre><span class="nv">$ </span>./pants goal <span class="nb">test</span> -h
 
 <span class="nb">test</span>: Test compiled code.
 
-<span class="nb">test </span>options:
-  --ng-daemons, --no-ng-daemons
-                          <span class="o">[</span>True<span class="o">]</span> Use nailgun daemons to execute java tasks.
+test.specs
+  -h, --help              show this <span class="nb">help </span>message and <span class="nb">exit</span>
+  --jvm-options &lt;option&gt;...
+                          Run the jvm with these extra jvm options. <span class="o">(</span>default: <span class="o">[])</span>
+  --args &lt;arg&gt;...         Run the jvm with these extra program args. <span class="o">(</span>default: <span class="o">[])</span>
+  --<span class="o">[</span>no-<span class="o">]</span>debug            Run the jvm under a debugger. <span class="o">(</span>default: None<span class="o">)</span>
+  --confs _TEST.SPECS_CONFS__
+                          Use only these Ivy configurations of external deps.
+                          <span class="o">(</span>default: <span class="o">[</span>u<span class="s1">'default'</span><span class="o">])</span>
 
-gen:thrift options:
-...
-  --test-specs-color, --no-test-specs-color
-                          <span class="o">[</span>True<span class="o">]</span> Emit <span class="nb">test </span>result with ANSI terminal color
-                          codes.
+...more <span class="nb">test </span>options...
+
+test.pytest
+  -h, --help              show this <span class="nb">help </span>message and <span class="nb">exit</span>
+  --timeout _TEST.PYTEST_TIMEOUT__
+                          Number of seconds to <span class="nb">wait </span><span class="k">for </span>http connections.
+                          <span class="o">(</span>default: 0<span class="o">)</span>
+
+...many more <span class="nb">test </span>options...
 </pre></div>
+<p>The <code>test</code> goal is made up of parts, or <em>tasks</em>: <code>test.junit</code>, <code>test.pytest</code>, and <code>test.specs</code>.
+Command-line options apply to those tasks. The goal's help groups options by task. E.g., here, it
+shows the <code>test.spec</code> <code>--jvm-options</code> option with <code>test.specs</code>.</p>
 <p>For a list of available goals, <code>./pants goal goals</code>.</p>
-<p>For help with things that aren't goals, use</p>
+<p>For help with things that aren't goals (global options, other kinds of help), use</p>
 <div class="codehilite"><pre><span class="nv">$ </span>./pants -h
 </pre></div>
-<p>If you want help diagnosing some strange Pants behavior, you might
-verbose output. To get this, instead of just invoking <code>./pants</code>, set
-some environment variables:
-<code>PEX_VERBOSE=1 PANTS_VERBOSE=1 PYTHON_VERBOSE=1 ./pants</code>.</p>
+<p>If you want help diagnosing some strange Pants behavior, you might want verbose output.
+To get this, instead of just invoking <code>./pants</code>, set some environment variables and request
+more logging: <code>PEX_VERBOSE=1 PANTS_VERBOSE=1 PYTHON_VERBOSE=1 ./pants -debug</code>.</p>
 
 <table class="h-plus-pilcrow">
 <tbody>
@@ -406,8 +459,8 @@ test.</br></p>
 Get the list of goals:</br></p>
 <div class="codehilite"><pre><span class="nv">$ </span>./pants goal goals
 </pre></div>
-<p>Get help for one goal:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants goal <span class="nb">help </span>onegoal
+<p>Get help for one goal, e.g., test:</p>
+<div class="codehilite"><pre><span class="nv">$ </span>./pants goal <span class="nb">test</span> -h
 </pre></div>
 
 <table class="h-plus-pilcrow">
@@ -430,7 +483,7 @@ Get the list of goals:</br></p>
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-dist/markdown/html/src/docs/first_tutorial.html 2014-11-21T16:11:35.839644
+dist/markdown/html/src/docs/first_tutorial.html 2014-11-26T15:57:42.806215
 </div>
 
 </div> <!-- end of mainflow -->
