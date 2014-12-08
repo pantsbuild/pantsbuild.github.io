@@ -122,11 +122,102 @@ Pants' <code>jvm</code> code registers in
 Pants' backend-loader code assumes your plugin has a <code>register.py</code> file
 there.</p>
 
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="simple-configuration">Simple Configuration</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#simple-configuration">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>If you want to extend Pants without adding any 3rd Party libraries that aren't already referenced by
+Pants, you can use the following technique using sources stored directly
+in your repo.  All you need to do is add the directory where your plugin sources are stored
+to <code>PYTHONPATH</code> and put the package where the plugin is defined in <code>pants.ini</code>.</p>
+<p>In the example below, the stock <code>maven_layout()</code> function will be extended by adding extra source
+root definitions and library types.</p>
+<ul>
+<li>
+<p>Define a home for your plugins. In this example we'll use a directory named 'plugins'</p>
+</li>
+<li>
+<p>Create an empty  <code>plugins/ext_maven_layout/__init__.py</code> to define your python package.</p>
+</li>
+<li>
+<p>Create a python module <code>plugins/ext_maven_layout/ext_maven_layout.py</code> that creates a new function
+to enhance <code>maven_layout()</code>:</p>
+<div class="codehilite"><pre><span class="c"># ext_maven_layout/ext_maven_layout.py</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">pants.backend.codegen.targets.java_wire_library</span> <span class="kn">import</span> <span class="n">JavaWireLibrary</span>
+<span class="kn">from</span> <span class="nn">pants.backend.jvm.targets.jar_library</span> <span class="kn">import</span> <span class="n">JarLibrary</span>
+<span class="kn">from</span> <span class="nn">pants.backend.maven_layout.maven_layout</span> <span class="kn">import</span> <span class="n">maven_layout</span>
+<span class="kn">from</span> <span class="nn">pants.base.source_root</span> <span class="kn">import</span> <span class="n">SourceRoot</span>
+
+<span class="k">def</span> <span class="nf">ext_maven_layout</span><span class="p">(</span><span class="n">parse_context</span><span class="p">,</span> <span class="n">basedir</span><span class="o">=</span><span class="s">''</span><span class="p">):</span>
+ <span class="sd">"""Sets up typical maven project source roots for all built-in pants target types.</span>
+
+<span class="sd"> See maven_layout() defined in the pants source code. Appends additional roots and targets</span>
+<span class="sd"> to the stock version.</span>
+<span class="sd"> """</span>
+ <span class="k">def</span> <span class="nf">root</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">*</span><span class="n">types</span><span class="p">):</span>
+   <span class="n">SourceRoot</span><span class="o">.</span><span class="n">register_mutable</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parse_context</span><span class="o">.</span><span class="n">rel_path</span><span class="p">,</span> <span class="n">basedir</span><span class="p">,</span> <span class="n">path</span><span class="p">),</span> <span class="o">*</span><span class="n">types</span><span class="p">)</span>
+
+ <span class="c"># Use the stock maven_layout to get started</span>
+ <span class="n">maven_layout</span><span class="p">(</span><span class="n">parse_context</span><span class="p">,</span> <span class="n">basedir</span><span class="o">=</span><span class="n">basedir</span><span class="p">)</span>
+
+ <span class="c"># Add additional targets to existing source roots</span>
+ <span class="n">root</span><span class="p">(</span><span class="s">'src/main/java'</span><span class="p">,</span> <span class="n">JarLibrary</span><span class="p">)</span>
+ <span class="n">root</span><span class="p">(</span><span class="s">'src/test/java'</span><span class="p">,</span> <span class="n">JarLibrary</span><span class="p">)</span>
+
+ <span class="c"># Add additional source roots</span>
+ <span class="n">root</span><span class="p">(</span><span class="s">'src/main/wire_proto'</span><span class="p">,</span> <span class="n">JavaWireLibrary</span><span class="p">,</span> <span class="n">JarLibrary</span><span class="p">)</span>
+ <span class="n">root</span><span class="p">(</span><span class="s">'src/test/wire_proto'</span><span class="p">,</span> <span class="n">JavaWireLibrary</span><span class="p">,</span> <span class="n">JarLibrary</span><span class="p">)</span>
+</pre></div>
+</li>
+<li>
+<p>Create <code>plugins/ext_maven_layout/register.py</code> to register the functions in your plugin.  When registering a
+backend in pants.ini, register.py is used by the pants plugin api  to register new functions
+exposed in build files, targets, tasks and goals:</p>
+<div class="codehilite"><pre><span class="c"># plugins/ext_maven_layout/register.py</span>
+
+<span class="kn">from</span> <span class="nn">pants.base.build_file_aliases</span> <span class="kn">import</span> <span class="n">BuildFileAliases</span>
+<span class="kn">from</span> <span class="nn">ext_maven_layout.ext_maven_layout</span> <span class="kn">import</span> <span class="n">ext_maven_layout</span>
+
+<span class="k">def</span> <span class="nf">build_file_aliases</span><span class="p">():</span>
+ <span class="k">return</span> <span class="n">BuildFileAliases</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+   <span class="n">context_aware_object_factories</span><span class="o">=</span><span class="p">{</span>
+    <span class="s">'ext_maven_layout'</span><span class="p">:</span> <span class="n">BuildFileAliases</span><span class="o">.</span><span class="n">curry_context</span><span class="p">(</span><span class="n">ext_maven_layout</span><span class="p">)</span>
+   <span class="p">}</span>
+ <span class="p">)</span>
+</pre></div>
+</li>
+<li>
+<p>Update your <code>pants</code> wrapper script to include the <code>plugins/</code> directory on <code>PYTHONPATH</code>:</p>
+<div class="codehilite"><pre><span class="nv">PYTHONPATH</span><span class="o">=</span>plugins:<span class="k">${</span><span class="nv">PYTHONPATH</span><span class="k">}</span>
+<span class="nb">export </span>PYTHONPATH
+</pre></div>
+</li>
+<li>
+<p>In <code>pants.ini</code>, add your new plugins directory to the list of backends to load when pants starts.
+This instructs pants to look for a module named <code>ext_maven_layout.register</code> and invoke
+it.</p>
+<div class="codehilite"><pre><span class="p">[</span><span class="n">backends</span><span class="p">]</span>
+<span class="n">packages</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s">"ext_maven_layout"</span><span class="p">,</span>
+  <span class="p">]</span>
+</pre></div>
+</li>
+</ul>
+
 <!-- main content end -->
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-dist/markdown/html/src/python/pants/docs/howto_plugin.html 2014-12-04T17:38:36.524695
+dist/markdown/html/src/python/pants/docs/howto_plugin.html 2014-12-08T08:11:21.759051
 </div>
 
 </div> <!-- end of mainflow -->
