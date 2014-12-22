@@ -9,7 +9,7 @@ ga('send', 'pageview');
 
 var ToggleNavs = function() {
   if (document && document.querySelectorAll) {
-    var navs = document.querySelectorAll('nav');
+    var navs = document.querySelectorAll('.bignav');
     if (!navs) { return; }
     var old_visibility = '';
     if (navs[0] && navs[0].style && navs[0].style.display) {
@@ -18,7 +18,7 @@ var ToggleNavs = function() {
 
     var new_visibility = 'block';
     if (old_visibility == 'block') {
-      new_visibility = 'none';
+      new_visibility = '';
     }
     for (ix = 0; ix < navs.length; ix++) {
       navs[ix].style.display = new_visibility;
