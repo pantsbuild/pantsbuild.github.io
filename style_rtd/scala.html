@@ -8,7 +8,7 @@
 
 <head>
   <meta charset="utf-8" />
-  <title>Python 3rdparty Pattern</title>
+  <title>Scala Projects with Pants</title>
   <link rel="stylesheet" href="s.css">
   <script src="s.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,15 +24,16 @@
 <nav class="breadcrumbs">
 <ul>
 <li><a href="index.html">Pants Build</a>
-<li><a href="python-readme.html">Python Projects with Pants</a>
-<li><a href="3rdparty_py.html">Python 3rdparty Pattern</a>
+<li><a href="JVMProjects.html">JVM Projects with Pants</a>
+<li><a href="scala.html">Scala Projects with Pants</a>
 </ul>
 </nav>
 
 <nav class="pagetoc">
 <ul>
-<li class="toc-h1"><a href="#3rdpartypython">3rdparty/python</a></li>
-<li class="toc-h1"><a href="#your-codes-build-file">Your Code's BUILD File</a></li>
+<li class="toc-h1"><a href="#hello-pants-scala">Hello Pants Scala</a></li>
+<li class="toc-h1"><a href="#scalajava-circular-dependencies">Scala/Java Circular Dependencies</a></li>
+<li class="toc-h1"><a href="#scala-console">Scala Console</a></li>
 </ul>
 </nav>
 
@@ -106,111 +107,168 @@
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h1 id="python-3rdparty-pattern">Python 3rdparty Pattern</h1></td>
+<td class="h-plus-pilcrow-holder"><h1 id="scala-projects-with-pants">Scala Projects with Pants</h1></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#python-3rdparty-pattern">¶</a>
+<a class="pilcrow-link" href="#scala-projects-with-pants">¶</a>
 </div></td>
 </tr>
 </tbody>
 </table>
 
-<p>In general, we use the
-<a href="3rdparty.html">3rdparty idiom</a> to organize
-dependencies on code from outside the source tree. This document
-describes how to make this work for Python code.</p>
-<p>Your Python code can pull in code written elsewhere. Pants fetches code
-via a library that uses pip-style specifications (name and
-version-range).</p>
+<p>Pants' Scala tooling has much in common with its Java tooling. (That's
+not surprising; Scala compiles to run on the JVM.) If you already know
+<a href="JVMProjects.html">how to use Pants to build JVM code</a>
+ and you know that
+<code>BUILD</code> files can have <a xref="bdict_scala_library"><code>scala_library</code></a> targets,
+then you're set to use Pants with Scala code.</p>
 
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h2 id="3rdpartypython">3rdparty/python</h2></td>
+<td class="h-plus-pilcrow-holder"><h2 id="hello-pants-scala">Hello Pants Scala</h2></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#3rdpartypython">¶</a>
+<a class="pilcrow-link" href="#hello-pants-scala">¶</a>
 </div></td>
 </tr>
 </tbody>
 </table>
 
-<p>To keep all of your code depending on the same versions of third-party
-Python artifacts, you might use the idiom of keeping them in a directory
-tree under <code>3rdparty/python</code>. If your organization has many such
-dependencies, you might arrange them in several directories: this can
-ease later "git detective work" when finding out who changed a version.</p>
-<p><strong>pip-style requirements.txt:</strong></p>
-<p>To define some third-party dependencies, use a
-<a href="build_dictionary.html#bdict_python_requirements" pantsref="bdict_python_requirements">python_requirements</a> in your <code>BUILD</code>
-file and make a pip <code>requirements.txt</code> file in the same directory.</p>
-<p>E.g, your <code>3rdparty/python/BUILD</code> file might look like:</p>
+<p>The sample code
+<a href="https://github.com/pantsbuild/pants/blob/master/examples/src/scala/com/pants/example/hello/welcome/">examples/src/scala/com/pants/example/hello/welcome/</a>
+shows how you can define a library of Scala code.</p>
+<p>Its <code>BUILD</code> file looks like that for a Java library, but contains a
+<code>scala_library</code> target with <code>.scala</code> sources:</p>
 <p>
-<div class="md-included-snippet"><div class="codehilite"><pre><span class="n">python_requirements</span><span class="p">()</span>
-</pre></div></div>
-</p>
-<p>...with <code>3rdparty/python/requirements.txt</code> like:</p>
-<p>
-<div class="md-included-snippet"><div class="codehilite"><pre>ansicolors==1.0.2
-
-antlr_python_runtime==3.1.3
---allow-external antlr-python-runtime
---allow-unverified antlr-python-runtime
-
-coverage&gt;=3.7,&lt;3.8
-docutils&gt;=0.12,&lt;0.13
-Markdown==2.1.1
-mock==1.0.1
-</pre></div></div>
-</p>
-<p><code>python_requirements</code> defines a named target for each line in the
-<code>requirements.txt</code> line. For example, a line like <code>ansicolors==1.0.2</code> in
-<code>requirements.txt</code> defines a target named <code>ansicolors</code> that pulls in
-ansicolors version 1.0.2.</p>
-<p><strong>python_requirement_library and python_requirement:</strong></p>
-<p>A <code>BUILD</code> file can also define requirements without a <code>requirements.txt</code>
-file. Set up a
-<a href="build_dictionary.html#bdict_python_requirement_library" pantsref="bdict_python_requirement_library"><code>python_requirement_library</code></a>
-with one or more
-<a href="build_dictionary.html#bdict_python_requirement" pantsref="bdict_python_requirement"><code>python_requirement</code></a>s
-like:</p>
-<div class="codehilite"><pre><span class="n">python_requirement_library</span><span class="p">(</span>
-  <span class="n">name</span><span class="o">=</span><span class="s">'beautifulsoup'</span><span class="p">,</span>
-  <span class="n">requirements</span><span class="o">=</span><span class="p">[</span>
-    <span class="n">python_requirement</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'beautifulsoup'</span><span class="p">,</span>
-                       <span class="n">requirement</span><span class="o">=</span><span class="s">'BeautifulSoup==3.2.0'</span><span class="p">),</span>
-  <span class="p">])</span>
-</pre></div>
-
-<table class="h-plus-pilcrow">
-<tbody>
-<tr>
-<td class="h-plus-pilcrow-holder"><h2 id="your-codes-build-file">Your Code's BUILD File</h2></td>
-<td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#your-codes-build-file">¶</a>
-</div></td>
-</tr>
-</tbody>
-</table>
-
-<p>In your code's <code>BUILD</code> file, introduce a dependency on the <code>3rdparty</code>
-target:</p>
-<p>
-<div class="md-included-snippet"><div class="codehilite"><pre><span class="n">python_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'greet'</span><span class="p">,</span>
+<div class="md-included-snippet"><div class="codehilite"><pre><span class="n">scala_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'welcome'</span><span class="p">,</span>
   <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
-    <span class="s">'3rdparty/python:ansicolors'</span><span class="p">,</span>
+    <span class="s">'examples/src/java/com/pants/examples/hello/greet:greet'</span><span class="p">,</span>
   <span class="p">],</span>
-  <span class="n">sources</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s">'*.py'</span><span class="p">),</span>
+  <span class="n">sources</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s">'*.scala'</span><span class="p">),</span>
+  <span class="n">resources</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s">'examples/src/resources/com/pants/example/hello'</span><span class="p">,</span>
+  <span class="p">],</span>
+  <span class="n">provides</span> <span class="o">=</span> <span class="n">artifact</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s">'com.pants.example.hello'</span><span class="p">,</span>
+                      <span class="n">name</span><span class="o">=</span><span class="s">'welcome'</span><span class="p">,</span>
+                      <span class="n">repo</span><span class="o">=</span><span class="n">public</span><span class="p">,),</span>
 <span class="p">)</span>
 </pre></div></div>
 </p>
-<p>Then in your Python code, you can <code>import</code> from that package:</p>
-<div class="codehilite"><pre><span class="kn">from</span> <span class="nn">colors</span> <span class="kn">import</span> <span class="n">green</span>
+<p>There's a sample test in
+<a href="https://github.com/pantsbuild/pants/tree/master/examples/tests/scala/com/pants/example/hello/welcome">examples/tests/scala/com/pants/example/hello/welcome</a>.
+It's a <a xref="bdict_junit_tests"><code>junit_tests</code></a> with <code>.scala</code> sources.
+(You might have thought JUnit was only for Java testing, but it also works great
+for Scala. Pants also has a
+<a xref="bdict_scala_specs"><code>scala_specs</code></a> target type for testing with
+Specs.)</p>
+<p>
+<div class="md-included-snippet"><div class="codehilite"><pre><span class="n">junit_tests</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'welcome'</span><span class="p">,</span>
+  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
+    <span class="s">'examples/src/scala/com/pants/example/hello/welcome:welcome'</span><span class="p">,</span>
+    <span class="s">'3rdparty:junit'</span><span class="p">,</span>
+    <span class="s">'3rdparty:specs'</span><span class="p">,</span>
+  <span class="p">],</span>
+  <span class="n">sources</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s">'*.scala'</span><span class="p">),</span>
+<span class="p">)</span>
+</pre></div></div>
+</p>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="scalajava-circular-dependencies">Scala/Java Circular Dependencies</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#scalajava-circular-dependencies">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Scala code and Java code can depend on each other. As long as the
+dependencies aren't circular, <code>scala_library</code> targets can depend on
+<code>java_library</code> targets and vice versa. If the dependencies <em>are</em>
+circular, you can set up targets to compile all of this code together:</p>
+<ul>
+<li>a <code>java_library</code> whose <code>sources</code> param is the <code>*.java</code> files.</li>
+<li>a <code>scala_library</code> whose <code>sources</code> param is the <code>*.scala</code> files and
+    whose <code>java_sources</code> is the above <code>java_library</code>.</li>
+</ul>
+<p>The <a href="https://github.com/pantsbuild/pants/tree/master/examples/src/scala/com/pants/example/scala_with_java_sources"><code>scala_with_java_sources</code></a>
+example shows how this can work:</p>
+<p>
+<div class="md-included-snippet"><div class="codehilite"><pre><span class="n">scala_library</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">'scala_with_java_sources'</span><span class="p">,</span>
+  <span class="n">sources</span> <span class="o">=</span> <span class="p">[</span><span class="s">'Greet.scala'</span><span class="p">],</span>
+  <span class="n">java_sources</span><span class="o">=</span><span class="p">[</span>
+    <span class="s">'examples/src/java/com/pants/examples/java_sources'</span><span class="p">,</span>
+   <span class="p">],</span>
+<span class="p">)</span>
+</pre></div></div>
+</p>
+<p>The referred-to
+<a href="https://github.com/pantsbuild/pants/tree/master/examples/src/java/com/pants/examples/java_sources/BUILD"><code>java_sources</code></a>
+<code>java_library</code> has this <code>java_library</code> in its dependencies:</p>
+<p>
+<div class="md-included-snippet"><div class="codehilite"><pre><span class="n">java_library</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">'java_sources'</span><span class="p">,</span>
+  <span class="n">sources</span> <span class="o">=</span> <span class="n">globs</span><span class="p">(</span><span class="s">'*.java'</span><span class="p">),</span>
+  <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
+   <span class="s">'examples/src/scala/com/pants/example/scala_with_java_sources'</span><span class="p">,</span>
+  <span class="p">],</span>
+<span class="p">)</span>
+</pre></div></div>
+</p>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="scala-console">Scala Console</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#scala-console">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>To bring up Scala's interactive console, use Pants
+<a xref="gref_goal_repl"><code>repl</code></a> goal.
+In the resulting console, you can <code>import</code> code from the Pants invocation's
+targets and their dependencies.</p>
+<div class="codehilite"><pre>$ ./pants goal repl examples/src/scala/com/pants/example/hello/welcome
+   ...much build output...
+15:08:13 00:11   [resources]
+15:08:13 00:11     [prepare]
+                   Invalidated 1 target containing 1 payload file.
+15:08:13 00:11   [repl]
+15:08:13 00:11     [python-repl]
+15:08:13 00:11     [scala-repl]
+15:08:13 00:11       [bootstrap-scala-repl]
+Welcome to Scala version 2.9.3 (Java HotSpot(TM) 64-Bit Server VM, Java 1.7.0_60).
+Type in expressions to have them evaluated.
+Type :help for more information.
+
+scala&gt; import com.pants.example.hello.welcome
+import com.pants.example.hello.welcome
+
+scala&gt; val folks = List("Abel", "Baker", "Charlie", "Delta")
+folks: List[java.lang.String] = List(Abel, Baker, Charlie, Delta)
+
+scala&gt; com.pants.example.hello.welcome.WelcomeEverybody(folks)
+res0: Seq[String] = List(Hello, Abel!, Hello, Baker!, Hello, Charlie!, Hello, Delta!)
+
+scala&gt; exit
+warning: there were 1 deprecation warnings; re-run with -deprecation for details
+
+               Waiting for background workers to finish.
+               SUCCESS
+
+$
 </pre></div>
+<p>Pants' <code>repl</code> goal works with JVM targets. (It also works with Python targets, but that uses a
+Python console instead.)</p>
 
 <!-- main content end -->
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/markdown/html/examples/src/python/example/3rdparty_py.html 2014-12-26T16:11:53.641208
+from dist/markdown/html/examples/src/scala/com/pants/example/readme.html 2014-12-26T16:11:53.613057
 </div>
 
 </div> <!-- end of mainflow -->
@@ -243,8 +301,8 @@ from dist/markdown/html/examples/src/python/example/3rdparty_py.html 2014-12-26T
 <li class="toc-h2 ">
 <a href="3rdparty_jvm.html">JVM 3rdparty Pattern</a>
 </li>
-<li class="toc-h2 ">
-<a href="scala.html">Scala Projects with Pants</a>
+<li class="toc-h2 toc-here">
+Scala Projects with Pants
 </li>
 <li class="toc-h2 ">
 <a href="from_maven.html">Pants for Maven Experts</a>
@@ -252,8 +310,8 @@ from dist/markdown/html/examples/src/python/example/3rdparty_py.html 2014-12-26T
 <li class="toc-h1 ">
 <a href="python-readme.html">Python Projects with Pants</a>
 </li>
-<li class="toc-h2 toc-here">
-Python 3rdparty Pattern
+<li class="toc-h2 ">
+<a href="3rdparty_py.html">Python 3rdparty Pattern</a>
 </li>
 <li class="toc-h2 ">
 <a href="pex_design.html">PEX Design</a>
@@ -279,8 +337,8 @@ Python 3rdparty Pattern
 <li class="toc-h2 ">
 <a href="3rdparty_jvm.html">JVM 3rdparty Pattern</a>
 </li>
-<li class="toc-h2 toc-here">
-Python 3rdparty Pattern
+<li class="toc-h2 ">
+<a href="3rdparty_py.html">Python 3rdparty Pattern</a>
 </li>
 <li class="toc-h1 ">
 <a href="ThriftDeps.html">Using Pants with Thrift Dependencies</a>
