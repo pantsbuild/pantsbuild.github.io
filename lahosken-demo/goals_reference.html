@@ -62,6 +62,7 @@
 <li class="toc-h2"><a href="#group_cleanallasync">clean-all-async</a></li>
 <li class="toc-h1"><a href="#compile">compile</a></li>
 <li class="toc-h2"><a href="#group_compilejvm">compile.jvm</a></li>
+<li class="toc-h2"><a href="#group_compilecheckstyle">compile.checkstyle</a></li>
 <li class="toc-h2"><a href="#group_compilescalastyle">compile.scalastyle</a></li>
 <li class="toc-h1"><a href="#dependees">dependees</a></li>
 <li class="toc-h2"><a href="#group_dependees">dependees</a></li>
@@ -148,8 +149,6 @@
 <li class="toc-h2"><a href="#group_setuppy">setup-py</a></li>
 <li class="toc-h1"><a href="#sign">sign</a></li>
 <li class="toc-h2"><a href="#group_sign">sign</a></li>
-<li class="toc-h1"><a href="#sitegen">sitegen</a></li>
-<li class="toc-h2"><a href="#group_sitegen">sitegen</a></li>
 <li class="toc-h1"><a href="#sort">sort</a></li>
 <li class="toc-h2"><a href="#group_sort">sort</a></li>
 <li class="toc-h1"><a href="#targets">targets</a></li>
@@ -198,7 +197,7 @@ goal.
 <p><b>Goals and Tasks summary</b>
 <ul>
 <li> <a href="#bench">bench</a> - None
-  <li> <a href="#binary">binary</a> - Create a jvm binary jar.
+  <li> <a href="#binary">binary</a> - Create a runnable binary.
   <li> <a href="#bootstrap">bootstrap</a> - Bootstrap tools needed for building.
   <li> <a href="#builddict">builddict</a> - None
   <li> <a href="#buildlint">buildlint</a> - None
@@ -208,7 +207,7 @@ goal.
   <li> <a href="#check_published_deps">check_published_deps</a> - Find references to outdated artifacts.
   <li> <a href="#clean-all">clean-all</a> - Clean all build output.
   <li> <a href="#clean-all-async">clean-all-async</a> - [deprecated] Clean all build output in a background process.
-  <li> <a href="#compile">compile</a> - Scala source code style check.
+  <li> <a href="#compile">compile</a> - Compile source code.
   <li> <a href="#dependees">dependees</a> - Print the target's dependees.
   <li> <a href="#dependencies">dependencies</a> - Print the target's dependencies.
   <li> <a href="#depmap">depmap</a> - Depict the target's dependencies.
@@ -246,12 +245,11 @@ goal.
   <li> <a href="#server">server</a> - Run the pants reporting server.
   <li> <a href="#setup-py">setup-py</a> - None
   <li> <a href="#sign">sign</a> - None
-  <li> <a href="#sitegen">sitegen</a> - Generate static web site.
   <li> <a href="#sort">sort</a> - Topologically sort the targets.
   <li> <a href="#targets">targets</a> - List target types and BUILD file symbols (python_tests, jar, etc).
   <li> <a href="#test">test</a> - Test compiled code.
   <li> <a href="#thrift-linter">thrift-linter</a> - Check thrift files for non-recommended usage patterns.
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 <style>
 div.gref_goal_section {
   margin-left: 2%;
@@ -329,7 +327,19 @@ div.gref_ogroup_section h3 {
 
       Enable memory profiling.
 
-</li></li></li></li></li></li></ul>
+<li><code>--benchmark-tool</code>
+<code>list_type</code>
+      (Default: <code>[u'//:benchmark-caliper-0.5']</code>)
+
+      Target specs for bootstrapping the benchmark-tool tool.
+
+<li><code>--benchmark-agent</code>
+<code>list_type</code>
+      (Default: <code>[u'//:benchmark-java-allocation-instrumenter-2.1']</code>)
+
+      Target specs for bootstrapping the benchmark-agent tool.
+
+</li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -348,7 +358,7 @@ div.gref_ogroup_section h3 {
 </tbody>
 </table>
 
-<p>Create a jvm binary jar.
+<p>Create a runnable binary.
 
 
 <div class="gref_ogroup_section">
@@ -385,7 +395,19 @@ div.gref_ogroup_section h3 {
 
 <p>Implemented by <code>pants.backend.jvm.tasks.binary_create.BinaryCreate</code>
 <ul>
-</ul>
+<li><code>--nailgun-server</code>
+<code>list_type</code>
+      (Default: <code>[u'//:nailgun-server']</code>)
+
+      Target specs for bootstrapping the nailgun-server tool.
+
+<li><code>--jar-tool</code>
+<code>list_type</code>
+      (Default: <code>[u'//:jar-tool']</code>)
+
+      Target specs for bootstrapping the jar-tool tool.
+
+</li></li></ul>
 </p></div>
 <div class="gref_ogroup_section">
 <a id="gref_cli_binarydup" pantsmark="gref_cli_binarydup"> </a>
@@ -403,6 +425,18 @@ div.gref_ogroup_section h3 {
 
 <p>Implemented by <code>pants.backend.jvm.tasks.detect_duplicates.DuplicateDetector</code>
 <ul>
+<li><code>--nailgun-server</code>
+<code>list_type</code>
+      (Default: <code>[u'//:nailgun-server']</code>)
+
+      Target specs for bootstrapping the nailgun-server tool.
+
+<li><code>--jar-tool</code>
+<code>list_type</code>
+      (Default: <code>[u'//:jar-tool']</code>)
+
+      Target specs for bootstrapping the jar-tool tool.
+
 <li><code>--[no-]fail-fast</code>
 <code>bool</code>
 
@@ -420,7 +454,7 @@ div.gref_ogroup_section h3 {
 
       Maximum number of duplicate classes to display per artifact.
 
-</li></li></li></ul>
+</li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -493,7 +527,12 @@ div.gref_ogroup_section h3 {
 
 <p>Implemented by <code>pants.backend.core.tasks.builddictionary.BuildBuildDictionary</code>
 <ul>
-</ul>
+<li><code>--omit-impl-re</code>
+<code>str</code>
+
+      Omit goals who have a task matching one of these regexps.
+
+</li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -581,6 +620,18 @@ div.gref_ogroup_section h3 {
 
 <p>Implemented by <code>pants.backend.jvm.tasks.bundle_create.BundleCreate</code>
 <ul>
+<li><code>--nailgun-server</code>
+<code>list_type</code>
+      (Default: <code>[u'//:nailgun-server']</code>)
+
+      Target specs for bootstrapping the nailgun-server tool.
+
+<li><code>--jar-tool</code>
+<code>list_type</code>
+      (Default: <code>[u'//:jar-tool']</code>)
+
+      Target specs for bootstrapping the jar-tool tool.
+
 <li><code>--[no-]deployjar</code>
 <code>bool</code>
 
@@ -596,7 +647,7 @@ div.gref_ogroup_section h3 {
 
       If --archive is specified, use the target basename as the path prefix.
 
-</li></li></li></ul>
+</li></li></li></li></li></ul>
 </p></div>
 <div class="gref_ogroup_section">
 <a id="gref_cli_bundledup" pantsmark="gref_cli_bundledup"> </a>
@@ -614,6 +665,18 @@ div.gref_ogroup_section h3 {
 
 <p>Implemented by <code>pants.backend.jvm.tasks.detect_duplicates.DuplicateDetector</code>
 <ul>
+<li><code>--nailgun-server</code>
+<code>list_type</code>
+      (Default: <code>[u'//:nailgun-server']</code>)
+
+      Target specs for bootstrapping the nailgun-server tool.
+
+<li><code>--jar-tool</code>
+<code>list_type</code>
+      (Default: <code>[u'//:jar-tool']</code>)
+
+      Target specs for bootstrapping the jar-tool tool.
+
 <li><code>--[no-]fail-fast</code>
 <code>bool</code>
 
@@ -631,7 +694,7 @@ div.gref_ogroup_section h3 {
 
       Maximum number of duplicate classes to display per artifact.
 
-</li></li></li></ul>
+</li></li></li></li></li></ul>
 </p></div>
 <div class="gref_ogroup_section">
 <a id="gref_cli_bundleapk" pantsmark="gref_cli_bundleapk"> </a>
@@ -719,18 +782,22 @@ div.gref_ogroup_section h3 {
 
       Write the console output to this file instead.
 
-<li><code>--parent</code>
-<code>str</code>
-      (Default: <code>HEAD</code>)
+<li><code>--[no-]fast</code>
+<code>bool</code>
 
-      Calculate changes against this tree-ish.
+      Stop searching for owners once a source is mapped to at least owning target.
+
+<li><code>--changes-since/--parent</code>
+<code>str</code>
+
+      Calculate changes since this tree-ish/scm ref (defaults to current HEAD/tip).
 
 <li><code>--[no-]files</code>
 <code>bool</code>
 
       Show changed files instead of the targets that own them.
 
-</li></li></li></li></ul>
+</li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -1005,7 +1072,7 @@ div.gref_ogroup_section h3 {
 </tbody>
 </table>
 
-<p>Scala source code style check.
+<p>Compile source code.
 
 
 <div class="gref_ogroup_section">
@@ -1027,6 +1094,57 @@ div.gref_ogroup_section h3 {
 </ul>
 </p></div>
 <div class="gref_ogroup_section">
+<a id="gref_cli_compilecheckstyle" pantsmark="gref_cli_compilecheckstyle"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_compilecheckstyle">compile.checkstyle</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_compilecheckstyle">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.checkstyle.Checkstyle</code>
+<ul>
+<li><code>--nailgun-server</code>
+<code>list_type</code>
+      (Default: <code>[u'//:nailgun-server']</code>)
+
+      Target specs for bootstrapping the nailgun-server tool.
+
+<li><code>--[no-]skip</code>
+<code>bool</code>
+
+      Skip checkstyle.
+
+<li><code>--configuration</code>
+<code>str</code>
+
+      Path to the checkstyle configuration file.
+
+<li><code>--properties</code>
+<code>dict_type</code>
+
+      Dictionary of property mappings to use for checkstyle.properties.
+
+<li><code>--confs</code>
+<code>str</code>
+      (Default: <code>[u'default']</code>)
+
+      One or more ivy configurations to resolve for this target. This parameter is not intended for general use.
+
+<li><code>--checkstyle</code>
+<code>list_type</code>
+      (Default: <code>[u'//:checkstyle']</code>)
+
+      Target specs for bootstrapping the checkstyle tool.
+
+</li></li></li></li></li></li></ul>
+</p></div>
+<div class="gref_ogroup_section">
 <a id="gref_cli_compilescalastyle" pantsmark="gref_cli_compilescalastyle"> </a>
 
 <table class="h-plus-pilcrow">
@@ -1042,12 +1160,24 @@ div.gref_ogroup_section h3 {
 
 <p>Implemented by <code>pants.backend.jvm.tasks.scalastyle.Scalastyle</code>
 <ul>
+<li><code>--nailgun-server</code>
+<code>list_type</code>
+      (Default: <code>[u'//:nailgun-server']</code>)
+
+      Target specs for bootstrapping the nailgun-server tool.
+
 <li><code>--[no-]skip</code>
 <code>bool</code>
 
       Skip scalastyle.
 
-</li></ul>
+<li><code>--scalastyle</code>
+<code>list_type</code>
+      (Default: <code>[u'//:scalastyle']</code>)
+
+      Target specs for bootstrapping the scalastyle tool.
+
+</li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -1294,6 +1424,18 @@ div.gref_ogroup_section h3 {
 
 <p>Implemented by <code>pants.backend.jvm.tasks.detect_duplicates.DuplicateDetector</code>
 <ul>
+<li><code>--nailgun-server</code>
+<code>list_type</code>
+      (Default: <code>[u'//:nailgun-server']</code>)
+
+      Target specs for bootstrapping the nailgun-server tool.
+
+<li><code>--jar-tool</code>
+<code>list_type</code>
+      (Default: <code>[u'//:jar-tool']</code>)
+
+      Target specs for bootstrapping the jar-tool tool.
+
 <li><code>--[no-]fail-fast</code>
 <code>bool</code>
 
@@ -1311,7 +1453,7 @@ div.gref_ogroup_section h3 {
 
       Maximum number of duplicate classes to display per artifact.
 
-</li></li></li></ul>
+</li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -1346,6 +1488,12 @@ div.gref_ogroup_section h3 {
 
 <p>Implemented by <code>pants.backend.android.tasks.dx_compile.DxCompile</code>
 <ul>
+<li><code>--nailgun-server</code>
+<code>list_type</code>
+      (Default: <code>[u'//:nailgun-server']</code>)
+
+      Target specs for bootstrapping the nailgun-server tool.
+
 <li><code>--sdk-path</code>
 <code>str</code>
 
@@ -1361,7 +1509,7 @@ div.gref_ogroup_section h3 {
 
       Run dx with these JVM options.
 
-</li></li></li></ul>
+</li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -1559,6 +1707,18 @@ div.gref_ogroup_section h3 {
 
 <p>Implemented by <code>pants.backend.jvm.tasks.eclipse_gen.EclipseGen</code>
 <ul>
+<li><code>--nailgun-server</code>
+<code>list_type</code>
+      (Default: <code>[u'//:nailgun-server']</code>)
+
+      Target specs for bootstrapping the nailgun-server tool.
+
+<li><code>--jar-tool</code>
+<code>list_type</code>
+      (Default: <code>[u'//:jar-tool']</code>)
+
+      Target specs for bootstrapping the jar-tool tool.
+
 <li><code>--project-name</code>
 <code>str</code>
       (Default: <code>project</code>)
@@ -1624,7 +1784,7 @@ div.gref_ogroup_section h3 {
 
       The Eclipse version the project configuration should be generated for.
 
-</li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -1662,6 +1822,18 @@ div.gref_ogroup_section h3 {
 
 <p>Implemented by <code>pants.backend.jvm.tasks.ensime_gen.EnsimeGen</code>
 <ul>
+<li><code>--nailgun-server</code>
+<code>list_type</code>
+      (Default: <code>[u'//:nailgun-server']</code>)
+
+      Target specs for bootstrapping the nailgun-server tool.
+
+<li><code>--jar-tool</code>
+<code>list_type</code>
+      (Default: <code>[u'//:jar-tool']</code>)
+
+      Target specs for bootstrapping the jar-tool tool.
+
 <li><code>--project-name</code>
 <code>str</code>
       (Default: <code>project</code>)
@@ -1727,7 +1899,7 @@ div.gref_ogroup_section h3 {
 
       Set the scala language level used for Ensime linting.
 
-</li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -1960,12 +2132,24 @@ div.gref_ogroup_section h3 {
 
 <p>Implemented by <code>pants.backend.codegen.tasks.scrooge_gen.ScroogeGen</code>
 <ul>
+<li><code>--nailgun-server</code>
+<code>list_type</code>
+      (Default: <code>[u'//:nailgun-server']</code>)
+
+      Target specs for bootstrapping the nailgun-server tool.
+
 <li><code>--[no-]verbose</code>
 <code>bool</code>
 
       Emit verbose output.
 
-</li></ul>
+<li><code>--scrooge-gen</code>
+<code>list_type</code>
+      (Default: <code>[u'//:scrooge-gen']</code>)
+
+      Target specs for bootstrapping the scrooge-gen tool.
+
+</li></li></li></ul>
 </p></div>
 <div class="gref_ogroup_section">
 <a id="gref_cli_genprotoc" pantsmark="gref_cli_genprotoc"> </a>
@@ -2006,7 +2190,25 @@ div.gref_ogroup_section h3 {
 
 <p>Implemented by <code>pants.backend.codegen.tasks.antlr_gen.AntlrGen</code>
 <ul>
-</ul>
+<li><code>--nailgun-server</code>
+<code>list_type</code>
+      (Default: <code>[u'//:nailgun-server']</code>)
+
+      Target specs for bootstrapping the nailgun-server tool.
+
+<li><code>--antlr3</code>
+<code>list_type</code>
+      (Default: <code>[u'//:antlr-3.4']</code>)
+
+      Target specs for bootstrapping the antlr3 tool.
+
+<li><code>--antlr4</code>
+<code>list_type</code>
+      (Default: <code>[u'//:antlr-4']</code>)
+
+      Target specs for bootstrapping the antlr4 tool.
+
+</li></li></li></ul>
 </p></div>
 <div class="gref_ogroup_section">
 <a id="gref_cli_genragel" pantsmark="gref_cli_genragel"> </a>
@@ -2042,7 +2244,13 @@ div.gref_ogroup_section h3 {
 
 <p>Implemented by <code>pants.backend.codegen.tasks.jaxb_gen.JaxbGen</code>
 <ul>
-</ul>
+<li><code>--nailgun-server</code>
+<code>list_type</code>
+      (Default: <code>[u'//:nailgun-server']</code>)
+
+      Target specs for bootstrapping the nailgun-server tool.
+
+</li></ul>
 </p></div>
 <div class="gref_ogroup_section">
 <a id="gref_cli_genwire" pantsmark="gref_cli_genwire"> </a>
@@ -2060,7 +2268,13 @@ div.gref_ogroup_section h3 {
 
 <p>Implemented by <code>pants.backend.codegen.tasks.wire_gen.WireGen</code>
 <ul>
-</ul>
+<li><code>--wire-compiler</code>
+<code>list_type</code>
+      (Default: <code>[u'//:wire-compiler']</code>)
+
+      Target specs for bootstrapping the wire-compiler tool.
+
+</li></ul>
 </p></div>
 <div class="gref_ogroup_section">
 <a id="gref_cli_genaapt" pantsmark="gref_cli_genaapt"> </a>
@@ -2196,6 +2410,18 @@ div.gref_ogroup_section h3 {
 
 <p>Implemented by <code>pants.backend.jvm.tasks.idea_gen.IdeaGen</code>
 <ul>
+<li><code>--nailgun-server</code>
+<code>list_type</code>
+      (Default: <code>[u'//:nailgun-server']</code>)
+
+      Target specs for bootstrapping the nailgun-server tool.
+
+<li><code>--jar-tool</code>
+<code>list_type</code>
+      (Default: <code>[u'//:jar-tool']</code>)
+
+      Target specs for bootstrapping the jar-tool tool.
+
 <li><code>--project-name</code>
 <code>str</code>
       (Default: <code>project</code>)
@@ -2312,7 +2538,7 @@ div.gref_ogroup_section h3 {
 
       Exclude 'target' directories for directories containing pom.xml files.  These directories contain generated code andcopies of files staged for deployment.
 
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -2347,7 +2573,13 @@ div.gref_ogroup_section h3 {
 
 <p>Implemented by <code>pants.backend.jvm.tasks.ivy_imports.IvyImports</code>
 <ul>
-</ul>
+<li><code>--nailgun-server</code>
+<code>list_type</code>
+      (Default: <code>[u'//:nailgun-server']</code>)
+
+      Target specs for bootstrapping the nailgun-server tool.
+
+</li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -2443,13 +2675,25 @@ div.gref_ogroup_section h3 {
 
 <p>Implemented by <code>pants.backend.jvm.tasks.jar_create.JarCreate</code>
 <ul>
+<li><code>--nailgun-server</code>
+<code>list_type</code>
+      (Default: <code>[u'//:nailgun-server']</code>)
+
+      Target specs for bootstrapping the nailgun-server tool.
+
+<li><code>--jar-tool</code>
+<code>list_type</code>
+      (Default: <code>[u'//:jar-tool']</code>)
+
+      Target specs for bootstrapping the jar-tool tool.
+
 <li><code>--[no-]compressed</code>
 <code>bool</code>
       (Default: <code>True</code>)
 
       Create compressed jars.
 
-</li></ul>
+</li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -2938,6 +3182,18 @@ div.gref_ogroup_section h3 {
 
 <p>Implemented by <code>pants.backend.jvm.tasks.jar_publish.JarPublish</code>
 <ul>
+<li><code>--nailgun-server</code>
+<code>list_type</code>
+      (Default: <code>[u'//:nailgun-server']</code>)
+
+      Target specs for bootstrapping the nailgun-server tool.
+
+<li><code>--jar-tool</code>
+<code>list_type</code>
+      (Default: <code>[u'//:jar-tool']</code>)
+
+      Target specs for bootstrapping the jar-tool tool.
+
 <li><code>--[no-]dryrun</code>
 <code>bool</code>
       (Default: <code>True</code>)
@@ -2993,7 +3249,7 @@ div.gref_ogroup_section h3 {
 
       Restart a fail push at the given jar.  Jars can be identified by maven coordinate [org]#[name] or target. For example: --restart-at=com.twitter.common#quantity Or: --restart-at=src/java/com/twitter/common/base
 
-</li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -3075,7 +3331,19 @@ div.gref_ogroup_section h3 {
 
       Use only these Ivy configurations of external deps.
 
-</li></li></li></li></ul>
+<li><code>--main</code>
+<code>str</code>
+      (Default: <code>scala.tools.nsc.MainGenericRunner</code>)
+
+      The entry point for running the repl.
+
+<li><code>--scala-repl</code>
+<code>list_type</code>
+      (Default: <code>[u'//:scala-repl-2.9.3']</code>)
+
+      Target specs for bootstrapping the scala-repl tool.
+
+</li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -3134,7 +3402,19 @@ div.gref_ogroup_section h3 {
 
       Use only these Ivy configurations of external deps.
 
-</li></li></li></li></ul>
+<li><code>--main</code>
+<code>str</code>
+      (Default: <code>scala.tools.nsc.MainGenericRunner</code>)
+
+      The entry point for running the repl.
+
+<li><code>--scala-repl</code>
+<code>list_type</code>
+      (Default: <code>[u'//:scala-repl-2.9.3']</code>)
+
+      Target specs for bootstrapping the scala-repl tool.
+
+</li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -3172,6 +3452,12 @@ div.gref_ogroup_section h3 {
 
 <p>Implemented by <code>pants.backend.jvm.tasks.ivy_resolve.IvyResolve</code>
 <ul>
+<li><code>--nailgun-server</code>
+<code>list_type</code>
+      (Default: <code>[u'//:nailgun-server']</code>)
+
+      Target specs for bootstrapping the nailgun-server tool.
+
 <li><code>--override</code>
 <code>str</code>
 
@@ -3202,7 +3488,13 @@ div.gref_ogroup_section h3 {
 
       If specified, all artifact revisions matching this pattern will be treated as mutable unless a matching artifact explicitly marks mutable as False.
 
-</li></li></li></li></li></li></ul>
+<li><code>--xalan</code>
+<code>list_type</code>
+      (Default: <code>[u'//:xalan']</code>)
+
+      Target specs for bootstrapping the xalan tool.
+
+</li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -3594,49 +3886,6 @@ div.gref_ogroup_section h3 {
 <a href="#Common">Common</a>
 </br></p></div>
 <div class="gref_goal_section">
-<a id="gref_goal_sitegen" pantsmark="gref_goal_sitegen"> </a>
-
-<table class="h-plus-pilcrow">
-<tbody>
-<tr>
-<td class="h-plus-pilcrow-holder"><h2 id="sitegen">sitegen</h2></td>
-<td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#sitegen">¶</a>
-</div></td>
-</tr>
-</tbody>
-</table>
-
-<p>Generate static web site.
-
-
-<div class="gref_ogroup_section">
-<a id="gref_cli_sitegen" pantsmark="gref_cli_sitegen"> </a>
-
-<table class="h-plus-pilcrow">
-<tbody>
-<tr>
-<td class="h-plus-pilcrow-holder"><h3 id="group_sitegen">sitegen</h3></td>
-<td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#group_sitegen">¶</a>
-</div></td>
-</tr>
-</tbody>
-</table>
-
-<p>Implemented by <code>internal_backend.sitegen.tasks.sitegen.SiteGen</code>
-<ul>
-<li><code>--config-path</code>
-<code>str</code>
-
-      Path to .json file describing site structure
-
-</li></ul>
-</p></div>
-<p><b>Other command-line options:</b><br>
-<a href="#Common">Common</a>
-</br></p></p></div>
-<div class="gref_goal_section">
 <a id="gref_goal_sort" pantsmark="gref_goal_sort"> </a>
 
 <table class="h-plus-pilcrow">
@@ -3845,32 +4094,6 @@ div.gref_ogroup_section h3 {
 
       Use only these Ivy configurations of external deps.
 
-<li><code>--coverage-patterns</code>
-<code>str</code>
-
-      Restrict coverage measurement. Values are class name prefixes in dotted form with ? and * wildcards. If preceded with a - the pattern is excluded. For example, to include all code in com.pants.raven except claws and the eye you would use: --coverage_patterns=com.pants.raven.* --coverage_patterns=-com.pants.raven.claw --coverage_patterns=-com.pants.raven.Eye.
-
-<li><code>--[no-]coverage-console</code>
-<code>bool</code>
-      (Default: <code>True</code>)
-
-      Output a simple coverage report to the console.
-
-<li><code>--[no-]coverage-xml</code>
-<code>bool</code>
-
-      Output an XML coverage report.
-
-<li><code>--[no-]coverage-html</code>
-<code>bool</code>
-
-      Output an HTML coverage report.
-
-<li><code>--[no-]coverage-html-open</code>
-<code>bool</code>
-
-      Open the generated HTML coverage report in a browser. Implies --coverage-html.
-
 <li><code>--[no-]skip</code>
 <code>bool</code>
 
@@ -3929,6 +4152,50 @@ div.gref_ogroup_section h3 {
 
       Set the working directory. If no argument is passed, use the first target path.
 
+<li><code>--junit</code>
+<code>list_type</code>
+      (Default: <code>[u'//:junit']</code>)
+
+      Target specs for bootstrapping the junit tool.
+
+<li><code>--coverage-patterns</code>
+<code>str</code>
+
+      Restrict coverage measurement. Values are class name prefixes in dotted form with ? and * wildcards. If preceded with a - the pattern is excluded. For example, to include all code in com.pants.raven except claws and the eye you would use: --coverage_patterns=com.pants.raven.* --coverage_patterns=-com.pants.raven.claw --coverage_patterns=-com.pants.raven.Eye.
+
+<li><code>--[no-]coverage-console</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Output a simple coverage report to the console.
+
+<li><code>--[no-]coverage-xml</code>
+<code>bool</code>
+
+      Output an XML coverage report.
+
+<li><code>--[no-]coverage-html</code>
+<code>bool</code>
+
+      Output an HTML coverage report.
+
+<li><code>--[no-]coverage-html-open</code>
+<code>bool</code>
+
+      Open the generated HTML coverage report in a browser. Implies --coverage-html.
+
+<li><code>--emma</code>
+<code>list_type</code>
+      (Default: <code>[u'//:emma']</code>)
+
+      Target specs for bootstrapping the emma tool.
+
+<li><code>--cobertura</code>
+<code>list_type</code>
+      (Default: <code>[u'//:cobertura']</code>)
+
+      Target specs for bootstrapping the cobertura tool.
+
 <li><code>--[no-]coverage</code>
 <code>bool</code>
 
@@ -3940,7 +4207,7 @@ div.gref_ogroup_section h3 {
 
       Which coverage subsystem to use.
 
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 </p></div>
 <div class="gref_ogroup_section">
 <a id="gref_cli_testspecs" pantsmark="gref_cli_testspecs"> </a>
@@ -3995,7 +4262,13 @@ div.gref_ogroup_section h3 {
 
       Emit test result with ANSI terminal color codes.
 
-</li></li></li></li></li></li></li></ul>
+<li><code>--specs</code>
+<code>list_type</code>
+      (Default: <code>[u'//:scala-specs-2.9.3']</code>)
+
+      Target specs for bootstrapping the specs tool.
+
+</li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -4033,12 +4306,24 @@ div.gref_ogroup_section h3 {
 
 <p>Implemented by <code>pants.backend.codegen.tasks.thrift_linter.ThriftLinter</code>
 <ul>
+<li><code>--nailgun-server</code>
+<code>list_type</code>
+      (Default: <code>[u'//:nailgun-server']</code>)
+
+      Target specs for bootstrapping the nailgun-server tool.
+
 <li><code>--[no-]strict</code>
 <code>bool</code>
 
       Fail the goal if thrift linter errors are found.
 
-</li></ul>
+<li><code>--scrooge-linter</code>
+<code>list_type</code>
+      (Default: <code>[u'//:scrooge-linter']</code>)
+
+      Target specs for bootstrapping the scrooge-linter tool.
+
+</li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -4196,7 +4481,7 @@ These command-line flags are available with all Pants goals.
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/builddict/goals_reference.html 2014-12-26T16:20:20.363795
+from dist/builddict/goals_reference.html 2014-12-29T11:01:19.801783
 </div>
 
 </div> <!-- end of mainflow -->
