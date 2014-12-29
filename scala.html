@@ -8,7 +8,7 @@
 
 <head>
   <meta charset="utf-8" />
-  <title>About the documentation</title>
+  <title>Scala Projects with Pants</title>
   <link rel="stylesheet" href="s.css">
   <script src="s.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,17 +24,16 @@
 <nav class="breadcrumbs">
 <ul>
 <li><a href="index.html">Welcome to the Pants build system.</a>
-<li><a href="dev.html">Pants Developer Center</a>
-<li><a href="docs.html">About the documentation</a>
+<li><a href="JVMProjects.html">JVM Projects with Pants</a>
+<li><a href="scala.html">Scala Projects with Pants</a>
 </ul>
 </nav>
 
 <nav class="pagetoc">
 <ul>
-<li class="toc-h1"><a href="#generating-the-site">Generating the site</a></li>
-<li class="toc-h1"><a href="#publishing-the-site">Publishing the site</a></li>
-<li class="toc-h1"><a href="#cross-references">Cross References</a></li>
-<li class="toc-h1"><a href="#doc-site-config">Doc Site Config</a></li>
+<li class="toc-h1"><a href="#hello-pants-scala">Hello Pants Scala</a></li>
+<li class="toc-h1"><a href="#scalajava-circular-dependencies">Scala/Java Circular Dependencies</a></li>
+<li class="toc-h1"><a href="#scala-console">Scala Console</a></li>
 </ul>
 </nav>
 
@@ -108,123 +107,172 @@
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h1 id="about-the-documentation">About the documentation</h1></td>
+<td class="h-plus-pilcrow-holder"><h1 id="scala-projects-with-pants">Scala Projects with Pants</h1></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#about-the-documentation">¶</a>
+<a class="pilcrow-link" href="#scala-projects-with-pants">¶</a>
 </div></td>
 </tr>
 </tbody>
 </table>
 
-<p>Pants documentation is generated from markdown sources and some
-reflection code by Pants itself.</p>
+<p>Pants' Scala tooling has much in common with its Java tooling. (That's
+not surprising; Scala compiles to run on the JVM.) If you already know
+<a href="JVMProjects.html">how to use Pants to build JVM code</a>
+ and you know that
+<code>BUILD</code> files can have <a xref="bdict_scala_library"><code>scala_library</code></a> targets,
+then you're set to use Pants with Scala code.</p>
 
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h2 id="generating-the-site">Generating the site</h2></td>
+<td class="h-plus-pilcrow-holder"><h2 id="hello-pants-scala">Hello Pants Scala</h2></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#generating-the-site">¶</a>
+<a class="pilcrow-link" href="#hello-pants-scala">¶</a>
 </div></td>
 </tr>
 </tbody>
 </table>
 
-<p>A script encapsulates all that needs to be done. To generate and preview
-changes, just:</p>
-<div class="codehilite"><pre><span class="c"># This publishes the docs **locally** and opens (-o) them in your browser for review</span>
-./build-support/bin/publish_docs.sh -o
+<p>The sample code
+<a href="https://github.com/pantsbuild/pants/blob/master/examples/src/scala/com/pants/example/hello/welcome/">examples/src/scala/com/pants/example/hello/welcome/</a>
+shows how you can define a library of Scala code.</p>
+<p>Its <code>BUILD</code> file looks like that for a Java library, but contains a
+<code>scala_library</code> target with <code>.scala</code> sources:</p>
+<p>
+<div class="md-included-snippet"><div class="codehilite"><pre><span class="n">scala_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'welcome'</span><span class="p">,</span>
+  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
+    <span class="s">'examples/src/java/com/pants/examples/hello/greet:greet'</span><span class="p">,</span>
+  <span class="p">],</span>
+  <span class="n">sources</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s">'*.scala'</span><span class="p">),</span>
+  <span class="n">resources</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s">'examples/src/resources/com/pants/example/hello'</span><span class="p">,</span>
+  <span class="p">],</span>
+  <span class="n">provides</span> <span class="o">=</span> <span class="n">artifact</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s">'com.pants.example.hello'</span><span class="p">,</span>
+                      <span class="n">name</span><span class="o">=</span><span class="s">'welcome'</span><span class="p">,</span>
+                      <span class="n">repo</span><span class="o">=</span><span class="n">public</span><span class="p">,),</span>
+<span class="p">)</span>
+</pre></div></div>
+</p>
+<p>There's a sample test in
+<a href="https://github.com/pantsbuild/pants/tree/master/examples/tests/scala/com/pants/example/hello/welcome">examples/tests/scala/com/pants/example/hello/welcome</a>.
+It's a <a xref="bdict_junit_tests"><code>junit_tests</code></a> with <code>.scala</code> sources.
+(You might have thought JUnit was only for Java testing, but it also works great
+for Scala. Pants also has a
+<a xref="bdict_scala_specs"><code>scala_specs</code></a> target type for testing with
+Specs.)</p>
+<p>
+<div class="md-included-snippet"><div class="codehilite"><pre><span class="n">junit_tests</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'welcome'</span><span class="p">,</span>
+  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
+    <span class="s">'examples/src/scala/com/pants/example/hello/welcome:welcome'</span><span class="p">,</span>
+    <span class="s">'3rdparty:junit'</span><span class="p">,</span>
+    <span class="s">'3rdparty:specs'</span><span class="p">,</span>
+  <span class="p">],</span>
+  <span class="n">sources</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s">'*.scala'</span><span class="p">),</span>
+<span class="p">)</span>
+</pre></div></div>
+</p>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="scalajava-circular-dependencies">Scala/Java Circular Dependencies</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#scalajava-circular-dependencies">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Scala code and Java code can depend on each other. As long as the
+dependencies aren't circular, <code>scala_library</code> targets can depend on
+<code>java_library</code> targets and vice versa. If the dependencies <em>are</em>
+circular, you can set up targets to compile all of this code together:</p>
+<ul>
+<li>a <code>java_library</code> whose <code>sources</code> param is the <code>*.java</code> files; one of its
+    dependencies should be...</li>
+<li>a <code>scala_library</code> whose <code>sources</code> param is the <code>*.scala</code> files and
+    whose <code>java_sources</code> is the above <code>java_library</code>.</li>
+</ul>
+<p>Do not put the <code>java_library</code> in the <code>scala_library</code>'s <code>dependencies</code> or Pants will error out in its
+circular dependencies check. Instead, put the <code>java_library</code> in <code>java_sources</code> to work around this
+check.</p>
+<p>The <a href="https://github.com/pantsbuild/pants/tree/master/examples/src/scala/com/pants/example/scala_with_java_sources"><code>scala_with_java_sources</code></a>
+example shows how this can work:</p>
+<p>
+<div class="md-included-snippet"><div class="codehilite"><pre><span class="n">scala_library</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">'scala_with_java_sources'</span><span class="p">,</span>
+  <span class="n">sources</span> <span class="o">=</span> <span class="p">[</span><span class="s">'Greet.scala'</span><span class="p">],</span>
+  <span class="n">java_sources</span><span class="o">=</span><span class="p">[</span>
+    <span class="s">'examples/src/java/com/pants/examples/java_sources'</span><span class="p">,</span>
+   <span class="p">],</span>
+<span class="p">)</span>
+</pre></div></div>
+</p>
+<p>The referred-to
+<a href="https://github.com/pantsbuild/pants/tree/master/examples/src/java/com/pants/examples/java_sources/BUILD"><code>java_sources</code></a>
+<code>java_library</code> has this <code>java_library</code> in its dependencies:</p>
+<p>
+<div class="md-included-snippet"><div class="codehilite"><pre><span class="n">java_library</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">'java_sources'</span><span class="p">,</span>
+  <span class="n">sources</span> <span class="o">=</span> <span class="n">globs</span><span class="p">(</span><span class="s">'*.java'</span><span class="p">),</span>
+  <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
+   <span class="s">'examples/src/scala/com/pants/example/scala_with_java_sources'</span><span class="p">,</span>
+  <span class="p">],</span>
+<span class="p">)</span>
+</pre></div></div>
+</p>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="scala-console">Scala Console</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#scala-console">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>To bring up Scala's interactive console, use Pants'
+<a xref="gref_goal_repl"><code>repl</code></a> goal.
+In the resulting console, you can <code>import</code> code from the Pants invocation's
+targets and their dependencies.</p>
+<div class="codehilite"><pre>$ ./pants goal repl examples/src/scala/com/pants/example/hello/welcome
+   ...much build output...
+15:08:13 00:11   [resources]
+15:08:13 00:11     [prepare]
+                   Invalidated 1 target containing 1 payload file.
+15:08:13 00:11   [repl]
+15:08:13 00:11     [python-repl]
+15:08:13 00:11     [scala-repl]
+15:08:13 00:11       [bootstrap-scala-repl]
+Welcome to Scala version 2.9.3 (Java HotSpot(TM) 64-Bit Server VM, Java 1.7.0_60).
+Type in expressions to have them evaluated.
+Type :help for more information.
+
+scala&gt; import com.pants.example.hello.welcome
+import com.pants.example.hello.welcome
+
+scala&gt; val folks = List("Abel", "Baker", "Charlie", "Delta")
+folks: List[java.lang.String] = List(Abel, Baker, Charlie, Delta)
+
+scala&gt; com.pants.example.hello.welcome.WelcomeEverybody(folks)
+res0: Seq[String] = List(Hello, Abel!, Hello, Baker!, Hello, Charlie!, Hello, Delta!)
+
+scala&gt; exit
+warning: there were 1 deprecation warnings; re-run with -deprecation for details
+
+               Waiting for background workers to finish.
+               SUCCESS
+
+$
 </pre></div>
-
-<table class="h-plus-pilcrow">
-<tbody>
-<tr>
-<td class="h-plus-pilcrow-holder"><h2 id="publishing-the-site">Publishing the site</h2></td>
-<td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#publishing-the-site">¶</a>
-</div></td>
-</tr>
-</tbody>
-</table>
-
-<p>Use the same script as for generating the site, but request it also be
-published. Don't worry - you'll get a chance to abort the publish just
-before its comitted remotely:</p>
-<div class="codehilite"><pre><span class="c"># This publishes the docs locally and opens (-o) them in your browser for review</span>
-<span class="c"># and then prompts you to confirm you want to publish these docs remotely before</span>
-<span class="c"># proceeding to publish to http://pantsbuild.github.io</span>
-./build-support/bin/publish_docs.sh -op
-</pre></div>
-<p>If you'd like to publish remotely for others to preview your changes
-easily, there is a -d option that will create a copy of the site in a
-subdir of <a href="http://pantsbuild.github.io/">http://pantsbuild.github.io/</a>:</p>
-<div class="codehilite"><pre><span class="c"># This publishes the docs locally and opens (-o) them in your browser for review</span>
-<span class="c"># and then prompts you to confirm you want to publish these docs remotely before</span>
-<span class="c"># proceeding to publish to http://pantsbuild.github.io/sirois-test-site</span>
-./build-support/bin/publish_docs.sh -opd sirois-test-site
-</pre></div>
-
-<table class="h-plus-pilcrow">
-<tbody>
-<tr>
-<td class="h-plus-pilcrow-holder"><h2 id="cross-references">Cross References</h2></td>
-<td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#cross-references">¶</a>
-</div></td>
-</tr>
-</tbody>
-</table>
-
-<p>If your doc has a
-link like <code>&lt;a pantsref="bdict_java_library"&gt;java_library&lt;/a&gt;</code>, it links to
-the BUILD Dictionary entry for <code>java_library</code>. To set up a short-hand
-link like this...</p>
-<p>Define the destination of the link with an <code>pantsmark</code> anchor, e.g.,
-<code>&lt;a pantsmark="bdict_java_library"&gt; &lt;/a&gt;</code>. The <code>pantsmark</code> attribute (here,
-<code>bdict_java_library</code>) must be unique within the doc set.</p>
-<p>Link to the destination with an <code>pantsref</code>, e.g.,
-<code>&lt;a pantsref="bdict_java_library"&gt;java_library&lt;/a&gt;</code>.</p>
-
-<table class="h-plus-pilcrow">
-<tbody>
-<tr>
-<td class="h-plus-pilcrow-holder"><h2 id="doc-site-config">Doc Site Config</h2></td>
-<td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#doc-site-config">¶</a>
-</div></td>
-</tr>
-</tbody>
-</table>
-
-<p>The site generator
-takes "raw" <code>.html</code> files, "wraps" them in a template with some
-navigation UI, and writes out the resulting <code>.html</code> files.</p>
-<p>You configure this with <code>src/python/pants/docs/docsite.json</code>:</p>
-<p><code>sources</code>:<br>
-Map of pages to the <code>.html</code> files they're generated from. E.g.,
-<code>"build_dictionary": "dist/builddict/build_dictionary.html",</code> means to
-generate the site's /build_dictionary.html page, the site generator
-should get the "raw" file <code>dist/builddict/build_dictionary.html</code> and
-apply the template to it.</br></p>
-<p><code>tree</code>:<br>
-Outline structure of the site. Each node of the tree is a dict. Each
-node-dict can have a <code>page</code>, a page defined in <code>sources</code> above. Each
-node-dict can have a <code>children</code>, a list of more nodes.</br></p>
-<p><code>template</code>:<br>
-Path to mustache template to apply to each page.</br></p>
-<p><code>extras</code>:<br>
-Map of "extra" files to copy over. Handy for graphics, stylesheets, and
-such.</br></p>
-<p><code>outdir</code>:<br>
-Path to which to write the generated site.</br></p>
-<p>To add a page and have it show up in the side navigation UI, add the
-page to the <code>sources</code> dict and to the <code>tree</code> hierarchy.</p>
+<p>Pants' <code>repl</code> goal works with JVM targets. (It also works with Python targets, but that uses a
+Python console instead.)</p>
 
 <!-- main content end -->
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-dist/markdown/html/src/python/pants/docs/docs.html 2014-12-29T14:17:00.916047
+dist/markdown/html/examples/src/scala/com/pants/example/readme.html 2014-12-29T14:17:00.858380
 </div>
 
 </div> <!-- end of mainflow -->
@@ -258,8 +306,8 @@ dist/markdown/html/src/python/pants/docs/docs.html 2014-12-29T14:17:00.916047
 <li class="toc-h2 ">
 <a href="3rdparty_jvm.html">JVM 3rdparty Pattern</a>
 </li>
-<li class="toc-h2 ">
-<a href="scala.html">Scala Projects with Pants</a>
+<li class="toc-h2 toc-here">
+Scala Projects with Pants
 </li>
 <li class="toc-h2 ">
 <a href="from_maven.html">Pants for Maven Experts</a>
@@ -351,8 +399,8 @@ dist/markdown/html/src/python/pants/docs/docs.html 2014-12-29T14:17:00.916047
 <li class="toc-h2 ">
 <a href="release.html">Release Process</a>
 </li>
-<li class="toc-h2 toc-here">
-About the documentation
+<li class="toc-h2 ">
+<a href="docs.html">About the documentation</a>
 </li>
 <li class="toc-h2 ">
 <a href="credits.html">Credits</a>
