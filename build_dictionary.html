@@ -990,6 +990,8 @@ everything if unspecified.</p></span>
 <div>
 <p>Returns Fileset containing matching files in same directory as this BUILD file.</p>
 <p>E.g., <tt class="docutils literal">sources = <span class="pre">globs('*java'),</span></tt> to get .java files in this directory.</p>
+<p>You can use "math" on the return value of <tt class="docutils literal">globs()</tt>. E.g., <tt class="docutils literal"><span class="pre">globs('*')</span> - <span class="pre">globs('*.java')</span></tt> gives
+all files in this directory <em>except</em> <tt class="docutils literal">.java</tt> files.</p>
 </div>
 <p class="bdict_impl">Implemented by <tt>pants.backend.core.wrapped_globs.Globs</tt>
 </p></p></div>
@@ -1187,7 +1189,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">jar_rules(rules=None, default_dup_action=&lt;object object at 0x7fe75e7085d0&gt;)
+<p class="bdict_argspec">jar_rules(rules=None, default_dup_action=&lt;object object at 0x7ff93effb190&gt;)
 
 <div>
 <p>A set of rules for packaging up a deploy jar.</p>
@@ -1208,7 +1210,7 @@ last wins, concatenation of the duplicate entry contents or raising an exception
 <p><b>Params:</b>
 <div class="bdict_param"><b class="bdict_param_name">rules</b>
 <span class="bdict_param_muffle_p"><p>One or more rules that will be applied in order to jar entries being packaged in
-a deploy jar.</p></span>
+a deploy jar. <a class="reference external" href="#Skip">Skip</a> rules can go here.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">default_dup_action</b>
 <span class="bdict_param_muffle_p"><p>The default action to take when a duplicate entry is encountered and
@@ -1512,7 +1514,8 @@ a particular target is built.</p></span>
 <span class="bdict_param_muffle_p"><p>Unused, and will be removed in a future release.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">imports</b>
-<span class="bdict_param_muffle_p"><p>List of addresses of <a class="reference external" href="#jar_library">jar_library</a>
+  (<em class="bdict_param_type">list </em>)
+  <span class="bdict_param_muffle_p"><p>List of addresses of <a class="reference external" href="#jar_library">jar_library</a>
 targets which contain .proto definitions.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">provides</b>
@@ -2304,7 +2307,7 @@ expecting to find java files in <tt class="docutils literal">src/main/java</tt>,
 </tbody>
 </table>
 
-<p class="bdict_argspec">page(name, source=None, links=None, resources=None, provides=None, tags=None)
+<p class="bdict_argspec">page(name, source=None, format=None, links=None, resources=None, provides=None, tags=None)
 
 <div>
 <p>Describes a single documentation page.</p>
@@ -2327,7 +2330,11 @@ page(name='mypage',
 <div class="bdict_params_section">
 <p><b>Params:</b>
 <div class="bdict_param"><b class="bdict_param_name">source</b>
-<span class="bdict_param_muffle_p"><p>Source of the page in markdown format.</p></span>
+<span class="bdict_param_muffle_p"><p>Path to page source file.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">format</b>
+<span class="bdict_param_muffle_p"><p>Page's format, <tt class="docutils literal">md</tt> or <tt class="docutils literal">rst</tt>. By default, Pants infers from <tt class="docutils literal">source</tt> file
+extension: <tt class="docutils literal">.rst</tt> is ReStructured Text; anything else is Markdown.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">links</b>
   (<em class="bdict_param_type"> List of target specs</em>)
@@ -2884,7 +2891,8 @@ python_requirement_library(name="bar", requirements=[
 </pre>
 <p>NB some requirements files can't be unambiguously translated; ie: multiple
 find links.  For these files a ValueError will be raised that points out the issue.</p>
-<p>See the requirements file spec here: <a class="reference external" href="http://www.pip-installer.org/en/1.1/requirements.html">http://www.pip-installer.org/en/1.1/requirements.html</a></p>
+<p>See the requirements file spec here:
+<a class="reference external" href="https://pip.pypa.io/en/latest/reference/pip_install.html#requirements-file-format">https://pip.pypa.io/en/latest/reference/pip_install.html#requirements-file-format</a></p>
 <div class="bdict_params_section">
 <p><b>Params:</b>
 <div class="bdict_param"><b class="bdict_param_name">parse_context</b>
@@ -3189,6 +3197,9 @@ a particular target is built.</p></span>
 <p>Recursive <tt class="docutils literal">globs</tt>, returns Fileset matching files in this directory and its "children.</p>
 <p>E.g., <tt class="docutils literal"><span class="pre">bundle().add(rglobs('config/*')),</span></tt> to bundle up all files in
 the config, config/foo, config/foo/bar directories.</p>
+<p>You can use "math" on the return value of <tt class="docutils literal">rglobs()</tt>. E.g.,
+<tt class="docutils literal"><span class="pre">rglobs('config/*')</span> - <span class="pre">rglobs('config/foo/*')</span></tt> gives all files under <cite>config</cite> <em>except</em>
+those in <tt class="docutils literal">config/foo</tt>.</p>
 </div>
 <p class="bdict_impl">Implemented by <tt>pants.backend.core.wrapped_globs.RGlobs</tt>
 </p></p></div>
@@ -3699,7 +3710,7 @@ For example, the following keys are supported for Atlassian's Confluence:</p></s
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/builddict/build_dictionary.html 2015-01-08T08:06:49.062022
+from dist/builddict/build_dictionary.html 2015-01-14T13:38:08.639400
 </div>
 
 </div> <!-- end of mainflow -->
@@ -3794,6 +3805,9 @@ Pants BUILD Dictionary
 </li>
 <li class="toc-h1 ">
 <a href="goals_reference.html">Pants Goals Reference</a>
+</li>
+<li class="toc-h1 ">
+<a href="changelog.html">RELEASE HISTORY</a>
 </li>
 <li class="toc-h1 ">
 <a href="dev.html">Pants Developer Center</a>
