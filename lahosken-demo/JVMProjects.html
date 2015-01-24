@@ -13,6 +13,7 @@
   <script src="s.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" href="logo.ico">
+  <link rel="canonical" href="https://pantsbuild.github.io/JVMProjects.html" >
 </head>
 
 <body>
@@ -39,6 +40,10 @@
 <li class="toc-h1"><a href="#toolchain">Toolchain</a></li>
 <li class="toc-h1"><a href="#java7-vs-java6-which-java">Java7 vs Java6, Which Java</a></li>
 <li class="toc-h1"><a href="#bundles-deploy-able-runnable-file-trees">Bundles: Deploy-able Runnable File Trees</a></li>
+<li class="toc-h2"><a href="#generating-a-bundle">Generating a Bundle</a></li>
+<li class="toc-h2"><a href="#contents-of-a-bundle">Contents of a Bundle</a></li>
+<li class="toc-h2"><a href="#deploying-a-bundle">Deploying a Bundle</a></li>
+<li class="toc-h1"><a href="#omit-parts-from-binary">Omit Parts from Binary</a></li>
 <li class="toc-h1"><a href="#further-reading">Further Reading</a></li>
 </ul>
 </nav>
@@ -232,6 +237,7 @@ directory):</p>
   <span class="n">source</span> <span class="o">=</span> <span class="s">'HelloMain.java'</span><span class="p">,</span>
   <span class="n">main</span> <span class="o">=</span> <span class="s">'com.pants.examples.hello.main.HelloMain'</span><span class="p">,</span>
   <span class="n">basename</span> <span class="o">=</span> <span class="s">'hello-example'</span><span class="p">,</span>
+  <span class="n">deploy_jar_rules</span><span class="o">=</span><span class="n">jar_rules</span><span class="p">(</span><span class="n">rules</span><span class="o">=</span><span class="p">[</span><span class="n">Skip</span><span class="p">(</span><span class="s">'Greeting'</span><span class="p">)])</span>
 <span class="p">)</span>
 </pre></div></div>
 </p>
@@ -481,13 +487,35 @@ runnable, you can define a <code>jvm_app</code> target with bundles (and/or
 resources) but whose <code>jvm_binary</code> has no source or main; the resulting
 bundle will have the files you want (along with a couple of
 not-so-useful stub <code>.jar</code> files).)</p>
-<p><strong>Generating a Bundle</strong></p>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="generating-a-bundle">Generating a Bundle</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#generating-a-bundle">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
 <p>Invoke <code>./pants goal bundle</code> on a JVM app or JVM binary target:</p>
 <div class="codehilite"><pre><span class="nv">$ </span>./pants goal bundle examples/src/java/com/pants/examples/hello/main:main
 </pre></div>
 <p>With options, you can tell Pants to archive the bundle in a zip, a tar, and some other common
 formats. See the <a href="goals_reference.html#gref_goal_bundle" pantsref="gref_goal_bundle">bundle help</a> for built-in choices.</p>
-<p><strong>Contents of a Bundle</strong></p>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="contents-of-a-bundle">Contents of a Bundle</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#contents-of-a-bundle">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
 <p>The generated bundle is basically a directory tree containing <code>.jar</code>s
 and extra files. The <code>.jar</code> in the top-level directory has a manifest so
 you can run it with <code>java -jar</code>:</p>
@@ -520,7 +548,18 @@ com/pants/examples/hello/greet/Greeting.class
 <p>That <code>greetee.txt</code> file came from the <code>bundles=</code> parameter.
 The <code>libs/</code> directory contains 3rdparty jars (if any). The <code>jar</code> in the top directory
 contains code compiled for this target.</p>
-<p><strong>Deploying a Bundle</strong></p>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="deploying-a-bundle">Deploying a Bundle</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#deploying-a-bundle">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
 <p>Instead of just creating a directory tree, you can specify <code>goal bundle --archive=zip</code> to
 <code>./pants goal bundle</code> to generate an archive file (a <code>.zip</code>, monolithic <code>.jar</code>, or some other
 format) instead.</p>
@@ -546,9 +585,49 @@ Hello, Bundled-File World!
 Hello, Resource World!
 <span class="err">$</span>
 </pre></div>
-<p>You can copy the archive somewhere, then unpack it on the destination machine. If there
-are some "standard jars" that are already on the destination machine, you might want to exclude
-them from the archive.</p>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="omit-parts-from-binary">Omit Parts from Binary</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#omit-parts-from-binary">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Sometimes you want to leave some files out of your binary.</p>
+<p>You can omit jars from the binary by means of the <code>jvm_binary</code>'s <code>deploy_excludes</code> parameter.
+For example, if you're making a binary to run on Hadoop and there are some "standard jars"
+already on the destination machines, you can list those in <code>deploy_excludes</code>.</p>
+<p>More generally, you can omit files from the binary jar with <code>deploy_jar_rules</code>. For example, a
+3rdparty dependency might have a transitive dependency with a bad manifest file. If you try to run
+the jar you might get <code>Invalid signature file digest for Manifest main attributes</code>. If you don't
+actually use the code in that transitive dependency, you might work around the error by omitting
+the dependency.</p>
+<p>To tell Pants to omit some files from the binary, set the <code>deploy_jar_rules</code> parameter of
+<a href="build_dictionary.html#bdict_jvm_binary" pantsref="bdict_jvm_binary"><code>jvm_binary</code></a> to a <a href="build_dictionary.html#bdict_jar_rules" pantsref="bdict_jar_rules"><code>jar_rules</code></a>.
+E.g., to omit all files containing the regexp <code>Greeting</code>, you might set</p>
+<div class="codehilite"><pre><span class="n">deploy_jar_rules</span><span class="o">=</span><span class="n">jar_rules</span><span class="p">(</span><span class="n">rules</span><span class="o">=</span><span class="p">[</span><span class="n">Skip</span><span class="p">(</span><span class="s">'Greeting'</span><span class="p">)])</span>
+</pre></div>
+<p>After building our <code>hello</code> example, if we check the binary jar's contents, there is no
+<code>Greeting.class</code> (and running that jar crashes; we omitted a class this binary needs):</p>
+<div class="codehilite"><pre><span class="nv">$ </span>./pants goal binary examples/src/java/com/pants/examples/hello/main:main
+<span class="nv">$ </span>jar -tf dist/hello-example.jar
+META-INF/
+META-INF/MANIFEST.MF
+com/
+com/pants/
+com/pants/examples/
+com/pants/examples/hello/
+com/pants/examples/hello/main/
+com/pants/examples/hello/main/HelloMain.class
+com/pants/example/
+com/pants/example/hello/
+com/pants/example/hello/world.txt
+<span class="err">$</span>
+</pre></div>
 
 <table class="h-plus-pilcrow">
 <tbody>
@@ -570,7 +649,7 @@ them from the archive.</p>
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/markdown/html/examples/src/java/com/pants/examples/readme.html 2014-12-29T11:11:43.770177
+from dist/markdown/html/examples/src/java/com/pants/examples/readme.html 2015-01-23T20:05:38.534263
 </div>
 
 </div> <!-- end of mainflow -->
@@ -665,6 +744,9 @@ JVM Projects with Pants
 </li>
 <li class="toc-h1 ">
 <a href="goals_reference.html">Pants Goals Reference</a>
+</li>
+<li class="toc-h1 ">
+<a href="changelog.html">RELEASE HISTORY</a>
 </li>
 <li class="toc-h1 ">
 <a href="dev.html">Pants Developer Center</a>

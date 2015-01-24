@@ -13,6 +13,7 @@
   <script src="s.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" href="logo.ico">
+  <link rel="canonical" href="https://pantsbuild.github.io/goals_reference.html" >
 </head>
 
 <body>
@@ -48,8 +49,6 @@
 <li class="toc-h2"><a href="#group_bundleapk">bundle.apk</a></li>
 <li class="toc-h1"><a href="#changed">changed</a></li>
 <li class="toc-h2"><a href="#group_changed">changed</a></li>
-<li class="toc-h1"><a href="#check-exclusives">check-exclusives</a></li>
-<li class="toc-h2"><a href="#group_checkexclusives">check-exclusives</a></li>
 <li class="toc-h1"><a href="#check_published_deps">check_published_deps</a></li>
 <li class="toc-h2"><a href="#group_checkpublisheddeps">check_published_deps</a></li>
 <li class="toc-h1"><a href="#clean-all">clean-all</a></li>
@@ -61,9 +60,14 @@
 <li class="toc-h2"><a href="#group_cleanallasyncinvalidate">clean-all-async.invalidate</a></li>
 <li class="toc-h2"><a href="#group_cleanallasync">clean-all-async</a></li>
 <li class="toc-h1"><a href="#compile">compile</a></li>
+<li class="toc-h2"><a href="#group_compile">compile</a></li>
 <li class="toc-h2"><a href="#group_compilejvm">compile.jvm</a></li>
 <li class="toc-h2"><a href="#group_compilecheckstyle">compile.checkstyle</a></li>
 <li class="toc-h2"><a href="#group_compilescalastyle">compile.scalastyle</a></li>
+<li class="toc-h1"><a href="#compile-changed">compile-changed</a></li>
+<li class="toc-h2"><a href="#group_compilechanged">compile-changed</a></li>
+<li class="toc-h1"><a href="#deferred-sources">deferred-sources</a></li>
+<li class="toc-h2"><a href="#group_deferredsources">deferred-sources</a></li>
 <li class="toc-h1"><a href="#dependees">dependees</a></li>
 <li class="toc-h2"><a href="#group_dependees">dependees</a></li>
 <li class="toc-h1"><a href="#dependencies">dependencies</a></li>
@@ -155,11 +159,16 @@
 <li class="toc-h2"><a href="#group_targets">targets</a></li>
 <li class="toc-h1"><a href="#test">test</a></li>
 <li class="toc-h2"><a href="#group_testrunprepcommand">test.run_prep_command</a></li>
+<li class="toc-h2"><a href="#group_test">test</a></li>
 <li class="toc-h2"><a href="#group_testpytest">test.pytest</a></li>
 <li class="toc-h2"><a href="#group_testjunit">test.junit</a></li>
 <li class="toc-h2"><a href="#group_testspecs">test.specs</a></li>
+<li class="toc-h1"><a href="#test-changed">test-changed</a></li>
+<li class="toc-h2"><a href="#group_testchanged">test-changed</a></li>
 <li class="toc-h1"><a href="#thrift-linter">thrift-linter</a></li>
 <li class="toc-h2"><a href="#group_thriftlinter">thrift-linter</a></li>
+<li class="toc-h1"><a href="#unpack-jars">unpack-jars</a></li>
+<li class="toc-h2"><a href="#group_unpackjars">unpack-jars</a></li>
 <li class="toc-h1"><a href="#Common">Common</a></li>
 </ul>
 </nav>
@@ -203,11 +212,12 @@ goal.
   <li> <a href="#buildlint">buildlint</a> - None
   <li> <a href="#bundle">bundle</a> - Create an application bundle from binary targets.
   <li> <a href="#changed">changed</a> - Print the targets changed since some prior commit.
-  <li> <a href="#check-exclusives">check-exclusives</a> - Check for exclusivity violations.
   <li> <a href="#check_published_deps">check_published_deps</a> - Find references to outdated artifacts.
   <li> <a href="#clean-all">clean-all</a> - Clean all build output.
   <li> <a href="#clean-all-async">clean-all-async</a> - [deprecated] Clean all build output in a background process.
   <li> <a href="#compile">compile</a> - Compile source code.
+  <li> <a href="#compile-changed">compile-changed</a> - Compile changed targets.
+  <li> <a href="#deferred-sources">deferred-sources</a> - Map unpacked sources from archives.
   <li> <a href="#dependees">dependees</a> - Print the target's dependees.
   <li> <a href="#dependencies">dependencies</a> - Print the target's dependencies.
   <li> <a href="#depmap">depmap</a> - Depict the target's dependencies.
@@ -248,8 +258,10 @@ goal.
   <li> <a href="#sort">sort</a> - Topologically sort the targets.
   <li> <a href="#targets">targets</a> - List target types and BUILD file symbols (python_tests, jar, etc).
   <li> <a href="#test">test</a> - Test compiled code.
+  <li> <a href="#test-changed">test-changed</a> - Test changed targets.
   <li> <a href="#thrift-linter">thrift-linter</a> - Check thrift files for non-recommended usage patterns.
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+  <li> <a href="#unpack-jars">unpack-jars</a> - Unpack artifacts specified by unpacked_jars() targets.
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 <style>
 div.gref_goal_section {
   margin-left: 2%;
@@ -492,7 +504,12 @@ div.gref_ogroup_section h3 {
 
 <p>Implemented by <code>pants.backend.jvm.tasks.bootstrap_jvm_tools.BootstrapJvmTools</code>
 <ul>
-</ul>
+<li><code>--jvm-options</code>
+<code>str</code>
+
+      Run Ivy with these extra jvm options.
+
+</li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -792,56 +809,23 @@ div.gref_ogroup_section h3 {
 
       Calculate changes since this tree-ish/scm ref (defaults to current HEAD/tip).
 
+<li><code>--diffspec</code>
+<code>str</code>
+
+      Calculate changes contained within given scm spec (commit range/sha/ref/etc).
+
+<li><code>--include-dependees</code>
+<code>str</code>
+      (Default: <code>none</code>)
+
+      Include direct or transitive dependees of changed targets.
+
 <li><code>--[no-]files</code>
 <code>bool</code>
 
       Show changed files instead of the targets that own them.
 
-</li></li></li></li></li></ul>
-</p></div>
-<p><b>Other command-line options:</b><br>
-<a href="#Common">Common</a>
-</br></p></p></div>
-<div class="gref_goal_section">
-<a id="gref_goal_check-exclusives" pantsmark="gref_goal_check-exclusives"> </a>
-
-<table class="h-plus-pilcrow">
-<tbody>
-<tr>
-<td class="h-plus-pilcrow-holder"><h2 id="check-exclusives">check-exclusives</h2></td>
-<td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#check-exclusives">¶</a>
-</div></td>
-</tr>
-</tbody>
-</table>
-
-<p>Check for exclusivity violations.
-
-
-<div class="gref_ogroup_section">
-<a id="gref_cli_checkexclusives" pantsmark="gref_cli_checkexclusives"> </a>
-
-<table class="h-plus-pilcrow">
-<tbody>
-<tr>
-<td class="h-plus-pilcrow-holder"><h3 id="group_checkexclusives">check-exclusives</h3></td>
-<td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#group_checkexclusives">¶</a>
-</div></td>
-</tr>
-</tbody>
-</table>
-
-<p>Implemented by <code>pants.backend.core.tasks.check_exclusives.CheckExclusives</code>
-<ul>
-<li><code>--[no-]error-on-collision</code>
-<code>bool</code>
-      (Default: <code>True</code>)
-
-      Abort the build if an exclusives collision is detected.
-
-</li></ul>
+</li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -1076,6 +1060,24 @@ div.gref_ogroup_section h3 {
 
 
 <div class="gref_ogroup_section">
+<a id="gref_cli_compile" pantsmark="gref_cli_compile"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_compile">compile</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_compile">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.core.tasks.noop.NoopCompile</code>
+<ul>
+</ul>
+</p></div>
+<div class="gref_ogroup_section">
 <a id="gref_cli_compilejvm" pantsmark="gref_cli_compilejvm"> </a>
 
 <table class="h-plus-pilcrow">
@@ -1178,6 +1180,103 @@ div.gref_ogroup_section h3 {
       Target specs for bootstrapping the scalastyle tool.
 
 </li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="gref_goal_section">
+<a id="gref_goal_compile-changed" pantsmark="gref_goal_compile-changed"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="compile-changed">compile-changed</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#compile-changed">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Compile changed targets.
+
+
+<div class="gref_ogroup_section">
+<a id="gref_cli_compilechanged" pantsmark="gref_cli_compilechanged"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_compilechanged">compile-changed</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_compilechanged">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.core.tasks.changed_target_goals.CompileChanged</code>
+<ul>
+<li><code>--[no-]fast</code>
+<code>bool</code>
+
+      Stop searching for owners once a source is mapped to at least owning target.
+
+<li><code>--changes-since/--parent</code>
+<code>str</code>
+
+      Calculate changes since this tree-ish/scm ref (defaults to current HEAD/tip).
+
+<li><code>--diffspec</code>
+<code>str</code>
+
+      Calculate changes contained within given scm spec (commit range/sha/ref/etc).
+
+<li><code>--include-dependees</code>
+<code>str</code>
+      (Default: <code>none</code>)
+
+      Include direct or transitive dependees of changed targets.
+
+</li></li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="gref_goal_section">
+<a id="gref_goal_deferred-sources" pantsmark="gref_goal_deferred-sources"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="deferred-sources">deferred-sources</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#deferred-sources">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Map unpacked sources from archives.
+
+
+<div class="gref_ogroup_section">
+<a id="gref_cli_deferredsources" pantsmark="gref_cli_deferredsources"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_deferredsources">deferred-sources</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_deferredsources">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.core.tasks.deferred_sources_mapper.DeferredSourcesMapper</code>
+<ul>
+</ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -2579,7 +2678,12 @@ div.gref_ogroup_section h3 {
 
       Target specs for bootstrapping the nailgun-server tool.
 
-</li></ul>
+<li><code>--jvm-options</code>
+<code>str</code>
+
+      Run Ivy with these extra jvm options.
+
+</li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -2850,14 +2954,7 @@ div.gref_ogroup_section h3 {
 
       Generate a fragment of html to embed in a page.
 
-<li><code>--extension</code>
-<code>str</code>
-      (Default: <code>[u'.md', u'.markdown']</code>)
-      (Default: <code>[u'.md', u'.markdown']</code>)
-
-      Process files with these extensions (as well as the standard extensions).
-
-</li></li></li></li></ul>
+</li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -3458,6 +3555,11 @@ div.gref_ogroup_section h3 {
 
       Target specs for bootstrapping the nailgun-server tool.
 
+<li><code>--jvm-options</code>
+<code>str</code>
+
+      Run Ivy with these extra jvm options.
+
 <li><code>--override</code>
 <code>str</code>
 
@@ -3494,7 +3596,7 @@ div.gref_ogroup_section h3 {
 
       Target specs for bootstrapping the xalan tool.
 
-</li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -4029,6 +4131,24 @@ div.gref_ogroup_section h3 {
 </ul>
 </p></div>
 <div class="gref_ogroup_section">
+<a id="gref_cli_test" pantsmark="gref_cli_test"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_test">test</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_test">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.core.tasks.noop.NoopTest</code>
+<ul>
+</ul>
+</p></div>
+<div class="gref_ogroup_section">
 <a id="gref_cli_testpytest" pantsmark="gref_cli_testpytest"> </a>
 
 <table class="h-plus-pilcrow">
@@ -4274,6 +4394,65 @@ div.gref_ogroup_section h3 {
 <a href="#Common">Common</a>
 </br></p></p></div>
 <div class="gref_goal_section">
+<a id="gref_goal_test-changed" pantsmark="gref_goal_test-changed"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="test-changed">test-changed</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#test-changed">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Test changed targets.
+
+
+<div class="gref_ogroup_section">
+<a id="gref_cli_testchanged" pantsmark="gref_cli_testchanged"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_testchanged">test-changed</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_testchanged">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.core.tasks.changed_target_goals.TestChanged</code>
+<ul>
+<li><code>--[no-]fast</code>
+<code>bool</code>
+
+      Stop searching for owners once a source is mapped to at least owning target.
+
+<li><code>--changes-since/--parent</code>
+<code>str</code>
+
+      Calculate changes since this tree-ish/scm ref (defaults to current HEAD/tip).
+
+<li><code>--diffspec</code>
+<code>str</code>
+
+      Calculate changes contained within given scm spec (commit range/sha/ref/etc).
+
+<li><code>--include-dependees</code>
+<code>str</code>
+      (Default: <code>none</code>)
+
+      Include direct or transitive dependees of changed targets.
+
+</li></li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="gref_goal_section">
 <a id="gref_goal_thrift-linter" pantsmark="gref_goal_thrift-linter"> </a>
 
 <table class="h-plus-pilcrow">
@@ -4324,6 +4503,44 @@ div.gref_ogroup_section h3 {
       Target specs for bootstrapping the scrooge-linter tool.
 
 </li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="gref_goal_section">
+<a id="gref_goal_unpack-jars" pantsmark="gref_goal_unpack-jars"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="unpack-jars">unpack-jars</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#unpack-jars">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Unpack artifacts specified by unpacked_jars() targets.
+
+
+<div class="gref_ogroup_section">
+<a id="gref_cli_unpackjars" pantsmark="gref_cli_unpackjars"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_unpackjars">unpack-jars</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_unpackjars">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.unpack_jars.UnpackJars</code>
+<ul>
+</ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -4379,6 +4596,11 @@ These command-line flags are available with all Pants goals.
       (Default: <code>[u'/etc/pantsrc', u'~/.pants.rc']</code>)
 
       Override config with values from these files. Later files override eariler ones.
+
+<li><code>--pythonpath</code>
+<code>str</code>
+
+      Add these directories to PYTHONPATH to search for plugins.
 
 <li><code>-t/--timeout</code>
 <code>int</code>
@@ -4441,7 +4663,12 @@ These command-line flags are available with all Pants goals.
 <code>str</code>
       (Default: <code>['&lt;buildroot&gt;/.pants.d']</code>)
 
-      Exclude these target specs when computing the command-line target specs.
+      Exclude these paths when computing the command-line target specs.
+
+<li><code>--exclude-target-regexp</code>
+<code>str</code>
+
+      Regex pattern to exclude from the target list (useful in conjunction with ::). Multiple patterns may be specified by setting this flag multiple times.
 
 <li><code>--[no-]read-from-artifact-cache</code>
 <code>bool</code>
@@ -4449,16 +4676,21 @@ These command-line flags are available with all Pants goals.
 
       Read build artifacts from cache, if available.
 
-<li><code>--exclude-target-regexp</code>
-<code>str</code>
+<li><code>--read-artifact-caches</code>
+<code>list_type</code>
 
-      Regex pattern to exclude from the target list (useful in conjunction with ::). Multiple patterns may be specified by setting this flag multiple times.
+      The URIs of artifact caches to read from. Each entry is a URL of a RESTful cache, a path of a filesystem cache, or a pipe-separated list of alternate caches to choose from.
 
 <li><code>--[no-]write-to-artifact-cache</code>
 <code>bool</code>
       (Default: <code>True</code>)
 
       Write build artifacts to cache, if possible.
+
+<li><code>--write-artifact-caches</code>
+<code>list_type</code>
+
+      The URIs of artifact caches to write to. Each entry is a URL of a RESTful cache, a path of a filesystem cache, or a pipe-separated list of alternate caches to choose from.
 
 <li><code>--[no-]overwrite-cache-artifacts</code>
 <code>bool</code>
@@ -4475,13 +4707,13 @@ These command-line flags are available with all Pants goals.
 
       When parsing specs, will stop on the first erronous BUILD file encountered. Otherwise, will parse all builds in a spec and then throw an Exception.
 
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 </p></p></p></p></p></body>
 <!-- main content end -->
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/builddict/goals_reference.html 2014-12-29T11:11:43.845417
+from dist/builddict/goals_reference.html 2015-01-23T20:05:38.613022
 </div>
 
 </div> <!-- end of mainflow -->
@@ -4576,6 +4808,9 @@ from dist/builddict/goals_reference.html 2014-12-29T11:11:43.845417
 </li>
 <li class="toc-h1 toc-here">
 Pants Goals Reference
+</li>
+<li class="toc-h1 ">
+<a href="changelog.html">RELEASE HISTORY</a>
 </li>
 <li class="toc-h1 ">
 <a href="dev.html">Pants Developer Center</a>

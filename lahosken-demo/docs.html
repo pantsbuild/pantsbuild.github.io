@@ -13,6 +13,7 @@
   <script src="s.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" href="logo.ico">
+  <link rel="canonical" href="https://pantsbuild.github.io/docs.html" >
 </head>
 
 <body>
@@ -31,6 +32,9 @@
 
 <nav class="pagetoc">
 <ul>
+<li class="toc-h1"><a href="#docs-in-the-code">Docs in the Code</a></li>
+<li class="toc-h2"><a href="#goals-tasks-and-options">Goals, Tasks, and Options</a></li>
+<li class="toc-h2"><a href="#targets-and-other-build-file-things">Targets and other BUILD File Things</a></li>
 <li class="toc-h1"><a href="#generating-the-site">Generating the site</a></li>
 <li class="toc-h1"><a href="#publishing-the-site">Publishing the site</a></li>
 <li class="toc-h1"><a href="#cross-references">Cross References</a></li>
@@ -116,8 +120,77 @@
 </tbody>
 </table>
 
-<p>Pants documentation is generated from markdown sources and some
-reflection code by Pants itself.</p>
+<p>Pants' user-facing documentation lives in markdown sources, in docstrings, and in some other
+special strings. We keep documentation close to the code it describes. If you change some code
+and wonder "should I update the docs?" the documentation that needs updating should be nearby.</p>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="docs-in-the-code">Docs in the Code</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#docs-in-the-code">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>"Reference" information tends to live in the code. (Information for Pants developers, of course,
+lives in docstrings and comments; but some information for Pants <em>users</em> lives in the code, too.)</p>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="goals-tasks-and-options">Goals, Tasks, and Options</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#goals-tasks-and-options">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>When a user views a goal's options by entering <code>./pants compile -h</code> or browsing the
+<a href="goals_reference.html#gref_goal_compile" pantsref="gref_goal_compile">Pants Goals Reference</a>, they see text that "lives" in the
+Pants source code. If you <a href="dev_tasks.html">develop a <code>Task</code></a>, document it:</p>
+<p><strong>Goal description:</strong> When registering a <code>Task</code> with a goal, call
+<code>with_description('yadda yadda')</code> to set the goal's description to "yadda yadda". More than one
+Task can register with a goal; thus another description might "clobber" the one you provide (and
+if you provide one, it might clobber another).</p>
+<p>
+<div class="md-included-snippet"><div class="codehilite"><pre>  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'goals'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">ListGoals</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">()</span><span class="o">.</span><span class="n">with_description</span><span class="p">(</span><span class="s">'List all documented goals.'</span><span class="p">)</span>
+</pre></div></div>
+</p>
+<p><strong>Option help</strong> When registering a <code>Task</code> option, pass a <code>help</code> parameter to describe that option.</p>
+<p>
+<div class="md-included-snippet"><div class="codehilite"><pre>  <span class="k">def</span> <span class="nf">register_options</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">register</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">ListGoals</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">register_options</span><span class="p">(</span><span class="n">register</span><span class="p">)</span>
+    <span class="n">register</span><span class="p">(</span><span class="s">'--graph'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">'store_true'</span><span class="p">,</span>
+             <span class="n">help</span><span class="o">=</span><span class="s">'Generate a graphviz graph of installed goals.'</span><span class="p">)</span>
+</pre></div></div>
+</p>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="targets-and-other-build-file-things">Targets and other <code>BUILD</code> File Things</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#targets-and-other-build-file-things">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>When a user views a target's parameters by entering <code>./pants targets --details=java_library</code> or
+by browsing the <a href="build_dictionary.html#bdict_java_library" pantsref="bdict_java_library">Pants BUILD Dictionary</a>, they're mostly
+seeing information from a docstring. Pants extracts the useful information with some reflection
+code.</p>
+<p>In a few cases, the reflection code doesn't do the right thing without some "steering". E.g.,
+a Target is implemented by a Python class. <em>Most</em> of those class' methods aren't useful in
+<code>BUILD</code> files, but a few are. To reveal only the useful methods in the docs, Pants omits them
+by default, except those that have been tagged for inclusion.</p>
+<p>To "steer" the reflection, use a <code>@manual.builddict</code> annotation. See its
+<a href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/base/build_manual.py">docstring</a>
+for details about what it can show/hide.</p>
 
 <table class="h-plus-pilcrow">
 <tbody>
@@ -130,8 +203,8 @@ reflection code by Pants itself.</p>
 </tbody>
 </table>
 
-<p>A script encapsulates all that needs to be done. To generate and preview
-changes, just:</p>
+<p>To see http://pantsbuild.github.io/ site's content as it would be generated based on your local
+copy of the pants repo, enter the command</p>
 <div class="codehilite"><pre><span class="c"># This publishes the docs **locally** and opens (-o) them in your browser for review</span>
 ./build-support/bin/publish_docs.sh -o
 </pre></div>
@@ -147,17 +220,17 @@ changes, just:</p>
 </tbody>
 </table>
 
-<p>Use the same script as for generating the site, but request it also be
-published. Don't worry - you'll get a chance to abort the publish just
-before its comitted remotely:</p>
+<p>We publish the site via <a href="https://pages.github.com/">Github Pages</a>. You need <code>pantsbuild</code> commit
+privilege to publish the site.</p>
+<p>Use the same script as for generating the site, but request it also be published. Don't
+worry—you'll get a chance to abort the publish just before it's committed remotely:</p>
 <div class="codehilite"><pre><span class="c"># This publishes the docs locally and opens (-o) them in your browser for review</span>
 <span class="c"># and then prompts you to confirm you want to publish these docs remotely before</span>
 <span class="c"># proceeding to publish to http://pantsbuild.github.io</span>
 ./build-support/bin/publish_docs.sh -op
 </pre></div>
-<p>If you'd like to publish remotely for others to preview your changes
-easily, there is a -d option that will create a copy of the site in a
-subdir of <a href="http://pantsbuild.github.io/">http://pantsbuild.github.io/</a>:</p>
+<p>If you'd like to publish remotely for others to preview your changes easily, the <code>-d</code> option creates
+a copy of the site in a subdir of <a href="http://pantsbuild.github.io/">http://pantsbuild.github.io/</a>:</p>
 <div class="codehilite"><pre><span class="c"># This publishes the docs locally and opens (-o) them in your browser for review</span>
 <span class="c"># and then prompts you to confirm you want to publish these docs remotely before</span>
 <span class="c"># proceeding to publish to http://pantsbuild.github.io/sirois-test-site</span>
@@ -224,7 +297,7 @@ page to the <code>sources</code> dict and to the <code>tree</code> hierarchy.</p
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/markdown/html/src/python/pants/docs/docs.html 2014-12-29T11:11:43.729810
+from dist/markdown/html/src/python/pants/docs/docs.html 2015-01-23T20:05:38.497033
 </div>
 
 </div> <!-- end of mainflow -->
@@ -319,6 +392,9 @@ from dist/markdown/html/src/python/pants/docs/docs.html 2014-12-29T11:11:43.7298
 </li>
 <li class="toc-h1 ">
 <a href="goals_reference.html">Pants Goals Reference</a>
+</li>
+<li class="toc-h1 ">
+<a href="changelog.html">RELEASE HISTORY</a>
 </li>
 <li class="toc-h1 ">
 <a href="dev.html">Pants Developer Center</a>

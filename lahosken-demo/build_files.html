@@ -13,6 +13,7 @@
   <script src="s.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" href="logo.ico">
+  <link rel="canonical" href="https://pantsbuild.github.io/build_files.html" >
 </head>
 
 <body>
@@ -38,7 +39,6 @@
 <li class="toc-h1"><a href="#depend-on-api-in-library-targets-implementation-in-binary-targets">Depend on API in Library Targets, Implementation in Binary Targets</a></li>
 <li class="toc-h1"><a href="#which-build-files-are-executed-and-how">Which BUILD Files are &quot;Executed&quot;? (and how?)</a></li>
 <li class="toc-h1"><a href="#build-files_1">BUILD.* files</a></li>
-<li class="toc-h1"><a href="#tag-incompatibilities-with-exclusives">Tag Incompatibilities with exclusives</a></li>
 <li class="toc-h1"><a href="#what-happened-to-the-pants-wrapper-around-targets">What happened to the pants() wrapper around targets?</a></li>
 <li class="toc-h1"><a href="#using-an-older-version-of-pants">Using an older version of Pants?</a></li>
 </ul>
@@ -530,43 +530,6 @@ definition that only makes sense behind your organization's firewall.</p>
 <p>A build target defined in <code>BUILD.foo</code> can't have the same <code>name</code> as a
 build target defined in the same directory's <code>BUILD</code> file; they share a
 namespace.</p>
-
-<table class="h-plus-pilcrow">
-<tbody>
-<tr>
-<td class="h-plus-pilcrow-holder"><h2 id="tag-incompatibilities-with-exclusives">Tag Incompatibilities with exclusives</h2></td>
-<td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#tag-incompatibilities-with-exclusives">¶</a>
-</div></td>
-</tr>
-</tbody>
-</table>
-
-<p>A big code workspace might contain some parts that aren't compatible
-with each other. To make sure that no target tries to use targets that
-don't work together, you can tag those targets with <code>exclusives</code>.</p>
-<p>For example, suppose that we had two java targets, jliba and jlibb.
-jliba uses <code>slf4j</code>, which includes in its jar package an implementation
-of <code>log4j</code>. jlibb uses <code>log4j</code> directly. But the version of log4j that's
-packaged inside of <code>slf4j</code> is different from the version used by jlibb.
-:</p>
-<div class="codehilite"><pre><span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'jliba'</span><span class="p">,</span>
-  <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span><span class="s">'3rdparty/jvm/org/slf4j:slf4j-with-log4j-2.4'</span><span class="p">])</span>
-<span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'jlibb'</span><span class="p">,</span>
-  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s">'3rdparty/jvm/log4j:log4j-1.9'</span><span class="p">])</span>
-<span class="n">java_binary</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'javabin'</span><span class="p">,</span> <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s">':jliba'</span><span class="p">,</span> <span class="s">':jlibb'</span><span class="p">])</span>
-</pre></div>
-<p>In this case, the binary target <code>javabin</code> depends on both <code>slf4j</code> with
-its packaged <code>log4j</code> version 2.4, and on <code>log4j-1.9</code>. Pants doesn't know
-that the slf4j and log4j <code>jar_dependencies</code> contain incompatible
-versions of the same library, and so it can't detect the error.</p>
-<p>With exclusives, the <code>jar_library</code> target for the joda libraries would
-declare exclusives tags:</p>
-<div class="codehilite"><pre><span class="n">jar_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'slf4j-with-log4j-2.4'</span><span class="p">,</span> <span class="n">exclusives</span><span class="o">=</span><span class="p">{</span><span class="s">'log4j'</span><span class="p">:</span> <span class="s">'2.4'</span><span class="p">},</span> <span class="n">jars</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
-<span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'jlibb'</span><span class="p">,</span> <span class="n">exclusives</span><span class="o">=</span><span class="p">{</span><span class="s">'log4j'</span><span class="p">:</span> <span class="s">'1.9'</span><span class="p">},</span> <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
-</pre></div>
-<p>With the exclusives declared, pants can recognize that 'javabin' has
-conflicting dependencies, and can generate an appropriate error message.</p>
 <p><a id="build_pants_wrapper_gone" pantsmark="build_pants_wrapper_gone"> </a></p>
 
 <table class="h-plus-pilcrow">
@@ -648,7 +611,7 @@ For more information, see the
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/markdown/html/src/docs/build_files.html 2014-12-29T11:11:43.751772
+from dist/markdown/html/src/docs/build_files.html 2015-01-23T20:05:38.517279
 </div>
 
 </div> <!-- end of mainflow -->
@@ -743,6 +706,9 @@ BUILD files
 </li>
 <li class="toc-h1 ">
 <a href="goals_reference.html">Pants Goals Reference</a>
+</li>
+<li class="toc-h1 ">
+<a href="changelog.html">RELEASE HISTORY</a>
 </li>
 <li class="toc-h1 ">
 <a href="dev.html">Pants Developer Center</a>

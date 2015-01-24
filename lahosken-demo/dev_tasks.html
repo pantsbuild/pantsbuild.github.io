@@ -13,6 +13,7 @@
   <script src="s.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" href="logo.ico">
+  <link rel="canonical" href="https://pantsbuild.github.io/dev_tasks.html" >
 </head>
 
 <body>
@@ -182,17 +183,17 @@ backend</a>:</p>
   <span class="n">Goal</span><span class="o">.</span><span class="n">by_name</span><span class="p">(</span><span class="s">'clean-all'</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="n">ng_killall</span><span class="p">,</span> <span class="n">first</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
   <span class="n">Goal</span><span class="o">.</span><span class="n">by_name</span><span class="p">(</span><span class="s">'clean-all-async'</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="n">ng_killall</span><span class="p">,</span> <span class="n">first</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'bootstrap-jvm-tools'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">BootstrapJvmTools</span>
-  <span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s">'bootstrap'</span><span class="p">)</span><span class="o">.</span><span class="n">with_description</span><span class="p">(</span><span class="s">'Bootstrap tools needed for building.'</span><span class="p">)</span>
+  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'bootstrap-jvm-tools'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">BootstrapJvmTools</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s">'bootstrap'</span><span class="p">)</span><span class="o">.</span><span class="n">with_description</span><span class="p">(</span>
+      <span class="s">'Bootstrap tools needed for building.'</span><span class="p">)</span>
 
   <span class="c"># Dependency resolution.</span>
-  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'ivy'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">IvyResolve</span><span class="p">,</span>
-       <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s">'gen'</span><span class="p">,</span> <span class="s">'check-exclusives'</span><span class="p">,</span> <span class="s">'bootstrap'</span><span class="p">]</span>
-  <span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s">'resolve'</span><span class="p">)</span><span class="o">.</span><span class="n">with_description</span><span class="p">(</span><span class="s">'Resolve dependencies and produce dependency reports.'</span><span class="p">)</span>
+  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'ivy'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">IvyResolve</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s">'resolve'</span><span class="p">)</span><span class="o">.</span><span class="n">with_description</span><span class="p">(</span>
+      <span class="s">'Resolve dependencies and produce dependency reports.'</span><span class="p">)</span>
 
-  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'ivy-imports'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">IvyImports</span><span class="p">,</span>
-       <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s">'bootstrap'</span><span class="p">]</span>
-  <span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s">'imports'</span><span class="p">)</span>
+  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'ivy-imports'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">IvyImports</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s">'imports'</span><span class="p">)</span>
+
+  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'unpack-jars'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">UnpackJars</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">()</span><span class="o">.</span><span class="n">with_description</span><span class="p">(</span>
+    <span class="s">'Unpack artifacts specified by unpacked_jars() targets.'</span><span class="p">)</span>
 </pre></div></div>
 </p>
 <p>That <code>task(...)</code> is a name for
@@ -231,6 +232,7 @@ returns a list of strings:</p>
 <div class="md-included-snippet"><div class="codehilite"><pre>  <span class="k">def</span> <span class="nf">prepare</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">round_manager</span><span class="p">):</span>
     <span class="nb">super</span><span class="p">(</span><span class="n">ProtobufGen</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">prepare</span><span class="p">(</span><span class="n">round_manager</span><span class="p">)</span>
     <span class="n">round_manager</span><span class="o">.</span><span class="n">require_data</span><span class="p">(</span><span class="s">'ivy_imports'</span><span class="p">)</span>
+    <span class="n">round_manager</span><span class="o">.</span><span class="n">require_data</span><span class="p">(</span><span class="s">'deferred_sources'</span><span class="p">)</span>
 </pre></div></div>
 </p>
 <p>Pants uses this information to determine which tasks must run first to
@@ -365,7 +367,7 @@ shows some useful idioms for JVM tasks.</p>
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/markdown/html/src/python/pants/docs/dev_tasks.html 2014-12-29T11:11:43.783101
+from dist/markdown/html/src/python/pants/docs/dev_tasks.html 2015-01-23T20:05:38.547451
 </div>
 
 </div> <!-- end of mainflow -->
@@ -460,6 +462,9 @@ from dist/markdown/html/src/python/pants/docs/dev_tasks.html 2014-12-29T11:11:43
 </li>
 <li class="toc-h1 ">
 <a href="goals_reference.html">Pants Goals Reference</a>
+</li>
+<li class="toc-h1 ">
+<a href="changelog.html">RELEASE HISTORY</a>
 </li>
 <li class="toc-h1 ">
 <a href="dev.html">Pants Developer Center</a>
