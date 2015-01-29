@@ -244,7 +244,7 @@ Java code, and is installed in the <tt>compile</tt> goal.
   <li> <a href="#run">run</a> - Run a binary target.
   <li> <a href="#run-dirty">run-dirty</a> - Run a binary target, skipping compilation.
   <li> <a href="#server">server</a> - Run the pants reporting server.
-  <li> <a href="#setup-py">setup-py</a> - None
+  <li> <a href="#setup-py">setup-py</a> - Build setup.py-based Python projects from python_library targets.
   <li> <a href="#sign">sign</a> - None
   <li> <a href="#sort">sort</a> - Topologically sort the targets.
   <li> <a href="#targets">targets</a> - List target types and BUILD file symbols (python_tests, jar, etc).
@@ -1745,18 +1745,6 @@ div.oref_ogroup_section h3 {
 
 <p>Implemented by <code>pants.backend.jvm.tasks.eclipse_gen.EclipseGen</code>
 <ul>
-<li><code>--nailgun-server</code>
-<code>list_type</code>
-      (Default: <code>[u'//:nailgun-server']</code>)
-
-      Target specs for bootstrapping the nailgun-server tool.
-
-<li><code>--jar-tool</code>
-<code>list_type</code>
-      (Default: <code>[u'//:jar-tool']</code>)
-
-      Target specs for bootstrapping the jar-tool tool.
-
 <li><code>--project-name</code>
 <code>str</code>
       (Default: <code>project</code>)
@@ -1822,7 +1810,7 @@ div.oref_ogroup_section h3 {
 
       The Eclipse version the project configuration should be generated for.
 
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -1860,18 +1848,6 @@ div.oref_ogroup_section h3 {
 
 <p>Implemented by <code>pants.backend.jvm.tasks.ensime_gen.EnsimeGen</code>
 <ul>
-<li><code>--nailgun-server</code>
-<code>list_type</code>
-      (Default: <code>[u'//:nailgun-server']</code>)
-
-      Target specs for bootstrapping the nailgun-server tool.
-
-<li><code>--jar-tool</code>
-<code>list_type</code>
-      (Default: <code>[u'//:jar-tool']</code>)
-
-      Target specs for bootstrapping the jar-tool tool.
-
 <li><code>--project-name</code>
 <code>str</code>
       (Default: <code>project</code>)
@@ -1937,7 +1913,7 @@ div.oref_ogroup_section h3 {
 
       Set the scala language level used for Ensime linting.
 
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -2448,18 +2424,6 @@ div.oref_ogroup_section h3 {
 
 <p>Implemented by <code>pants.backend.jvm.tasks.idea_gen.IdeaGen</code>
 <ul>
-<li><code>--nailgun-server</code>
-<code>list_type</code>
-      (Default: <code>[u'//:nailgun-server']</code>)
-
-      Target specs for bootstrapping the nailgun-server tool.
-
-<li><code>--jar-tool</code>
-<code>list_type</code>
-      (Default: <code>[u'//:jar-tool']</code>)
-
-      Target specs for bootstrapping the jar-tool tool.
-
 <li><code>--project-name</code>
 <code>str</code>
       (Default: <code>project</code>)
@@ -2576,7 +2540,7 @@ div.oref_ogroup_section h3 {
 
       Exclude 'target' directories for directories containing pom.xml files.  These directories contain generated code andcopies of files staged for deployment.
 
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -3524,6 +3488,12 @@ div.oref_ogroup_section h3 {
 
       Pass these extra args to ivy.
 
+<li><code>--confs</code>
+<code>str</code>
+      (Default: <code>[u'default']</code>)
+
+      Pass a configuration to ivy in addition to the default ones.
+
 <li><code>--mutable-pattern</code>
 <code>str</code>
 
@@ -3535,7 +3505,7 @@ div.oref_ogroup_section h3 {
 
       Target specs for bootstrapping the xalan tool.
 
-</li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -3855,6 +3825,9 @@ div.oref_ogroup_section h3 {
 </tbody>
 </table>
 
+<p>Build setup.py-based Python projects from python_library targets.
+
+
 <div class="oref_ogroup_section">
 <a id="oref_cli_setuppy" pantsmark="oref_cli_setuppy"> </a>
 
@@ -3885,7 +3858,7 @@ div.oref_ogroup_section h3 {
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
-</br></p></div>
+</br></p></p></div>
 <div class="oref_goal_section">
 <a id="oref_goal_sign" pantsmark="oref_goal_sign"> </a>
 
@@ -4540,6 +4513,11 @@ These command-line flags are available with all Pants goals.
 
       Add these directories to PYTHONPATH to search for plugins.
 
+<li><code>--target-spec-file</code>
+<code>str</code>
+
+      Read additional specs from this file, one per line
+
 <li><code>-t/--timeout</code>
 <code>int</code>
 
@@ -4651,13 +4629,13 @@ These command-line flags are available with all Pants goals.
 
       the time in seconds before we consider re-resolving an open-ended requirement, e.g. "flask&gt;=0.2" if a matching distribution is available on disk.
 
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 </p></p></p></p></body>
 <!-- main content end -->
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/builddict/options_reference.html 2015-01-27T12:55:12.283457
+from dist/builddict/options_reference.html 2015-01-29T14:38:10.965156
 </div>
 
 </div> <!-- end of mainflow -->
