@@ -173,8 +173,8 @@ more about <a href="JVMProjects.html#jvm_bundles" pantsref="jvm_bundles">bundles
 executable because it contains a manifest file that specifies the main
 class as well as classpath for all dependencies. If your program
 contains only jars (and resources packaged in those jars), this is all
-you need to run the binary. Use <code>./pants goal binary</code> to compile its
-code; <code>./pants goal run</code> to run it "in place".</p>
+you need to run the binary. Use <code>./pants binary</code> to compile its
+code; <code>./pants run</code> to run it "in place".</p>
 </blockquote>
 <p><strong>Importable Code</strong></p>
 <blockquote>
@@ -238,7 +238,6 @@ directory):</p>
   <span class="n">source</span> <span class="o">=</span> <span class="s">'HelloMain.java'</span><span class="p">,</span>
   <span class="n">main</span> <span class="o">=</span> <span class="s">'com.pants.examples.hello.main.HelloMain'</span><span class="p">,</span>
   <span class="n">basename</span> <span class="o">=</span> <span class="s">'hello-example'</span><span class="p">,</span>
-  <span class="n">deploy_jar_rules</span><span class="o">=</span><span class="n">jar_rules</span><span class="p">(</span><span class="n">rules</span><span class="o">=</span><span class="p">[</span><span class="n">Skip</span><span class="p">(</span><span class="s">'Greeting'</span><span class="p">)])</span>
 <span class="p">)</span>
 </pre></div></div>
 </p>
@@ -367,20 +366,20 @@ You can read more about
 <p>Use the <code>test</code> goal with the targets you're interested in. If they are test targets,
 Pants runs the tests. If they aren't test targets, Pants still compiles them since it knows it
 must compile before it can test.</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants goal <span class="nb">test </span>examples/src/java/com/pants/examples/hello/:: examples/tests/java/com/pants/examples/hello/::
+<div class="codehilite"><pre><span class="nv">$ </span>./pants <span class="nb">test </span>examples/src/java/com/pants/examples/hello/:: examples/tests/java/com/pants/examples/hello/::
 </pre></div>
 <p>Assuming you use <code>junit_test</code> targets, output from the <code>junit</code> run is written to
 <code>.pants.d/test/junit/</code>; you can see it on the console with <code>--no--suppress-output</code>:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants goal test.junit --no-suppress-output examples/tests/java/com/pants/examples/hello::
+<div class="codehilite"><pre><span class="nv">$ </span>./pants test.junit --no-suppress-output examples/tests/java/com/pants/examples/hello::
 </pre></div>
 <p><strong>Run just that one troublesome test class:</strong> (assuming a JUnit test;
 other frameworks use other flags)</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants goal test.junit --test<span class="o">=</span>com.pants.examples.hello.greet.GreetingTest examples/tests/java/com/pants/examples/hello/::
+<div class="codehilite"><pre><span class="nv">$ </span>./pants test.junit --test<span class="o">=</span>com.pants.examples.hello.greet.GreetingTest examples/tests/java/com/pants/examples/hello/::
 </pre></div>
 <p><strong>Packaging Binaries</strong></p>
 <p>To create a <a href="JVMProjects.html#jvm_bundles" pantsref="jvm_bundles">bundle</a> (a binary and its dependencies, perhaps
 including helper files):</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants goal bundle --archive<span class="o">=</span>zip examples/src/java/com/pants/examples/hello/main
+<div class="codehilite"><pre><span class="nv">$ </span>./pants bundle --archive<span class="o">=</span>zip examples/src/java/com/pants/examples/hello/main
    ...lots of build output...
 08:50:54 00:02       <span class="o">[</span>create-monolithic-jar<span class="o">]</span>
 08:50:54 00:02         <span class="o">[</span>add-internal-classes<span class="o">]</span>
@@ -427,18 +426,18 @@ classes for each JVM-based operation. Things go faster.</p>
 
 <p>Normally, Pants uses the first java it finds in <code>JDK_HOME</code>, <code>JAVA_HOME</code>, or <code>PATH</code>. To specify a
 specific java version for just one pants invocation:</p>
-<div class="codehilite"><pre><span class="nv">$ JDK_HOME</span><span class="o">=</span>/usr/lib/jvm/java-1.7.0-openjdk-amd64 ./pants goal ...
+<div class="codehilite"><pre><span class="nv">$ JDK_HOME</span><span class="o">=</span>/usr/lib/jvm/java-1.7.0-openjdk-amd64 ./pants ...
 </pre></div>
 <p>If you sometimes need to compile some code in Java 6 and sometimes Java 7, you can use a
 <code>compile.java</code> command-line arg to specify Java version:</p>
-<div class="codehilite"><pre>./pants goal bundle compile.java --target<span class="o">=</span>7 --source<span class="o">=</span>7 examples/src/java/com/pants/examples/hello/main
+<div class="codehilite"><pre>./pants bundle compile.java --target<span class="o">=</span>7 --source<span class="o">=</span>7 examples/src/java/com/pants/examples/hello/main
 </pre></div>
 <p><em>BUT</em> beware: if you switch between Java versions, Pants doesn't realize
 when it needs to rebuild. If you build with version 7, change some code,
 then build with version 6, java 6 will try to understand java
 7-generated classfiles and fail. Thus, if you've been building with one
 Java version and are switching to another, you probably need to:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants goal clean-all
+<div class="codehilite"><pre><span class="nv">$ </span>./pants clean-all
 </pre></div>
 <p>so that the next build starts from scratch.</p>
 <p><strong>Note:</strong> Currently, pants is known to work with OpenJDK version 7 or greater,
@@ -500,8 +499,8 @@ not-so-useful stub <code>.jar</code> files).)</p>
 </tbody>
 </table>
 
-<p>Invoke <code>./pants goal bundle</code> on a JVM app or JVM binary target:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants goal bundle examples/src/java/com/pants/examples/hello/main:main
+<p>Invoke <code>./pants bundle</code> on a JVM app or JVM binary target:</p>
+<div class="codehilite"><pre><span class="nv">$ </span>./pants bundle examples/src/java/com/pants/examples/hello/main:main
 </pre></div>
 <p>With options, you can tell Pants to archive the bundle in a zip, a tar, and some other common
 formats. See the <a href="options_reference.html#oref_goal_bundle" pantsref="oref_goal_bundle">bundle help</a> for built-in choices.</p>
@@ -561,11 +560,11 @@ contains code compiled for this target.</p>
 </tbody>
 </table>
 
-<p>Instead of just creating a directory tree, you can specify <code>goal bundle --archive=zip</code> to
-<code>./pants goal bundle</code> to generate an archive file (a <code>.zip</code>, monolithic <code>.jar</code>, or some other
+<p>Instead of just creating a directory tree, you can specify <code>bundle --archive=zip</code> to
+<code>./pants bundle</code> to generate an archive file (a <code>.zip</code>, monolithic <code>.jar</code>, or some other
 format) instead.</p>
 <p>To use such an archive, put it where you want it, unpack it, and run:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants goal bundle --archive<span class="o">=</span>zip examples/src/java/com/pants/examples/hello/main
+<div class="codehilite"><pre><span class="nv">$ </span>./pants bundle --archive<span class="o">=</span>zip examples/src/java/com/pants/examples/hello/main
     ...lots of build output...
 10:14:26 00:01       <span class="o">[</span>create-monolithic-jar<span class="o">]</span>
 10:14:26 00:01         <span class="o">[</span>add-internal-classes<span class="o">]</span>
@@ -614,7 +613,7 @@ E.g., to omit all files containing the regexp <code>Greeting</code>, you might s
 </pre></div>
 <p>After building our <code>hello</code> example, if we check the binary jar's contents, there is no
 <code>Greeting.class</code> (and running that jar crashes; we omitted a class this binary needs):</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants goal binary examples/src/java/com/pants/examples/hello/main:main
+<div class="codehilite"><pre><span class="nv">$ </span>./pants binary examples/src/java/com/pants/examples/hello/main:main
 <span class="nv">$ </span>jar -tf dist/hello-example.jar
 META-INF/
 META-INF/MANIFEST.MF
@@ -650,7 +649,7 @@ com/pants/example/hello/world.txt
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/markdown/html/examples/src/java/com/pants/examples/readme.html 2015-01-30T09:23:39.922914
+from dist/markdown/html/examples/src/java/com/pants/examples/readme.html 2015-02-05T22:23:44.443294
 </div>
 
 </div> <!-- end of mainflow -->
