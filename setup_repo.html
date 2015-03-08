@@ -165,10 +165,10 @@ several contexts, as in these excerpts that define/use <code>thrift_workdir</cod
 <div class="codehilite"><pre><span class="k">[DEFAULT]</span>
 <span class="err">thrift_workdir:</span> <span class="err">%(pants_workdir)s/thrift</span>
 
-<span class="k">[thrift-gen]</span>
+<span class="k">[gen.thrift]</span>
 <span class="err">workdir:</span> <span class="err">%(thrift_workdir)s</span>
 
-<span class="k">[java-compile]</span>
+<span class="k">[compile.java]</span>
 <span class="err">args:</span> <span class="err">[</span>
   <span class="err">'-C-Tnowarnprefixes',</span> <span class="err">'-C%(thrift_workdir)s',</span>
 <span class="err">]</span>
@@ -197,7 +197,7 @@ repo and perhaps change some version numbers to fit your situation.</p>
 <code>BUILD.tools</code> for that target:</p>
 <p>
 <div class="md-included-snippet"><div class="codehilite"><pre><span class="n">jar_library</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">'jmake'</span><span class="p">,</span>
-            <span class="n">jars</span> <span class="o">=</span> <span class="p">[</span><span class="n">jar</span><span class="p">(</span><span class="n">org</span> <span class="o">=</span> <span class="s">'org.pantsbuild'</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s">'jmake'</span><span class="p">,</span> <span class="n">rev</span> <span class="o">=</span> <span class="s">'1.3.8-9'</span><span class="p">)])</span>
+            <span class="n">jars</span> <span class="o">=</span> <span class="p">[</span><span class="n">jar</span><span class="p">(</span><span class="n">org</span> <span class="o">=</span> <span class="s">'org.pantsbuild'</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s">'jmake'</span><span class="p">,</span> <span class="n">rev</span> <span class="o">=</span> <span class="s">'1.3.8-10'</span><span class="p">)])</span>
 </pre></div></div>
 </p>
 <p><strong>Python</strong> <code>build-support/python/pants.requirements.txt</code> has Pants' runtime Python requirements,
@@ -416,10 +416,8 @@ repository.</p>
 </tbody>
 </table>
 
-<p>Pants can ease
-<a href="publish.html">"publishing"</a>: uploading versioned compiled
-artifacts. There are some special things to set up to enable and
-customize publishing.</p>
+<p>Pants can ease <a href="publish.html">"publishing"</a>: uploading versioned compiled artifacts.
+There are some special things to set up to enable and customize publishing.</p>
 
 <table class="h-plus-pilcrow">
 <tbody>
@@ -432,14 +430,12 @@ customize publishing.</p>
 </tbody>
 </table>
 
-<p>To tell Pants which artifact repsitory to publish to,</p>
-<p><a href="howto_plugin.html">Create a plugin</a>
-if you haven't already. Register it with Pants.</p>
-<p>In the plugin, define and register a <code>Repository</code> in a <code>BUILD</code> file alias
-as shown in
+<p>To tell Pants which artifact repository to publish to, <a href="howto_plugin.html">Create a
+plugin</a> if you haven't already. Register it with Pants.</p>
+<p>In the plugin, define and register at least one <code>Repository</code> object in a <code>BUILD</code> file alias as
+shown in
 <a href="https://github.com/pantsbuild/pants/blob/master/src/python/internal_backend/repositories/register.py"><code>src/python/internal_backend/repositories/register.py</code></a>.</p>
-<p><code>BUILD</code> targets can use this Repository's alias as the <code>repo</code> parameter
-to an <a href="build_dictionary.html#bdict_artifact" pantsref="bdict_artifact"><code>artifact</code></a>. For example,
+<p><code>BUILD</code> targets can use this Repository's alias as the <code>repo</code> parameter to an <a href="build_dictionary.html#bdict_artifact" pantsref="bdict_artifact"><code>artifact</code></a>. For example,
 <a href="https://github.com/pantsbuild/pants/blob/master/examples/src/java/com/pants/examples/hello/greet/BUILD">examples/src/java/com/pants/examples/hello/greet/BUILD</a>
 refers to the <code>public</code> repository defined above. (Notice it's a Python object, not a string.)</p>
 <p>
@@ -453,27 +449,81 @@ refers to the <code>public</code> repository defined above. (Notice it's a Pytho
 <span class="p">)</span>
 </pre></div></div>
 </p>
-<p>If you get an error that the repo name (here, <code>public</code>) isn't defined,
-your plugin didn't register with Pants successfully. Make sure you
-bootstrap Pants in a way that loads your <code>register.py</code>.</p>
-<p>In your config file (usually <code>pants.ini</code>), set up a <code>[jar-publish]</code>
-section. In that section, create a <code>dict</code> called <code>repos</code>. It should
-contain a section for each Repository:</p>
+<p>If you get an error that the repo name (here, <code>public</code>) isn't defined, your plugin didn't register
+with Pants successfully. Make sure you bootstrap Pants in a way that loads your <code>register.py</code>.</p>
+<p>In your config file (usually <code>pants.ini</code>), set up a <code>[jar-publish]</code> section. In that section,
+create a <code>dict</code> called <code>repos</code>. It should contain a section for each <code>Repository</code> object that you
+defined in your plugin:</p>
 <div class="codehilite"><pre>repos: {
-  'public': {  # must match the alias above
-    'resolver': 'maven.twttr.com', # must match URL above and &lt;url&gt; name
-                                   # in ivysettings.xml
+  'public': {  # must match the name of the `Repository` object that you defined in your plugin.
+    'resolver': 'maven.example.com', # must match hostname in ~/.netrc and the &lt;url&gt; parameter
+                                     # in your custom ivysettings.xml.
     'confs': ['default', 'sources', 'docs', 'changelog'],
-    # 'auth': 'build-support:netrc',
-    # 'help': 'Configure your ~/.netrc for artifactory access.
+    'auth': 'build-support:netrc',   # Pants spec to a 'credentials()' object.
+    'help': 'Configure your ~/.netrc for maven.example.com access.'
   },
-  'testing': { # this key must match the alias name above
-    'resolver': 'maven.twttr.com',
+  'testing': {
+    'resolver': 'artifactory.example.com',
     'confs': ['default', 'sources', 'docs', 'changelog'],
-    # 'auth': 'build-support:netrc',
-    # 'help': 'Configure your ~/.netrc for artifactory access.
+    'auth': 'build-support:netrc',
+    'help': 'Configure your ~/.netrc for artifactory.example.com access.'
   },
 }
+</pre></div>
+<p>If your repository requires authentication, add a <code>~/.netrc</code> file. Here is a sample file, that
+matches the <code>repos</code> specified above:</p>
+<div class="codehilite"><pre>machine maven.example.com
+  login someuser
+  password password123
+
+machine artifactory.example.com
+  login someuser
+  password someotherpassword123
+</pre></div>
+<p>And place the following in a <code>BUILD</code> file somewhere in your repository (<code>build-support/BUILD</code> is a
+good place, and is used in the example above):</p>
+<div class="codehilite"><pre>netrc = netrc()
+
+credentials(
+  name = 'netrc',
+  username=netrc.getusername,
+  password=netrc.getpassword)
+</pre></div>
+<p>Next, tell Ivy how to publish to your repository. Add a new <code>ivysettings.xml</code> file to your repo
+(for example: '<code>build-support/ivy/ivysettings_for_publishing.xml</code>'). Here is an example file to get
+you started:</p>
+<div class="codehilite"><pre>    &lt;?xml version="1.0"?&gt;
+    &lt;!-- pants.ini forces this settings file to be loaded by Ivy, but only at
+         publish time. --&gt;
+
+    &lt;ivysettings&gt;
+      &lt;settings defaultResolver="chain-repos"/&gt;
+
+      &lt;include file="${ivy.settings.dir}/ivysettings.xml"/&gt;
+
+      &lt;credentials host="artifactory.example.com"
+                   realm="Artifactory Realm"
+               &lt;!-- These values come from a credentials() object, which is fed by '~/.netrc'.
+                    There must be a '~/.netrc' machine entry which matches a resolver in the
+                    "repos" object in 'pants.ini', which also matches the 'host' in this XML
+                    block. --&gt;
+                   username="${login}"
+                   passwd="${password}"/&gt;
+
+      &lt;resolvers&gt;
+        &lt;chain name="chain-repos" returnFirst="true"&gt;
+          &lt;_remote_resolvers name="remote-repos"/&gt;
+        &lt;/chain&gt;
+
+        &lt;url name="artifactory.example.com" m2compatible="true"&gt;
+          &lt;artifact pattern="https://artifactory.example.com/libs-releases-local/[organization]/[module]/[revision]/[module]-[revision](-[classifier]).[ext]"/&gt;
+        &lt;/url&gt;
+      &lt;/resolvers&gt;
+    &lt;/ivysettings&gt;
+</pre></div>
+<p>With this file in place, add a <code>[publish]</code> section to <code>pants.ini</code>, and tell pants to use
+the custom Ivy settings when publishing:</p>
+<div class="codehilite"><pre>ivy_settings: %(pants_supportdir)s/ivy/ivysettings_for_publishing.xml
 </pre></div>
 <p><a id="setup_publish_restrict_branch" pantsmark="setup_publish_restrict_branch"> </a></p>
 
@@ -488,13 +538,10 @@ contain a section for each Repository:</p>
 </tbody>
 </table>
 
-<p>Your organization might have a notion of a special "release branch": you
-want
-<a href="publish.html">artifact publishing</a>
-to happen on this source control
-branch, which you maintain extra-carefully. You can set this branch
-using the <code>restrict_push_branches</code> option of the <code>[jar-publish]</code> section
-of your config file (usually <code>pants.ini</code>).</p>
+<p>Your organization might have a notion of a special "release branch": you want <a href="publish.html">artifact
+publishing</a> to happen on this source control branch, which you maintain
+extra-carefully. You can set this branch using the <code>restrict_push_branches</code> option of the
+<code>[jar-publish]</code> section of your config file (usually <code>pants.ini</code>).</p>
 
 <table class="h-plus-pilcrow">
 <tbody>
@@ -507,18 +554,14 @@ of your config file (usually <code>pants.ini</code>).</p>
 </tbody>
 </table>
 
-<p>Pants supports "publish plugins", which allow end-users to add
-additional, arbitrary files to be published along with the primary
-artifact. For example, let's say that along with publishing your jar
-full of class files, you would also like to publish a companion file
-that contains some metadata -- code coverage info, source git
-repository, java version that created the jar, etc. By
-<a href="dev_tasks.html">developing a task</a>
-in a <a href="howto_plugin.html">plugin</a>,
-you give Pants a new ability.
-<a href="dev_tasks_publish_extras.html">Develop a Task to Publish "Extra" Artifacts</a>
-to find out how to
-develop a special Task to include "extra" data with published artifacts.</p>
+<p>Pants supports "publish plugins", which allow end-users to add additional, arbitrary files to be
+published along with the primary artifact. For example, let's say that along with publishing your
+jar full of class files, you would also like to publish a companion file that contains some
+metadata -- code coverage info, source git repository, java version that created the jar, etc. By
+<a href="dev_tasks.html">developing a task</a> in a
+<a href="howto_plugin.html">plugin</a>, you give Pants a new ability. <a href="dev_tasks_publish_extras.html">Develop a
+Task to Publish "Extra" Artifacts</a> to find
+out how to develop a special Task to include "extra" data with published artifacts.</p>
 
 <table class="h-plus-pilcrow">
 <tbody>
@@ -572,7 +615,7 @@ find it handy to use <code>.netrc</code> to authenticate those users.)</p>
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/markdown/html/src/docs/setup_repo.html 2015-02-06T08:03:29.841189
+from dist/markdown/html/src/docs/setup_repo.html 2015-03-08T19:32:01.002254
 </div>
 
 </div> <!-- end of mainflow -->
