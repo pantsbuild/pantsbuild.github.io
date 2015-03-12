@@ -47,6 +47,13 @@
 <li class="toc-h2"><a href="#restricting-publish-to-release-branch">Restricting Publish to &quot;Release Branch&quot;</a></li>
 <li class="toc-h2"><a href="#task-to-publish-extra-artifacts">Task to Publish &quot;Extra&quot; Artifacts</a></li>
 <li class="toc-h1"><a href="#outside-caches">Outside Caches</a></li>
+<li class="toc-h1"><a href="#using-pants-behind-a-firewall">Using Pants behind a firewall</a></li>
+<li class="toc-h2"><a href="#ivy-bootstrapper-and-tool-bootstrapping">Ivy bootstrapper and tool bootstrapping</a></li>
+<li class="toc-h2"><a href="#configuring-the-python-requests-library">Configuring the Python requests library</a></li>
+<li class="toc-h2"><a href="#using-ivy-behind-a-firewall">Using Ivy behind a firewall</a></li>
+<li class="toc-h1"><a href="#nexus-as-proxy">Nexus as proxy</a></li>
+<li class="toc-h2"><a href="#redirecting-tool-downloads-to-other-servers">Redirecting tool downloads to other servers</a></li>
+<li class="toc-h2"><a href="#redirecting-python-requirements-to-other-servers">Redirecting python requirements to other servers</a></li>
 </ul>
 </nav>
 
@@ -611,11 +618,196 @@ If the user's <code>.netrc</code> has authentication information for the cache s
 (Thus, if only some users with known-good setups should be able to write to the cache, you might
 find it handy to use <code>.netrc</code> to authenticate those users.)</p>
 
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="using-pants-behind-a-firewall">Using Pants behind a firewall</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#using-pants-behind-a-firewall">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Pants may encounter issues running behind a firewall. Several components expect to be able to reach the Internet:</p>
+<ul>
+<li>Ivy bootstrapper</li>
+<li>Binary tool bootstrapping</li>
+<li>Ivy itself (used for tool bootstrapping and downloading external .jar files)</li>
+<li>Python requirements</li>
+</ul>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="ivy-bootstrapper-and-tool-bootstrapping">Ivy bootstrapper and tool bootstrapping</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#ivy-bootstrapper-and-tool-bootstrapping">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Pants fetches the 'ivy' tool with an initial manual bootstrapping
+test.  You can  re-redirect this initial download to another URL with a setting in pants.ini:</p>
+<div class="codehilite"><pre>[ivy]
+bootstrap_jar_url: https://proxy.corp.example.com/content/groups/public/org/apache/ivy/ivy/2.3.0/ivy-2.3.0.jar
+</pre></div>
+<p>You may also encounter issues downloading this .jar file if you are
+using self-signed SSL certificates. See the section on SSL
+certificates below.</p>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="configuring-the-python-requests-library">Configuring the Python requests library</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#configuring-the-python-requests-library">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Code in bootstrapper.py and other parts of Pants use the Python
+<a href="http://docs.python-requests.org/en/latest/">requests</a> library to
+download resources using http or https.  The first time you may
+encounter this is when Pants attempts to download an initial version
+of ivy.  If this initial download is through a proxy, the requests
+library uses the <code>HTTP_PROXY</code> or<code>HTTPS_PROXY</code> environment variable to
+find the proxy server.</p>
+<div class="codehilite"><pre>export HTTP_PROXY=http://proxy.corp.example.com:123
+export HTTPS_PROXY=https://proxy.corp.example.com:456
+</pre></div>
+<p>If you are using Pants configured to find resources with HTTPS urls, you may see an error like:</p>
+<div class="codehilite"><pre>Exception message: Problem fetching the ivy bootstrap jar! Problem GETing data from https://artifactserver.example.com/content/groups/public/org/apache/ivy/ivy/2.3.0/ivy-2.3.0.jar: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed (_ssl.c:581)
+</pre></div>
+<p>The requests library attempts to verify SSL certificates by default.
+The reason it is denying the request is that it cannot find a trusted
+public key for the root certificate authority presented by the server.
+The requests library uses the 'certifi' library of well known
+certificate authorities, if that library is installed.  If you are
+using a virtualenv installation of pants, using <code>pip
+install certifi</code> to add the certify package to your pants environment
+might help.  You can also download a .pem bundle from the
+<a href="http://certifi.io/en/latest/">certifi project page</a> and set
+<code>REQUESTS_CA_BUNDLE</code> as mentioned below.</p>
+<p>If you are using hosts with a self-signed certificate, your
+certificate authority will not be available in the certifi library.
+You will need a <code>.pem</code> file for the local certificate authority.</p>
+<p>You can tell the requests library about your trusted certificate
+authority certificates by setting the environment variable <code>REQUESTS_CA_BUNDLE</code>.
+This variable should point to a file containing trusted certificates:</p>
+<div class="codehilite"><pre>export REQUESTS_CA_BUNDLE=/etc/certs/latest.pem
+</pre></div>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="using-ivy-behind-a-firewall">Using Ivy behind a firewall</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#using-ivy-behind-a-firewall">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p><a href="http://ant.apache.org/ivy/">Apache Ivy</a> is used as a way to download
+the tools that Pants uses and for tool bootstrapper and external
+artifacts</p>
+<p>After the initial bootstrapping of ivy, pants then invokes that
+version of ivy to re-bootstrap a new version of ivy.  Unlike the
+requests library, Ivy does not use the HTTP_PROXY environment
+variable, but instead relies on Java system properties.</p>
+<p>One way to do this is to override <code>jvm_options</code> in pants.ini:</p>
+<div class="codehilite"><pre>[bootstrap.bootstrap_jvm_tools] 
+jvm_options: [
+    "-Dhttp.proxyHost=proxy.example.com",
+    "-Dhttp.proxyPort=123",
+    "-Dhttps.proxyHost=proxy.example.com",
+    "-Dhttps.proxyPort=456",
+  ]
+</pre></div>
+<p>Alternatively, you can also set these values through the <code>&lt;properties&gt;</code> configuration item in
+<code>ivysettings.xml</code></p>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="nexus-as-proxy">Nexus as proxy</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#nexus-as-proxy">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>If your site uses Sonotype Nexus or another reverse proxy for
+artifacts, you do not need to use a separate HTTP proxy.  Contact the
+reverse proxy administrator to setup a proxy for the sites listed in
+<code>build-support/ivy/settings.xml</code> and <code>pants.ini</code>.  Currently, these
+sites are <code>repo1.maven.org</code>, <code>maven.twttr.com</code>:</p>
+<p>Here is an excerpt of a modified ivysettings.xml with some possible configurations:</p>
+<div class="codehilite"><pre>&lt;macrodef name="_remote_resolvers"&gt;
+    &lt;chain returnFirst="true"&gt;
+      &lt;ibiblio name="example-corp-maven"
+               m2compatible="true"
+               usepoms="true"
+               root="https://nexus.example.com/content/groups/public/"/&gt;
+      &lt;ibiblio name="maven.twttr.com-maven"
+               m2compatible="true"
+               usepoms="true"
+               root="https://nexus.example.com/content/repositories/maven.twttr.com/"/&gt;
+  &lt;/chain&gt;
+&lt;/macrodef&gt;
+</pre></div>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="redirecting-tool-downloads-to-other-servers">Redirecting tool downloads to other servers</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#redirecting-tool-downloads-to-other-servers">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>For the binary support tools like protoc, you will need to setup a
+proxy for the <code>dl.bintray.com</code> repo, or create your own repo of build
+tools:</p>
+<div class="codehilite"><pre>pants_support_baseurls = [
+    "https://nexus.example.com/content/repositories/dl.bintray.com/pantsbuild/bin/build-support"
+    ]
+</pre></div>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="redirecting-python-requirements-to-other-servers">Redirecting python requirements to other servers</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#redirecting-python-requirements-to-other-servers">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>For python repos, you need to override the following settings in pants.ini:</p>
+<div class="codehilite"><pre>[python-repos]
+repos: [
+    "https://pantsbuild.github.io/cheeseshop/third_party/python/dist/index.html",
+    "https://pantsbuild.github.io/cheeseshop/third_party/python/index.html"
+  ]
+
+indices: [
+    "https://pypi.python.org/simple/"
+  ]
+</pre></div>
+
 <!-- main content end -->
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/markdown/html/src/docs/setup_repo.html 2015-03-08T19:58:22.786299
+from dist/markdown/html/src/docs/setup_repo.html 2015-03-12T03:13:26.807510
 </div>
 
 </div> <!-- end of mainflow -->
