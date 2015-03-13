@@ -36,6 +36,9 @@
 <li class="toc-h1"><a href="#maximum-verbosity">Maximum Verbosity</a></li>
 <li class="toc-h1"><a href="#scrub-the-environment">Scrub the Environment</a></li>
 <li class="toc-h1"><a href="#nailgun-10-seconds">Nailgun 10 seconds</a></li>
+<li class="toc-h1"><a href="#troubleshooting-ivy-download-failures">Troubleshooting Ivy download failures</a></li>
+<li class="toc-h2"><a href="#add-the-debug-flag-to-the-ivy-tool">Add the -debug flag to the ivy tool</a></li>
+<li class="toc-h2"><a href="#turn-on-http-header-debugging-in-ivy">Turn on HTTP header debugging in Ivy</a></li>
 <li class="toc-h1"><a href="#questions-issues-bug-reports">Questions, Issues, Bug Reports</a></li>
 </ul>
 </nav>
@@ -144,7 +147,7 @@ runs will be stored under <code>.pants.d/reports</code> and the most recent run
 is in <code>.pants.d/reports/latest</code>.  Additional information from the run
 will be logged under <code>.pants.d/runs</code>.</p>
 <p>An easy way to view this output is to use the reporting server.</p>
-<div class="codehilite"><pre>$ ./pants server --open
+<div class="codehilite"><pre><span class="nv">$ </span>./pants server --open
 Launching server with pid 6991 at http://localhost:49266
 </pre></div>
 <p>Your browser should open up automatically to the main reporting server
@@ -242,6 +245,135 @@ To recover from this, <a href="tshoot.html#washpants" pantsref="washpants">scrub
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
+<td class="h-plus-pilcrow-holder"><h2 id="troubleshooting-ivy-download-failures">Troubleshooting Ivy download failures</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#troubleshooting-ivy-download-failures">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Sometimes Ivy will refuse to download a particular artifact.   When
+the ivy step fails, pants echos the ivy output to the console.
+You can go back and look at previous runs or get more insight
+by starting the reporting server with <code>./pants server --open</code> and
+looking at the report for the failed run.</p>
+<ul>
+<li>
+<p>If you missed it the first time, you can open up the <code>[ivy-resolve]</code>
+or one of the <code>bootstrap</code> steps in the output and check the stderr
+and stdout links.</p>
+</li>
+<li>
+<p>Using a web browser, navigate to the URLs that are failing the Ivy
+download and see if you can download the artifact manually.
+If you are downloading through a proxy you may find a configuration
+issue or an artifact missing from the proxy's cache.</p>
+</li>
+</ul>
+<p>There are other options you can use to enable more debugging in
+Ivy if you think you need it.</p>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="add-the-debug-flag-to-the-ivy-tool">Add the <code>-debug</code> flag to the ivy tool</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#add-the-debug-flag-to-the-ivy-tool">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>You can get more debugging in the ivy resolve task by passing the
+<code>-debug</code> argument when ivy is invoked:</p>
+<div class="codehilite"><pre><span class="k">[resolve.ivy]</span>
+<span class="err">args:</span> <span class="k">[ "-debug" ]</span>
+</pre></div>
+<p>This makes the ivy output much more verbose.  You can see the output in the
+pants reporting server window for stderr and stdout for the
+<code>[ivy-resolve]</code> step.  This setting does not affect the output of the
+bootstrapping task for downloading tools.</p>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="turn-on-http-header-debugging-in-ivy">Turn on HTTP header debugging in Ivy</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#turn-on-http-header-debugging-in-ivy">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>This is a bit more involved, but gives you deeper inspection into the
+network traffic between Ivy and the repo.</p>
+<p>First, you need to add commons-httpclient to the bootstrapped ivy
+installation by creating a custom ivy.xml.  You can
+start with the org.apache.ivy xml file under the ivy cache and just
+add a dependency for commons-httpclient as follows:</p>
+<div class="codehilite"><pre>$ cat ./ivy-with-commons-httpclient.xml
+<span class="nt">&lt;ivy-module</span> <span class="na">version=</span><span class="s">"2.0"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;info</span> <span class="na">organisation=</span><span class="s">"org.apache.ivy"</span> <span class="na">module=</span><span class="s">"ivy-caller"</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;configurations</span> <span class="na">defaultconf=</span><span class="s">"default"</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;dependencies&gt;</span>
+                <span class="nt">&lt;dependency</span> <span class="na">org=</span><span class="s">"org.apache.ivy"</span> <span class="na">name=</span><span class="s">"ivy"</span> <span class="na">rev=</span><span class="s">"2.3.0"</span> <span class="nt">/&gt;</span>
+                <span class="nt">&lt;dependency</span> <span class="na">org=</span><span class="s">"commons-httpclient"</span> <span class="na">name=</span><span class="s">"commons-httpclient"</span> <span class="na">rev=</span><span class="s">"3.0"</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;/dependencies&gt;</span>
+<span class="nt">&lt;/ivy-module&gt;</span>
+</pre></div>
+<p>Then, reference your modified ivy profile from pants.ini and flip on
+some extra logging in the commons-httpclient by setting some system properties:</p>
+<div class="codehilite"><pre><span class="k">[ivy]</span>
+<span class="err">ivy_profile:</span> <span class="err">ivy-with-commons-httpclient.xml</span>
+
+<span class="c"># Enable httpcommons debugging when bootstrapping tools</span>
+<span class="k">[bootstrap.bootstrap-jvm-tools]</span>
+<span class="err">jvm_options:</span> <span class="err">[</span>
+    <span class="na">"-Dorg.apache.commons.logging.Log</span><span class="o">=</span><span class="s">org.apache.commons.logging.impl.SimpleLog",</span>
+<span class="s">    "-Dorg.apache.commons.logging.simplelog.showdatetime=true",</span>
+<span class="s">    "-Dorg.apache.commons.logging.simplelog.log.httpclient.wire.header=debug",</span>
+<span class="s">    "-Dorg.apache.commons.logging.simplelog.log.org.apache.commons.httpclient=debug",</span>
+<span class="s">  ]</span>
+
+<span class="c"># Enable httpcommons debugging when resolving 3rdparty libraries</span>
+<span class="k">[resolve.ivy]</span>
+<span class="err">jvm_options:</span> <span class="err">[</span>
+    <span class="na">"-Dorg.apache.commons.logging.Log</span><span class="o">=</span><span class="s">org.apache.commons.logging.impl.SimpleLog",</span>
+<span class="s">    "-Dorg.apache.commons.logging.simplelog.showdatetime=true",</span>
+<span class="s">    "-Dorg.apache.commons.logging.simplelog.log.httpclient.wire.header=debug",</span>
+<span class="s">    "-Dorg.apache.commons.logging.simplelog.log.org.apache.commons.httpclient=debug",</span>
+<span class="s">    ]</span>
+</pre></div>
+<p>You'll be able to see the output in the pants reporting server output
+by expanding the <code>stderr</code> nodes.</p>
+<div class="codehilite"><pre>2015/03/12 03:55:56:456 PDT [DEBUG] HttpConnection - -Open connection to repo1.maven.org:443
+2015/03/12 03:55:57:144 PDT [DEBUG] header - -&gt;&gt; "HEAD /maven2/org/antlr/antlr4/4.1/antlr4-4.1.pom HTTP/1.1[\r][\n]"
+2015/03/12 03:55:57:144 PDT [DEBUG] HttpMethodBase - -Adding Host request header
+2015/03/12 03:55:57:149 PDT [DEBUG] header - -&gt;&gt; "User-Agent: Apache Ivy/2.3.0[\r][\n]"
+2015/03/12 03:55:57:150 PDT [DEBUG] header - -&gt;&gt; "Host: repo1.maven.org[\r][\n]"
+2015/03/12 03:55:57:150 PDT [DEBUG] header - -&gt;&gt; "[\r][\n]"
+2015/03/12 03:55:57:448 PDT [DEBUG] header - -&lt;&lt; "HTTP/1.1 200 OK[\r][\n]"
+2015/03/12 03:55:57:450 PDT [DEBUG] header - -&lt;&lt; "Date: Thu, 12 Mar 2015 10:55:57 GMT[\r][\n]"
+2015/03/12 03:55:57:450 PDT [DEBUG] header - -&lt;&lt; "Server: nginx[\r][\n]"
+2015/03/12 03:55:57:450 PDT [DEBUG] header - -&lt;&lt; "Content-Type: text/xml[\r][\n]"
+2015/03/12 03:55:57:450 PDT [DEBUG] header - -&lt;&lt; "Content-Length: 4800[\r][\n]"
+2015/03/12 03:55:57:450 PDT [DEBUG] header - -&lt;&lt; "Last-Modified: Fri, 05 Jul 2013 21:35:45 GMT[\r][\n]"
+2015/03/12 03:55:57:450 PDT [DEBUG] header - -&lt;&lt; "ETag: "51d73c31-12c0"[\r][\n]"
+2015/03/12 03:55:57:450 PDT [DEBUG] header - -&lt;&lt; "Accept-Ranges: bytes[\r][\n]"
+2015/03/12 03:55:57:450 PDT [DEBUG] header - -&lt;&lt; "Accept-Ranges: bytes[\r][\n]"
+2015/03/12 03:55:57:450 PDT [DEBUG] header - -&lt;&lt; "Via: 1.1 varnish[\r][\n]"
+2015/03/12 03:55:57:451 PDT [DEBUG] header - -&lt;&lt; "Accept-Ranges: bytes[\r][\n]"
+2015/03/12 03:55:57:451 PDT [DEBUG] header - -&lt;&lt; "Via: 1.1 varnish[\r][\n]"
+2015/03/12 03:55:57:451 PDT [DEBUG] header - -&lt;&lt; "X-Served-By: cache-iad2127-IAD, cache-atl6233-ATL[\r][\n]"
+2015/03/12 03:55:57:451 PDT [DEBUG] header - -&lt;&lt; "X-Cache: MISS, MISS[\r][\n]"
+2015/03/12 03:55:57:451 PDT [DEBUG] header - -&lt;&lt; "X-Cache-Hits: 0, 0[\r][\n]"
+2015/03/12 03:55:57:451 PDT [DEBUG] header - -&lt;&lt; "X-Timer: S1426157757.333469,VS0,VE36[\r][\n]"
+</pre></div>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
 <td class="h-plus-pilcrow-holder"><h2 id="questions-issues-bug-reports">Questions, Issues, Bug Reports</h2></td>
 <td><div class="pilcrow-div">
 <a class="pilcrow-link" href="#questions-issues-bug-reports">¶</a>
@@ -256,7 +388,7 @@ To recover from this, <a href="tshoot.html#washpants" pantsref="washpants">scrub
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/markdown/html/src/docs/tshoot.html 2015-03-12T03:13:26.973839
+from dist/markdown/html/src/docs/tshoot.html 2015-03-13T05:21:03.838310
 </div>
 
 </div> <!-- end of mainflow -->
