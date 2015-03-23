@@ -89,6 +89,8 @@
 <li class="toc-h2"><a href="#group_eclipse">eclipse</a></li>
 <li class="toc-h1"><a href="#ensime">ensime</a></li>
 <li class="toc-h2"><a href="#group_ensime">ensime</a></li>
+<li class="toc-h1"><a href="#export">export</a></li>
+<li class="toc-h2"><a href="#group_export">export</a></li>
 <li class="toc-h1"><a href="#filedeps">filedeps</a></li>
 <li class="toc-h2"><a href="#group_filedeps">filedeps</a></li>
 <li class="toc-h1"><a href="#filemap">filemap</a></li>
@@ -131,8 +133,6 @@
 <li class="toc-h2"><a href="#group_pathdeps">pathdeps</a></li>
 <li class="toc-h1"><a href="#paths">paths</a></li>
 <li class="toc-h2"><a href="#group_paths">paths</a></li>
-<li class="toc-h1"><a href="#provides">provides</a></li>
-<li class="toc-h2"><a href="#group_provides">provides</a></li>
 <li class="toc-h1"><a href="#publish">publish</a></li>
 <li class="toc-h2"><a href="#group_publish">publish</a></li>
 <li class="toc-h1"><a href="#repl">repl</a></li>
@@ -223,6 +223,7 @@ Java code, and is installed in the <tt>compile</tt> goal.
   <li> <a href="#doc">doc</a> - Create documentation.
   <li> <a href="#eclipse">eclipse</a> - Create an Eclipse project from the given targets.
   <li> <a href="#ensime">ensime</a> - Create an Ensime project from the given targets.
+  <li> <a href="#export">export</a> - Export project information for targets in JSON format. Use with resolve goal to get detailed information about libraries.
   <li> <a href="#filedeps">filedeps</a> - Print out the source and BUILD files the target depends on.
   <li> <a href="#filemap">filemap</a> - Outputs a mapping from source file to owning target.
   <li> <a href="#filter">filter</a> - Filter the input targets based on various criteria.
@@ -240,7 +241,6 @@ Java code, and is installed in the <tt>compile</tt> goal.
   <li> <a href="#path">path</a> - Find a dependency path from one target to another.
   <li> <a href="#pathdeps">pathdeps</a> - Print out all paths containing BUILD files the target depends on.
   <li> <a href="#paths">paths</a> - Find all dependency paths from one target to another.
-  <li> <a href="#provides">provides</a> - Print the symbols provided by the given targets.
   <li> <a href="#publish">publish</a> - Publish artifacts.
   <li> <a href="#repl">repl</a> - Run a REPL.
   <li> <a href="#repl-dirty">repl-dirty</a> - Run a REPL, skipping compilation.
@@ -364,17 +364,17 @@ div.oref_ogroup_section h3 {
 <li><code>--jvm-options</code>
 <code>str</code>
 
-      Run the jvm with these extra jvm options.
+      Run the JVM with these extra jvm options.
 
 <li><code>--args</code>
 <code>str</code>
 
-      Run the jvm with these extra program args.
+      Run the JVM with these extra program args.
 
 <li><code>--[no-]debug</code>
 <code>bool</code>
 
-      Run the jvm under a debugger.
+      Run the JVM with remote debugging.
 
 <li><code>--confs</code>
 <code>str</code>
@@ -404,7 +404,20 @@ div.oref_ogroup_section h3 {
 
       Target specs for bootstrapping the benchmark-agent tool.
 
-</li></li></li></li></li></li></li></li></ul>
+<li><code>--debug-port</code>
+<code>int</code>
+      (Default: <code>5005</code>)
+
+      The JVM will listen for a debugger on this port.
+
+<li><code>--debug-args</code>
+<code>list_type</code>
+      (Default: <code>[u'-Xdebug', u'-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address={debug_port}']</code>)
+      (Default: <code>[u'-Xdebug', u'-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address={debug_port}']</code>)
+
+      The JVM remote-debugging arguments. {debug_port} will be replaced with the value of the --debug-port option.
+
+</li></li></li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -1325,7 +1338,17 @@ div.oref_ogroup_section h3 {
 
       Target specs for bootstrapping the scalastyle tool.
 
-</li></li></li></li></ul>
+<li><code>--config</code>
+<code>str</code>
+
+      Path to scalastyle config file.
+
+<li><code>--excludes</code>
+<code>str</code>
+
+      Path to optional scalastyle excludes file. Each line is a regex. a file is skipped if its path (relative to the repo root) matches any of these regexes.
+
+</li></li></li></li></li></li></ul>
 </p></div>
 <div class="oref_ogroup_section">
 <a id="oref_cli_compilecppcompile" pantsmark="oref_cli_compilecppcompile"> </a>
@@ -1557,7 +1580,7 @@ div.oref_ogroup_section h3 {
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.dependencies.Dependencies</code>
+<p>Implemented by <code>pants.backend.project_info.tasks.dependencies.Dependencies</code>
 <ul>
 <li><code>--sep</code>
 <code>str</code>
@@ -1616,7 +1639,7 @@ div.oref_ogroup_section h3 {
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.depmap.Depmap</code>
+<p>Implemented by <code>pants.backend.project_info.tasks.depmap.Depmap</code>
 <ul>
 <li><code>--sep</code>
 <code>str</code>
@@ -1652,12 +1675,14 @@ div.oref_ogroup_section h3 {
 <li><code>--[no-]project-info</code>
 <code>bool</code>
 
+      DEPRECATED: Option --project-info in scope DEFAULT is deprecated and will be removed in version 0.0.32. Use the export goal instead of depmap to get info for the IDE.
       Produces a json object with info about the target, including source roots, dependencies, and paths to libraries for their targets and dependencies.
 
 <li><code>--[no-]project-info-formatted</code>
 <code>bool</code>
       (Default: <code>True</code>)
 
+      DEPRECATED: Option --project-info-formatted in scope DEFAULT is deprecated and will be removed in version 0.0.32. Use the export goal instead of depmap to get info for the IDE.
       Causes project-info output to be a single line of JSON.
 
 <li><code>--separator</code>
@@ -1785,17 +1810,17 @@ div.oref_ogroup_section h3 {
 <li><code>--jvm-options</code>
 <code>str</code>
 
-      Run the jvm with these extra jvm options.
+      Run the JVM with these extra jvm options.
 
 <li><code>--args</code>
 <code>str</code>
 
-      Run the jvm with these extra program args.
+      Run the JVM with these extra program args.
 
 <li><code>--[no-]debug</code>
 <code>bool</code>
 
-      Run the jvm under a debugger.
+      Run the JVM with remote debugging.
 
 <li><code>--confs</code>
 <code>str</code>
@@ -1834,7 +1859,20 @@ div.oref_ogroup_section h3 {
 
       Skip javadoc generation.
 
-</li></li></li></li></li></li></li></li></li></li></ul>
+<li><code>--debug-port</code>
+<code>int</code>
+      (Default: <code>5005</code>)
+
+      The JVM will listen for a debugger on this port.
+
+<li><code>--debug-args</code>
+<code>list_type</code>
+      (Default: <code>[u'-Xdebug', u'-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address={debug_port}']</code>)
+      (Default: <code>[u'-Xdebug', u'-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address={debug_port}']</code>)
+
+      The JVM remote-debugging arguments. {debug_port} will be replaced with the value of the --debug-port option.
+
+</li></li></li></li></li></li></li></li></li></li></li></li></ul>
 </p></div>
 <div class="oref_ogroup_section">
 <a id="oref_cli_docscaladoc" pantsmark="oref_cli_docscaladoc"> </a>
@@ -1855,17 +1893,17 @@ div.oref_ogroup_section h3 {
 <li><code>--jvm-options</code>
 <code>str</code>
 
-      Run the jvm with these extra jvm options.
+      Run the JVM with these extra jvm options.
 
 <li><code>--args</code>
 <code>str</code>
 
-      Run the jvm with these extra program args.
+      Run the JVM with these extra program args.
 
 <li><code>--[no-]debug</code>
 <code>bool</code>
 
-      Run the jvm under a debugger.
+      Run the JVM with remote debugging.
 
 <li><code>--confs</code>
 <code>str</code>
@@ -1904,7 +1942,20 @@ div.oref_ogroup_section h3 {
 
       Skip scaladoc generation.
 
-</li></li></li></li></li></li></li></li></li></li></ul>
+<li><code>--debug-port</code>
+<code>int</code>
+      (Default: <code>5005</code>)
+
+      The JVM will listen for a debugger on this port.
+
+<li><code>--debug-args</code>
+<code>list_type</code>
+      (Default: <code>[u'-Xdebug', u'-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address={debug_port}']</code>)
+      (Default: <code>[u'-Xdebug', u'-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address={debug_port}']</code>)
+
+      The JVM remote-debugging arguments. {debug_port} will be replaced with the value of the --debug-port option.
+
+</li></li></li></li></li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -1940,7 +1991,7 @@ div.oref_ogroup_section h3 {
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.eclipse_gen.EclipseGen</code>
+<p>Implemented by <code>pants.backend.project_info.tasks.eclipse_gen.EclipseGen</code>
 <ul>
 <li><code>--project-name</code>
 <code>str</code>
@@ -2007,6 +2058,18 @@ div.oref_ogroup_section h3 {
 
       Port to use for launching tasks under the debugger.
 
+<li><code>--[no-]source-jars</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Pull source jars from external dependencies into the project.
+
+<li><code>--[no-]javadoc-jars</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Pull javadoc jars from external dependencies into the project
+
 <li><code>--version</code>
 <code>str</code>
       (Default: <code>3.6</code>)
@@ -2038,7 +2101,7 @@ div.oref_ogroup_section h3 {
 
       Always add these paths to the IDE for Java test sources.
 
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -2074,7 +2137,7 @@ div.oref_ogroup_section h3 {
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.ensime_gen.EnsimeGen</code>
+<p>Implemented by <code>pants.backend.project_info.tasks.ensime_gen.EnsimeGen</code>
 <ul>
 <li><code>--project-name</code>
 <code>str</code>
@@ -2141,6 +2204,18 @@ div.oref_ogroup_section h3 {
 
       Port to use for launching tasks under the debugger.
 
+<li><code>--[no-]source-jars</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Pull source jars from external dependencies into the project.
+
+<li><code>--[no-]javadoc-jars</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Pull javadoc jars from external dependencies into the project
+
 <li><code>--scala-language-level</code>
 <code>str</code>
       (Default: <code>2.10</code>)
@@ -2172,7 +2247,62 @@ div.oref_ogroup_section h3 {
 
       Always add these paths to the IDE for Java test sources.
 
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_export" pantsmark="oref_goal_export"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="export">export</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#export">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Export project information for targets in JSON format. Use with resolve goal to get detailed information about libraries.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_export" pantsmark="oref_cli_export"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_export">export</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_export">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.project_info.tasks.export.Export</code>
+<ul>
+<li><code>--sep</code>
+<code>str</code>
+      (Default: <code>\n</code>)
+
+      String to use to separate results.
+
+<li><code>--output-file</code>
+<code>str</code>
+
+      Write the console output to this file instead.
+
+<li><code>--[no-]formatted</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Causes output to be a single line of JSON.
+
+</li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -2208,7 +2338,7 @@ div.oref_ogroup_section h3 {
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.filedeps.FileDeps</code>
+<p>Implemented by <code>pants.backend.project_info.tasks.filedeps.FileDeps</code>
 <ul>
 <li><code>--sep</code>
 <code>str</code>
@@ -2651,13 +2781,33 @@ div.oref_ogroup_section h3 {
 
       Emit verbose output.
 
+<li><code>--[no-]strict</code>
+<code>bool</code>
+
+      Enable strict compilation.
+
 <li><code>--scrooge-gen</code>
 <code>list_type</code>
       (Default: <code>[u'//:scrooge-gen']</code>)
 
       Target specs for bootstrapping the scrooge-gen tool.
 
-</li></li></li></li></ul>
+<li><code>--jvm-options</code>
+<code>list_type</code>
+
+      Use these jvm options when running Scrooge.
+
+<li><code>--service-deps</code>
+<code>dict_type</code>
+
+      A map of language to targets to add as dependencies of synthetic thrift libraries that contain services.
+
+<li><code>--structs-deps</code>
+<code>dict_type</code>
+
+      A map of language to targets to add as dependencies of synthetic thrift libraries that contain structs.
+
+</li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -2752,7 +2902,7 @@ div.oref_ogroup_section h3 {
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.idea_gen.IdeaGen</code>
+<p>Implemented by <code>pants.backend.project_info.tasks.idea_gen.IdeaGen</code>
 <ul>
 <li><code>--project-name</code>
 <code>str</code>
@@ -2818,6 +2968,18 @@ div.oref_ogroup_section h3 {
       (Default: <code>5005</code>)
 
       Port to use for launching tasks under the debugger.
+
+<li><code>--[no-]source-jars</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Pull source jars from external dependencies into the project.
+
+<li><code>--[no-]javadoc-jars</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Pull javadoc jars from external dependencies into the project
 
 <li><code>--version</code>
 <code>str</code>
@@ -2910,7 +3072,7 @@ div.oref_ogroup_section h3 {
 
       Always add these paths to the IDE for Java test sources.
 
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -3484,54 +3646,6 @@ div.oref_ogroup_section h3 {
 <a href="#Common">Common</a>
 </br></p></p></div>
 <div class="oref_goal_section">
-<a id="oref_goal_provides" pantsmark="oref_goal_provides"> </a>
-
-<table class="h-plus-pilcrow">
-<tbody>
-<tr>
-<td class="h-plus-pilcrow-holder"><h2 id="provides">provides</h2></td>
-<td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#provides">¶</a>
-</div></td>
-</tr>
-</tbody>
-</table>
-
-<p>Print the symbols provided by the given targets.
-
-
-<div class="oref_ogroup_section">
-<a id="oref_cli_provides" pantsmark="oref_cli_provides"> </a>
-
-<table class="h-plus-pilcrow">
-<tbody>
-<tr>
-<td class="h-plus-pilcrow-holder"><h3 id="group_provides">provides</h3></td>
-<td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#group_provides">¶</a>
-</div></td>
-</tr>
-</tbody>
-</table>
-
-<p>Implemented by <code>pants.backend.jvm.tasks.provides.Provides</code>
-<ul>
-<li><code>--[no-]transitive</code>
-<code>bool</code>
-
-      Shows the symbols provided not just by the specified targets but by all their transitive dependencies.
-
-<li><code>--[no-]also-write-to-stdout</code>
-<code>bool</code>
-
-      Also write the provides information to stdout.
-
-</li></li></ul>
-</p></div>
-<p><b>Other command-line options:</b><br>
-<a href="#Common">Common</a>
-</br></p></p></div>
-<div class="oref_goal_section">
 <a id="oref_goal_publish" pantsmark="oref_goal_publish"> </a>
 
 <table class="h-plus-pilcrow">
@@ -3582,6 +3696,12 @@ div.oref_ogroup_section h3 {
 
       Target specs for bootstrapping the jar-tool tool.
 
+<li><code>--scm-push-attempts</code>
+<code>int</code>
+      (Default: <code>5</code>)
+
+      Try pushing the pushdb to the SCM this many times before aborting.
+
 <li><code>--[no-]dryrun</code>
 <code>bool</code>
       (Default: <code>True</code>)
@@ -3598,12 +3718,6 @@ div.oref_ogroup_section h3 {
 <code>str</code>
 
       Publish jars to a maven repository on the local filesystem at this path.
-
-<li><code>--scm-push-attempts</code>
-<code>int</code>
-      (Default: <code>5</code>)
-
-      Try pushing the pushdb to the SCM this many times before aborting.
 
 <li><code>--[no-]local-snapshot</code>
 <code>bool</code>
@@ -3637,15 +3751,15 @@ div.oref_ogroup_section h3 {
 
       Restart a fail push at the given jar.  Jars can be identified by maven coordinate [org]#[name] or target. For example: --restart-at=com.twitter.common#quantity Or: --restart-at=src/java/com/twitter/common/base
 
-<li><code>--ivy_settings</code>
-<code>str</code>
-
-      Specify a custom ivysettings.xml file to be used when publishing.
-
 <li><code>--restrict-push-branches</code>
 <code>list_type</code>
 
       Allow pushes only from one of these branches.
+
+<li><code>--ivy_settings</code>
+<code>str</code>
+
+      Specify a custom ivysettings.xml file to be used when publishing.
 
 <li><code>--jvm-options</code>
 <code>list_type</code>
@@ -3743,17 +3857,17 @@ div.oref_ogroup_section h3 {
 <li><code>--jvm-options</code>
 <code>str</code>
 
-      Run the jvm with these extra jvm options.
+      Run the JVM with these extra jvm options.
 
 <li><code>--args</code>
 <code>str</code>
 
-      Run the jvm with these extra program args.
+      Run the JVM with these extra program args.
 
 <li><code>--[no-]debug</code>
 <code>bool</code>
 
-      Run the jvm under a debugger.
+      Run the JVM with remote debugging.
 
 <li><code>--confs</code>
 <code>str</code>
@@ -3773,7 +3887,20 @@ div.oref_ogroup_section h3 {
 
       Target specs for bootstrapping the scala-repl tool.
 
-</li></li></li></li></li></li></ul>
+<li><code>--debug-port</code>
+<code>int</code>
+      (Default: <code>5005</code>)
+
+      The JVM will listen for a debugger on this port.
+
+<li><code>--debug-args</code>
+<code>list_type</code>
+      (Default: <code>[u'-Xdebug', u'-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address={debug_port}']</code>)
+      (Default: <code>[u'-Xdebug', u'-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address={debug_port}']</code>)
+
+      The JVM remote-debugging arguments. {debug_port} will be replaced with the value of the --debug-port option.
+
+</li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -3814,17 +3941,17 @@ div.oref_ogroup_section h3 {
 <li><code>--jvm-options</code>
 <code>str</code>
 
-      Run the jvm with these extra jvm options.
+      Run the JVM with these extra jvm options.
 
 <li><code>--args</code>
 <code>str</code>
 
-      Run the jvm with these extra program args.
+      Run the JVM with these extra program args.
 
 <li><code>--[no-]debug</code>
 <code>bool</code>
 
-      Run the jvm under a debugger.
+      Run the JVM with remote debugging.
 
 <li><code>--confs</code>
 <code>str</code>
@@ -3844,7 +3971,20 @@ div.oref_ogroup_section h3 {
 
       Target specs for bootstrapping the scala-repl tool.
 
-</li></li></li></li></li></li></ul>
+<li><code>--debug-port</code>
+<code>int</code>
+      (Default: <code>5005</code>)
+
+      The JVM will listen for a debugger on this port.
+
+<li><code>--debug-args</code>
+<code>list_type</code>
+      (Default: <code>[u'-Xdebug', u'-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address={debug_port}']</code>)
+      (Default: <code>[u'-Xdebug', u'-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address={debug_port}']</code>)
+
+      The JVM remote-debugging arguments. {debug_port} will be replaced with the value of the --debug-port option.
+
+</li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -4089,17 +4229,17 @@ div.oref_ogroup_section h3 {
 <li><code>--jvm-options</code>
 <code>str</code>
 
-      Run the jvm with these extra jvm options.
+      Run the JVM with these extra jvm options.
 
 <li><code>--args</code>
 <code>str</code>
 
-      Run the jvm with these extra program args.
+      Run the JVM with these extra program args.
 
 <li><code>--[no-]debug</code>
 <code>bool</code>
 
-      Run the jvm under a debugger.
+      Run the JVM with remote debugging.
 
 <li><code>--confs</code>
 <code>str</code>
@@ -4118,7 +4258,20 @@ div.oref_ogroup_section h3 {
 
       Set the working directory. If no argument is passed, use the target path.
 
-</li></li></li></li></li></li></ul>
+<li><code>--debug-port</code>
+<code>int</code>
+      (Default: <code>5005</code>)
+
+      The JVM will listen for a debugger on this port.
+
+<li><code>--debug-args</code>
+<code>list_type</code>
+      (Default: <code>[u'-Xdebug', u'-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address={debug_port}']</code>)
+      (Default: <code>[u'-Xdebug', u'-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address={debug_port}']</code>)
+
+      The JVM remote-debugging arguments. {debug_port} will be replaced with the value of the --debug-port option.
+
+</li></li></li></li></li></li></li></li></ul>
 </p></div>
 <div class="oref_ogroup_section">
 <a id="oref_cli_runcpprun" pantsmark="oref_cli_runcpprun"> </a>
@@ -4187,17 +4340,17 @@ div.oref_ogroup_section h3 {
 <li><code>--jvm-options</code>
 <code>str</code>
 
-      Run the jvm with these extra jvm options.
+      Run the JVM with these extra jvm options.
 
 <li><code>--args</code>
 <code>str</code>
 
-      Run the jvm with these extra program args.
+      Run the JVM with these extra program args.
 
 <li><code>--[no-]debug</code>
 <code>bool</code>
 
-      Run the jvm under a debugger.
+      Run the JVM with remote debugging.
 
 <li><code>--confs</code>
 <code>str</code>
@@ -4216,7 +4369,20 @@ div.oref_ogroup_section h3 {
 
       Set the working directory. If no argument is passed, use the target path.
 
-</li></li></li></li></li></li></ul>
+<li><code>--debug-port</code>
+<code>int</code>
+      (Default: <code>5005</code>)
+
+      The JVM will listen for a debugger on this port.
+
+<li><code>--debug-args</code>
+<code>list_type</code>
+      (Default: <code>[u'-Xdebug', u'-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address={debug_port}']</code>)
+      (Default: <code>[u'-Xdebug', u'-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address={debug_port}']</code>)
+
+      The JVM remote-debugging arguments. {debug_port} will be replaced with the value of the --debug-port option.
+
+</li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -4316,7 +4482,7 @@ div.oref_ogroup_section h3 {
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.python.tasks.python_setup.PythonSetup</code>
+<p>Implemented by <code>pants.backend.python.tasks.setup_py.SetupPy</code>
 <ul>
 <li><code>--run</code>
 <code>str</code>
@@ -4582,17 +4748,17 @@ div.oref_ogroup_section h3 {
 <li><code>--jvm-options</code>
 <code>str</code>
 
-      Run the jvm with these extra jvm options.
+      Run the JVM with these extra jvm options.
 
 <li><code>--args</code>
 <code>str</code>
 
-      Run the jvm with these extra program args.
+      Run the JVM with these extra program args.
 
 <li><code>--[no-]debug</code>
 <code>bool</code>
 
-      Run the jvm under a debugger.
+      Run the JVM with remote debugging.
 
 <li><code>--confs</code>
 <code>str</code>
@@ -4730,7 +4896,20 @@ div.oref_ogroup_section h3 {
 
       Which coverage subsystem to use.
 
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+<li><code>--debug-port</code>
+<code>int</code>
+      (Default: <code>5005</code>)
+
+      The JVM will listen for a debugger on this port.
+
+<li><code>--debug-args</code>
+<code>list_type</code>
+      (Default: <code>[u'-Xdebug', u'-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address={debug_port}']</code>)
+      (Default: <code>[u'-Xdebug', u'-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address={debug_port}']</code>)
+
+      The JVM remote-debugging arguments. {debug_port} will be replaced with the value of the --debug-port option.
+
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 </p></div>
 <div class="oref_ogroup_section">
 <a id="oref_cli_testspecs" pantsmark="oref_cli_testspecs"> </a>
@@ -4751,17 +4930,17 @@ div.oref_ogroup_section h3 {
 <li><code>--jvm-options</code>
 <code>str</code>
 
-      Run the jvm with these extra jvm options.
+      Run the JVM with these extra jvm options.
 
 <li><code>--args</code>
 <code>str</code>
 
-      Run the jvm with these extra program args.
+      Run the JVM with these extra program args.
 
 <li><code>--[no-]debug</code>
 <code>bool</code>
 
-      Run the jvm under a debugger.
+      Run the JVM with remote debugging.
 
 <li><code>--confs</code>
 <code>str</code>
@@ -4779,20 +4958,26 @@ div.oref_ogroup_section h3 {
 
       Force running of just these specs.  Tests can be specified either by fully qualified classname or full file path.
 
-<li><code>--[no-]color</code>
-<code>bool</code>
-      (Default: <code>True</code>)
-
-      DEPRECATED: Option --color in scope DEFAULT is deprecated and will be removed in version 0.0.30. Use the --colors and --no-colors instead of --color and --no-color.
-      Toggle displaying console messages in color.
-
 <li><code>--specs</code>
 <code>list_type</code>
       (Default: <code>[u'//:scala-specs']</code>)
 
       Target specs for bootstrapping the specs tool.
 
-</li></li></li></li></li></li></li></li></ul>
+<li><code>--debug-port</code>
+<code>int</code>
+      (Default: <code>5005</code>)
+
+      The JVM will listen for a debugger on this port.
+
+<li><code>--debug-args</code>
+<code>list_type</code>
+      (Default: <code>[u'-Xdebug', u'-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address={debug_port}']</code>)
+      (Default: <code>[u'-Xdebug', u'-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address={debug_port}']</code>)
+
+      The JVM remote-debugging arguments. {debug_port} will be replaced with the value of the --debug-port option.
+
+</li></li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -4908,7 +5093,7 @@ div.oref_ogroup_section h3 {
 <li><code>--[no-]strict</code>
 <code>bool</code>
 
-      Fail the goal if thrift linter errors are found.
+      Fail the goal if thrift linter errors are found. Overrides the `strict-default` option.
 
 <li><code>--scrooge-linter</code>
 <code>list_type</code>
@@ -4916,7 +5101,17 @@ div.oref_ogroup_section h3 {
 
       Target specs for bootstrapping the scrooge-linter tool.
 
-</li></li></li></li></li></ul>
+<li><code>--[no-]strict-default</code>
+<code>bool</code>
+
+      Sets the default strictness for targets. The `strict` option overrides this value if it is set.
+
+<li><code>--linter-args</code>
+<code>list_type</code>
+
+      Additional options passed to the linter.
+
+</li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -5146,13 +5341,31 @@ These command-line flags are available with all Pants goals.
 
       The gzip compression level for created artifacts.
 
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+<li><code>--thrift-default-compiler</code>
+<code>str</code>
+      (Default: <code>thrift</code>)
+
+      The default compiler to use for java_thrift_library targets.
+
+<li><code>--thrift-default-language</code>
+<code>str</code>
+      (Default: <code>java</code>)
+
+      The default language to generate for java_thrift_library targets.
+
+<li><code>--thrift-default-rpc-style</code>
+<code>str</code>
+      (Default: <code>sync</code>)
+
+      The default rpc-style to generate for java_thrift_library targets.
+
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 </p></p></p></p></body>
 <!-- main content end -->
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/builddict/options_reference.html 2015-03-12T04:18:40.631616
+from dist/builddict/options_reference.html 2015-03-23T11:23:48.136197
 </div>
 
 </div> <!-- end of mainflow -->

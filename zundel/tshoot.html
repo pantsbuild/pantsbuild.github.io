@@ -147,7 +147,7 @@ runs will be stored under <code>.pants.d/reports</code> and the most recent run
 is in <code>.pants.d/reports/latest</code>.  Additional information from the run
 will be logged under <code>.pants.d/runs</code>.</p>
 <p>An easy way to view this output is to use the reporting server.</p>
-<div class="codehilite"><pre>$ ./pants server --open
+<div class="codehilite"><pre><span class="nv">$ </span>./pants server --open
 Launching server with pid 6991 at http://localhost:49266
 </pre></div>
 <p>Your browser should open up automatically to the main reporting server
@@ -287,8 +287,8 @@ Ivy if you think you need it.</p>
 
 <p>You can get more debugging in the ivy resolve task by passing the
 <code>-debug</code> argument when ivy is invoked:</p>
-<div class="codehilite"><pre>[resolve.ivy]
-args: [ "-debug" ]
+<div class="codehilite"><pre><span class="k">[resolve.ivy]</span>
+<span class="err">args:</span> <span class="k">[ "-debug" ]</span>
 </pre></div>
 <p>This makes the ivy output much more verbose.  You can see the output in the
 pants reporting server window for stderr and stdout for the
@@ -312,44 +312,38 @@ network traffic between Ivy and the repo.</p>
 installation by creating a custom ivy.xml.  You can
 start with the org.apache.ivy xml file under the ivy cache and just
 add a dependency for commons-httpclient as follows:</p>
-<div class="codehilite"><pre>$ cat ./ivy-with-commons-httpclient.xml 
-&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;ivy-module version="2.0"&gt;
-    &lt;info organisation="org.apache.ivy" module="ivy-caller" revision="working" status="release" publication="20150311170622" default="true"/&gt;
-    &lt;configurations&gt;
-        &lt;conf name="default" visibility="public"/&gt;
-    &lt;/configurations&gt;
-    &lt;publications&gt;
-        &lt;artifact name="ivy-caller" type="jar" ext="jar" conf="default"/&gt;
-    &lt;/publications&gt;
-    &lt;dependencies&gt;
-        &lt;dependency org="org.apache.ivy" name="ivy" rev="2.3.0" conf="default-&gt;default"/&gt;
-        &lt;dependency org="commons-httpclient" name="commons-httpclient" rev="3.0" conf="default-&gt;default"/&gt;
-    &lt;/dependencies&gt;
-&lt;/ivy-module&gt;
+<div class="codehilite"><pre>$ cat ./ivy-with-commons-httpclient.xml
+<span class="nt">&lt;ivy-module</span> <span class="na">version=</span><span class="s">"2.0"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;info</span> <span class="na">organisation=</span><span class="s">"org.apache.ivy"</span> <span class="na">module=</span><span class="s">"ivy-caller"</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;configurations</span> <span class="na">defaultconf=</span><span class="s">"default"</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;dependencies&gt;</span>
+                <span class="nt">&lt;dependency</span> <span class="na">org=</span><span class="s">"org.apache.ivy"</span> <span class="na">name=</span><span class="s">"ivy"</span> <span class="na">rev=</span><span class="s">"2.3.0"</span> <span class="nt">/&gt;</span>
+                <span class="nt">&lt;dependency</span> <span class="na">org=</span><span class="s">"commons-httpclient"</span> <span class="na">name=</span><span class="s">"commons-httpclient"</span> <span class="na">rev=</span><span class="s">"3.0"</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;/dependencies&gt;</span>
+<span class="nt">&lt;/ivy-module&gt;</span>
 </pre></div>
 <p>Then, reference your modified ivy profile from pants.ini and flip on
 some extra logging in the commons-httpclient by setting some system properties:</p>
-<div class="codehilite"><pre>[ivy]
-ivy_profile: ivy-with-commons-httpclient.xml
+<div class="codehilite"><pre><span class="k">[ivy]</span>
+<span class="err">ivy_profile:</span> <span class="err">ivy-with-commons-httpclient.xml</span>
 
-# Enable httpcommons debugging when bootstrapping tools
-[bootstrap.bootstrap-jvm-tools]
-jvm_options: [
-    "-Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.SimpleLog",
-    "-Dorg.apache.commons.logging.simplelog.showdatetime=true",
-    "-Dorg.apache.commons.logging.simplelog.log.httpclient.wire.header=debug",
-    "-Dorg.apache.commons.logging.simplelog.log.org.apache.commons.httpclient=debug",
-  ]
+<span class="c"># Enable httpcommons debugging when bootstrapping tools</span>
+<span class="k">[bootstrap.bootstrap-jvm-tools]</span>
+<span class="err">jvm_options:</span> <span class="err">[</span>
+    <span class="na">"-Dorg.apache.commons.logging.Log</span><span class="o">=</span><span class="s">org.apache.commons.logging.impl.SimpleLog",</span>
+<span class="s">    "-Dorg.apache.commons.logging.simplelog.showdatetime=true",</span>
+<span class="s">    "-Dorg.apache.commons.logging.simplelog.log.httpclient.wire.header=debug",</span>
+<span class="s">    "-Dorg.apache.commons.logging.simplelog.log.org.apache.commons.httpclient=debug",</span>
+<span class="s">  ]</span>
 
-# Enable httpcommons debugging when resolving 3rdparty libraries
-[resolve.ivy]
-jvm_options: [
-    "-Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.SimpleLog",
-    "-Dorg.apache.commons.logging.simplelog.showdatetime=true",
-    "-Dorg.apache.commons.logging.simplelog.log.httpclient.wire.header=debug",
-    "-Dorg.apache.commons.logging.simplelog.log.org.apache.commons.httpclient=debug",
-    ]
+<span class="c"># Enable httpcommons debugging when resolving 3rdparty libraries</span>
+<span class="k">[resolve.ivy]</span>
+<span class="err">jvm_options:</span> <span class="err">[</span>
+    <span class="na">"-Dorg.apache.commons.logging.Log</span><span class="o">=</span><span class="s">org.apache.commons.logging.impl.SimpleLog",</span>
+<span class="s">    "-Dorg.apache.commons.logging.simplelog.showdatetime=true",</span>
+<span class="s">    "-Dorg.apache.commons.logging.simplelog.log.httpclient.wire.header=debug",</span>
+<span class="s">    "-Dorg.apache.commons.logging.simplelog.log.org.apache.commons.httpclient=debug",</span>
+<span class="s">    ]</span>
 </pre></div>
 <p>You'll be able to see the output in the pants reporting server output
 by expanding the <code>stderr</code> nodes.</p>
@@ -394,7 +388,7 @@ by expanding the <code>stderr</code> nodes.</p>
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/markdown/html/src/docs/tshoot.html 2015-03-12T04:18:40.541490
+from dist/markdown/html/src/docs/tshoot.html 2015-03-23T11:23:48.035143
 </div>
 
 </div> <!-- end of mainflow -->
