@@ -137,9 +137,9 @@ Pants "bootstrap" itself, downloading and compiling things it needs:</p>
 <p>Now you're ready to invoke pants for more useful things.</p>
 <p>You invoke pants with <em>goals</em> (like <code>test</code> or <code>bundle</code>) and the <em>build
 targets</em> to use (like
-<code>examples/tests/java/com/pants/examples/hello/greet:greet</code>). For
+<code>examples/tests/java/org/pantsbuild/example/hello/greet:greet</code>). For
 example,</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants <span class="nb">test </span>examples/tests/java/com/pants/examples/hello/greet:greet
+<div class="codehilite"><pre><span class="nv">$ </span>./pants <span class="nb">test </span>examples/tests/java/org/pantsbuild/example/hello/greet:greet
 </pre></div>
 <p>Goals (the "verbs" of Pants) produce new files from Targets (the
 "nouns").</p>
@@ -164,7 +164,7 @@ are files in that directory.</p>
 <p>Pants knows about goals ("verbs" like <code>bundle</code> and <code>test</code>) and targets
 (build-able things in your source code). A typical pants command-line
 invocation looks like</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants <span class="nb">test </span>examples/tests/java/com/pants/examples/hello/greet:greet
+<div class="codehilite"><pre><span class="nv">$ </span>./pants <span class="nb">test </span>examples/tests/java/org/pantsbuild/example/hello/greet:greet
 </pre></div>
 <p>Looking at the pieces of this we see</p>
 <p><code>./pants</code><br>
@@ -180,7 +180,7 @@ knows that some of these goals depend on each other. E.g., in this
 example, before it run tests, it must compile the code.</p>
 <p>You can specify more than one goal on a command line. E.g., to run
 tests <em>and</em> run a binary, we could have said <code>./pants test run ...</code></p>
-<p><code>examples/tests/java/com/pants/examples/hello/greet:greet</code><br>
+<p><code>examples/tests/java/org/pantsbuild/example/hello/greet:greet</code><br>
 This is a <em>build target</em>, a "build-able" thing in your source code. To
 define these, you set up configuration files named <code>BUILD</code> in your
 source code file tree. (You'll see more about these later.)</br></p>
@@ -261,7 +261,7 @@ tests.</p>
 <p>You can specify some details of Pants' actions by means of command-line options. E.g., you could
 tell Pants to "fail fast" on the first <code>junit</code> test failure instead of running and reporting all
 <code>junit</code> tests like so:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants test.junit --fail-fast examples/tests/java/com/pants/examples/hello/greet:greet
+<div class="codehilite"><pre><span class="nv">$ </span>./pants test.junit --fail-fast examples/tests/java/org/pantsbuild/example/hello/greet:greet
 </pre></div>
 <p>Here, <code>test</code> has become <code>test.junit</code>. The <code>test</code> goal is made up of parts, or <em>tasks</em>: <code>test.junit</code>,
 <code>test.pytest</code>, and <code>test.specs</code>. We want to specify a flag to the <code>test.junit</code> task, so we
@@ -276,7 +276,7 @@ for a goal or task go immediately after that goal or task.</p>
 <p>Pants has some global options, options not associated with just one goal. For example,
 If you pass the global <code>-ldebug</code> flag after the word <code>goal</code> but before any particular goal or
 task, you get verbose debug-level logging for all goals:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants -ldebug <span class="nb">test </span>examples/tests/java/com/pants/examples/hello/greet:
+<div class="codehilite"><pre><span class="nv">$ </span>./pants -ldebug <span class="nb">test </span>examples/tests/java/org/pantsbuild/example/hello/greet:
 09:18:53 00:00 <span class="o">[</span>main<span class="o">]</span>
                <span class="o">(</span>To run a reporting server: ./pants server<span class="o">)</span>
 09:18:53 00:00   <span class="o">[</span>bootstrap<span class="o">]</span>
@@ -349,7 +349,7 @@ more logging: <code>PEX_VERBOSE=1 PANTS_VERBOSE=1 PYTHON_VERBOSE=1 ./pants -debu
 
 <p>When we ran the <code>pants test</code> goal, we told pants what target to build, but where are these
 targets defined? Scattered around the source tree are <code>BUILD</code> files. These <code>BUILD</code> files
-define targets. For example, this code snippet of <code>java/com/pants/examples/hello/main/BUILD</code>
+define targets. For example, this code snippet of <code>java/org/pantsbuild/example/hello/main/BUILD</code>
 defines two targets: the app we ran and the binary that contains its code.
 These targets are named <code>main</code> (of type <code>jvm_app</code>) and and <code>main-bin</code> (of type <code>jvm_binary</code>):</p>
 <p>
@@ -367,13 +367,13 @@ These targets are named <code>main</code> (of type <code>jvm_app</code>) and and
 
 <span class="n">jvm_binary</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">'main-bin'</span><span class="p">,</span>
   <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s">'examples/src/java/com/pants/examples/hello/greet'</span><span class="p">,</span>
+    <span class="s">'examples/src/java/org/pantsbuild/example/hello/greet'</span><span class="p">,</span>
   <span class="p">],</span>
   <span class="n">resources</span><span class="o">=</span><span class="p">[</span>
-    <span class="s">'examples/src/resources/com/pants/example/hello'</span><span class="p">,</span>
+    <span class="s">'examples/src/resources/org/pantsbuild/example/hello'</span><span class="p">,</span>
   <span class="p">],</span>
   <span class="n">source</span> <span class="o">=</span> <span class="s">'HelloMain.java'</span><span class="p">,</span>
-  <span class="n">main</span> <span class="o">=</span> <span class="s">'com.pants.examples.hello.main.HelloMain'</span><span class="p">,</span>
+  <span class="n">main</span> <span class="o">=</span> <span class="s">'org.pantsbuild.example.hello.main.HelloMain'</span><span class="p">,</span>
   <span class="n">basename</span> <span class="o">=</span> <span class="s">'hello-example'</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div></div>
@@ -383,7 +383,7 @@ The <code>main-bin</code> build target depends on other build targets;
 its <code>dependencies</code> lists those.
 To build a runnable Java binary, we need to first compile its dependencies.
 The <code>main-bin</code> binary's dependency,
-<code>'examples/src/java/com/pants/examples/hello/greet'</code>, is the <em>address</em> of
+<code>'examples/src/java/org/pantsbuild/example/hello/greet'</code>, is the <em>address</em> of
 another target. Addresses look, roughly, like <code>path/to/dir:targetname</code>. We can see this build
 target in the <code>.../hello/greet/BUILD</code> file:</p>
 <p>
@@ -391,7 +391,7 @@ target in the <code>.../hello/greet/BUILD</code> file:</p>
   <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[],</span> <span class="c"># A more realistic example would depend on other libs,</span>
                      <span class="c"># but this "hello world" is pretty simple.</span>
   <span class="n">sources</span> <span class="o">=</span> <span class="n">globs</span><span class="p">(</span><span class="s">'*.java'</span><span class="p">),</span>
-  <span class="n">provides</span> <span class="o">=</span> <span class="n">artifact</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s">'com.pants.examples'</span><span class="p">,</span>
+  <span class="n">provides</span> <span class="o">=</span> <span class="n">artifact</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s">'org.pantsbuild.example'</span><span class="p">,</span>
                       <span class="n">name</span><span class="o">=</span><span class="s">'hello-greet'</span><span class="p">,</span>
                       <span class="n">repo</span><span class="o">=</span><span class="n">public</span><span class="p">,),</span>
 <span class="p">)</span>
@@ -459,7 +459,7 @@ test.</br></p>
 </pre></div>
 <p><strong>Run a binary</strong><br>
 Use pants to execute a binary target.  Compiles the code first if it is not up to date.</br></p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants run examples/src/java/com/pants/examples/hello/simple
+<div class="codehilite"><pre><span class="nv">$ </span>./pants run examples/src/java/org/pantsbuild/example/hello/simple
 </pre></div>
 <p><strong>Get Help</strong><br>
 Get the list of goals:</br></p>
@@ -489,7 +489,7 @@ Get the list of goals:</br></p>
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/markdown/html/src/docs/first_tutorial.html 2015-04-05T18:29:52.853320
+from dist/markdown/html/src/docs/first_tutorial.html 2015-04-06T22:42:09.321988
 </div>
 
 </div> <!-- end of mainflow -->

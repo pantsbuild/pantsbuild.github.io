@@ -136,27 +136,27 @@ then you're set to use Pants with Scala code.</p>
 </table>
 
 <p>The sample code
-<a href="https://github.com/pantsbuild/pants/blob/master/examples/src/scala/com/pants/example/hello/welcome/">examples/src/scala/com/pants/example/hello/welcome/</a>
+<a href="https://github.com/pantsbuild/pants/blob/master/examples/src/scala/org/pantsbuild/example/hello/welcome/">examples/src/scala/org/pantsbuild/example/hello/welcome/</a>
 shows how you can define a library of Scala code.</p>
 <p>Its <code>BUILD</code> file looks like that for a Java library, but contains a
 <code>scala_library</code> target with <code>.scala</code> sources:</p>
 <p>
 <div class="md-included-snippet"><div class="codehilite"><pre><span class="n">scala_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'welcome'</span><span class="p">,</span>
   <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
-    <span class="s">'examples/src/java/com/pants/examples/hello/greet:greet'</span><span class="p">,</span>
+    <span class="s">'examples/src/java/org/pantsbuild/example/hello/greet:greet'</span><span class="p">,</span>
   <span class="p">],</span>
   <span class="n">sources</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s">'*.scala'</span><span class="p">),</span>
   <span class="n">resources</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s">'examples/src/resources/com/pants/example/hello'</span><span class="p">,</span>
+    <span class="s">'examples/src/resources/org/pantsbuild/example/hello'</span><span class="p">,</span>
   <span class="p">],</span>
-  <span class="n">provides</span> <span class="o">=</span> <span class="n">artifact</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s">'com.pants.example.hello'</span><span class="p">,</span>
+  <span class="n">provides</span> <span class="o">=</span> <span class="n">artifact</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s">'org.pantsbuild.example.hello'</span><span class="p">,</span>
                       <span class="n">name</span><span class="o">=</span><span class="s">'welcome'</span><span class="p">,</span>
                       <span class="n">repo</span><span class="o">=</span><span class="n">public</span><span class="p">,),</span>
 <span class="p">)</span>
 </pre></div></div>
 </p>
 <p>There's a sample test in
-<a href="https://github.com/pantsbuild/pants/tree/master/examples/tests/scala/com/pants/example/hello/welcome">examples/tests/scala/com/pants/example/hello/welcome</a>.
+<a href="https://github.com/pantsbuild/pants/tree/master/examples/tests/scala/org/pantsbuild/example/hello/welcome">examples/tests/scala/org/pantsbuild/example/hello/welcome</a>.
 It's a <a xref="bdict_junit_tests"><code>junit_tests</code></a> with <code>.scala</code> sources.
 (You might have thought JUnit was only for Java testing, but it also works great
 for Scala. Pants also has a
@@ -165,7 +165,7 @@ Specs.)</p>
 <p>
 <div class="md-included-snippet"><div class="codehilite"><pre><span class="n">junit_tests</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'welcome'</span><span class="p">,</span>
   <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
-    <span class="s">'examples/src/scala/com/pants/example/hello/welcome:welcome'</span><span class="p">,</span>
+    <span class="s">'examples/src/scala/org/pantsbuild/example/hello/welcome:welcome'</span><span class="p">,</span>
     <span class="s">'3rdparty:junit'</span><span class="p">,</span>
     <span class="s">'3rdparty:specs'</span><span class="p">,</span>
   <span class="p">],</span>
@@ -198,25 +198,25 @@ and <code>*scala</code> files are in separate directories, you can:</p>
 <p>Do not put the <code>java_library</code> in the <code>scala_library</code>'s <code>dependencies</code> or Pants will error out in its
 circular dependencies check. Instead, put the <code>java_library</code> in <code>java_sources</code> to work around this
 check.</p>
-<p>The <a href="https://github.com/pantsbuild/pants/tree/master/examples/src/scala/com/pants/example/scala_with_java_sources"><code>scala_with_java_sources</code></a>
+<p>The <a href="https://github.com/pantsbuild/pants/tree/master/examples/src/scala/org/pantsbuild/example/scala_with_java_sources"><code>scala_with_java_sources</code></a>
 example shows how this can work:</p>
 <p>
 <div class="md-included-snippet"><div class="codehilite"><pre><span class="n">scala_library</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">'scala_with_java_sources'</span><span class="p">,</span>
   <span class="n">sources</span> <span class="o">=</span> <span class="p">[</span><span class="s">'Greet.scala'</span><span class="p">],</span>
   <span class="n">java_sources</span><span class="o">=</span><span class="p">[</span>
-    <span class="s">'examples/src/java/com/pants/examples/java_sources'</span><span class="p">,</span>
+    <span class="s">'examples/src/java/org/pantsbuild/example/java_sources'</span><span class="p">,</span>
    <span class="p">],</span>
 <span class="p">)</span>
 </pre></div></div>
 </p>
 <p>The referred-to
-<a href="https://github.com/pantsbuild/pants/tree/master/examples/src/java/com/pants/examples/java_sources/BUILD"><code>java_sources</code></a>
+<a href="https://github.com/pantsbuild/pants/tree/master/examples/src/java/org/pantsbuild/example/java_sources/BUILD"><code>java_sources</code></a>
 <code>java_library</code> has this <code>java_library</code> in its dependencies:</p>
 <p>
 <div class="md-included-snippet"><div class="codehilite"><pre><span class="n">java_library</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">'java_sources'</span><span class="p">,</span>
   <span class="n">sources</span> <span class="o">=</span> <span class="n">globs</span><span class="p">(</span><span class="s">'*.java'</span><span class="p">),</span>
   <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
-   <span class="s">'examples/src/scala/com/pants/example/scala_with_java_sources'</span><span class="p">,</span>
+   <span class="s">'examples/src/scala/org/pantsbuild/example/scala_with_java_sources'</span><span class="p">,</span>
   <span class="p">],</span>
 <span class="p">)</span>
 </pre></div></div>
@@ -240,7 +240,7 @@ need separate <code>java_library</code> and <code>scala_library</code> targets. 
 <a xref="oref_goal_repl"><code>repl</code></a> goal.
 In the resulting console, you can <code>import</code> code from the Pants invocation's
 targets and their dependencies.</p>
-<div class="codehilite"><pre>$ ./pants repl examples/src/scala/com/pants/example/hello/welcome
+<div class="codehilite"><pre>$ ./pants repl examples/src/scala/org/pantsbuild/example/hello/welcome
    ...much build output...
 15:08:13 00:11   [resources]
 15:08:13 00:11     [prepare]
@@ -253,13 +253,13 @@ Welcome to Scala version 2.10.4 (Java HotSpot(TM) 64-Bit Server VM, Java 1.7.0_6
 Type in expressions to have them evaluated.
 Type :help for more information.
 
-scala&gt; import com.pants.example.hello.welcome
-import com.pants.example.hello.welcome
+scala&gt; import org.pantsbuild.example.hello.welcome
+import org.pantsbuild.example.hello.welcome
 
 scala&gt; val folks = List("Abel", "Baker", "Charlie", "Delta")
 folks: List[java.lang.String] = List(Abel, Baker, Charlie, Delta)
 
-scala&gt; com.pants.example.hello.welcome.WelcomeEverybody(folks)
+scala&gt; org.pantsbuild.example.hello.welcome.WelcomeEverybody(folks)
 res0: Seq[String] = List(Hello, Abel!, Hello, Baker!, Hello, Charlie!, Hello, Delta!)
 
 scala&gt; exit
@@ -277,7 +277,7 @@ Python console instead.)</p>
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/markdown/html/examples/src/scala/com/pants/example/readme.html 2015-04-05T18:29:52.843876
+from dist/markdown/html/examples/src/scala/org/pantsbuild/example/readme.html 2015-04-06T22:42:09.312159
 </div>
 
 </div> <!-- end of mainflow -->
