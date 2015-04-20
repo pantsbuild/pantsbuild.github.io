@@ -47,6 +47,7 @@
 <li class="toc-h2"><a href="#restricting-publish-to-release-branch">Restricting Publish to &quot;Release Branch&quot;</a></li>
 <li class="toc-h2"><a href="#task-to-publish-extra-artifacts">Task to Publish &quot;Extra&quot; Artifacts</a></li>
 <li class="toc-h1"><a href="#outside-caches">Outside Caches</a></li>
+<li class="toc-h1"><a href="#uploading-timing-stats">Uploading Timing Stats</a></li>
 <li class="toc-h1"><a href="#using-pants-behind-a-firewall">Using Pants behind a firewall</a></li>
 <li class="toc-h2"><a href="#configuring-the-python-requests-library">Configuring the Python requests library</a></li>
 <li class="toc-h2"><a href="#ivy-bootstrapper-and-tool-bootstrapping">Ivy bootstrapper and tool bootstrapping</a></li>
@@ -593,6 +594,7 @@ metadata -- code coverage info, source git repository, java version that created
 <a href="howto_plugin.html">plugin</a>, you give Pants a new ability. <a href="dev_tasks_publish_extras.html">Develop a
 Task to Publish "Extra" Artifacts</a> to find
 out how to develop a special Task to include "extra" data with published artifacts.</p>
+<p><a id="setup_cache"></a></p>
 
 <table class="h-plus-pilcrow">
 <tbody>
@@ -641,6 +643,73 @@ then try a <code>PUT</code> request; store the file it sends.
 If the user's <code>.netrc</code> has authentication information for the cache server[s], Pants will use it.
 (Thus, if only some users with known-good setups should be able to write to the cache, you might
 find it handy to use <code>.netrc</code> to authenticate those users.)</p>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="uploading-timing-stats">Uploading Timing Stats</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#uploading-timing-stats">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Pants tracks information about its performance: what it builds, how much
+time various build operations take, cache hits, and more.
+If you you work with a large engineering organization, you might want to
+gather this information in one place, so it can inform decisions about how
+to improve everybody's build times.</p>
+<p>In everyone's <code>pants.ini</code> files, in the <code>[DEFAULT]</code> section, add a
+<code>stats_upload_url</code> line:</p>
+<div class="codehilite"><pre>stats_upload_url: "http://myorg.org/pantsstats"
+</pre></div>
+<p>Pants <code>POST</code>s reports to that URL. It's up to you to write a server to "listen"
+at that URL. A <code>POST</code> can have the following fields:</p>
+<p><code>artifact_cache_stats</code>: Information about Pants' caching.
+<a href="#setup_cache">This "cache" refers to the place where Pants can store and fetch things it
+builds</a> (not to be confused with the information it keeps in its working
+directory or the pre-built artifacts it fetches from PyPI or maven).
+This field is JSON. If Pants did <em>not</em> exercise its cache in a run, this might
+be an empty list "<code>[]</code>". If Pants <em>did</em> exercise its cache, this JSON might
+look like:</p>
+<div class="codehilite"><pre><span class="p">[{</span><span class="s2">"num_hits"</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
+  <span class="s2">"hits"</span><span class="o">:</span> <span class="p">[</span><span class="s2">"3rdparty:hamcrest-core"</span><span class="p">,</span> <span class="s2">"3rdparty:junit"</span><span class="p">],</span>
+  <span class="s2">"num_misses"</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="s2">"cache_name"</span><span class="o">:</span> <span class="s2">"default"</span><span class="p">,</span>
+  <span class="s2">"misses"</span><span class="o">:</span> <span class="p">[</span><span class="s2">"examples/tests/java/com/pants/examples/hello/greet"</span><span class="p">]}]</span>
+</pre></div>
+<p><code>run_info</code>: Miscellaneous info about the Pants run: SCM status, build
+failure/success, etc. This is formatted as a JSON dictionary. It might look
+like:</p>
+<div class="codehilite"><pre><span class="p">{</span><span class="s2">"timestamp"</span><span class="o">:</span> <span class="s2">"1422901742.05"</span><span class="p">,</span>
+ <span class="s2">"datetime"</span><span class="o">:</span> <span class="s2">"Monday Feb 02, 2015 10:29:02"</span><span class="p">,</span>
+ <span class="s2">"machine"</span><span class="o">:</span> <span class="s2">"pogo-desktop"</span><span class="p">,</span>
+ <span class="s2">"default_report"</span><span class="o">:</span> <span class="s2">"/home/lahosken/src/lpants/.pants.d/reports/pants_run_2015_02_02_10_29_02_54/html/build.html"</span><span class="p">,</span>
+ <span class="s2">"tag"</span><span class="o">:</span> <span class="s2">"release_0.0.27-153-g7daeafc"</span><span class="p">,</span>
+ <span class="s2">"user"</span><span class="o">:</span> <span class="s2">"lahosken"</span><span class="p">,</span>
+ <span class="s2">"branch"</span><span class="o">:</span> <span class="s2">"cache_printf"</span><span class="p">,</span>
+ <span class="s2">"path"</span><span class="o">:</span> <span class="s2">"/home/lahosken/src/lpants"</span><span class="p">,</span>
+ <span class="s2">"outcome"</span><span class="o">:</span> <span class="s2">"SUCCESS"</span><span class="p">,</span>
+ <span class="s2">"cmd_line"</span><span class="o">:</span> <span class="s2">"./pants test examples/tests/java/com/pants/examples/hello::"</span><span class="p">,</span>
+ <span class="s2">"id"</span><span class="o">:</span> <span class="s2">"pants_run_2015_02_02_10_29_02_54"</span><span class="p">,</span>
+ <span class="s2">"revision"</span><span class="o">:</span> <span class="s2">"7daeafc8b40dc9bdad532195d510b8ed520aaa7c"</span><span class="p">}</span>
+</pre></div>
+<p><code>self_timings</code>, <code>cumulative_timings</code>: Timing information about the stages of
+the build. These stages "nest". If stage1 invokes stage2, then the
+<code>cumulative_timings</code> for <code>stage1</code> include the <code>stage2</code> time, but the
+<code>self_timings</code> for <code>stage1</code> will not. Each of these fields is a JSON-encoded
+list of structures. The start of <code>cumulative_timings</code> might look like</p>
+<div class="codehilite"><pre><span class="p">[{</span><span class="s2">"timing"</span><span class="o">:</span> <span class="mf">3.3389577865600586</span><span class="p">,</span> <span class="s2">"is_tool"</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span> <span class="s2">"label"</span><span class="o">:</span> <span class="s2">"main"</span><span class="p">},</span>
+ <span class="p">{</span><span class="s2">"timing"</span><span class="o">:</span> <span class="mf">2.929041862487793</span><span class="p">,</span> <span class="s2">"is_tool"</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span> <span class="s2">"label"</span><span class="o">:</span> <span class="s2">"background"</span><span class="p">},</span>
+ <span class="p">{</span><span class="s2">"timing"</span><span class="o">:</span> <span class="mf">1.560438871383667</span><span class="p">,</span> <span class="s2">"is_tool"</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span> <span class="s2">"label"</span><span class="o">:</span> <span class="s2">"main:test"</span><span class="p">},</span>
+ <span class="p">{</span><span class="s2">"timing"</span><span class="o">:</span> <span class="mf">1.479201078414917</span><span class="p">,</span> <span class="s2">"is_tool"</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span> <span class="s2">"label"</span><span class="o">:</span> <span class="s2">"main:test:junit"</span><span class="p">},</span>
+ <span class="p">{</span><span class="s2">"timing"</span><span class="o">:</span> <span class="mf">1.262120008468628</span><span class="p">,</span> <span class="s2">"is_tool"</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span> <span class="s2">"label"</span><span class="o">:</span> <span class="s2">"main:compile"</span><span class="p">},</span>
+ <span class="p">{</span><span class="s2">"timing"</span><span class="o">:</span> <span class="mf">1.118539810180664</span><span class="p">,</span> <span class="s2">"is_tool"</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span> <span class="s2">"label"</span><span class="o">:</span> <span class="s2">"main:test:junit:bootstrap-junit"</span><span class="p">},</span>
+ <span class="p">{</span><span class="s2">"timing"</span><span class="o">:</span> <span class="mf">0.7393410205841064</span><span class="p">,</span> <span class="s2">"is_tool"</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span> <span class="s2">"label"</span><span class="o">:</span> <span class="s2">"main:compile:checkstyle"</span><span class="p">},</span>
+ <span class="p">{</span><span class="s2">"timing"</span><span class="o">:</span> <span class="mf">0.7151470184326172</span><span class="p">,</span> <span class="s2">"is_tool"</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span> <span class="s2">"label"</span><span class="o">:</span> <span class="s2">"main:compile:checkstyle:checkstyle"</span><span class="p">},</span>
+ <span class="p">...</span>
+</pre></div>
 
 <table class="h-plus-pilcrow">
 <tbody>
@@ -832,7 +901,7 @@ indices: [
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/markdown/html/src/docs/setup_repo.html 2015-04-13T15:38:30.634779
+from dist/markdown/html/src/docs/setup_repo.html 2015-04-20T11:47:58.551274
 </div>
 
 </div> <!-- end of mainflow -->
