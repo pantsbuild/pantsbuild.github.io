@@ -135,7 +135,7 @@
 <li class="toc-h1"><a href="#paths">paths</a></li>
 <li class="toc-h2"><a href="#group_paths">paths</a></li>
 <li class="toc-h1"><a href="#publish">publish</a></li>
-<li class="toc-h2"><a href="#group_publish">publish</a></li>
+<li class="toc-h2"><a href="#group_publishjar">publish.jar</a></li>
 <li class="toc-h1"><a href="#repl">repl</a></li>
 <li class="toc-h2"><a href="#group_replpy">repl.py</a></li>
 <li class="toc-h2"><a href="#group_replscala">repl.scala</a></li>
@@ -2481,7 +2481,17 @@ div.oref_ogroup_section h3 {
 
       Regex patterns of target addresses to include (optional '+' prefix) or exclude ('-' prefix).  Multiple target inclusions or exclusions can be specified in a comma-separated list or by using multiple instances of this flag.
 
-</li></li></li></li></li></li></ul>
+<li><code>--tag</code>
+<code>str</code>
+
+      Tags to include (optional '+' prefix) or exclude ('-' prefix).  Multiple attribute inclusions or exclusions can be specified in a comma-separated list or by using multiple instances of this flag. Format: --tag='+foo,-bar'
+
+<li><code>--tag-regex</code>
+<code>str</code>
+
+      Regex patterns of tags to include (optional '+' prefix) or exclude ('-' prefix).  Multiple attribute inclusions or exclusions can be specified in a comma-separated list or by using multiple instances of this flag. Format: --tag-regex='+foo,-bar'
+
+</li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -2728,13 +2738,19 @@ div.oref_ogroup_section h3 {
 
 <p>Implemented by <code>pants.backend.codegen.tasks.wire_gen.WireGen</code>
 <ul>
+<li><code>--javadeps</code>
+<code>list_type</code>
+      (Default: <code>[u'//:wire-runtime']</code>)
+
+      Runtime dependencies for wire-using Java code.
+
 <li><code>--wire-compiler</code>
 <code>list_type</code>
       (Default: <code>[u'//:wire-compiler']</code>)
 
       Target specs for bootstrapping the wire-compiler tool.
 
-</li></ul>
+</li></li></ul>
 </p></div>
 <div class="oref_ogroup_section">
 <a id="oref_cli_genaapt" pantsmark="oref_cli_genaapt"> </a>
@@ -3736,14 +3752,14 @@ div.oref_ogroup_section h3 {
 
 
 <div class="oref_ogroup_section">
-<a id="oref_cli_publish" pantsmark="oref_cli_publish"> </a>
+<a id="oref_cli_publishjar" pantsmark="oref_cli_publishjar"> </a>
 
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h3 id="group_publish">publish</h3></td>
+<td class="h-plus-pilcrow-holder"><h3 id="group_publishjar">publish.jar</h3></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#group_publish">¶</a>
+<a class="pilcrow-link" href="#group_publishjar">¶</a>
 </div></td>
 </tr>
 </tbody>
@@ -3812,6 +3828,12 @@ div.oref_ogroup_section h3 {
 
       Restart a fail push at the given jar.  Jars can be identified by maven coordinate [org]#[name] or target. For example: --restart-at=com.twitter.common#quantity Or: --restart-at=src/java/com/twitter/common/base
 
+<li><code>--[no-]changelog</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      A changelog.txt file will be created and printed to the console for each artifact published
+
 <li><code>--nailgun-server</code>
 <code>list_type</code>
       (Default: <code>[u'//:nailgun-server']</code>)
@@ -3853,7 +3875,7 @@ div.oref_ogroup_section h3 {
 
       A post-script to add to pushdb commit messages and push tag commit messages.
 
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -4193,7 +4215,13 @@ div.oref_ogroup_section h3 {
 
 <p>Implemented by <code>pants.backend.core.tasks.prepare_resources.PrepareResources</code>
 <ul>
-</ul>
+<li><code>--confs</code>
+<code>list_type</code>
+      (Default: <code>[u'default']</code>)
+
+      Prepare resources for these Ivy confs.
+
+</li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -5405,15 +5433,20 @@ These command-line flags are available with all Pants goals.
 
       the time in seconds before we consider re-resolving an open-ended requirement, e.g. "flask&gt;=0.2" if a matching distribution is available on disk.
 
+<li><code>--build-file-rev</code>
+<code>str</code>
+
+      Read BUILD files from this scm rev instead of from the working tree.  This is useful for implementing pants-aware sparse checkouts.
+
 <li><code>--pants-bootstrapdir</code>
 <code>str</code>
-      (Default: <code>/home/lahosken/.cache/pants</code>)
+      (Default: <code>/home/jsirois/.cache/pants</code>)
 
       Use this dir for global cache.
 
 <li><code>--pants-configdir</code>
 <code>str</code>
-      (Default: <code>/home/lahosken/.config/pants</code>)
+      (Default: <code>/home/jsirois/.config/pants</code>)
 
       Use this dir for global config files.
 
@@ -5465,13 +5498,13 @@ These command-line flags are available with all Pants goals.
 
       The default rpc-style to generate for java_thrift_library targets.
 
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 </p></p></p></p></body>
 <!-- main content end -->
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/builddict/options_reference.html 2015-04-20T11:47:58.883512
+from dist/builddict/options_reference.html 2015-05-09T13:10:02.384708
 </div>
 
 </div> <!-- end of mainflow -->
@@ -5566,6 +5599,9 @@ Pants Options Reference
 </li>
 <li class="toc-h1 ">
 <a href="changelog.html">RELEASE HISTORY</a>
+</li>
+<li class="toc-h1 ">
+<a href="export.html">Export Format</a>
 </li>
 <li class="toc-h1 ">
 <a href="dev.html">Pants Developer Center</a>
