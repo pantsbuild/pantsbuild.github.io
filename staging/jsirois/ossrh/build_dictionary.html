@@ -1,0 +1,4117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!--
+  Copyright 2014 Pants project contributors (see CONTRIBUTORS.md).
+  Licensed under the Apache License, Version 2.0 (see LICENSE).
+-->
+
+<head>
+  <meta charset="utf-8" />
+  <title>Pants BUILD Dictionary</title>
+  <link rel="stylesheet" href="s.css">
+  <script src="s.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="logo.ico">
+  <!-- In case this is a "test publish", tell search engines where real version lives: -->
+  <link rel="canonical" href="https://pantsbuild.github.io/build_dictionary.html">
+</head>
+
+<body>
+
+<div id="navtoggler">
+&#x25c4; <!-- triangle -->
+</div>
+<div class="mainflow">
+<nav class="breadcrumbs">
+<ul>
+<li><a href="index.html">Pants Build</a>
+<li><a href="build_dictionary.html">Pants BUILD Dictionary</a>
+</ul>
+</nav>
+
+<nav class="pagetoc">
+<ul>
+<li class="toc-h1"><a href="#android_binary">android_binary</a></li>
+<li class="toc-h1"><a href="#android_resources">android_resources</a></li>
+<li class="toc-h1"><a href="#annotation_processor">annotation_processor</a></li>
+<li class="toc-h1"><a href="#artifact">artifact</a></li>
+<li class="toc-h1"><a href="#benchmark">benchmark</a></li>
+<li class="toc-h1"><a href="#buildfile_path">buildfile_path</a></li>
+<li class="toc-h1"><a href="#bundle">bundle</a></li>
+<li class="toc-h1"><a href="#ConfluencePublish">ConfluencePublish</a></li>
+<li class="toc-h1"><a href="#contrib_setup_py">contrib_setup_py</a></li>
+<li class="toc-h1"><a href="#cpp_binary">cpp_binary</a></li>
+<li class="toc-h1"><a href="#cpp_library">cpp_library</a></li>
+<li class="toc-h1"><a href="#credentials">credentials</a></li>
+<li class="toc-h1"><a href="#dependencies">dependencies</a></li>
+<li class="toc-h1"><a href="#developer">developer</a></li>
+<li class="toc-h1"><a href="#DirectoryReMapper">DirectoryReMapper</a></li>
+<li class="toc-h1"><a href="#Duplicate">Duplicate</a></li>
+<li class="toc-h1"><a href="#egg">egg</a></li>
+<li class="toc-h1"><a href="#exclude">exclude</a></li>
+<li class="toc-h1"><a href="#from_target">from_target</a></li>
+<li class="toc-h1"><a href="#get_buildroot">get_buildroot</a></li>
+<li class="toc-h1"><a href="#github">github</a></li>
+<li class="toc-h1"><a href="#globs">globs</a></li>
+<li class="toc-h1"><a href="#ivy_artifact">ivy_artifact</a></li>
+<li class="toc-h1"><a href="#jar">jar</a></li>
+<li class="toc-h1"><a href="#jar_library">jar_library</a></li>
+<li class="toc-h1"><a href="#jar_rules">jar_rules</a></li>
+<li class="toc-h1"><a href="#java_agent">java_agent</a></li>
+<li class="toc-h1"><a href="#java_antlr_library">java_antlr_library</a></li>
+<li class="toc-h1"><a href="#java_library">java_library</a></li>
+<li class="toc-h1"><a href="#java_protobuf_library">java_protobuf_library</a></li>
+<li class="toc-h1"><a href="#java_ragel_library">java_ragel_library</a></li>
+<li class="toc-h1"><a href="#java_tests">java_tests</a></li>
+<li class="toc-h1"><a href="#java_thrift_library">java_thrift_library</a></li>
+<li class="toc-h1"><a href="#java_wire_library">java_wire_library</a></li>
+<li class="toc-h1"><a href="#jaxb_library">jaxb_library</a></li>
+<li class="toc-h1"><a href="#junit_tests">junit_tests</a></li>
+<li class="toc-h1"><a href="#jvm_app">jvm_app</a></li>
+<li class="toc-h1"><a href="#jvm_binary">jvm_binary</a></li>
+<li class="toc-h1"><a href="#license">license</a></li>
+<li class="toc-h1"><a href="#maven_layout">maven_layout</a></li>
+<li class="toc-h1"><a href="#netrc">netrc</a></li>
+<li class="toc-h1"><a href="#ossrh">ossrh</a></li>
+<li class="toc-h1"><a href="#page">page</a></li>
+<li class="toc-h1"><a href="#pants">pants</a></li>
+<li class="toc-h1"><a href="#pants_library">pants_library</a></li>
+<li class="toc-h1"><a href="#pants_setup_py">pants_setup_py</a></li>
+<li class="toc-h1"><a href="#pants_version">pants_version</a></li>
+<li class="toc-h1"><a href="#prep_command">prep_command</a></li>
+<li class="toc-h1"><a href="#python_antlr_library">python_antlr_library</a></li>
+<li class="toc-h1"><a href="#python_binary">python_binary</a></li>
+<li class="toc-h1"><a href="#python_library">python_library</a></li>
+<li class="toc-h1"><a href="#python_requirement">python_requirement</a></li>
+<li class="toc-h1"><a href="#python_requirement_library">python_requirement_library</a></li>
+<li class="toc-h1"><a href="#python_requirements">python_requirements</a></li>
+<li class="toc-h1"><a href="#python_test_suite">python_test_suite</a></li>
+<li class="toc-h1"><a href="#python_tests">python_tests</a></li>
+<li class="toc-h1"><a href="#python_thrift_library">python_thrift_library</a></li>
+<li class="toc-h1"><a href="#Repository">Repository</a></li>
+<li class="toc-h1"><a href="#resources">resources</a></li>
+<li class="toc-h1"><a href="#rglobs">rglobs</a></li>
+<li class="toc-h1"><a href="#scala_library">scala_library</a></li>
+<li class="toc-h1"><a href="#scalac_plugin">scalac_plugin</a></li>
+<li class="toc-h1"><a href="#scm">scm</a></li>
+<li class="toc-h1"><a href="#setup_py">setup_py</a></li>
+<li class="toc-h1"><a href="#Skip">Skip</a></li>
+<li class="toc-h1"><a href="#source_root">source_root</a></li>
+<li class="toc-h1"><a href="#spindle_thrift_library">spindle_thrift_library</a></li>
+<li class="toc-h1"><a href="#target">target</a></li>
+<li class="toc-h1"><a href="#unpacked_jars">unpacked_jars</a></li>
+<li class="toc-h1"><a href="#Wiki">Wiki</a></li>
+<li class="toc-h1"><a href="#wiki_artifact">wiki_artifact</a></li>
+<li class="toc-h1"><a href="#zglobs">zglobs</a></li>
+</ul>
+</nav>
+
+<!-- main content start -->
+<body>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h1 id="heading_pantsbuilddictionary_101">Pants BUILD Dictionary</h1></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#heading_pantsbuilddictionary_101">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>
+A <tt>BUILD</tt> file defines one or more <em>build targets</em>.
+A build target might create a jar or a deployable package,
+run some tests or perform whatever actions you might associate
+with the ant concept of a build target. This page describes the
+commands and values available. Many of these define <tt>BUILD</tt>
+targets; some are handy utilities.
+
+<!-- some styles used only in build dictionary, so far -->
+<style>
+.bdict_section {
+  margin-left: 0.5em;
+}
+.bdict_heading {
+  margin-left: -0.25em;
+  border-top: 4px solid #9bf;
+}
+p.bdict_argspec {
+  border-top: 1px dotted #bcd;
+  background-color: #def;
+  font-family: monospace;
+  padding: 0.5em;
+}
+div.bdict_params_section {
+  margin-left: 1em;
+  font-size: 90%;
+}
+p.bdict_method_heading {
+  border-top: 2px solid #bcd;
+  margin-bottom: 0px;
+}
+div.bdict_method {
+  border: 1px dotted #def;
+  margin-left: 1em;
+  padding: 0px 0.5em;
+}
+p.bdict_impl {
+  font-size: 90%;
+}
+.bdict_param {
+  margin-left: 1.0em;
+}
+span.bdict_param_muffle_p p {
+  display: inline;
+}
+</style>
+<p>
+<b>All The Things</b> |
+    <a href="#android_binary">android_binary</a>
+<a href="#android_resources">android_resources</a>
+<a href="#annotation_processor">annotation_processor</a>
+<a href="#artifact">artifact</a>
+<a href="#benchmark">benchmark</a>
+<a href="#buildfile_path">buildfile_path</a>
+<a href="#bundle">bundle</a>
+<a href="#ConfluencePublish">ConfluencePublish</a>
+<a href="#contrib_setup_py">contrib_setup_py</a>
+<a href="#cpp_binary">cpp_binary</a>
+<a href="#cpp_library">cpp_library</a>
+<a href="#credentials">credentials</a>
+<a href="#dependencies">dependencies</a>
+<a href="#developer">developer</a>
+<a href="#DirectoryReMapper">DirectoryReMapper</a>
+<a href="#Duplicate">Duplicate</a>
+<a href="#egg">egg</a>
+<a href="#exclude">exclude</a>
+<a href="#from_target">from_target</a>
+<a href="#get_buildroot">get_buildroot</a>
+<a href="#github">github</a>
+<a href="#globs">globs</a>
+<a href="#ivy_artifact">ivy_artifact</a>
+<a href="#jar">jar</a>
+<a href="#jar_library">jar_library</a>
+<a href="#jar_rules">jar_rules</a>
+<a href="#java_agent">java_agent</a>
+<a href="#java_antlr_library">java_antlr_library</a>
+<a href="#java_library">java_library</a>
+<a href="#java_protobuf_library">java_protobuf_library</a>
+<a href="#java_ragel_library">java_ragel_library</a>
+<a href="#java_tests">java_tests</a>
+<a href="#java_thrift_library">java_thrift_library</a>
+<a href="#java_wire_library">java_wire_library</a>
+<a href="#jaxb_library">jaxb_library</a>
+<a href="#junit_tests">junit_tests</a>
+<a href="#jvm_app">jvm_app</a>
+<a href="#jvm_binary">jvm_binary</a>
+<a href="#license">license</a>
+<a href="#maven_layout">maven_layout</a>
+<a href="#netrc">netrc</a>
+<a href="#ossrh">ossrh</a>
+<a href="#page">page</a>
+<a href="#pants">pants</a>
+<a href="#pants_library">pants_library</a>
+<a href="#pants_setup_py">pants_setup_py</a>
+<a href="#pants_version">pants_version</a>
+<a href="#prep_command">prep_command</a>
+<a href="#python_antlr_library">python_antlr_library</a>
+<a href="#python_binary">python_binary</a>
+<a href="#python_library">python_library</a>
+<a href="#python_requirement">python_requirement</a>
+<a href="#python_requirement_library">python_requirement_library</a>
+<a href="#python_requirements">python_requirements</a>
+<a href="#python_test_suite">python_test_suite</a>
+<a href="#python_tests">python_tests</a>
+<a href="#python_thrift_library">python_thrift_library</a>
+<a href="#Repository">Repository</a>
+<a href="#resources">resources</a>
+<a href="#rglobs">rglobs</a>
+<a href="#scala_library">scala_library</a>
+<a href="#scalac_plugin">scalac_plugin</a>
+<a href="#scm">scm</a>
+<a href="#setup_py">setup_py</a>
+<a href="#Skip">Skip</a>
+<a href="#source_root">source_root</a>
+<a href="#spindle_thrift_library">spindle_thrift_library</a>
+<a href="#target">target</a>
+<a href="#unpacked_jars">unpacked_jars</a>
+<a href="#Wiki">Wiki</a>
+<a href="#wiki_artifact">wiki_artifact</a>
+<a href="#zglobs">zglobs</a>
+<p>
+<b>JVM</b> |
+    <a href="#android_binary">android_binary</a>
+<a href="#android_resources">android_resources</a>
+<a href="#annotation_processor">annotation_processor</a>
+<a href="#artifact">artifact</a>
+<a href="#benchmark">benchmark</a>
+<a href="#buildfile_path">buildfile_path</a>
+<a href="#bundle">bundle</a>
+<a href="#ConfluencePublish">ConfluencePublish</a>
+<a href="#credentials">credentials</a>
+<a href="#developer">developer</a>
+<a href="#DirectoryReMapper">DirectoryReMapper</a>
+<a href="#Duplicate">Duplicate</a>
+<a href="#exclude">exclude</a>
+<a href="#from_target">from_target</a>
+<a href="#github">github</a>
+<a href="#globs">globs</a>
+<a href="#ivy_artifact">ivy_artifact</a>
+<a href="#jar">jar</a>
+<a href="#jar_library">jar_library</a>
+<a href="#jar_rules">jar_rules</a>
+<a href="#java_agent">java_agent</a>
+<a href="#java_antlr_library">java_antlr_library</a>
+<a href="#java_library">java_library</a>
+<a href="#java_protobuf_library">java_protobuf_library</a>
+<a href="#java_ragel_library">java_ragel_library</a>
+<a href="#java_thrift_library">java_thrift_library</a>
+<a href="#java_wire_library">java_wire_library</a>
+<a href="#junit_tests">junit_tests</a>
+<a href="#jvm_app">jvm_app</a>
+<a href="#jvm_binary">jvm_binary</a>
+<a href="#license">license</a>
+<a href="#ossrh">ossrh</a>
+<a href="#page">page</a>
+<a href="#prep_command">prep_command</a>
+<a href="#Repository">Repository</a>
+<a href="#resources">resources</a>
+<a href="#rglobs">rglobs</a>
+<a href="#scala_library">scala_library</a>
+<a href="#scalac_plugin">scalac_plugin</a>
+<a href="#scm">scm</a>
+<a href="#Skip">Skip</a>
+<a href="#target">target</a>
+<a href="#unpacked_jars">unpacked_jars</a>
+<a href="#Wiki">Wiki</a>
+<a href="#wiki_artifact">wiki_artifact</a>
+<a href="#zglobs">zglobs</a>
+<p>
+<b>Python</b> |
+    <a href="#buildfile_path">buildfile_path</a>
+<a href="#ConfluencePublish">ConfluencePublish</a>
+<a href="#from_target">from_target</a>
+<a href="#globs">globs</a>
+<a href="#page">page</a>
+<a href="#prep_command">prep_command</a>
+<a href="#python_binary">python_binary</a>
+<a href="#python_library">python_library</a>
+<a href="#python_requirement">python_requirement</a>
+<a href="#python_requirement_library">python_requirement_library</a>
+<a href="#python_requirements">python_requirements</a>
+<a href="#python_tests">python_tests</a>
+<a href="#resources">resources</a>
+<a href="#rglobs">rglobs</a>
+<a href="#setup_py">setup_py</a>
+<a href="#target">target</a>
+<a href="#Wiki">Wiki</a>
+<a href="#wiki_artifact">wiki_artifact</a>
+<a href="#zglobs">zglobs</a>
+<p> 
+
+
+<div class="bdict_section">
+<a id="bdict_android_binary" pantsmark="bdict_android_binary"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="android_binary">android_binary</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#android_binary">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">android_binary(name, build_tools_version=u'19.1.0', manifest=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, tags=None, description=None)
+
+<div>
+<p>Produces an Android binary.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">build_tools_version</b>
+<span class="bdict_param_muffle_p"><p>API for the Build Tools (separate from SDK version).
+Defaults to the latest full release.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">manifest</b>
+<span class="bdict_param_muffle_p"><p>path/to/file of 'AndroidManifest.xml' (required name). Paths are relative
+to the BUILD file's directory.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">configurations</b>
+  (<em class="bdict_param_type"> tuple of strings</em>)
+  <span class="bdict_param_muffle_p"><p>One or more ivy configurations to resolve for this target.
+This parameter is not intended for general use.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">excludes</b>
+<span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
+transitive dependencies against.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">sources</b>
+  (<em class="bdict_param_type"> ``Fileset`` (from globs or rglobs) or list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Source code files to build. Paths are relative to the BUILD
+file's directory.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">no_cache</b>
+<span class="bdict_param_muffle_p"><p>If True, this should not be stored in the artifact cache</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
+build file defines the target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> list of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.android.targets.android_binary.AndroidBinary</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_android_resources" pantsmark="bdict_android_resources"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="android_resources">android_resources</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#android_resources">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">android_resources(name, resource_dir=None, build_tools_version=u'19.1.0', manifest=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, tags=None, description=None)
+
+<div>
+<p>Processes android resources to generate R.java</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">resource_dir</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>path/to/directory containing Android resource files,
+often named 'res'.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">build_tools_version</b>
+<span class="bdict_param_muffle_p"><p>API for the Build Tools (separate from SDK version).
+Defaults to the latest full release.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">manifest</b>
+<span class="bdict_param_muffle_p"><p>path/to/file of 'AndroidManifest.xml' (required name). Paths are relative
+to the BUILD file's directory.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">configurations</b>
+  (<em class="bdict_param_type"> tuple of strings</em>)
+  <span class="bdict_param_muffle_p"><p>One or more ivy configurations to resolve for this target.
+This parameter is not intended for general use.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">excludes</b>
+<span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
+transitive dependencies against.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">sources</b>
+  (<em class="bdict_param_type"> ``Fileset`` (from globs or rglobs) or list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Source code files to build. Paths are relative to the BUILD
+file's directory.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">no_cache</b>
+<span class="bdict_param_muffle_p"><p>If True, this should not be stored in the artifact cache</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
+build file defines the target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> list of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.android.targets.android_resources.AndroidResources</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_annotation_processor" pantsmark="bdict_annotation_processor"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="annotation_processor">annotation_processor</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#annotation_processor">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">annotation_processor(name, processors=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, tags=None, description=None)
+
+<div>
+<p>Produces a Java library containing one or more annotation processors.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">resources</b>
+<span class="bdict_param_muffle_p"><p>An optional list of file paths (DEPRECATED) or
+<tt class="docutils literal">resources</tt> targets (which in turn point to file paths). The paths
+indicate text file resources to place in this module's jar.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">processors</b>
+<span class="bdict_param_muffle_p"><p>A list of the fully qualified class names of the
+annotation processors this library exports.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">provides</b>
+<span class="bdict_param_muffle_p"><p>An optional Dependency object indicating the The ivy artifact to export.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">configurations</b>
+  (<em class="bdict_param_type"> tuple of strings</em>)
+  <span class="bdict_param_muffle_p"><p>One or more ivy configurations to resolve for this target.
+This parameter is not intended for general use.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">excludes</b>
+<span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
+transitive dependencies against.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">sources</b>
+  (<em class="bdict_param_type"> ``Fileset`` (from globs or rglobs) or list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Source code files to build. Paths are relative to the BUILD
+file's directory.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">no_cache</b>
+<span class="bdict_param_muffle_p"><p>If True, this should not be stored in the artifact cache</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
+build file defines the target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> list of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.jvm.targets.annotation_processor.AnnotationProcessor</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_artifact" pantsmark="bdict_artifact"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="artifact">artifact</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#artifact">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">artifact(org, name, repo, publication_metadata=None)
+
+<div>
+<p>Represents a publishable jvm artifact ala maven or ivy.</p>
+<p>Used in the <tt class="docutils literal">provides</tt> parameter to <em>jvm</em>_library targets.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">org</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Organization of this artifact, or groupId in maven parlance.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Name of the artifact, or artifactId in maven parlance.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">repo</b>
+<span class="bdict_param_muffle_p"><p>The <tt class="docutils literal">repo</tt> this artifact is published to.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">publication_metadata</b>
+<span class="bdict_param_muffle_p"><p>Optional extra publication metadata required by the <tt class="docutils literal">repo</tt>.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.jvm.artifact.Artifact</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_benchmark" pantsmark="bdict_benchmark"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="benchmark">benchmark</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#benchmark">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">benchmark(name, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, tags=None, description=None)
+
+<div>
+<p>A caliper benchmark.</p>
+<p>Run it with the <tt class="docutils literal">bench</tt> goal.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">configurations</b>
+  (<em class="bdict_param_type"> tuple of strings</em>)
+  <span class="bdict_param_muffle_p"><p>One or more ivy configurations to resolve for this target.
+This parameter is not intended for general use.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">excludes</b>
+<span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
+transitive dependencies against.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">sources</b>
+  (<em class="bdict_param_type"> ``Fileset`` (from globs or rglobs) or list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Source code files to build. Paths are relative to the BUILD
+file's directory.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">no_cache</b>
+<span class="bdict_param_muffle_p"><p>If True, this should not be stored in the artifact cache</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
+build file defines the target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> list of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.jvm.targets.benchmark.Benchmark</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_buildfile_path" pantsmark="bdict_buildfile_path"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="buildfile_path">buildfile_path</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#buildfile_path">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">buildfile_path(parse_context)
+
+<div>
+<p>Returns path containing this <tt class="docutils literal">BUILD</tt> file.</p>
+</div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.core.register.BuildFilePath</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_bundle" pantsmark="bdict_bundle"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="bundle">bundle</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#bundle">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">bundle(parse_context, rel_path=None, mapper=None, relative_to=None, fileset=None)
+
+<div>
+<p>A set of files to include in an application bundle.</p>
+<p>To learn about application bundles, see
+<a class="reference external" href="JVMProjects.html#jvm-bundles">bundles</a>.
+Looking for Java-style resources accessible via the <tt class="docutils literal">Class.getResource</tt> API?
+Those are <a class="reference external" href="build_dictionary.html#resources">resources</a>.</p>
+<p>Files added to the bundle will be included when bundling an application target.
+By default relative paths are preserved. For example, to include <tt class="docutils literal">config</tt>
+and <tt class="docutils literal">scripts</tt> directories:</p>
+<pre class="literal-block">
+bundles=[
+  bundle(fileset=[rglobs('config/*', 'scripts/*'), 'my.cfg']),
+]
+</pre>
+<p>To include files relative to some path component use the <tt class="docutils literal">relative_to</tt> parameter.
+The following places the contents of <tt class="docutils literal">common/config</tt> in a  <tt class="docutils literal">config</tt> directory
+in the bundle.</p>
+<pre class="literal-block">
+bundles=[
+  bundle(relative_to='common', fileset=globs('common/config/*'))
+]
+</pre>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">rel_path</b>
+<span class="bdict_param_muffle_p"><p>Base path of the "source" file paths. By default, path of the
+BUILD file. Useful for assets that don't live in the source code repo.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">mapper</b>
+<span class="bdict_param_muffle_p"><p>Function that takes a path string and returns a path string. Takes a path in
+the source tree, returns a path to use in the resulting bundle. By default, an identity
+mapper.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">relative_to</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Set up a simple mapping from source path to bundle path.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">fileset</b>
+<span class="bdict_param_muffle_p"><p>The set of files to include in the bundle.  A string filename, or list of
+filenames, or a Fileset object (e.g. globs()).
+E.g., <tt class="docutils literal"><span class="pre">relative_to='common'</span></tt> removes that prefix from all files in the application bundle.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.jvm.targets.jvm_app.Bundle</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_ConfluencePublish" pantsmark="bdict_ConfluencePublish"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="ConfluencePublish">ConfluencePublish</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#ConfluencePublish">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">ConfluencePublish(*args, **kwargs)
+
+<div>
+<p>A task to publish Page targets to Confluence wikis.</p>
+</div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.core.tasks.confluence_publish.ConfluencePublish</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_contrib_setup_py" pantsmark="bdict_contrib_setup_py"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="contrib_setup_py">contrib_setup_py</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#contrib_setup_py">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">contrib_setup_py(name, description, additional_classifiers=None)
+
+
+
+<p>Creates the setup_py for a pants contrib plugin artifact.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field"><th class="field-name">returns:</th><td class="field-body">A setup_py suitable for building and publishing pants components.</td>
+</tr>
+</tbody>
+</table>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">str </em>)
+  <span class="bdict_param_muffle_p"><p>The name of the package; must start with 'pantsbuild.pants.contrib.'.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">str </em>)
+  <span class="bdict_param_muffle_p"><p>A brief description of what the plugin provides.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">additional_classifiers</b>
+  (<em class="bdict_param_type">list </em>)
+  <span class="bdict_param_muffle_p"><p>Any additional trove classifiers that apply to the plugin,
+see: <a class="reference external" href="https://pypi.python.org/pypi?%3Aaction=list_classifiers">https://pypi.python.org/pypi?%3Aaction=list_classifiers</a></p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>internal_backend.utilities.register.contrib_setup_py</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_cpp_binary" pantsmark="bdict_cpp_binary"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="cpp_binary">cpp_binary</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#cpp_binary">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">cpp_binary(name, libraries=None, sources_rel_path=None, sources=None, tags=None, description=None)
+
+<div>
+<p>Produces a c++ binary.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">libraries</b>
+  (<em class="bdict_param_type"> List of libraries to link against.</em>)
+  <span class="bdict_param_muffle_p"><p>Libraries that this target depends on that are not pants targets.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">sources</b>
+  (<em class="bdict_param_type"> ``Fileset`` (from globs or rglobs) or list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Source code files to build. Paths are relative to the BUILD
+file's directory.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
+build file defines the target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> list of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.contrib.cpp.targets.cpp_binary.CppBinary</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_cpp_library" pantsmark="bdict_cpp_library"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="cpp_library">cpp_library</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#cpp_library">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">cpp_library(name, sources_rel_path=None, sources=None, tags=None, description=None)
+
+<div>
+<p>Represents a statically linked c++ library.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">sources</b>
+  (<em class="bdict_param_type"> ``Fileset`` (from globs or rglobs) or list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Source code files to build. Paths are relative to the BUILD
+file's directory.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
+build file defines the target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> list of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.contrib.cpp.targets.cpp_library.CppLibrary</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_credentials" pantsmark="bdict_credentials"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="credentials">credentials</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#credentials">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">credentials(name, username=None, password=None, tags=None, description=None)
+
+<div>
+<p>Supplies credentials for a maven repository on demand.</p>
+<p>The <tt class="docutils literal">publish.jar</tt> section of your <tt class="docutils literal">pants.ini</tt> file can refer to one
+or more of these.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of these credentials.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">username</b>
+  (<em class="bdict_param_type"> string or callable</em>)
+  <span class="bdict_param_muffle_p"><p>Either a constant username value or else a callable that can fetch one.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">password</b>
+  (<em class="bdict_param_type"> string or callable</em>)
+  <span class="bdict_param_muffle_p"><p>Either a constant password value or else a callable that can fetch one.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> list of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.jvm.targets.credentials.Credentials</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_dependencies" pantsmark="bdict_dependencies"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="dependencies">dependencies</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#dependencies">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+Old name for <a href="#target">target</a>
+</div>
+<div class="bdict_section">
+<a id="bdict_developer" pantsmark="bdict_developer"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="developer">developer</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#developer">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">developer(user_id=None, name=None, email=None, url=None, organization=None, organization_url=None, roles=None)
+
+<div>
+<p>Corresponds to the maven POM &lt;developer/&gt; element.</p>
+<p>Refer to the schema here: <a class="reference external" href="http://maven.apache.org/maven-v4_0_0.xsd">http://maven.apache.org/maven-v4_0_0.xsd</a></p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">user_id</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The user id of the developer; typically the one used to access the scm.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The developer's full name.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">email</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>the developer's email address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">url</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>An optional url pointing to more information about the developer.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">organization</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>An optional name for the organization the developer works on the
+library for.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">organization_url</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>An optional url pointing to more information about the
+developer's organization.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">roles</b>
+  (<em class="bdict_param_type">list </em>)
+  <span class="bdict_param_muffle_p"><p>An optional list of role names that apply to this developer on this project.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.jvm.ossrh_publication_metadata.Developer</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_DirectoryReMapper" pantsmark="bdict_DirectoryReMapper"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="DirectoryReMapper">DirectoryReMapper</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#DirectoryReMapper">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">DirectoryReMapper(base, dest)
+
+<div>
+<p>A mapper that maps files relative to a base directory into a destination directory.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">base</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>the relative path to get_buildroot()</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dest</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>the dest path in the bundle</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.jvm.targets.jvm_app.DirectoryReMapper</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_Duplicate" pantsmark="bdict_Duplicate"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="Duplicate">Duplicate</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#Duplicate">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">Duplicate(apply_pattern, action)
+
+<div>
+<p>A rule that indicates how duplicate entries should be handled when building a jar.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">apply_pattern</b>
+  (<em class="bdict_param_type">str </em>)
+  <span class="bdict_param_muffle_p"><p>A regular expression that matches duplicate jar entries this rule
+applies to.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">action</b>
+<span class="bdict_param_muffle_p"><p>An action to take to handle one or more duplicate entries.  Must be one of:
+<tt class="docutils literal">Duplicate.SKIP</tt>, <tt class="docutils literal">Duplicate.REPLACE</tt>, <tt class="docutils literal">Duplicate.CONCAT</tt> or <tt class="docutils literal">Duplicate.FAIL</tt>.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.jvm.targets.jvm_binary.Duplicate</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_egg" pantsmark="bdict_egg"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="egg">egg</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#egg">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+In older Pants, loads a pre-built Python egg from file system. Undefined in newer Pants.
+
+
+
+
+
+</div>
+<div class="bdict_section">
+<a id="bdict_exclude" pantsmark="bdict_exclude"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="exclude">exclude</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#exclude">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">exclude(org, name=None)
+
+<div>
+<p>Represents a dependency exclude pattern to filter transitive dependencies against.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">org</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Organization of the artifact to filter,
+known as groupId in Maven parlance.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Name of the artifact to filter in the org, or filter
+everything if unspecified.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.jvm.targets.exclude.Exclude</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_from_target" pantsmark="bdict_from_target"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="from_target">from_target</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#from_target">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">from_target(parse_context)
+
+<div>
+<p>Used in a BUILD file to redirect the value of the sources= attribute to another target.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">parse_context</b>
+  (<em class="bdict_param_type">ParseContext </em>)
+  <span class="bdict_param_muffle_p"><p>build file context</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.core.from_target.FromTarget</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_get_buildroot" pantsmark="bdict_get_buildroot"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="get_buildroot">get_buildroot</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#get_buildroot">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">get_buildroot()
+
+
+
+<p>Returns the pants build root, calculating it if needed.</p>
+<p class="bdict_impl">Implemented by <tt>pants.base.build_environment.get_buildroot</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_github" pantsmark="bdict_github"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="github">github</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#github">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">github(cls, user, repo)
+
+
+
+<p>Creates an <cite>Scm</cite> for a github repo.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field"><th class="field-name">returns:</th><td class="field-body">An <cite>Scm</cite> representing the github repo.</td>
+</tr>
+</tbody>
+</table>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">user</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The github user or organization name the repo is hosted under.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">repo</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The repository name.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.jvm.ossrh_publication_metadata.github</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_globs" pantsmark="bdict_globs"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="globs">globs</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#globs">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">globs(parse_context)
+
+<div>
+<p>Returns Fileset containing matching files in same directory as this BUILD file.
+E.g., <tt class="docutils literal">sources = <span class="pre">globs('*java'),</span></tt> to get .java files in this directory.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field"><th class="field-name">param exclude:</th><td class="field-body">a list of {,r,z}globs objects, strings, or lists of</td>
+</tr>
+</tbody>
+</table>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">&lt;string&gt;</tt>, line 5)</p>
+Field list ends without a blank line; unexpected unindent.</div>
+<p>strings to exclude.  E.g. <tt class="docutils literal"><span class="pre">globs('*',exclude=[globs('*.java'),</span>
+<span class="pre">'foo.py'])</span></tt> gives all files in this directory except <tt class="docutils literal">.java</tt>
+files and <tt class="docutils literal">foo.py</tt>.</p>
+<p>Deprecated:
+You might see that old code uses "math" on the return value of
+<tt class="docutils literal">globs()</tt>.  E.g., <tt class="docutils literal"><span class="pre">globs('*')</span> - <span class="pre">globs('*.java')</span></tt> gives all files
+in this directory <em>except</em> <tt class="docutils literal">.java</tt> files.  Please use exclude
+instead, since pants is moving to make BUILD files easier to parse,
+and the new grammar will not support arithmetic.</p>
+<p>:returns FilesetWithSpec containing matching files in same directory as this BUILD file.
+:rtype FilesetWithSpec</p>
+</div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.core.wrapped_globs.Globs</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_ivy_artifact" pantsmark="bdict_ivy_artifact"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="ivy_artifact">ivy_artifact</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#ivy_artifact">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">ivy_artifact(name, type_=None, ext=None, conf=None, url=None, classifier=None)
+
+<div>
+<p>Specification for an Ivy Artifact for this jar dependency.</p>
+<p>See: <a class="reference external" href="http://ant.apache.org/ivy/history/latest-milestone/ivyfile/artifact.html">http://ant.apache.org/ivy/history/latest-milestone/ivyfile/artifact.html</a></p>
+</div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.jvm.targets.jar_dependency.IvyArtifact</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_jar" pantsmark="bdict_jar"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="jar">jar</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#jar">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">jar(org, name, rev=None, force=False, ext=None, url=None, apidocs=None, type_=None, classifier=None, mutable=None, artifacts=None, intransitive=False)
+
+<div>
+<p>A pre-built Maven repository dependency.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">org</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The Maven <tt class="docutils literal">groupId</tt> of this dependency.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The Maven <tt class="docutils literal">artifactId</tt> of this dependency.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">rev</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The Maven <tt class="docutils literal">version</tt> of this dependency.
+If unspecified the latest available version is used.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">force</b>
+  (<em class="bdict_param_type">boolean </em>)
+  <span class="bdict_param_muffle_p"><p>Force this specific artifact revision even if other transitive
+dependencies specify a different revision. This requires specifying the <tt class="docutils literal">rev</tt> parameter.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">ext</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Extension of the artifact if different from the artifact type.
+This is sometimes needed for artifacts packaged with Maven bundle type but stored as jars.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">url</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>URL of this artifact, if different from the Maven repo standard location
+(specifying this parameter is unusual).</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">apidocs</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>URL of existing javadocs, which if specified, pants-generated javadocs
+will properly hyperlink {@link}s.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">type_</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Artifact packaging type.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">classifier</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Classifier specifying the artifact variant to use.
+Use multiple <tt class="docutils literal">with_artifact</tt> statements to include multiple artifacts of the same org.name,
+but with different classifiers.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">mutable</b>
+  (<em class="bdict_param_type">boolean </em>)
+  <span class="bdict_param_muffle_p"><p>Inhibit caching of this mutable artifact. A common use is for
+Maven -SNAPSHOT style artifacts in an active development/integration cycle.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">artifacts</b>
+  (<em class="bdict_param_type">list </em>)
+  <span class="bdict_param_muffle_p"><p>A list of additional IvyArtifacts</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">intransitive</b>
+  (<em class="bdict_param_type">boolean </em>)
+  <span class="bdict_param_muffle_p"><p>Declares this Dependency intransitive, indicating only the jar for</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.jvm.targets.jar_dependency.JarDependency</tt>
+<p><b>Methods:</b>
+<p class="bdict_method_heading">exclude
+<div class="bdict_method">
+<p class="bdict_argspec">exclude(org, name=None)
+
+<p>Adds a transitive dependency of this jar to the exclude list.</p>
+</p></div>
+<p class="bdict_method_heading">with_artifact
+<div class="bdict_method">
+<p class="bdict_argspec">with_artifact(name=None, type_=None, ext=None, url=None, configuration=None, classifier=None)
+
+<p>Sets an alternative artifact to fetch or adds additional artifacts if called multiple times.</p>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+<span class="bdict_param_muffle_p"><p>The name of the published artifact. This name must not include revision.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">type_</b>
+<span class="bdict_param_muffle_p"><p>The type of the published artifact. It's usually the same as the artifact's file
+extension, but not necessarily. For instance, ivy files are of type 'ivy' but have 'xml' as
+their file extension.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">ext</b>
+<span class="bdict_param_muffle_p"><p>The file extension of the published artifact.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">url</b>
+<span class="bdict_param_muffle_p"><p>The url at which this artifact can be found if it isn't located at the standard
+location in the repository.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">configuration</b>
+<span class="bdict_param_muffle_p"><p>The public configuration in which this artifact is published. The '*' wildcard can
+be used to designate all public configurations.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">classifier</b>
+<span class="bdict_param_muffle_p"><p>The maven classifier of this artifact.</p></span>
+</div>
+</p></div>
+</p></div>
+<p class="bdict_method_heading">with_docs
+<div class="bdict_method">
+<p class="bdict_argspec">with_docs()
+
+<p>This historically requested the artifact have its javadoc jar fetched.
+(This implies there <em>is</em> a javadoc jar to fetch.) Used in contexts
+that can use source jars (as of 2014, just eclipse and idea goals).</p>
+</p></div>
+<p class="bdict_method_heading">with_sources
+<div class="bdict_method">
+<p class="bdict_argspec">with_sources()
+
+<p>This historically requested the artifact have its source jar fetched.
+(This implies there <em>is</em> a source jar to fetch.) Used in contexts
+that can use source jars (as of 2014, just eclipse and idea goals).</p>
+</p></div>
+</p></p></p></p></p></p></p></div>
+<div class="bdict_section">
+<a id="bdict_jar_library" pantsmark="bdict_jar_library"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="jar_library">jar_library</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#jar_library">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">jar_library(name, jars=None, tags=None, description=None)
+
+<div>
+<p>A set of jars that may be depended upon.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">jars</b>
+<span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#jar">jar</a>s to depend upon.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
+build file defines the target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> list of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.jvm.targets.jar_library.JarLibrary</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_jar_rules" pantsmark="bdict_jar_rules"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="jar_rules">jar_rules</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#jar_rules">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">jar_rules(rules=None, default_dup_action=u'SKIP')
+
+<div>
+<p>A set of rules for packaging up a deploy jar.</p>
+<p>Deploy jars are executable jars with fully self-contained classpaths and as such, assembling them
+presents problems given jar semantics.</p>
+<p>One issue is signed jars that must be included on the
+classpath.  These have a signature that depends on the jar contents and assembly of the deploy jar
+changes the content of the jar, breaking the signatures.  For cases like these the signed jars
+must be verified and then the signature information thrown away.  The <a class="reference external" href="#Skip">Skip</a>
+rule supports this sort of issue by allowing outright entry exclusion in the final deploy jar.</p>
+<p>Another issue is duplicate jar entries.  Although the underlying zip format supports these, the
+java jar tool and libraries do not.  As such some action must be taken for each duplicate entry
+such that there are no duplicates in the final deploy jar.  The four
+<a class="reference external" href="#Duplicate">Duplicate</a> rules support resolution of these cases by allowing 1st wins,
+last wins, concatenation of the duplicate entry contents or raising an exception.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">rules</b>
+<span class="bdict_param_muffle_p"><p>One or more rules that will be applied in order to jar entries being packaged in
+a deploy jar. <a class="reference external" href="#Skip">Skip</a> rules can go here.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">default_dup_action</b>
+<span class="bdict_param_muffle_p"><p>The default action to take when a duplicate entry is encountered and
+no explicit rules apply to the entry.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.jvm.targets.jvm_binary.JarRules</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_java_agent" pantsmark="bdict_java_agent"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="java_agent">java_agent</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#java_agent">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">java_agent(name, sources=None, excludes=None, resources=None, premain=None, agent_class=None, can_redefine=False, can_retransform=False, can_set_native_method_prefix=False, sources_rel_path=None, provides=None, configurations=None, no_cache=False, tags=None, description=None)
+
+<div>
+<p>Defines a java agent entrypoint.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">premain</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>When an agent is specified at JVM launch time this attribute specifies
+the agent class. Exactly one of <tt class="docutils literal">premain</tt> or <tt class="docutils literal">agent_class</tt> must be specified.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">agent_class</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>If an implementation supports a mechanism to start agents sometime
+after the VM has started then this attribute specifies the agent class. Exactly one of
+<tt class="docutils literal">premain</tt> or <tt class="docutils literal">agent_class</tt> must be specified.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">can_redefine</b>
+  (<em class="bdict_param_type">bool </em>)
+  <span class="bdict_param_muffle_p"><p><cite>True</cite> if the ability to redefine classes is needed by this agent;
+<cite>False</cite> by default.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">can_retransform</b>
+  (<em class="bdict_param_type">bool </em>)
+  <span class="bdict_param_muffle_p"><p><cite>True</cite> if the ability to retransform classes is needed by this
+agent; <cite>False</cite> by default.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">can_set_native_method_prefix</b>
+  (<em class="bdict_param_type">bool </em>)
+  <span class="bdict_param_muffle_p"><p><cite>True</cite> if the ability to set he native method prefix
+is needed by this agent; <cite>False</cite> by default.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">provides</b>
+<span class="bdict_param_muffle_p"><p>The <tt class="docutils literal">artifact</tt>
+to publish that represents this target outside the repo.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">resources</b>
+<span class="bdict_param_muffle_p"><p>An optional list of file paths (DEPRECATED) or
+<tt class="docutils literal">resources</tt> targets (which in turn point to file paths). The paths
+indicate text file resources to place in this module's jar.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">configurations</b>
+  (<em class="bdict_param_type"> tuple of strings</em>)
+  <span class="bdict_param_muffle_p"><p>One or more ivy configurations to resolve for this target.
+This parameter is not intended for general use.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">excludes</b>
+<span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
+transitive dependencies against.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">sources</b>
+  (<em class="bdict_param_type"> ``Fileset`` (from globs or rglobs) or list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Source code files to build. Paths are relative to the BUILD
+file's directory.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">no_cache</b>
+<span class="bdict_param_muffle_p"><p>If True, this should not be stored in the artifact cache</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
+build file defines the target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> list of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.jvm.targets.java_agent.JavaAgent</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_java_antlr_library" pantsmark="bdict_java_antlr_library"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="java_antlr_library">java_antlr_library</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#java_antlr_library">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">java_antlr_library(name=None, sources=None, provides=None, excludes=None, compiler=u'antlr3', package=None, sources_rel_path=None, resources=None, configurations=None, no_cache=False, tags=None, description=None)
+
+<div>
+<p>Generates a stub Java library from Antlr grammar files.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">provides</b>
+<span class="bdict_param_muffle_p"><p>The <tt class="docutils literal">artifact</tt>
+to publish that represents this target outside the repo.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">compiler</b>
+<span class="bdict_param_muffle_p"><p>The name of the compiler used to compile the ANTLR files.
+Currently only supports 'antlr3' and 'antlr4'</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">package</b>
+<span class="bdict_param_muffle_p"><p>(antlr4 only) A string which specifies the package to be used on the dependent
+sources.  If unset, the package will be based on the path to the sources. Note that if
+the sources are spread among different files, this must be set as the package cannot be
+inferred.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">configurations</b>
+  (<em class="bdict_param_type"> tuple of strings</em>)
+  <span class="bdict_param_muffle_p"><p>One or more ivy configurations to resolve for this target.
+This parameter is not intended for general use.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">excludes</b>
+<span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
+transitive dependencies against.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">sources</b>
+  (<em class="bdict_param_type"> ``Fileset`` (from globs or rglobs) or list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Source code files to build. Paths are relative to the BUILD
+file's directory.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">no_cache</b>
+<span class="bdict_param_muffle_p"><p>If True, this should not be stored in the artifact cache</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
+build file defines the target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> list of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.codegen.targets.java_antlr_library.JavaAntlrLibrary</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_java_library" pantsmark="bdict_java_library"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="java_library">java_library</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#java_library">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">java_library(name, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, tags=None, description=None)
+
+<div>
+<p>A collection of Java code.</p>
+<p>Normally has conceptually-related sources; invoking the <tt class="docutils literal">compile</tt> goal
+on this target compiles Java and generates classes. Invoking the <tt class="docutils literal">jar</tt>
+goal on this target creates a <tt class="docutils literal">.jar</tt>; but that's an unusual thing to do.
+Instead, a <tt class="docutils literal">jvm_binary</tt> might depend on this library; that binary is a
+more sensible thing to bundle.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">provides</b>
+<span class="bdict_param_muffle_p"><p>The <tt class="docutils literal">artifact</tt>
+to publish that represents this target outside the repo.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">resources</b>
+<span class="bdict_param_muffle_p"><p>An optional list of file paths (DEPRECATED) or
+<tt class="docutils literal">resources</tt> targets (which in turn point to file paths). The paths
+indicate text file resources to place in this module's jar.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">configurations</b>
+  (<em class="bdict_param_type"> tuple of strings</em>)
+  <span class="bdict_param_muffle_p"><p>One or more ivy configurations to resolve for this target.
+This parameter is not intended for general use.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">excludes</b>
+<span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
+transitive dependencies against.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">sources</b>
+  (<em class="bdict_param_type"> ``Fileset`` (from globs or rglobs) or list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Source code files to build. Paths are relative to the BUILD
+file's directory.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">no_cache</b>
+<span class="bdict_param_muffle_p"><p>If True, this should not be stored in the artifact cache</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
+build file defines the target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> list of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.jvm.targets.java_library.JavaLibrary</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_java_protobuf_library" pantsmark="bdict_java_protobuf_library"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="java_protobuf_library">java_protobuf_library</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#java_protobuf_library">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">java_protobuf_library(name, buildflags=None, imports=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, tags=None, description=None)
+
+<div>
+<p>Generates a stub Java library from protobuf IDL files.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">buildflags</b>
+<span class="bdict_param_muffle_p"><p>Unused, and will be removed in a future release.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">imports</b>
+  (<em class="bdict_param_type">list </em>)
+  <span class="bdict_param_muffle_p"><p>List of addresses of <a class="reference external" href="#jar_library">jar_library</a>
+targets which contain .proto definitions.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">configurations</b>
+  (<em class="bdict_param_type"> tuple of strings</em>)
+  <span class="bdict_param_muffle_p"><p>One or more ivy configurations to resolve for this target.
+This parameter is not intended for general use.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">excludes</b>
+<span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
+transitive dependencies against.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">sources</b>
+  (<em class="bdict_param_type"> ``Fileset`` (from globs or rglobs) or list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Source code files to build. Paths are relative to the BUILD
+file's directory.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">no_cache</b>
+<span class="bdict_param_muffle_p"><p>If True, this should not be stored in the artifact cache</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
+build file defines the target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> list of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.codegen.targets.java_protobuf_library.JavaProtobufLibrary</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_java_ragel_library" pantsmark="bdict_java_ragel_library"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="java_ragel_library">java_ragel_library</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#java_ragel_library">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">java_ragel_library(name, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, tags=None, description=None)
+
+<div>
+<p>Generates a stub Java library from a Ragel file.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">configurations</b>
+  (<em class="bdict_param_type"> tuple of strings</em>)
+  <span class="bdict_param_muffle_p"><p>One or more ivy configurations to resolve for this target.
+This parameter is not intended for general use.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">excludes</b>
+<span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
+transitive dependencies against.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">sources</b>
+  (<em class="bdict_param_type"> ``Fileset`` (from globs or rglobs) or list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Source code files to build. Paths are relative to the BUILD
+file's directory.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">no_cache</b>
+<span class="bdict_param_muffle_p"><p>If True, this should not be stored in the artifact cache</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
+build file defines the target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> list of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.codegen.targets.java_ragel_library.JavaRagelLibrary</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_java_tests" pantsmark="bdict_java_tests"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="java_tests">java_tests</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#java_tests">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+Old name for <a href="#junit_tests">junit_tests</a>
+</div>
+<div class="bdict_section">
+<a id="bdict_java_thrift_library" pantsmark="bdict_java_thrift_library"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="java_thrift_library">java_thrift_library</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#java_thrift_library">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">java_thrift_library(name, compiler=None, language=None, rpc_style=None, namespace_map=None, thrift_linter_strict=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, tags=None, description=None)
+
+<div>
+<p>Generates a stub Java or Scala library from thrift IDL files.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">compiler</b>
+<span class="bdict_param_muffle_p"><p>The compiler used to compile the thrift files. The default is defined in
+the global options under <tt class="docutils literal"><span class="pre">--thrift-default-compiler</span></tt>.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">language</b>
+<span class="bdict_param_muffle_p"><p>The language used to generate the output files. The default is defined in
+the global options under <tt class="docutils literal"><span class="pre">--thrift-default-language</span></tt>.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">rpc_style</b>
+<span class="bdict_param_muffle_p"><p>An optional rpc style to generate service stubs with. The default is defined
+in the global options under <tt class="docutils literal"><span class="pre">--thrift-default-rpc-style</span></tt>.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">namespace_map</b>
+<span class="bdict_param_muffle_p"><p>An optional dictionary of namespaces to remap {old: new}</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">thrift_linter_strict</b>
+<span class="bdict_param_muffle_p"><p>If True, fail if thrift linter produces any warnings.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">configurations</b>
+  (<em class="bdict_param_type"> tuple of strings</em>)
+  <span class="bdict_param_muffle_p"><p>One or more ivy configurations to resolve for this target.
+This parameter is not intended for general use.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">excludes</b>
+<span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
+transitive dependencies against.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">sources</b>
+  (<em class="bdict_param_type"> ``Fileset`` (from globs or rglobs) or list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Source code files to build. Paths are relative to the BUILD
+file's directory.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">no_cache</b>
+<span class="bdict_param_muffle_p"><p>If True, this should not be stored in the artifact cache</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
+build file defines the target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> list of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.codegen.targets.java_thrift_library.JavaThriftLibrary</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_java_wire_library" pantsmark="bdict_java_wire_library"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="java_wire_library">java_wire_library</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#java_wire_library">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">java_wire_library(name, service_writer=None, service_writer_options=None, roots=None, registry_class=None, enum_options=None, no_options=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, tags=None, description=None)
+
+<div>
+<p>Generates a stub Java library from protobuf IDL files.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">service_writer</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>the name of the class to pass as the --service_writer option to</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">service_writer_options</b>
+  (<em class="bdict_param_type">list </em>)
+  <span class="bdict_param_muffle_p"><p>A list of options to pass to the service writer</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">roots</b>
+  (<em class="bdict_param_type">list </em>)
+  <span class="bdict_param_muffle_p"><p>passed through to the --roots option of the Wire compiler</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">registry_class</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>fully qualified class name of RegistryClass to create. If in</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">enum_options</b>
+  (<em class="bdict_param_type">list </em>)
+  <span class="bdict_param_muffle_p"><p>list of enums to pass to as the --enum-enum_options option, # optional</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">no_options</b>
+  (<em class="bdict_param_type">boolean </em>)
+  <span class="bdict_param_muffle_p"><p>boolean that determines if --no_options flag is passed</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">provides</b>
+<span class="bdict_param_muffle_p"><p>An optional Dependency object indicating the The ivy artifact to export.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">configurations</b>
+  (<em class="bdict_param_type"> tuple of strings</em>)
+  <span class="bdict_param_muffle_p"><p>One or more ivy configurations to resolve for this target.
+This parameter is not intended for general use.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">excludes</b>
+<span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
+transitive dependencies against.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">sources</b>
+  (<em class="bdict_param_type"> ``Fileset`` (from globs or rglobs) or list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Source code files to build. Paths are relative to the BUILD
+file's directory.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">no_cache</b>
+<span class="bdict_param_muffle_p"><p>If True, this should not be stored in the artifact cache</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
+build file defines the target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> list of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.codegen.targets.java_wire_library.JavaWireLibrary</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_jaxb_library" pantsmark="bdict_jaxb_library"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="jaxb_library">jaxb_library</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#jaxb_library">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">jaxb_library(name, package=None, language=u'java', sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, tags=None, description=None)
+
+<div>
+<p>Generates a stub Java library from jaxb xsd files.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">package</b>
+<span class="bdict_param_muffle_p"><p>java package (com.company.package) in which to generate the output java files.
+If unspecified, Pants guesses it from the file path leading to the schema
+(xsd) file. This guess is accurate only if the .xsd file is in a path like
+<tt class="docutils literal"><span class="pre">.../com/company/package/schema.xsd</span></tt>. This guess is probably less
+accurate than setting the package explicitly in the <tt class="docutils literal">BUILD</tt> file.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">language</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>only 'java' is supported. Default: 'java'</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">configurations</b>
+  (<em class="bdict_param_type"> tuple of strings</em>)
+  <span class="bdict_param_muffle_p"><p>One or more ivy configurations to resolve for this target.
+This parameter is not intended for general use.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">excludes</b>
+<span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
+transitive dependencies against.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">sources</b>
+  (<em class="bdict_param_type"> ``Fileset`` (from globs or rglobs) or list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Source code files to build. Paths are relative to the BUILD
+file's directory.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">no_cache</b>
+<span class="bdict_param_muffle_p"><p>If True, this should not be stored in the artifact cache</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
+build file defines the target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> list of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.codegen.targets.jaxb_library.JaxbLibrary</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_junit_tests" pantsmark="bdict_junit_tests"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="junit_tests">junit_tests</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#junit_tests">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">junit_tests(name, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, tags=None, description=None)
+
+<div>
+<p>Tests JVM sources with JUnit.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">configurations</b>
+  (<em class="bdict_param_type"> tuple of strings</em>)
+  <span class="bdict_param_muffle_p"><p>One or more ivy configurations to resolve for this target.
+This parameter is not intended for general use.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">excludes</b>
+<span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
+transitive dependencies against.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">sources</b>
+  (<em class="bdict_param_type"> ``Fileset`` (from globs or rglobs) or list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Source code files to build. Paths are relative to the BUILD
+file's directory.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">no_cache</b>
+<span class="bdict_param_muffle_p"><p>If True, this should not be stored in the artifact cache</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
+build file defines the target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> list of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.jvm.targets.java_tests.JavaTests</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_jvm_app" pantsmark="bdict_jvm_app"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="jvm_app">jvm_app</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#jvm_app">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">jvm_app(name=None, binary=None, bundles=None, basename=None, tags=None, description=None)
+
+<div>
+<p>A JVM-based application consisting of a binary plus "extra files".</p>
+<p>Invoking the <tt class="docutils literal">bundle</tt> goal on one of these targets creates a
+self-contained artifact suitable for deployment on some other machine.
+The artifact contains the executable jar, its dependencies, and
+extra files like config files, startup scripts, etc.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">binary</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Target spec of the <tt class="docutils literal">jvm_binary</tt> that contains the
+app main.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">bundles</b>
+<span class="bdict_param_muffle_p"><p>One or more <tt class="docutils literal">bundle</tt>s
+describing "extra files" that should be included with this app
+(e.g.: config files, startup scripts).</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">basename</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Name of this application, if different from the
+<tt class="docutils literal">name</tt>. Pants uses this in the <tt class="docutils literal">bundle</tt> goal to name the distribution
+artifact. In most cases this parameter is not necessary.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
+build file defines the target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> list of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.jvm.targets.jvm_app.JvmApp</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_jvm_binary" pantsmark="bdict_jvm_binary"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="jvm_binary">jvm_binary</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#jvm_binary">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">jvm_binary(name=None, main=None, basename=None, source=None, deploy_excludes=None, deploy_jar_rules=None, manifest_entries=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, tags=None, description=None)
+
+<div>
+<p>Produces a JVM binary optionally identifying a launcher main class.</p>
+<p>Below are a summary of how key goals affect targets of this type:</p>
+<ul class="simple">
+<li><tt class="docutils literal">bundle</tt> - Creates a self-contained directory with the binary and all
+its dependencies, optionally archived, suitable for deployment.</li>
+<li><tt class="docutils literal">binary</tt> - Create an executable jar of the binary. On the JVM
+this means the jar has a manifest specifying the main class.</li>
+<li><tt class="docutils literal">run</tt> - Executes the main class of this binary locally.</li>
+</ul>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">main</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of the <tt class="docutils literal">main</tt> class, e.g.,
+<tt class="docutils literal">'org.pantsbuild.example.hello.main.HelloMain'</tt>. This class may be
+present as the source of this target or depended-upon library.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">basename</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Base name for the generated <tt class="docutils literal">.jar</tt> file, e.g.,
+<tt class="docutils literal">'hello'</tt>. (By default, uses <tt class="docutils literal">name</tt> param)</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">source</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Name of one <tt class="docutils literal">.java</tt> or <tt class="docutils literal">.scala</tt> file (a good
+place for a <tt class="docutils literal">main</tt>).</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">sources</b>
+<span class="bdict_param_muffle_p"><p>Overridden by source. If you want more than one source
+file, use a library and have the jvm_binary depend on that library.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">resources</b>
+<span class="bdict_param_muffle_p"><p>List of <tt class="docutils literal">resource</tt>s to include in bundle.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> list of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Targets (probably <tt class="docutils literal">java_library</tt> and
+<tt class="docutils literal">scala_library</tt> targets) to "link" in.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">deploy_excludes</b>
+<span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to apply
+at deploy time.
+If you, for example, deploy a java servlet that has one version of
+<tt class="docutils literal">servlet.jar</tt> onto a Tomcat environment that provides another version,
+they might conflict. <tt class="docutils literal">deploy_excludes</tt> gives you a way to build your
+code but exclude the conflicting <tt class="docutils literal">jar</tt> when deploying.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">deploy_jar_rules</b>
+<span class="bdict_param_muffle_p"><p><a class="reference external" href="#jar_rules">Jar rules</a> for packaging this binary in a
+deploy jar.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">manifest_entries</b>
+<span class="bdict_param_muffle_p"><p>dict that specifies entries for <a class="reference external" href="#manifest_entries">ManifestEntries</a>
+for adding to MANIFEST.MF when packaging this binary.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">configurations</b>
+  (<em class="bdict_param_type"> tuple of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Ivy configurations to resolve for this target.
+This parameter is not intended for general use.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">excludes</b>
+<span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
+transitive dependencies against.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">no_cache</b>
+<span class="bdict_param_muffle_p"><p>If True, this should not be stored in the artifact cache</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
+build file defines the target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.jvm.targets.jvm_binary.JvmBinary</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_license" pantsmark="bdict_license"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="license">license</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#license">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">license(name, url, comments=None)
+
+<div>
+<p>Corresponds to the maven POM &lt;license/&gt; element.</p>
+<p>Refer to the schema here: <a class="reference external" href="http://maven.apache.org/maven-v4_0_0.xsd">http://maven.apache.org/maven-v4_0_0.xsd</a></p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The full official name of the license.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">url</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>An url pointing to the license text.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">comments</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Optional comments clarifying the license.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.jvm.ossrh_publication_metadata.License</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_maven_layout" pantsmark="bdict_maven_layout"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="maven_layout">maven_layout</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#maven_layout">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">maven_layout(ctx)
+
+
+
+<p>Sets up typical maven project source roots for all built-in pants target types.</p>
+<p>Shortcut for <tt class="docutils literal"><span class="pre">source_root('src/main/java',</span> *java targets*)</tt>,
+<tt class="docutils literal"><span class="pre">source_root('src/main/python',</span> *python targets*)</tt>, ...</p>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">basedir</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Instead of using this BUILD file's directory as
+the base of the source tree, use a subdirectory. E.g., instead of
+expecting to find java files in <tt class="docutils literal">src/main/java</tt>, expect them in
+<tt class="docutils literal"><span class="pre">**basedir**/src/main/java</span></tt>.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.base.build_file_aliases.curry_context.pants.backend.maven_layout.maven_layout.maven_layout</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_netrc" pantsmark="bdict_netrc"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="netrc">netrc</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#netrc">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">netrc()
+
+<div>
+<p>Fetches username and password from ~/.netrc for logged in user.</p>
+</div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.authentication.netrc_util.Netrc</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_ossrh" pantsmark="bdict_ossrh"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="ossrh">ossrh</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#ossrh">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">ossrh(description, url, licenses, developers, scm, name=None)
+
+<div>
+<p>Corresponds to the Sonatype required fields for jars published to OSSRH.</p>
+<p>See: <a class="reference external" href="http://central.sonatype.org/pages/requirements.html#sufficient-metadata">http://central.sonatype.org/pages/requirements.html#sufficient-metadata</a></p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>A description of the library.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">url</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>An url pointing to more information about the library.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">licenses</b>
+  (<em class="bdict_param_type">list </em>)
+  <span class="bdict_param_muffle_p"><p>The licenses that apply to the library.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">developers</b>
+  (<em class="bdict_param_type">list </em>)
+  <span class="bdict_param_muffle_p"><p>The developers who work on the library.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">scm</b>
+<span class="bdict_param_muffle_p"><p>The primary scm system hosting the library source code.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The optional full name of the library.  If not supplied an appropriate name
+will be synthesized.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.jvm.ossrh_publication_metadata.OSSRHPublicationMetadata</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_page" pantsmark="bdict_page"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="page">page</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#page">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">page(name, source=None, format=None, links=None, resources=None, provides=None, tags=None, description=None)
+
+<div>
+<p>Describes a single documentation page.</p>
+<p>Here is an example, that shows a markdown page providing a wiki page on an Atlassian Confluence
+wiki:</p>
+<pre class="literal-block">
+page(name='mypage',
+  source='mypage.md',
+  provides=[
+    wiki_artifact(wiki=Wiki('foozle', &lt;url builder&gt;),
+                  space='my_space',
+                  title='my_page',
+                  parent='my_parent'),
+  ],
+)
+</pre>
+<p>A <tt class="docutils literal">page</tt> can have more than one <tt class="docutils literal">wiki_artifact</tt> in its <tt class="docutils literal">provides</tt>
+(there might be more than one place to publish it).</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">source</b>
+<span class="bdict_param_muffle_p"><p>Path to page source file.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">format</b>
+<span class="bdict_param_muffle_p"><p>Page's format, <tt class="docutils literal">md</tt> or <tt class="docutils literal">rst</tt>. By default, Pants infers from <tt class="docutils literal">source</tt> file
+extension: <tt class="docutils literal">.rst</tt> is ReStructured Text; anything else is Markdown.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">links</b>
+  (<em class="bdict_param_type"> List of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other <tt class="docutils literal">page</tt> targets that this <cite>page</cite> links to.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">provides</b>
+  (<em class="bdict_param_type"> List of ``wiki_artifact``s</em>)
+  <span class="bdict_param_muffle_p"><p>Optional "Addresses" at which this page is published.
+E.g., a wiki location.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">resources</b>
+<span class="bdict_param_muffle_p"><p>An optional list of Resources objects.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
+build file defines the target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> list of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.core.targets.doc.Page</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_pants" pantsmark="bdict_pants"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="pants">pants</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#pants">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+In old Pants versions, a reference to a Pants targets.
+                        (In new Pants versions, just use strings.)
+
+
+
+
+
+</div>
+<div class="bdict_section">
+<a id="bdict_pants_library" pantsmark="bdict_pants_library"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="pants_library">pants_library</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#pants_library">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">pants_library(description)
+
+
+
+
+
+<p class="bdict_impl">Implemented by <tt>internal_backend.repositories.register.org_pantsbuild_publication_metadata</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_pants_setup_py" pantsmark="bdict_pants_setup_py"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="pants_setup_py">pants_setup_py</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#pants_setup_py">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">pants_setup_py(name, description, namespace_packages=None, additional_classifiers=None)
+
+
+
+<p>Creates the setup_py for a pants artifact.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field"><th class="field-name">returns:</th><td class="field-body">A setup_py suitable for building and publishing pants components.</td>
+</tr>
+</tbody>
+</table>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">str </em>)
+  <span class="bdict_param_muffle_p"><p>The name of the package.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">str </em>)
+  <span class="bdict_param_muffle_p"><p>A brief description of what the package provides.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">additional_classifiers</b>
+  (<em class="bdict_param_type">list </em>)
+  <span class="bdict_param_muffle_p"><p>Any additional trove classifiers that apply to the package,
+see: <a class="reference external" href="https://pypi.python.org/pypi?%3Aaction=list_classifiers">https://pypi.python.org/pypi?%3Aaction=list_classifiers</a></p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>internal_backend.utilities.register.pants_setup_py</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_pants_version" pantsmark="bdict_pants_version"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="pants_version">pants_version</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#pants_version">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">pants_version()
+
+
+
+<p>Returns the pants semantic version number: <a class="reference external" href="http://semver.org/">http://semver.org/</a></p>
+<p class="bdict_impl">Implemented by <tt>pants.base.build_environment.pants_version</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_prep_command" pantsmark="bdict_prep_command"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="prep_command">prep_command</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#prep_command">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">prep_command(name, prep_executable=None, prep_args=None, prep_environ=False, tags=None, description=None)
+
+<div>
+<p>A command that must be run before some other target can be tested.</p>
+<p>For example, you can use <cite>prep_command()</cite> to execute a script that sets up tunnels to database
+servers. These tunnels could then be leveraged by integration tests.</p>
+<p>Pants will only execute the <cite>prep_command()</cite> under the test goal, when testing targets that
+depend on the <cite>prep_command()</cite> target.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">prep_executable</b>
+<span class="bdict_param_muffle_p"><p>The path to the executable that should be run.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">prep_args</b>
+<span class="bdict_param_muffle_p"><p>A list of command-line args to the excutable.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">prep_environ</b>
+<span class="bdict_param_muffle_p"><p>If True, the output of the command will be treated as
+a \0-separated list of key=value pairs to insert into the environment.
+Note that this will pollute the environment for all future tests, so
+avoid it if at all possible.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
+build file defines the target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> list of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.core.targets.prep_command.PrepCommand</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_python_antlr_library" pantsmark="bdict_python_antlr_library"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="python_antlr_library">python_antlr_library</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#python_antlr_library">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">python_antlr_library(name, module=None, antlr_version=u'3.1.3', sources_rel_path=None, sources=None, resources=None, resource_targets=None, provides=None, compatibility=None, tags=None, description=None)
+
+<div>
+<p>Generates a stub Python library from Antlr grammar files.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">module</b>
+<span class="bdict_param_muffle_p"><p>everything beneath module is relative to this module name, None if root namespace</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">antlr_version</b>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> List of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.
+These dependencies may
+be <tt class="docutils literal">python_library</tt>-like targets (<tt class="docutils literal">python_library</tt>,
+<tt class="docutils literal">python_thrift_library</tt>, <tt class="docutils literal">python_antlr_library</tt> and so forth) or
+<tt class="docutils literal">python_requirement_library</tt> targets.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">sources</b>
+  (<em class="bdict_param_type"> ``Fileset`` or list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Files to "include". Paths are relative to the
+BUILD file's directory.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">resources</b>
+<span class="bdict_param_muffle_p"><p>non-Python resources, e.g. templates, keys, other data
+(it is
+recommended that your application uses the pkgutil package to access these
+resources in a .zip-module friendly way.)</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">provides</b>
+<span class="bdict_param_muffle_p"><p>The <a class="reference external" href="#setup_py">setup_py</a> to publish that represents this
+target outside the repo.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">compatibility</b>
+<span class="bdict_param_muffle_p"><p>either a string or list of strings that represents
+interpreter compatibility for this target, using the Requirement-style
+format, e.g. <tt class="docutils literal"><span class="pre">'CPython&gt;=3',</span> or just <span class="pre">['&gt;=2.7','&lt;3']</span></tt> for requirements
+agnostic to interpreter class.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
+build file defines the target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.codegen.targets.python_antlr_library.PythonAntlrLibrary</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_python_binary" pantsmark="bdict_python_binary"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="python_binary">python_binary</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#python_binary">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">python_binary(name, source=None, entry_point=None, inherit_path=False, zip_safe=True, always_write_cache=False, repositories=None, indices=None, ignore_errors=False, platforms=(), sources_rel_path=None, sources=None, resources=None, resource_targets=None, provides=None, compatibility=None, tags=None, description=None)
+
+<div>
+<p>Produces a Python binary.</p>
+<p>Python binaries are pex files, self-contained executable shell
+scripts that contain a complete Python environment capable of
+running the target. For more information about pex files see
+<a class="reference external" href="http://pantsbuild.github.io/python-readme.html#how-pex-files-work">http://pantsbuild.github.io/python-readme.html#how-pex-files-work</a>.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">source</b>
+<span class="bdict_param_muffle_p"><p>relative path to one python source file that becomes this
+binary's __main__.
+If None specified, drops into an interpreter by default.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">entry_point</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>the default entry point for this binary.  if None, drops into the entry
+point that is defined by source. Something like
+"pants.bin.pants_exe:main", where "pants.bin.pants_exe" is the package
+name and "main" is the function name (if ommitted, the module is
+executed directly, presuming it has a <tt class="docutils literal">__main.py__</tt>).</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">sources</b>
+<span class="bdict_param_muffle_p"><p>Overridden by source. To specify more than one source file,
+use a python_library and have the python_binary depend on that library.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">inherit_path</b>
+<span class="bdict_param_muffle_p"><p>inherit the sys.path of the environment that this binary runs in</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">zip_safe</b>
+<span class="bdict_param_muffle_p"><p>whether or not this binary is safe to run in compacted (zip-file) form</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">always_write_cache</b>
+<span class="bdict_param_muffle_p"><p>whether or not the .deps cache of this PEX file should always
+be written to disk.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">repositories</b>
+<span class="bdict_param_muffle_p"><p>a list of repositories to query for dependencies.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">indices</b>
+<span class="bdict_param_muffle_p"><p>a list of indices to use for packages.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">ignore_errors</b>
+<span class="bdict_param_muffle_p"><p>should we ignore inability to resolve dependencies?</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">platforms</b>
+<span class="bdict_param_muffle_p"><p>extra platforms to target when building this binary. If this is, e.g.,
+<tt class="docutils literal">['current', <span class="pre">'linux-x86_64',</span> <span class="pre">'macosx-10.4-x86_64']</span></tt>, then when building the pex, then
+for any platform-dependent modules, Pants will include <tt class="docutils literal">egg</tt>s for Linux (64-bit Intel),
+Mac OS X (version 10.4 or newer), and the current platform (whatever is being used when
+making the PEX).</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">compatibility</b>
+<span class="bdict_param_muffle_p"><p>either a string or list of strings that represents
+interpreter compatibility for this target, using the Requirement-style format,
+e.g. <tt class="docutils literal"><span class="pre">'CPython&gt;=3',</span> or just <span class="pre">['&gt;=2.7','&lt;3']</span></tt> for requirements agnostic to interpreter class.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> List of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.
+These dependencies may
+be <tt class="docutils literal">python_library</tt>-like targets (<tt class="docutils literal">python_library</tt>,
+<tt class="docutils literal">python_thrift_library</tt>, <tt class="docutils literal">python_antlr_library</tt> and so forth) or
+<tt class="docutils literal">python_requirement_library</tt> targets.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">resources</b>
+<span class="bdict_param_muffle_p"><p>non-Python resources, e.g. templates, keys, other data
+(it is
+recommended that your application uses the pkgutil package to access these
+resources in a .zip-module friendly way.)</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">provides</b>
+<span class="bdict_param_muffle_p"><p>The <a class="reference external" href="#setup_py">setup_py</a> to publish that represents this
+target outside the repo.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
+build file defines the target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.python.targets.python_binary.PythonBinary</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_python_library" pantsmark="bdict_python_library"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="python_library">python_library</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#python_library">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">python_library(name, sources_rel_path=None, sources=None, resources=None, resource_targets=None, provides=None, compatibility=None, tags=None, description=None)
+
+<div>
+<p>Produces a Python library.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> List of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.
+These dependencies may
+be <tt class="docutils literal">python_library</tt>-like targets (<tt class="docutils literal">python_library</tt>,
+<tt class="docutils literal">python_thrift_library</tt>, <tt class="docutils literal">python_antlr_library</tt> and so forth) or
+<tt class="docutils literal">python_requirement_library</tt> targets.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">sources</b>
+  (<em class="bdict_param_type"> ``Fileset`` or list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Files to "include". Paths are relative to the
+BUILD file's directory.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">resources</b>
+<span class="bdict_param_muffle_p"><p>non-Python resources, e.g. templates, keys, other data
+(it is
+recommended that your application uses the pkgutil package to access these
+resources in a .zip-module friendly way.)</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">provides</b>
+<span class="bdict_param_muffle_p"><p>The <a class="reference external" href="#setup_py">setup_py</a> to publish that represents this
+target outside the repo.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">compatibility</b>
+<span class="bdict_param_muffle_p"><p>either a string or list of strings that represents
+interpreter compatibility for this target, using the Requirement-style
+format, e.g. <tt class="docutils literal"><span class="pre">'CPython&gt;=3',</span> or just <span class="pre">['&gt;=2.7','&lt;3']</span></tt> for requirements
+agnostic to interpreter class.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
+build file defines the target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.python.targets.python_library.PythonLibrary</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_python_requirement" pantsmark="bdict_python_requirement"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="python_requirement">python_requirement</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#python_requirement">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">python_requirement(requirement, name=None, repository=None, version_filter=None, use_2to3=False, compatibility=None)
+
+<div>
+<p>Pants wrapper around pkg_resources.Requirement</p>
+<p>Describes an external dependency as understood by <tt class="docutils literal">easy_install</tt> or
+<tt class="docutils literal">pip</tt>. It takes
+a single non-keyword argument of the <cite>Requirement</cite>-style string, e.g.</p>
+<pre class="literal-block">
+python_requirement('django-celery')
+python_requirement('tornado==2.2')
+python_requirement('kombu&gt;=2.1.1,&lt;3.0')
+</pre>
+<p>Pants resolves the dependency <em>and its transitive closure</em>.
+For example, <cite>django-celery</cite> pulls also pulls down its
+dependencies: <cite>celery&gt;=2.5.1</cite>, <cite>django-picklefield&gt;=0.2.0</cite>, <cite>ordereddict</cite>,
+<cite>python-dateutil</cite>,
+<cite>kombu&gt;=2.1.1,&lt;3.0</cite>, <cite>anyjson&gt;=0.3.1</cite>, <cite>importlib</cite>, and <cite>amqplib&gt;=1.0</cite>.</p>
+<p>To let other Targets depend on this <tt class="docutils literal">python_requirement</tt>, put it in a
+<a class="reference external" href="#python_requirement_library">python_requirement_library</a>.</p>
+</div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.python.python_requirement.PythonRequirement</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_python_requirement_library" pantsmark="bdict_python_requirement_library"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="python_requirement_library">python_requirement_library</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#python_requirement_library">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">python_requirement_library(name, requirements=None, tags=None, description=None)
+
+<div>
+<p>Named target for some pip requirements.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">requirements</b>
+  (<em class="bdict_param_type"> List of python_requirement calls</em>)
+  <span class="bdict_param_muffle_p"><p>pip requirements as <a class="reference external" href="#python_requirement">python_requirement</a>s.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
+build file defines the target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> list of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.python.targets.python_requirement_library.PythonRequirementLibrary</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_python_requirements" pantsmark="bdict_python_requirements"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="python_requirements">python_requirements</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#python_requirements">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">python_requirements(ctx)
+
+
+
+<p>Translates a pip requirements file into an equivalent set of python_requirements</p>
+<p>If the <tt class="docutils literal">requirements.txt</tt> file has lines <tt class="docutils literal"><span class="pre">foo&gt;=3.14</span></tt> and <tt class="docutils literal"><span class="pre">bar&gt;=2.7</span></tt>,
+then this is roughly like:</p>
+<pre class="literal-block">
+python_requirement_library(name="foo", requirements=[
+  python_requirement("foo&gt;=3.14"),
+])
+python_requirement_library(name="bar", requirements=[
+  python_requirement("bar&gt;=2.7"),
+])
+</pre>
+<p>NB some requirements files can't be unambiguously translated; ie: multiple
+find links.  For these files a ValueError will be raised that points out the issue.</p>
+<p>See the requirements file spec here:
+<a class="reference external" href="https://pip.pypa.io/en/latest/reference/pip_install.html#requirements-file-format">https://pip.pypa.io/en/latest/reference/pip_install.html#requirements-file-format</a></p>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">parse_context</b>
+<span class="bdict_param_muffle_p"><p>(Don't specify this in a BUILD file; it's set automatically)</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">requirements_relpath</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The relative path from the parent dir of the BUILD file using
+this function to the requirements file.  By default a <cite>requirements.txt</cite> file sibling to the
+BUILD file is assumed.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.base.build_file_aliases.curry_context.pants.backend.python.python_requirements.python_requirements</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_python_test_suite" pantsmark="bdict_python_test_suite"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="python_test_suite">python_test_suite</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#python_test_suite">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+Deprecated way to group Python tests; use <a href="#target">target</a>
+</div>
+<div class="bdict_section">
+<a id="bdict_python_tests" pantsmark="bdict_python_tests"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="python_tests">python_tests</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#python_tests">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">python_tests(name, coverage=None, sources_rel_path=None, sources=None, resources=None, resource_targets=None, provides=None, compatibility=None, tags=None, description=None)
+
+<div>
+<p>Tests a Python library.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">coverage</b>
+<span class="bdict_param_muffle_p"><p>the module(s) whose coverage should be generated, e.g.
+'twitter.common.log' or ['twitter.common.log', 'twitter.common.http']</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> List of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.
+These dependencies may
+be <tt class="docutils literal">python_library</tt>-like targets (<tt class="docutils literal">python_library</tt>,
+<tt class="docutils literal">python_thrift_library</tt>, <tt class="docutils literal">python_antlr_library</tt> and so forth) or
+<tt class="docutils literal">python_requirement_library</tt> targets.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">sources</b>
+  (<em class="bdict_param_type"> ``Fileset`` or list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Files to "include". Paths are relative to the
+BUILD file's directory.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">resources</b>
+<span class="bdict_param_muffle_p"><p>non-Python resources, e.g. templates, keys, other data
+(it is
+recommended that your application uses the pkgutil package to access these
+resources in a .zip-module friendly way.)</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">provides</b>
+<span class="bdict_param_muffle_p"><p>The <a class="reference external" href="#setup_py">setup_py</a> to publish that represents this
+target outside the repo.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">compatibility</b>
+<span class="bdict_param_muffle_p"><p>either a string or list of strings that represents
+interpreter compatibility for this target, using the Requirement-style
+format, e.g. <tt class="docutils literal"><span class="pre">'CPython&gt;=3',</span> or just <span class="pre">['&gt;=2.7','&lt;3']</span></tt> for requirements
+agnostic to interpreter class.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
+build file defines the target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.python.targets.python_tests.PythonTests</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_python_thrift_library" pantsmark="bdict_python_thrift_library"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="python_thrift_library">python_thrift_library</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#python_thrift_library">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">python_thrift_library(name, sources_rel_path=None, sources=None, resources=None, resource_targets=None, provides=None, compatibility=None, tags=None, description=None)
+
+<div>
+<p>Generates a stub Python library from thrift IDL files.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">sources</b>
+  (<em class="bdict_param_type"> ``Fileset`` or list of strings. Paths are relative to the
+  BUILD file's directory.</em>)
+  <span class="bdict_param_muffle_p"><p>thrift source files (If more than one tries to use the same
+namespace, beware <a class="reference external" href="https://issues.apache.org/jira/browse/THRIFT-515">https://issues.apache.org/jira/browse/THRIFT-515</a>)</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">resources</b>
+<span class="bdict_param_muffle_p"><p>non-Python resources, e.g. templates, keys, other data (it is
+recommended that your application uses the pkgutil package to access these
+resources in a .zip-module friendly way.)</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> List of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.
+These dependencies may
+be <tt class="docutils literal">python_library</tt>-like targets (<tt class="docutils literal">python_library</tt>,
+<tt class="docutils literal">python_thrift_library</tt>, <tt class="docutils literal">python_antlr_library</tt> and so forth) or
+<tt class="docutils literal">python_requirement_library</tt> targets.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">provides</b>
+<span class="bdict_param_muffle_p"><p>The <a class="reference external" href="#setup_py">setup_py</a> to publish that represents this
+target outside the repo.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">compatibility</b>
+<span class="bdict_param_muffle_p"><p>either a string or list of strings that represents
+interpreter compatibility for this target, using the Requirement-style
+format, e.g. <tt class="docutils literal"><span class="pre">'CPython&gt;=3',</span> or just <span class="pre">['&gt;=2.7','&lt;3']</span></tt> for requirements
+agnostic to interpreter class.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
+build file defines the target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.codegen.targets.python_thrift_library.PythonThriftLibrary</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_Repository" pantsmark="bdict_Repository"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="Repository">Repository</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#Repository">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">Repository(name=None, url=None, push_db_basedir=None, **kwargs)
+
+<div>
+<p>An artifact repository, such as a maven repo.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">url</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Optional URL of the repository.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">push_db_basedir</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Push history file base directory.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.jvm.repository.Repository</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_resources" pantsmark="bdict_resources"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="resources">resources</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#resources">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">resources(name, sources=None, tags=None, description=None)
+
+<div>
+<p>A set of files accessible as resources from the JVM classpath.</p>
+<p>Looking for loose files in your application bundle? Those are
+<a class="reference external" href="#bundle">bundle</a>s.</p>
+<p>Resources are Java-style resources accessible via the <tt class="docutils literal">Class.getResource</tt>
+and friends API. In the <tt class="docutils literal">jar</tt> goal, the resource files are placed in the resulting <cite>.jar</cite>.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">sources</b>
+  (<em class="bdict_param_type"> ``Fileset`` or list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Files to "include". Paths are relative to the
+BUILD file's directory.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
+build file defines the target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> list of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.core.targets.resources.Resources</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_rglobs" pantsmark="bdict_rglobs"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="rglobs">rglobs</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#rglobs">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">rglobs(parse_context)
+
+<div>
+<p>Recursive <tt class="docutils literal">globs</tt>, returns Fileset matching files in this directory and its descendents.</p>
+<p>E.g., <tt class="docutils literal"><span class="pre">bundle(fileset=rglobs('config/*')),</span></tt> to bundle up all files in
+the config, config/foo, config/foo/bar directories.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field"><th class="field-name">param exclude:</th><td class="field-body">a list of {,r,z}globs objects, strings, or lists of</td>
+</tr>
+</tbody>
+</table>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">&lt;string&gt;</tt>, line 7)</p>
+Field list ends without a blank line; unexpected unindent.</div>
+<p>strings to exclude.  E.g. <tt class="docutils literal"><span class="pre">rglobs('config/*',exclude=[globs('config/*.java'),</span>
+<span class="pre">'config/foo.py'])</span></tt> gives all files under config except <tt class="docutils literal">.java</tt> files and <tt class="docutils literal">config/foo.py</tt>.</p>
+<p>Deprecated:
+You might see that old code uses "math" on the return value of <tt class="docutils literal">rglobs()</tt>. E.g.,
+<tt class="docutils literal"><span class="pre">rglobs('config/*')</span> - <span class="pre">rglobs('config/foo/*')</span></tt> gives all files under <cite>config</cite> <em>except</em>
+those in <tt class="docutils literal">config/foo</tt>.  Please use exclude instead, since pants is moving to
+make BUILD files easier to parse, and the new grammar will not support arithmetic.
+:returns FilesetWithSpec matching files in this directory and its descendents.
+:rtype FilesetWithSpec</p>
+</div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.core.wrapped_globs.RGlobs</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_scala_library" pantsmark="bdict_scala_library"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="scala_library">scala_library</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#scala_library">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">scala_library(name, java_sources=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, tags=None, description=None)
+
+<div>
+<p>A collection of Scala code.</p>
+<p>Normally has conceptually-related sources; invoking the <tt class="docutils literal">compile</tt> goal
+on this target compiles scala and generates classes. Invoking the <tt class="docutils literal">bundle</tt>
+goal on this target creates a <tt class="docutils literal">.jar</tt>; but that's an unusual thing to do.
+Instead, a <tt class="docutils literal">jvm_binary</tt> might depend on this library; that binary is a
+more sensible thing to bundle.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">java_sources</b>
+  (<em class="bdict_param_type"> target spec or list of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Java libraries this library has a <em>circular</em>
+dependency on.
+If you don't have the particular problem of circular dependencies
+forced by splitting interdependent java and scala into multiple targets,
+don't use this at all.
+Prefer using <tt class="docutils literal">dependencies</tt> to express non-circular dependencies.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">resources</b>
+<span class="bdict_param_muffle_p"><p>An optional list of paths (DEPRECATED) or <tt class="docutils literal">resources</tt>
+targets containing resources that belong on this library's classpath.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">provides</b>
+<span class="bdict_param_muffle_p"><p>An optional Dependency object indicating the The ivy artifact to export.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">configurations</b>
+  (<em class="bdict_param_type"> tuple of strings</em>)
+  <span class="bdict_param_muffle_p"><p>One or more ivy configurations to resolve for this target.
+This parameter is not intended for general use.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">excludes</b>
+<span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
+transitive dependencies against.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">sources</b>
+  (<em class="bdict_param_type"> ``Fileset`` (from globs or rglobs) or list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Source code files to build. Paths are relative to the BUILD
+file's directory.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">no_cache</b>
+<span class="bdict_param_muffle_p"><p>If True, this should not be stored in the artifact cache</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
+build file defines the target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> list of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.jvm.targets.scala_library.ScalaLibrary</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_scalac_plugin" pantsmark="bdict_scalac_plugin"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="scalac_plugin">scalac_plugin</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#scalac_plugin">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">scalac_plugin(name, classname=None, plugin=None, java_sources=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, tags=None, description=None)
+
+<div>
+<p>Defines a target that produces a scalac_plugin.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">classname</b>
+<span class="bdict_param_muffle_p"><p>The fully qualified plugin class name - required.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">plugin</b>
+<span class="bdict_param_muffle_p"><p>The name of the plugin which defaults to name if not supplied.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">java_sources</b>
+  (<em class="bdict_param_type"> target spec or list of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Java libraries this library has a <em>circular</em>
+dependency on.
+If you don't have the particular problem of circular dependencies
+forced by splitting interdependent java and scala into multiple targets,
+don't use this at all.
+Prefer using <tt class="docutils literal">dependencies</tt> to express non-circular dependencies.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">resources</b>
+<span class="bdict_param_muffle_p"><p>An optional list of paths (DEPRECATED) or <tt class="docutils literal">resources</tt>
+targets containing resources that belong on this library's classpath.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">provides</b>
+<span class="bdict_param_muffle_p"><p>An optional Dependency object indicating the The ivy artifact to export.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">configurations</b>
+  (<em class="bdict_param_type"> tuple of strings</em>)
+  <span class="bdict_param_muffle_p"><p>One or more ivy configurations to resolve for this target.
+This parameter is not intended for general use.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">excludes</b>
+<span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
+transitive dependencies against.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">sources</b>
+  (<em class="bdict_param_type"> ``Fileset`` (from globs or rglobs) or list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Source code files to build. Paths are relative to the BUILD
+file's directory.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">no_cache</b>
+<span class="bdict_param_muffle_p"><p>If True, this should not be stored in the artifact cache</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
+build file defines the target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> list of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.jvm.targets.scalac_plugin.ScalacPlugin</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_scm" pantsmark="bdict_scm"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="scm">scm</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#scm">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">scm(connection, developer_connection, url, tag=None)
+
+<div>
+<p>Corresponds to the maven POM &lt;scm/&gt; element.</p>
+<p>Refer to the schema here: <a class="reference external" href="http://maven.apache.org/maven-v4_0_0.xsd">http://maven.apache.org/maven-v4_0_0.xsd</a></p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">connection</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The scm connection string for read-only access to the scm.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">developer_connection</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The scm connection string for read-write access to the scm.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">url</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>An url pointing to a browseable web interface for the scm.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tag</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>An optional tag corresponding to the published release.  This will be
+populated by pants during publish runs.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.jvm.ossrh_publication_metadata.Scm</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_setup_py" pantsmark="bdict_setup_py"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="setup_py">setup_py</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#setup_py">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">setup_py(**kwargs)
+
+<div>
+<p>Represents a Python setup.py-based project.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">kwargs</b>
+<span class="bdict_param_muffle_p"><p>Passed to <a class="reference external" href="https://pythonhosted.org/setuptools/setuptools.html">setuptools.setup</a>.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.python.python_artifact.PythonArtifact</tt>
+<p><b>Methods:</b>
+<p class="bdict_method_heading">with_binaries
+<div class="bdict_method">
+<p class="bdict_argspec">with_binaries(*args, **kw)
+
+<p>Add binaries tagged to this artifact.</p>
+<p>For example:</p>
+<pre class="literal-block">
+provides = setup_py(
+  name = 'my_library',
+  zip_safe = True
+).with_binaries(
+  my_command = ':my_library_bin'
+)
+</pre>
+<p>This adds a console_script entry_point for the python_binary target
+pointed at by :my_library_bin.  Currently only supports
+python_binaries that specify entry_point explicitly instead of source.</p>
+<p>Also can take a dictionary, e.g.
+with_binaries({'my-command': ':my_library_bin'})</p>
+</p></div>
+</p></p></p></p></div>
+<div class="bdict_section">
+<a id="bdict_Skip" pantsmark="bdict_Skip"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="Skip">Skip</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#Skip">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">Skip(apply_pattern, payload=None)
+
+<div>
+<p>A rule that skips adding matched entries to a jar.</p>
+</div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.jvm.targets.jvm_binary.Skip</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_source_root" pantsmark="bdict_source_root"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="source_root">source_root</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#source_root">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">source_root(rel_path)
+
+<div>
+<p>Allows registration of a source root for a set of targets.</p>
+<p>A source root is the base path sources for a particular language are found relative to.
+Generally compilers or interpreters for the source will expect sources relative to a base path
+and a source root allows calculation of the correct relative paths.</p>
+<p>E.g., a Java compiler probably expects to find <tt class="docutils literal">.java</tt> files for
+<tt class="docutils literal">package com.twitter.common.net</tt> in <tt class="docutils literal"><span class="pre">*something*/com/twitter/common/net</span></tt>.
+The <tt class="docutils literal">source_root</tt> command specifies that <em>something</em>.</p>
+<p>It is illegal to have nested source roots.</p>
+</div>
+<p class="bdict_impl">Implemented by <tt>pants.base.source_root.SourceRoot</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_spindle_thrift_library" pantsmark="bdict_spindle_thrift_library"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="spindle_thrift_library">spindle_thrift_library</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#spindle_thrift_library">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">spindle_thrift_library(name, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, tags=None, description=None)
+
+<div>
+<p>Defines a target that builds scala_record stubs from a thrift IDL file.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">provides</b>
+<span class="bdict_param_muffle_p"><p>An optional Dependency object indicating the The ivy artifact to export.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">configurations</b>
+  (<em class="bdict_param_type"> tuple of strings</em>)
+  <span class="bdict_param_muffle_p"><p>One or more ivy configurations to resolve for this target.
+This parameter is not intended for general use.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">excludes</b>
+<span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
+transitive dependencies against.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">sources</b>
+  (<em class="bdict_param_type"> ``Fileset`` (from globs or rglobs) or list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Source code files to build. Paths are relative to the BUILD
+file's directory.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">no_cache</b>
+<span class="bdict_param_muffle_p"><p>If True, this should not be stored in the artifact cache</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
+build file defines the target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> list of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.contrib.spindle.targets.spindle_thrift_library.SpindleThriftLibrary</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_target" pantsmark="bdict_target"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="target">target</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#target">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">target(name, tags=None, description=None)
+
+<div>
+<p>A set of dependencies that may be depended upon,
+as if depending upon the set of dependencies directly.</p>
+<p>NB: This class is commonly referred to by the alias 'target' in BUILD files.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
+build file defines the target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> list of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.core.targets.dependencies.Dependencies</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_unpacked_jars" pantsmark="bdict_unpacked_jars"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="unpacked_jars">unpacked_jars</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#unpacked_jars">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">unpacked_jars(name, libraries=None, include_patterns=None, exclude_patterns=None, tags=None, description=None)
+
+<div>
+<p>Describes a set of sources that are extracted from jar artifacts.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">libraries</b>
+  (<em class="bdict_param_type">list </em>)
+  <span class="bdict_param_muffle_p"><p>addresses of jar_library targets that specify the jars you want to unpack</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">include_patterns</b>
+  (<em class="bdict_param_type">list </em>)
+  <span class="bdict_param_muffle_p"><p>fileset patterns to include from the archive</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">exclude_patterns</b>
+  (<em class="bdict_param_type">list </em>)
+  <span class="bdict_param_muffle_p"><p>fileset patterns to exclude from the archive</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
+build file defines the target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> list of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.jvm.targets.unpacked_jars.UnpackedJars</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_Wiki" pantsmark="bdict_Wiki"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="Wiki">Wiki</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#Wiki">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">Wiki(name, url_builder)
+
+<div>
+<p>Identifies a wiki where pages can be published.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">url_builder</b>
+<span class="bdict_param_muffle_p"><p>Function that accepts a page target and an optional wiki config dict.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.core.targets.doc.Wiki</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_wiki_artifact" pantsmark="bdict_wiki_artifact"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="wiki_artifact">wiki_artifact</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#wiki_artifact">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">wiki_artifact(wiki, **kwargs)
+
+<div>
+<p>Binds a single documentation page to a wiki instance.</p>
+<p>This object allows you to specify which wiki a page should be published to, along with additional
+wiki-specific parameters, such as the title, parent page, etc.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">wiki</b>
+<span class="bdict_param_muffle_p"><p>target spec of a <tt class="docutils literal">wiki</tt>.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">kwargs</b>
+<span class="bdict_param_muffle_p"><p>a dictionary that may contain configuration directives for your particular wiki.
+For example, the following keys are supported for Atlassian's Confluence:</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.core.targets.doc.WikiArtifact</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_zglobs" pantsmark="bdict_zglobs"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="zglobs">zglobs</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#zglobs">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">zglobs(parse_context)
+
+<div>
+<p>Returns a FilesetWithSpec that matches zsh-style globs, including <tt class="docutils literal">**/</tt> for recursive globbing.</p>
+<p>Uses <tt class="docutils literal">BUILD</tt> file's directory as the "working directory".</p>
+</div>
+<p class="bdict_impl">Implemented by <tt>pants.backend.core.wrapped_globs.ZGlobs</tt>
+</p></p></div>
+</p></p></p></p></p></body>
+<!-- main content end -->
+
+<div class="generated">
+Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
+from dist/builddict/build_dictionary.html 2015-05-28T17:49:58.967505
+</div>
+
+</div> <!-- end of mainflow -->
+
+<nav class="bignav">
+  <div class="bignav-logo">
+    <a href="index.html">
+      <img src="logo.ico" alt="[pantsbuild logo]">
+    </a>
+  </div>
+  <form class="search" action="https://www.google.com/search">
+  <input name="as_q" class="query" placeholder="Search">
+  <input name="as_sitesearch" value="pantsbuild.github.io" type="hidden">
+  </form>
+
+<div class="site-toc">
+<ul>
+<li class="toc-h1 ">
+<a href="first_concepts.html">Pants Conceptual Overview</a>
+</li>
+<li class="toc-h1 ">
+<a href="first_tutorial.html">First Tutorial</a>
+</li>
+<li class="toc-h1 ">
+<a href="target_addresses.html">Target Addresses</a>
+</li>
+<li class="toc-h1 ">
+<a href="JVMProjects.html">JVM Projects with Pants</a>
+</li>
+<li class="toc-h2 ">
+<a href="3rdparty_jvm.html">JVM 3rdparty Pattern</a>
+</li>
+<li class="toc-h2 ">
+<a href="scala.html">Scala Projects with Pants</a>
+</li>
+<li class="toc-h2 ">
+<a href="from_maven.html">Pants for Maven Experts</a>
+</li>
+<li class="toc-h1 ">
+<a href="python-readme.html">Python Projects with Pants</a>
+</li>
+<li class="toc-h2 ">
+<a href="3rdparty_py.html">Python 3rdparty Pattern</a>
+</li>
+<li class="toc-h2 ">
+<a href="pex_design.html">PEX Design</a>
+</li>
+<li class="toc-h1 ">
+<a href="page.html">README Files and Markdown</a>
+</li>
+<li class="toc-h1 ">
+<a href="build_files.html">BUILD files</a>
+</li>
+<li class="toc-h1 ">
+<a href="invoking.html">Invoking Pants Build</a>
+</li>
+<li class="toc-h1 ">
+<a href="tshoot.html">Troubleshooting</a>
+</li>
+<li class="toc-h1 ">
+<a href="3rdparty.html">Third-Party Dependencies</a>
+</li>
+<li class="toc-h2 ">
+<a href="3rdparty_jvm.html">JVM 3rdparty Pattern</a>
+</li>
+<li class="toc-h2 ">
+<a href="3rdparty_py.html">Python 3rdparty Pattern</a>
+</li>
+<li class="toc-h1 ">
+<a href="ThriftDeps.html">Using Pants with Thrift Dependencies</a>
+</li>
+<li class="toc-h1 ">
+<a href="publish.html">Publishing Artifacts</a>
+</li>
+<li class="toc-h1 ">
+<a href="with_emacs.html">Emacs With Pants</a>
+</li>
+<li class="toc-h1 ">
+<a href="with_intellij.html">Using Pants with IntelliJ IDEA</a>
+</li>
+<li class="toc-h1 ">
+<a href="install.html">Installing Pants</a>
+</li>
+<li class="toc-h1 ">
+<a href="setup_repo.html">Set up Your Source Tree for Pants</a>
+</li>
+<li class="toc-h1 toc-here">
+Pants BUILD Dictionary
+</li>
+<li class="toc-h1 ">
+<a href="options_reference.html">Pants Options Reference</a>
+</li>
+<li class="toc-h1 ">
+<a href="changelog.html">RELEASE HISTORY</a>
+</li>
+<li class="toc-h1 ">
+<a href="export.html">Export Format</a>
+</li>
+<li class="toc-h1 ">
+<a href="dev.html">Pants Developer Center</a>
+</li>
+<li class="toc-h2 ">
+<a href="howto_contribute.html">Pants Contributors Guide</a>
+</li>
+<li class="toc-h2 ">
+<a href="howto_ask.html">How To Ask</a>
+</li>
+<li class="toc-h2 ">
+<a href="howto_develop.html">Pants Developers Guide</a>
+</li>
+<li class="toc-h2 ">
+<a href="dev_tasks.html">Task Developer's Guide</a>
+</li>
+<li class="toc-h3 ">
+<a href="dev_tasks_publish_extras.html">Develop a Task to Publish &quot;Extra&quot; Artifacts</a>
+</li>
+<li class="toc-h2 ">
+<a href="howto_plugin.html">Developing a Pants Plugin</a>
+</li>
+<li class="toc-h2 ">
+<a href="intellij.html">Pants Development with IntelliJ IDEA</a>
+</li>
+<li class="toc-h2 ">
+<a href="internals.html">Pants Internals</a>
+</li>
+<li class="toc-h2 ">
+<a href="release.html">Release Process</a>
+</li>
+<li class="toc-h3 ">
+<a href="release_jvm.html">JVM Artifact Release Process</a>
+</li>
+<li class="toc-h2 ">
+<a href="docs.html">About the documentation</a>
+</li>
+<li class="toc-h2 ">
+<a href="credits.html">Credits</a>
+</li>
+</ul>
+</div>
+</nav>
+
+<div class="ci-status">
+<a href="https://travis-ci.org/pantsbuild/pants">
+<img src="https://travis-ci.org/pantsbuild/pants.png?branch=master"
+     alt="Are the tests passing?" title="Are the tests passing?"></a><br>
+<a href="https://coveralls.io/r/pantsbuild/pants?branch=master">
+<img src="https://coveralls.io/repos/pantsbuild/pants/badge.png?branch=master"
+     alt="Test Coverage Status" title="Test Coverage Status"></a>
+</div>
+
+</body>
+</html>
