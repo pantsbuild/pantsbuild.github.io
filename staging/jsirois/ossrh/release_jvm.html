@@ -123,10 +123,9 @@
 
 <p>This page describes how to make a versioned release of the Pants jvm
 tools to Maven Central.</p>
-<p>Before reading further, you should familiarize yourself with the
-standard Pants <a href="publish.html">jar publishing support</a>.
-This is used for Maven Central staging day to day and only some initial
-one-time setup is non-standard.</p>
+<p>Releasing jvm tools largely follows the
+<a href="publish.html">standard jar publishing process</a>, but has
+some non-standard initial one-time setup.</p>
 <p>At a high level, releasing pants jvm artifacts involves:</p>
 <ul>
 <li>Deciding when to release.
@@ -150,7 +149,7 @@ one-time setup is non-standard.</p>
 </tbody>
 </table>
 
-<p>You must be a at least a
+<p>You must be at least a
 <a href="https://github.com/orgs/pantsbuild/teams/committers">committer</a> in
 the pantsbuild GitHub organisation to publish pants artifacts.  If you
 aren't yet, you need only ping the
@@ -172,7 +171,7 @@ satisfy in order to be able publish to Maven Central:</p>
     sonatype.org JIRA account id. Here's an
     <a href="https://issues.sonatype.org/browse/OSSRH-12754">example ticket</a>
     they can use as a template.  Once this is done and you've performed
-    your 1st release, add yourself to the <a href="#releasers">releasers</a>
+    your 1st release, add yourself to the <a href="#releasers">Releasers</a>
     section below.</li>
 <li>Create a <code>~/.pantsbuild.pants.pgp.properties</code> file to store the
     credentials Pants needs to sign artifacts uploaded to sonatype.org.
@@ -221,7 +220,7 @@ gpg: connection to agent established
 gpg: writing to stdout
 gpg: RSA/SHA256 signature from: <span class="s2">"67B5C626 John Sirois &lt;john.sirois@gmail.com&gt;"</span>
 </pre></div>
-<p>In this case the default key id is <code>67B5C626</code>.  You can add a entry
+<p>In this case the default key id is <code>67B5C626</code>.  You can add an entry
 to the properties file instead of relying on the default <code>auto</code>
 setting if you prefer to be explicit like so:</p>
 <div class="codehilite"><pre><span class="nv">$ </span><span class="nb">echo </span>pgp.keyid<span class="o">=</span>67B5C626 &gt;&gt; ~/.pantsbuild.pants.pgp.properties
@@ -248,11 +247,11 @@ pgp key.</p>
 </table>
 
 <p>Releases should only be published from master, so get on master and
-ensure the changes to want to publish are present. After confirming
+ensure the changes you want to publish are present. After confirming
 this, you can test out the publish in 2 ways:</p>
 <ol>
 <li>
-<p>A dry run to get a preview of what will be published and why: </p>
+<p>A dry run to get a preview of what will be published and why:</p>
 <div class="codehilite"><pre><span class="nv">$ PANTS_DEV</span><span class="o">=</span>1 ./pants clean-all publish.jar src/<span class="o">{</span>java,scala<span class="o">}</span>::
 </pre></div>
 </li>
@@ -263,7 +262,7 @@ this, you can test out the publish in 2 ways:</p>
 </pre></div>
 <p>Note that this "dry-run" technique somewhat confusingly passes
  <code>--no-dryrun</code> but only because the publish is local and to a
- temporary fir (the argument to <code>--local</code>).  You can also poke
+ temporary dir (the argument to <code>--local</code>).  You can also poke
  around in the <code>/tmp/m2</code> local maven repo if you're curious or want
  to double-check fine details of exactly what will be pushed.</p>
 </li>
@@ -288,7 +287,7 @@ no consequences of global importance.  Pants will create and push git
 tags for the staging releases you do here, but in the worst case the
 tags will point to releases never promoted to Maven Central, which is
 fine.</p>
-<p>To do the staging release, its a normal pants publish and its easiest
+<p>To do the staging release, it's a normal pants publish and it's easiest
 to use the following command, which will publish everything that's
 changed and only those things that have changed since the last publish:</p>
 <div class="codehilite"><pre><span class="nv">$ PANTS_DEV</span><span class="o">=</span>1 ./pants publish.jar --no-dryrun src/<span class="o">{</span>java,scala<span class="o">}</span>::
@@ -313,7 +312,7 @@ but the process is also described below:</p>
 <ol>
 <li>
 <p>Log into Sonatype's OSSRH Nexus repository manager web UI.</p>
-<p>You do this <a href="https://oss.sonatype.org/#stagingRepositories">here</a>. 
+<p>You do this <a href="https://oss.sonatype.org/#stagingRepositories">here</a>.
  You should use the the same user id and password you use to login
  to the Sonatype JIRA server.</p>
 </li>
@@ -324,7 +323,7 @@ but the process is also described below:</p>
  <code>pantsbuild</code> in the search box in the upper-right corner to filter
  the display to your staging repository.</p>
 <p><img alt="image" src="images/ossrh-publish-find-staging-repo.png"/></p>
-<p>There should be exactly one repository listed and you should 
+<p>There should be exactly one repository listed and you should
  select its checkbox.</p>
 </li>
 <li>
@@ -392,7 +391,7 @@ org.pantsbuild:</p>
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/markdown/html/src/python/pants/docs/release_jvm.html 2015-05-28T17:49:59.022110
+from dist/markdown/html/src/python/pants/docs/release_jvm.html 2015-05-29T12:29:55.280954
 </div>
 
 </div> <!-- end of mainflow -->
