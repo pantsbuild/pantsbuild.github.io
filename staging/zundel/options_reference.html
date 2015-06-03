@@ -135,7 +135,7 @@
 <li class="toc-h1"><a href="#paths">paths</a></li>
 <li class="toc-h2"><a href="#group_paths">paths</a></li>
 <li class="toc-h1"><a href="#publish">publish</a></li>
-<li class="toc-h2"><a href="#group_publish">publish</a></li>
+<li class="toc-h2"><a href="#group_publishjar">publish.jar</a></li>
 <li class="toc-h1"><a href="#repl">repl</a></li>
 <li class="toc-h2"><a href="#group_replpy">repl.py</a></li>
 <li class="toc-h2"><a href="#group_replscala">repl.scala</a></li>
@@ -168,7 +168,6 @@
 <li class="toc-h2"><a href="#group_test">test</a></li>
 <li class="toc-h2"><a href="#group_testpytest">test.pytest</a></li>
 <li class="toc-h2"><a href="#group_testjunit">test.junit</a></li>
-<li class="toc-h2"><a href="#group_testspecs">test.specs</a></li>
 <li class="toc-h1"><a href="#test-changed">test-changed</a></li>
 <li class="toc-h2"><a href="#group_testchanged">test-changed</a></li>
 <li class="toc-h1"><a href="#thrift-linter">thrift-linter</a></li>
@@ -689,13 +688,19 @@ div.oref_ogroup_section h3 {
 
       If a target depends on a jar that is excluded by another target resolve this jar anyway
 
+<li><code>--[no-]automatic-excludes</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      If a target in the graph provides an artifact, said artifact will automatically be excluded from Ivy resolution.
+
 <li><code>--jarjar</code>
 <code>list_type</code>
       (Default: <code>[u'//:jarjar']</code>)
 
       Target specs for bootstrapping the jarjar tool.
 
-</li></li></li></li></li></ul>
+</li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -3219,7 +3224,13 @@ div.oref_ogroup_section h3 {
 
       If a target depends on a jar that is excluded by another target resolve this jar anyway
 
-</li></li></li></li></ul>
+<li><code>--[no-]automatic-excludes</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      If a target in the graph provides an artifact, said artifact will automatically be excluded from Ivy resolution.
+
+</li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -3752,14 +3763,14 @@ div.oref_ogroup_section h3 {
 
 
 <div class="oref_ogroup_section">
-<a id="oref_cli_publish" pantsmark="oref_cli_publish"> </a>
+<a id="oref_cli_publishjar" pantsmark="oref_cli_publishjar"> </a>
 
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h3 id="group_publish">publish</h3></td>
+<td class="h-plus-pilcrow-holder"><h3 id="group_publishjar">publish.jar</h3></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#group_publish">¶</a>
+<a class="pilcrow-link" href="#group_publishjar">¶</a>
 </div></td>
 </tr>
 </tbody>
@@ -3828,6 +3839,12 @@ div.oref_ogroup_section h3 {
 
       Restart a fail push at the given jar.  Jars can be identified by maven coordinate [org]#[name] or target. For example: --restart-at=com.twitter.common#quantity Or: --restart-at=src/java/com/twitter/common/base
 
+<li><code>--[no-]changelog</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      A changelog.txt file will be created and printed to the console for each artifact published
+
 <li><code>--nailgun-server</code>
 <code>list_type</code>
       (Default: <code>[u'//:nailgun-server']</code>)
@@ -3869,7 +3886,7 @@ div.oref_ogroup_section h3 {
 
       A post-script to add to pushdb commit messages and push tag commit messages.
 
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -4168,13 +4185,19 @@ div.oref_ogroup_section h3 {
 
       If a target depends on a jar that is excluded by another target resolve this jar anyway
 
+<li><code>--[no-]automatic-excludes</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      If a target in the graph provides an artifact, said artifact will automatically be excluded from Ivy resolution.
+
 <li><code>--xalan</code>
 <code>list_type</code>
       (Default: <code>[u'//:xalan']</code>)
 
       Target specs for bootstrapping the xalan tool.
 
-</li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -4209,7 +4232,13 @@ div.oref_ogroup_section h3 {
 
 <p>Implemented by <code>pants.backend.core.tasks.prepare_resources.PrepareResources</code>
 <ul>
-</ul>
+<li><code>--confs</code>
+<code>list_type</code>
+      (Default: <code>[u'default']</code>)
+
+      Prepare resources for these Ivy confs.
+
+</li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -4825,7 +4854,12 @@ div.oref_ogroup_section h3 {
 
       Emit coverage information for specified paths/modules. Value has two forms: "module:list,of,modules" or "path:list,of,paths"
 
-</li></li></li></ul>
+<li><code>--shard</code>
+<code>str</code>
+
+      Subset of tests to run, in the form M/N, 0 &lt;= M &lt; N. For example, 1/3 means run tests number 2, 5, 8, 11, ...
+
+</li></li></li></li></ul>
 </p></div>
 <div class="oref_ogroup_section">
 <a id="oref_cli_testjunit" pantsmark="oref_cli_testjunit"> </a>
@@ -4885,11 +4919,6 @@ div.oref_ogroup_section h3 {
 
       Force running of just these tests.  Tests can be specified using any of: [classname], [classname]#[methodname], [filename] or [filename]#[methodname]
 
-<li><code>--[no-]xml-report</code>
-<code>bool</code>
-
-      Output an XML report for the test run.
-
 <li><code>--[no-]per-test-timer</code>
 <code>bool</code>
 
@@ -4914,7 +4943,7 @@ div.oref_ogroup_section h3 {
 <code>bool</code>
       (Default: <code>True</code>)
 
-      Redirect test output to files in .pants.d/test/junit. Implied by --xml-report.
+      Redirect test output to files in .pants.d/test/junit.
 
 <li><code>--cwd</code>
 <code>str</code>
@@ -5012,75 +5041,7 @@ div.oref_ogroup_section h3 {
 
       Target specs for bootstrapping the cobertura-report tool.
 
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
-</p></div>
-<div class="oref_ogroup_section">
-<a id="oref_cli_testspecs" pantsmark="oref_cli_testspecs"> </a>
-
-<table class="h-plus-pilcrow">
-<tbody>
-<tr>
-<td class="h-plus-pilcrow-holder"><h3 id="group_testspecs">test.specs</h3></td>
-<td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#group_testspecs">¶</a>
-</div></td>
-</tr>
-</tbody>
-</table>
-
-<p>Implemented by <code>pants.backend.jvm.tasks.specs_run.SpecsRun</code>
-<ul>
-<li><code>--jvm-options</code>
-<code>str</code>
-
-      Run the JVM with these extra jvm options.
-
-<li><code>--args</code>
-<code>str</code>
-
-      Run the JVM with these extra program args.
-
-<li><code>--[no-]debug</code>
-<code>bool</code>
-
-      Run the JVM with remote debugging.
-
-<li><code>--confs</code>
-<code>str</code>
-      (Default: <code>[u'default']</code>)
-
-      Use only these Ivy configurations of external deps.
-
-<li><code>--[no-]skip</code>
-<code>bool</code>
-
-      Skip running specs.
-
-<li><code>--test</code>
-<code>str</code>
-
-      Force running of just these specs.  Tests can be specified either by fully qualified classname or full file path.
-
-<li><code>--debug-port</code>
-<code>int</code>
-      (Default: <code>5005</code>)
-
-      The JVM will listen for a debugger on this port.
-
-<li><code>--debug-args</code>
-<code>list_type</code>
-      (Default: <code>[u'-Xdebug', u'-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address={debug_port}']</code>)
-      (Default: <code>[u'-Xdebug', u'-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address={debug_port}']</code>)
-
-      The JVM remote-debugging arguments. {debug_port} will be replaced with the value of the --debug-port option.
-
-<li><code>--specs</code>
-<code>list_type</code>
-      (Default: <code>[u'//:scala-specs']</code>)
-
-      Target specs for bootstrapping the specs tool.
-
-</li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -5426,6 +5387,16 @@ These command-line flags are available with all Pants goals.
 
       Read BUILD files from this scm rev instead of from the working tree.  This is useful for implementing pants-aware sparse checkouts.
 
+<li><code>--plugins</code>
+<code>list_type</code>
+
+      Load these plugins.
+
+<li><code>--backend-packages</code>
+<code>list_type</code>
+
+      Load backends from these packages that are already on the path.
+
 <li><code>--pants-bootstrapdir</code>
 <code>str</code>
       (Default: <code>/Users/zundel/.cache/pants</code>)
@@ -5468,31 +5439,13 @@ These command-line flags are available with all Pants goals.
 
       Timeout in seconds for url reads when fetching binary tools from the repos specified by --pants-support-baseurls
 
-<li><code>--thrift-default-compiler</code>
-<code>str</code>
-      (Default: <code>thrift</code>)
-
-      The default compiler to use for java_thrift_library targets.
-
-<li><code>--thrift-default-language</code>
-<code>str</code>
-      (Default: <code>java</code>)
-
-      The default language to generate for java_thrift_library targets.
-
-<li><code>--thrift-default-rpc-style</code>
-<code>str</code>
-      (Default: <code>sync</code>)
-
-      The default rpc-style to generate for java_thrift_library targets.
-
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 </p></p></p></p></body>
 <!-- main content end -->
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/builddict/options_reference.html 2015-05-05T13:00:28.974985
+from dist/builddict/options_reference.html 2015-06-03T12:56:54.687456
 </div>
 
 </div> <!-- end of mainflow -->
@@ -5620,6 +5573,9 @@ Pants Options Reference
 </li>
 <li class="toc-h2 ">
 <a href="release.html">Release Process</a>
+</li>
+<li class="toc-h3 ">
+<a href="release_jvm.html">JVM Artifact Release Process</a>
 </li>
 <li class="toc-h2 ">
 <a href="docs.html">About the documentation</a>
