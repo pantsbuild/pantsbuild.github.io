@@ -206,12 +206,16 @@ Java code, and is installed in the <tt>compile</tt> goal.
 
 <p><b>Goals and Tasks summary</b>
 <ul>
-<li> <a href="#apk">apk</a> - None
+<li> <a href="#apk">apk</a> - Build an android bundle with compiled code and assets.
+
+  This class gathers compiled classes (an Android dex archive) and packages it with the
+  target's resource files. The output is an unsigned .apk, an Android application package file.
+  
   <li> <a href="#bash-completion">bash-completion</a> - Dump bash shell script for autocompletion of pants command lines.
   <li> <a href="#bench">bench</a> - None
   <li> <a href="#binary">binary</a> - Create a runnable binary.
   <li> <a href="#bootstrap">bootstrap</a> - Bootstrap tools needed for building.
-  <li> <a href="#builddict">builddict</a> - None
+  <li> <a href="#builddict">builddict</a> - Generate documentation for the Sphinx site.
   <li> <a href="#bundle">bundle</a> - Create an application bundle from binary targets.
   <li> <a href="#changed">changed</a> - Print the targets changed since some prior commit.
   <li> <a href="#check_published_deps">check_published_deps</a> - Find references to outdated artifacts.
@@ -231,12 +235,21 @@ Java code, and is installed in the <tt>compile</tt> goal.
   <li> <a href="#filedeps">filedeps</a> - Print out the source and BUILD files the target depends on.
   <li> <a href="#filemap">filemap</a> - Outputs a mapping from source file to owning target.
   <li> <a href="#filter">filter</a> - Filter the input targets based on various criteria.
+
+  Each of the filtering options below is a comma-separated list of filtering criteria, with an
+  implied logical OR between them, so that a target passes the filter if it matches any of the
+  criteria in the list.  A '-' prefix inverts the sense of the entire comma-separated list, so that
+  a target passes the filter only if it matches none of the criteria in the list.
+
+  Each of the filtering options may be specified multiple times, with an implied logical AND
+  between them.
+  
   <li> <a href="#gen">gen</a> - Generate code.
   <li> <a href="#goals">goals</a> - List all documented goals.
   <li> <a href="#idea">idea</a> - Create an IntelliJ IDEA project from the given targets.
-  <li> <a href="#imports">imports</a> - None
+  <li> <a href="#imports">imports</a> - 
   <li> <a href="#invalidate">invalidate</a> - Invalidate all targets.
-  <li> <a href="#jar">jar</a> - None
+  <li> <a href="#jar">jar</a> - Jars jvm libraries and optionally their sources and their docs.
   <li> <a href="#killserver">killserver</a> - Kill the reporting server.
   <li> <a href="#list">list</a> - List available BUILD targets.
   <li> <a href="#markdown">markdown</a> - Generate html from markdown docs.
@@ -249,13 +262,13 @@ Java code, and is installed in the <tt>compile</tt> goal.
   <li> <a href="#repl">repl</a> - Run a REPL.
   <li> <a href="#repl-dirty">repl-dirty</a> - Run a REPL, skipping compilation.
   <li> <a href="#resolve">resolve</a> - Resolve dependencies and produce dependency reports.
-  <li> <a href="#resources">resources</a> - None
+  <li> <a href="#resources">resources</a> - 
   <li> <a href="#roots">roots</a> - Print the workspace's source roots and associated target types.
   <li> <a href="#run">run</a> - Run a binary target.
   <li> <a href="#run-dirty">run-dirty</a> - Run a binary target, skipping compilation.
   <li> <a href="#server">server</a> - Run the pants reporting server.
   <li> <a href="#setup-py">setup-py</a> - Build setup.py-based Python projects from python_library targets.
-  <li> <a href="#sign">sign</a> - None
+  <li> <a href="#sign">sign</a> - Sign Android packages with keystores using the jarsigner tool.
   <li> <a href="#sort">sort</a> - Topologically sort the targets.
   <li> <a href="#targets">targets</a> - List target types and BUILD file symbols (python_tests, jar, etc).
   <li> <a href="#test">test</a> - Test compiled code.
@@ -293,6 +306,13 @@ div.oref_ogroup_section h3 {
 </tbody>
 </table>
 
+<p>Build an android bundle with compiled code and assets.
+
+  This class gathers compiled classes (an Android dex archive) and packages it with the
+  target's resource files. The output is an unsigned .apk, an Android application package file.
+  
+
+
 <div class="oref_ogroup_section">
 <a id="oref_cli_apk" pantsmark="oref_cli_apk"> </a>
 
@@ -308,6 +328,11 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.android.tasks.aapt_builder.AaptBuilder</code>
+<div>
+<p>Build an android bundle with compiled code and assets.</p>
+<p>This class gathers compiled classes (an Android dex archive) and packages it with the
+target's resource files. The output is an unsigned .apk, an Android application package file.</p>
+</div>
 <ul>
 <li><code>--sdk-path</code>
 <code>str</code>
@@ -334,7 +359,7 @@ div.oref_ogroup_section h3 {
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
-</br></p></div>
+</br></p></p></div>
 <div class="oref_goal_section">
 <a id="oref_goal_bash-completion" pantsmark="oref_goal_bash-completion"> </a>
 
@@ -367,6 +392,9 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.core.tasks.bash_completion.BashCompletionTask</code>
+<div>
+<p>Generate a Bash shell script that teaches Bash how to autocomplete pants command lines.</p>
+</div>
 <ul>
 <li><code>--sep</code>
 <code>str</code>
@@ -525,6 +553,9 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.jvm.tasks.binary_create.BinaryCreate</code>
+<div>
+<p>Creates a runnable monolithic binary deploy jar.</p>
+</div>
 <ul>
 <li><code>--[no-]use-nailgun</code>
 <code>bool</code>
@@ -555,6 +586,9 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.jvm.tasks.detect_duplicates.DuplicateDetector</code>
+<div>
+<p>Detect classes and resources with the same qualified name on the classpath.</p>
+</div>
 <ul>
 <li><code>--[no-]use-nailgun</code>
 <code>bool</code>
@@ -602,6 +636,9 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.android.tasks.dx_compile.DxCompile</code>
+<div>
+<p>Compile java classes into dex files, Dalvik executables.</p>
+</div>
 <ul>
 <li><code>--[no-]use-nailgun</code>
 <code>bool</code>
@@ -647,6 +684,9 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.contrib.cpp.tasks.cpp_library_create.CppLibraryCreate</code>
+<div>
+<p>Builds a static library from C++ sources.</p>
+</div>
 <ul>
 <li><code>--compiler</code>
 <code>str</code>
@@ -670,6 +710,9 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.contrib.cpp.tasks.cpp_binary_create.CppBinaryCreate</code>
+<div>
+<p>Builds an executable file from C++ sources and libraries.</p>
+</div>
 <ul>
 <li><code>--compiler</code>
 <code>str</code>
@@ -772,6 +815,9 @@ div.oref_ogroup_section h3 {
 </tbody>
 </table>
 
+<p>Generate documentation for the Sphinx site.
+
+
 <div class="oref_ogroup_section">
 <a id="oref_cli_builddict" pantsmark="oref_cli_builddict"> </a>
 
@@ -787,6 +833,9 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.core.tasks.builddictionary.BuildBuildDictionary</code>
+<div>
+<p>Generate documentation for the Sphinx site.</p>
+</div>
 <ul>
 <li><code>--omit-impl-re</code>
 <code>str</code>
@@ -797,7 +846,7 @@ div.oref_ogroup_section h3 {
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
-</br></p></div>
+</br></p></p></div>
 <div class="oref_goal_section">
 <a id="oref_goal_bundle" pantsmark="oref_goal_bundle"> </a>
 
@@ -875,6 +924,9 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.jvm.tasks.detect_duplicates.DuplicateDetector</code>
+<div>
+<p>Detect classes and resources with the same qualified name on the classpath.</p>
+</div>
 <ul>
 <li><code>--[no-]use-nailgun</code>
 <code>bool</code>
@@ -922,6 +974,9 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.android.tasks.zipalign.Zipalign</code>
+<div>
+<p>Task to run zipalign, an archive alignment tool.</p>
+</div>
 <ul>
 <li><code>--sdk-path</code>
 <code>str</code>
@@ -965,6 +1020,9 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.core.tasks.what_changed.WhatChanged</code>
+<div>
+<p>Emits the targets that have been modified since a given commit.</p>
+</div>
 <ul>
 <li><code>--sep</code>
 <code>str</code>
@@ -1094,6 +1152,9 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.jvm.tasks.nailgun_task.NailgunKillall</code>
+<div>
+<p>A task to manually kill nailguns.</p>
+</div>
 <ul>
 <li><code>--[no-]everywhere</code>
 <code>bool</code>
@@ -1117,6 +1178,9 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.core.tasks.clean.Invalidator</code>
+<div>
+<p>Invalidate the entire build.</p>
+</div>
 <ul>
 </ul>
 </p></div>
@@ -1135,6 +1199,9 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.core.tasks.clean.Cleaner</code>
+<div>
+<p>Clean all current build products.</p>
+</div>
 <ul>
 </ul>
 </p></div>
@@ -1173,6 +1240,9 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.jvm.tasks.nailgun_task.NailgunKillall</code>
+<div>
+<p>A task to manually kill nailguns.</p>
+</div>
 <ul>
 <li><code>--[no-]everywhere</code>
 <code>bool</code>
@@ -1196,6 +1266,9 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.core.tasks.clean.Invalidator</code>
+<div>
+<p>Invalidate the entire build.</p>
+</div>
 <ul>
 </ul>
 </p></div>
@@ -1252,6 +1325,9 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.core.tasks.noop.NoopCompile</code>
+<div>
+<p>A no-op that provides a product type that can be used to force scheduling.</p>
+</div>
 <ul>
 </ul>
 </p></div>
@@ -1373,6 +1449,10 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.jvm.tasks.scalastyle.Scalastyle</code>
+<div>
+<p>Checks scala source files to ensure they're stylish.</p>
+<p>Scalastyle only checks scala sources in non-synthetic targets.</p>
+</div>
 <ul>
 <li><code>--[no-]use-nailgun</code>
 <code>bool</code>
@@ -1424,6 +1504,9 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.contrib.cpp.tasks.cpp_compile.CppCompile</code>
+<div>
+<p>Compiles object files from C++ sources.</p>
+</div>
 <ul>
 <li><code>--compiler</code>
 <code>str</code>
@@ -1480,6 +1563,9 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.core.tasks.changed_target_goals.CompileChanged</code>
+<div>
+<p>Find and compile changed targets.</p>
+</div>
 <ul>
 <li><code>--[no-]fast</code>
 <code>bool</code>
@@ -1539,6 +1625,11 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.core.tasks.deferred_sources_mapper.DeferredSourcesMapper</code>
+<div>
+<p>Map DeferredSorucesFields to files that produce product 'unpacked_archives', like UnpackJars</p>
+<p>If you want a task to be able to map sources like this, make it require the  'deferred_sources'
+product.</p>
+</div>
 <ul>
 </ul>
 </p></div>
@@ -1577,6 +1668,9 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.core.tasks.dependees.ReverseDepmap</code>
+<div>
+<p>Outputs all targets whose dependencies include at least one of the input targets.</p>
+</div>
 <ul>
 <li><code>--sep</code>
 <code>str</code>
@@ -1641,6 +1735,9 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.project_info.tasks.dependencies.Dependencies</code>
+<div>
+<p>Generates a textual list (using the target format) for the dependency set of a target.</p>
+</div>
 <ul>
 <li><code>--sep</code>
 <code>str</code>
@@ -1700,6 +1797,10 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.project_info.tasks.depmap.Depmap</code>
+<div>
+<p>Generates either a textual dependency tree or a graphviz digraph dot file for the dependency
+set of a target.</p>
+</div>
 <ul>
 <li><code>--sep</code>
 <code>str</code>
@@ -1725,25 +1826,22 @@ div.oref_ogroup_section h3 {
 <li><code>--[no-]minimal</code>
 <code>bool</code>
 
-      For a textual dependency tree, only prints a dependency the 1st time it is encountered.  For graph output this does nothing.
+      For a textual dependency tree, only prints a dependency the 1st time it is encountered. This is a no-op for --graph.
 
 <li><code>--[no-]graph</code>
 <code>bool</code>
 
       Specifies the internal dependency graph should be output in the dot digraph format.
 
-<li><code>--[no-]project-info</code>
+<li><code>--[no-]tree</code>
 <code>bool</code>
 
-      DEPRECATED: Option --project-info in scope DEFAULT is deprecated and will be removed in version 0.0.33. Use the export goal instead of depmap to get info for the IDE.
-      Produces a json object with info about the target, including source roots, dependencies, and paths to libraries for their targets and dependencies.
+      For text output, show an ascii tree to help visually line up indentions.
 
-<li><code>--[no-]project-info-formatted</code>
+<li><code>--[no-]show-types</code>
 <code>bool</code>
-      (Default: <code>True</code>)
 
-      DEPRECATED: Option --project-info-formatted in scope DEFAULT is deprecated and will be removed in version 0.0.33. Use the export goal instead of depmap to get info for the IDE.
-      Causes project-info output to be a single line of JSON.
+      Show types of objects in depmap --graph.
 
 <li><code>--separator</code>
 <code>str</code>
@@ -1754,7 +1852,7 @@ div.oref_ogroup_section h3 {
 <li><code>--path-to</code>
 <code>str</code>
 
-      Show only items on the path to the given target.
+      Show only items on the path to the given target. This is a no-op for --graph.
 
 </li></li></li></li></li></li></li></li></li></li></ul>
 </p></div>
@@ -1793,6 +1891,9 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.jvm.tasks.detect_duplicates.DuplicateDetector</code>
+<div>
+<p>Detect classes and resources with the same qualified name on the classpath.</p>
+</div>
 <ul>
 <li><code>--[no-]use-nailgun</code>
 <code>bool</code>
@@ -2338,6 +2439,10 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.project_info.tasks.export.Export</code>
+<div>
+<p>Generates a JSON description of the targets as configured in pants.</p>
+<p>Intended for exporting project information for IDE, such as the IntelliJ Pants plugin.</p>
+</div>
 <ul>
 <li><code>--sep</code>
 <code>str</code>
@@ -2404,6 +2509,11 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.project_info.tasks.filedeps.FileDeps</code>
+<div>
+<p>List all transitive file dependencies of the targets specified on the command line.</p>
+<p>Files are listed with absolute paths and any BUILD files implied in the transitive closure of
+targets are also included.</p>
+</div>
 <ul>
 <li><code>--sep</code>
 <code>str</code>
@@ -2458,6 +2568,9 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.core.tasks.filemap.Filemap</code>
+<div>
+<p>Outputs a mapping from source file to the target that owns the source file.</p>
+</div>
 <ul>
 <li><code>--sep</code>
 <code>str</code>
@@ -2491,6 +2604,15 @@ div.oref_ogroup_section h3 {
 
 <p>Filter the input targets based on various criteria.
 
+  Each of the filtering options below is a comma-separated list of filtering criteria, with an
+  implied logical OR between them, so that a target passes the filter if it matches any of the
+  criteria in the list.  A '-' prefix inverts the sense of the entire comma-separated list, so that
+  a target passes the filter only if it matches none of the criteria in the list.
+
+  Each of the filtering options may be specified multiple times, with an implied logical AND
+  between them.
+  
+
 
 <div class="oref_ogroup_section">
 <a id="oref_cli_filter" pantsmark="oref_cli_filter"> </a>
@@ -2507,6 +2629,15 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.core.tasks.filter.Filter</code>
+<div>
+<p>Filter the input targets based on various criteria.</p>
+<p>Each of the filtering options below is a comma-separated list of filtering criteria, with an
+implied logical OR between them, so that a target passes the filter if it matches any of the
+criteria in the list.  A '-' prefix inverts the sense of the entire comma-separated list, so that
+a target passes the filter only if it matches none of the criteria in the list.</p>
+<p>Each of the filtering options may be specified multiple times, with an implied logical AND
+between them.</p>
+</div>
 <ul>
 <li><code>--sep</code>
 <code>str</code>
@@ -2522,32 +2653,32 @@ div.oref_ogroup_section h3 {
 <li><code>--type</code>
 <code>str</code>
 
-      Target types to include (optional '+' prefix) or exclude ('-' prefix).  Multiple type inclusions or exclusions can be specified in a comma-separated list or by using multiple instances of this flag.
+      Filter on these target types.
 
 <li><code>--target</code>
 <code>str</code>
 
-      Targets to include (optional '+' prefix) or exclude ('-' prefix).  Multiple target inclusions or exclusions can be specified in a comma-separated list or by using multiple instances of this flag.
+      Filter on these target addresses.
 
 <li><code>--ancestor</code>
 <code>str</code>
 
-      Dependency targets of targets to include (optional '+' prefix) or exclude ('-' prefix).  Multiple ancestor inclusions or exclusions can be specified in a comma-separated list or by using multiple instances of this flag.
+      Filter on targets that these targets depend on.
 
 <li><code>--regex</code>
 <code>str</code>
 
-      Regex patterns of target addresses to include (optional '+' prefix) or exclude ('-' prefix).  Multiple target inclusions or exclusions can be specified in a comma-separated list or by using multiple instances of this flag.
+      Filter on target addresses matching these regexes.
 
 <li><code>--tag</code>
 <code>str</code>
 
-      Tags to include (optional '+' prefix) or exclude ('-' prefix).  Multiple attribute inclusions or exclusions can be specified in a comma-separated list or by using multiple instances of this flag. Format: --tag='+foo,-bar'
+      Filter on targets with these tags.
 
 <li><code>--tag-regex</code>
 <code>str</code>
 
-      Regex patterns of tags to include (optional '+' prefix) or exclude ('-' prefix).  Multiple attribute inclusions or exclusions can be specified in a comma-separated list or by using multiple instances of this flag. Format: --tag-regex='+foo,-bar'
+      Filter on targets with tags matching these regexes.
 
 </li></li></li></li></li></li></li></li></ul>
 </p></div>
@@ -2777,6 +2908,9 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.codegen.tasks.jaxb_gen.JaxbGen</code>
+<div>
+<p>Generates java source files from jaxb schema (.xsd).</p>
+</div>
 <ul>
 <li><code>--[no-]use-nailgun</code>
 <code>bool</code>
@@ -2860,6 +2994,15 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.android.tasks.aapt_gen.AaptGen</code>
+<div>
+<p>Handle the processing of resources for Android targets with the
+Android Asset Packaging Tool (aapt).</p>
+<p>The aapt tool supports 6 major commands: [dump, list, add, remove, crunch, package]
+For right now, pants is only supporting 'package'. More to come as we support Release builds
+(crunch, at minimum).</p>
+<p>Commands and flags for aapt can be seen here:
+<a class="reference external" href="https://android.googlesource.com/platform/frameworks/base/+/master/tools/aapt/Command.cpp">https://android.googlesource.com/platform/frameworks/base/+/master/tools/aapt/Command.cpp</a></p>
+</div>
 <ul>
 <li><code>--sdk-path</code>
 <code>str</code>
@@ -3289,6 +3432,12 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.jvm.tasks.ivy_imports.IvyImports</code>
+<div>
+<p>Resolves all jar files for the import_jar_libraries property on a target.</p>
+<p>Looks for targets that have an ImportJarsMixin.</p>
+<p>One use case is for  JavaProtobufLibrary, which includes imports for jars
+containing .proto files.</p>
+</div>
 <ul>
 <li><code>--[no-]use-nailgun</code>
 <code>bool</code>
@@ -3355,6 +3504,9 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.jvm.tasks.nailgun_task.NailgunKillall</code>
+<div>
+<p>A task to manually kill nailguns.</p>
+</div>
 <ul>
 <li><code>--[no-]everywhere</code>
 <code>bool</code>
@@ -3378,6 +3530,9 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.core.tasks.clean.Invalidator</code>
+<div>
+<p>Invalidate the entire build.</p>
+</div>
 <ul>
 </ul>
 </p></div>
@@ -3398,6 +3553,9 @@ div.oref_ogroup_section h3 {
 </tbody>
 </table>
 
+<p>Jars jvm libraries and optionally their sources and their docs.
+
+
 <div class="oref_ogroup_section">
 <a id="oref_cli_jar" pantsmark="oref_cli_jar"> </a>
 
@@ -3413,6 +3571,9 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.jvm.tasks.jar_create.JarCreate</code>
+<div>
+<p>Jars jvm libraries and optionally their sources and their docs.</p>
+</div>
 <ul>
 <li><code>--[no-]use-nailgun</code>
 <code>bool</code>
@@ -3436,7 +3597,7 @@ div.oref_ogroup_section h3 {
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
-</br></p></div>
+</br></p></p></div>
 <div class="oref_goal_section">
 <a id="oref_goal_killserver" pantsmark="oref_goal_killserver"> </a>
 
@@ -3469,6 +3630,9 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.core.tasks.reporting_server.KillServer</code>
+<div>
+<p>Kills the reporting server.</p>
+</div>
 <ul>
 </ul>
 </p></div>
@@ -3507,6 +3671,10 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.core.tasks.listtargets.ListTargets</code>
+<div>
+<p>Lists all targets matching the target specs.</p>
+<p>If no targets are specified, lists all targets in the workspace.</p>
+</div>
 <ul>
 <li><code>--sep</code>
 <code>str</code>
@@ -3626,6 +3794,11 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.core.tasks.minimal_cover.MinimalCover</code>
+<div>
+<p>Outputs a minimal covering set of targets.</p>
+<p>For a given set of input targets, the output targets transitive dependency set will include all
+the input targets without gaps.</p>
+</div>
 <ul>
 <li><code>--sep</code>
 <code>str</code>
@@ -3675,6 +3848,9 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.jvm.tasks.nailgun_task.NailgunKillall</code>
+<div>
+<p>A task to manually kill nailguns.</p>
+</div>
 <ul>
 <li><code>--[no-]everywhere</code>
 <code>bool</code>
@@ -3865,6 +4041,57 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.jvm.tasks.jar_publish.JarPublish</code>
+<div>
+<p>Publish jars to a maven repository.</p>
+<p>At a high-level, pants uses <a class="reference external" href="http://ant.apache.org/ivy/">Apache Ivy</a> to
+publish artifacts to Maven-style repositories. Pants performs prerequisite
+tasks like compiling, creating jars, and generating <tt class="docutils literal">pom.xml</tt> files then
+invokes Ivy to actually publish the artifacts, so publishing is largely
+configured in <tt class="docutils literal">ivysettings.xml</tt>. <tt class="docutils literal">BUILD</tt> and <tt class="docutils literal">pants.ini</tt> files
+primarily provide linkage between publishable targets and the
+Ivy <tt class="docutils literal">resolvers</tt> used to publish them.</p>
+<p>The following target types are publishable:
+<a class="reference external" href="build_dictionary.html#java_library">java_library</a>,
+<a class="reference external" href="build_dictionary.html#scala_library">scala_library</a>,
+<a class="reference external" href="build_dictionary.html#java_thrift_library">java_thrift_library</a>,
+<a class="reference external" href="build_dictionary.html#annotation_processor">annotation_processor</a>.
+Targets to publish and their dependencies must be publishable target
+types and specify the <tt class="docutils literal">provides</tt> argument. One exception is
+<a class="reference external" href="build_dictionary.html#jar">jar</a>s - pants will generate a pom file that
+depends on the already-published jar.</p>
+<p>Example usage:</p>
+<pre class="literal-block">
+# By default pants will perform a dry-run.
+./pants clean-all publish src/java/com/twitter/mybird
+
+# Actually publish.
+./pants clean-all publish src/java/com/twitter/mybird --no-publish-dryrun
+</pre>
+<p>Please see <tt class="docutils literal">./pants publish <span class="pre">-h</span></tt> for a detailed description of all
+publishing options.</p>
+<p>Publishing can be configured with the following options:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">--repos</span></tt> - Required dictionary of settings for repos that may be pushed to.</li>
+<li><tt class="docutils literal"><span class="pre">--jvm-options</span></tt> - Optional list of JVM command-line args when invoking Ivy.</li>
+<li><tt class="docutils literal"><span class="pre">--restrict-push-branches</span></tt> - Optional list of branches to restrict publishing to.</li>
+</ul>
+<p>Example repos dictionary:</p>
+<pre class="literal-block">
+repos = {
+  # repository target name is paired with this key
+  'myrepo': {
+    # ivysettings.xml resolver to use for publishing
+    'resolver': 'maven.example.com',
+    # ivy configurations to publish
+    'confs': ['default', 'sources', 'javadoc'],
+    # address of a Credentials target to use when publishing
+    'auth': 'address/of/credentials:target',
+    # help message if unable to initialize the Credentials target.
+    'help': 'Please check your credentials and try again.',
+  },
+}
+</pre>
+</div>
 <ul>
 <li><code>--[no-]use-nailgun</code>
 <code>bool</code>
@@ -4319,6 +4546,11 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.jvm.tasks.prepare_resources.PrepareResources</code>
+<div>
+<p>Prepares loose resource files associated with a target.</p>
+<p>Currently this task does no form of resource filtering, it just copies resource files to
+dedicated, isolated resource chroots for use in the classpath as well as for packaging purposes.</p>
+</div>
 <ul>
 <li><code>--confs</code>
 <code>list_type</code>
@@ -4343,6 +4575,11 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.jvm.tasks.prepare_services.PrepareServices</code>
+<div>
+<p>Generates service provider configuration for targets that host service implementations.</p>
+<p>This automates maintenance of jvm service provider configuration files as described here:
+<a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p>
+</div>
 <ul>
 <li><code>--confs</code>
 <code>list_type</code>
@@ -4387,6 +4624,9 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.core.tasks.roots.ListRoots</code>
+<div>
+<p>List the registered source roots of the repo.</p>
+</div>
 <ul>
 <li><code>--sep</code>
 <code>str</code>
@@ -4522,6 +4762,9 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.contrib.cpp.tasks.cpp_run.CppRun</code>
+<div>
+<p>Runs a cpp binary</p>
+</div>
 <ul>
 <li><code>--compiler</code>
 <code>str</code>
@@ -4653,6 +4896,9 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.core.tasks.reporting_server.RunServer</code>
+<div>
+<p>Runs the reporting server.</p>
+</div>
 <ul>
 <li><code>--port</code>
 <code>int</code>
@@ -4717,6 +4963,9 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.python.tasks.setup_py.SetupPy</code>
+<div>
+<p>Generate setup.py-based Python projects from python_library targets.</p>
+</div>
 <ul>
 <li><code>--run</code>
 <code>str</code>
@@ -4747,6 +4996,9 @@ div.oref_ogroup_section h3 {
 </tbody>
 </table>
 
+<p>Sign Android packages with keystores using the jarsigner tool.
+
+
 <div class="oref_ogroup_section">
 <a id="oref_cli_sign" pantsmark="oref_cli_sign"> </a>
 
@@ -4762,6 +5014,9 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.android.tasks.sign_apk.SignApkTask</code>
+<div>
+<p>Sign Android packages with keystores using the jarsigner tool.</p>
+</div>
 <ul>
 <li><code>--keystore-config-location</code>
 <code>str</code>
@@ -4772,7 +5027,7 @@ div.oref_ogroup_section h3 {
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
-</br></p></div>
+</br></p></p></div>
 <div class="oref_goal_section">
 <a id="oref_goal_sort" pantsmark="oref_goal_sort"> </a>
 
@@ -4859,6 +5114,9 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.core.tasks.targets_help.TargetsHelp</code>
+<div>
+<p>Show online help for symbols usable in BUILD files (java_library, etc).</p>
+</div>
 <ul>
 <li><code>--sep</code>
 <code>str</code>
@@ -4931,6 +5189,9 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.core.tasks.noop.NoopTest</code>
+<div>
+<p>A no-op that provides a product type that can be used to force scheduling.</p>
+</div>
 <ul>
 </ul>
 </p></div>
@@ -5205,6 +5466,9 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.core.tasks.changed_target_goals.TestChanged</code>
+<div>
+<p>Find and test changed targets.</p>
+</div>
 <ul>
 <li><code>--[no-]fast</code>
 <code>bool</code>
@@ -5264,6 +5528,9 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.contrib.scrooge.tasks.thrift_linter.ThriftLinter</code>
+<div>
+<p>Print linter warnings for thrift files.</p>
+</div>
 <ul>
 <li><code>--[no-]use-nailgun</code>
 <code>bool</code>
@@ -5340,6 +5607,11 @@ div.oref_ogroup_section h3 {
 </table>
 
 <p>Implemented by <code>pants.backend.jvm.tasks.unpack_jars.UnpackJars</code>
+<div>
+<p>Looks for UnpackedJars targets and unpacks them.</p>
+<p>Adds an entry to SourceRoot for the contents.  Initially only
+supported by JavaProtobufLibrary.</p>
+</div>
 <ul>
 </ul>
 </p></div>
@@ -5459,12 +5731,17 @@ These command-line flags are available with all Pants goals.
 <code>str</code>
       (Default: <code>['&lt;buildroot&gt;/.pants.d']</code>)
 
-      Exclude these paths when computing the command-line target specs.
+      Ignore these paths when evaluating the command-line target specs.  Useful with ::, to avoid descending into unneeded directories.
 
 <li><code>--exclude-target-regexp</code>
 <code>str</code>
 
-      Regex pattern to exclude from the target list (useful in conjunction with ::). Multiple patterns may be specified by setting this flag multiple times.
+      Exclude targets that match these regexes. Useful with ::, to ignore broken BUILD files.
+
+<li><code>--tag</code>
+<code>str</code>
+
+      Include only targets with these tags (optional '+' prefix) or without these tags ('-' prefix).  Useful with ::, to find subsets of targets (e.g., integration tests.)
 
 <li><code>--[no-]read-from-artifact-cache</code>
 <code>bool</code>
@@ -5520,13 +5797,13 @@ These command-line flags are available with all Pants goals.
 
 <li><code>--pants-bootstrapdir</code>
 <code>str</code>
-      (Default: <code>/home/jsirois/.cache/pants</code>)
+      (Default: <code>/Users/zundel/.cache/pants</code>)
 
       Use this dir for global cache.
 
 <li><code>--pants-configdir</code>
 <code>str</code>
-      (Default: <code>/home/jsirois/.config/pants</code>)
+      (Default: <code>/Users/zundel/.config/pants</code>)
 
       Use this dir for global config files.
 
@@ -5560,13 +5837,13 @@ These command-line flags are available with all Pants goals.
 
       Timeout in seconds for url reads when fetching binary tools from the repos specified by --pants-support-baseurls
 
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 </p></p></p></p></body>
 <!-- main content end -->
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/builddict/options_reference.html 2015-06-16T15:44:55.129569
+from dist/builddict/options_reference.html 2015-06-16T22:28:39.625862
 </div>
 
 </div> <!-- end of mainflow -->

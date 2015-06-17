@@ -1268,24 +1268,23 @@ E.g., <tt class="docutils literal">sources = <span class="pre">globs('*java'),</
 <col class="field-name"></col>
 <col class="field-body"></col>
 <tbody valign="top">
-<tr class="field"><th class="field-name">param exclude:</th><td class="field-body">a list of {,r,z}globs objects, strings, or lists of</td>
+<tr class="field"><th class="field-name">param exclude:</th><td class="field-body">a list of {,r,z}globs objects, strings, or lists of
+strings to exclude.  E.g. <tt class="docutils literal"><span class="pre">globs('*',exclude=[globs('*.java'),</span>
+<span class="pre">'foo.py'])</span></tt> gives all files in this directory except <tt class="docutils literal">.java</tt>
+files and <tt class="docutils literal">foo.py</tt>.</td>
+</tr>
+<tr class="field"><th class="field-name">return:</th><td class="field-body">FilesetWithSpec containing matching files in same directory as this BUILD file.</td>
+</tr>
+<tr class="field"><th class="field-name">rtype:</th><td class="field-body">FilesetWithSpec</td>
 </tr>
 </tbody>
 </table>
-<div class="system-message">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">&lt;string&gt;</tt>, line 5)</p>
-Field list ends without a blank line; unexpected unindent.</div>
-<p>strings to exclude.  E.g. <tt class="docutils literal"><span class="pre">globs('*',exclude=[globs('*.java'),</span>
-<span class="pre">'foo.py'])</span></tt> gives all files in this directory except <tt class="docutils literal">.java</tt>
-files and <tt class="docutils literal">foo.py</tt>.</p>
 <p>Deprecated:
 You might see that old code uses "math" on the return value of
 <tt class="docutils literal">globs()</tt>.  E.g., <tt class="docutils literal"><span class="pre">globs('*')</span> - <span class="pre">globs('*.java')</span></tt> gives all files
 in this directory <em>except</em> <tt class="docutils literal">.java</tt> files.  Please use exclude
 instead, since pants is moving to make BUILD files easier to parse,
 and the new grammar will not support arithmetic.</p>
-<p>:returns FilesetWithSpec containing matching files in same directory as this BUILD file.
-:rtype FilesetWithSpec</p>
 </div>
 <p class="bdict_impl">Implemented by <tt>pants.backend.core.wrapped_globs.Globs</tt>
 </p></p></div>
@@ -3503,22 +3502,21 @@ the config, config/foo, config/foo/bar directories.</p>
 <col class="field-name"></col>
 <col class="field-body"></col>
 <tbody valign="top">
-<tr class="field"><th class="field-name">param exclude:</th><td class="field-body">a list of {,r,z}globs objects, strings, or lists of</td>
+<tr class="field"><th class="field-name">param exclude:</th><td class="field-body">a list of {,r,z}globs objects, strings, or lists of
+strings to exclude.  E.g. <tt class="docutils literal"><span class="pre">rglobs('config/*',exclude=[globs('config/*.java'),</span>
+<span class="pre">'config/foo.py'])</span></tt> gives all files under config except <tt class="docutils literal">.java</tt> files and <tt class="docutils literal">config/foo.py</tt>.</td>
+</tr>
+<tr class="field"><th class="field-name">return:</th><td class="field-body">FilesetWithSpec matching files in this directory and its descendents.</td>
+</tr>
+<tr class="field"><th class="field-name">rtype:</th><td class="field-body">FilesetWithSpec</td>
 </tr>
 </tbody>
 </table>
-<div class="system-message">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">&lt;string&gt;</tt>, line 7)</p>
-Field list ends without a blank line; unexpected unindent.</div>
-<p>strings to exclude.  E.g. <tt class="docutils literal"><span class="pre">rglobs('config/*',exclude=[globs('config/*.java'),</span>
-<span class="pre">'config/foo.py'])</span></tt> gives all files under config except <tt class="docutils literal">.java</tt> files and <tt class="docutils literal">config/foo.py</tt>.</p>
 <p>Deprecated:
 You might see that old code uses "math" on the return value of <tt class="docutils literal">rglobs()</tt>. E.g.,
 <tt class="docutils literal"><span class="pre">rglobs('config/*')</span> - <span class="pre">rglobs('config/foo/*')</span></tt> gives all files under <cite>config</cite> <em>except</em>
 those in <tt class="docutils literal">config/foo</tt>.  Please use exclude instead, since pants is moving to
-make BUILD files easier to parse, and the new grammar will not support arithmetic.
-:returns FilesetWithSpec matching files in this directory and its descendents.
-:rtype FilesetWithSpec</p>
+make BUILD files easier to parse, and the new grammar will not support arithmetic.</p>
 </div>
 <p class="bdict_impl">Implemented by <tt>pants.backend.core.wrapped_globs.RGlobs</tt>
 </p></p></div>
@@ -3987,7 +3985,8 @@ a particular target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">exclude_patterns</b>
   (<em class="bdict_param_type">list </em>)
-  <span class="bdict_param_muffle_p"><p>fileset patterns to exclude from the archive</p></span>
+  <span class="bdict_param_muffle_p"><p>fileset patterns to exclude from the archive. Exclude patterns
+are processed before include_patterns.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -4098,7 +4097,7 @@ For example, the following keys are supported for Atlassian's Confluence:</p></s
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/builddict/build_dictionary.html 2015-06-16T15:44:54.983789
+from dist/builddict/build_dictionary.html 2015-06-16T22:28:39.463981
 </div>
 
 </div> <!-- end of mainflow -->
