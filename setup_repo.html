@@ -344,39 +344,15 @@ the <code>BUILD.internal</code> file.</p>
 </tbody>
 </table>
 
-<p>Pants uses <code>ivy</code> to fetch libraries external to the repo (also called 3rdparty libraries).
-Ivy uses an XML configuration file.  Pants ships with an ivy configuration under
-<code>build-support/ivy/ivysettings.xml</code>.  For your repo, you will need to setup your own.  Here's a
-simple example to get you started:</p>
-<div class="codehilite"><pre><span class="cp">&lt;?xml version="1.0"?&gt;</span>
-
-<span class="nt">&lt;ivysettings&gt;</span>
-
-  <span class="nt">&lt;settings</span> <span class="na">defaultResolver=</span><span class="s">"chain-repos"</span><span class="nt">/&gt;</span>
-  <span class="nt">&lt;resolvers&gt;</span>
-    <span class="nt">&lt;chain</span> <span class="na">name=</span><span class="s">"chain-repos"</span> <span class="na">returnFirst=</span><span class="s">"true"</span><span class="nt">&gt;</span>
-      <span class="nt">&lt;ibiblio</span> <span class="na">name=</span><span class="s">"maven2"</span>
-               <span class="na">m2compatible=</span><span class="s">"true"</span>
-               <span class="na">usepoms=</span><span class="s">"true"</span>
-               <span class="na">root=</span><span class="s">"https://repo1.maven.org/maven2/"</span><span class="nt">/&gt;</span>
-
-      <span class="c">&lt;!-- This is just for jvm tools used by Pants and not yet published to maven central. --&gt;</span>
-      <span class="nt">&lt;ibiblio</span> <span class="na">name=</span><span class="s">"pantsbuild-maven-repo"</span>
-               <span class="na">m2compatible=</span><span class="s">"true"</span>
-               <span class="na">usepoms=</span><span class="s">"true"</span>
-               <span class="na">root=</span><span class="s">"https://dl.bintray.com/pantsbuild/maven/"</span><span class="nt">/&gt;</span>
-
-    <span class="nt">&lt;/chain&gt;</span>
-  <span class="nt">&lt;/resolvers&gt;</span>
-<span class="nt">&lt;/ivysettings&gt;</span>
-</pre></div>
-<p>Note that the location of this file and the location of the <code>ivy.cache.dir</code> property in the
-<code>ivysettings.xml</code> file must match up with the ivy configuration in pants.  To modify these, update
-the following settings in <code>pants.ini</code>:</p>
+<p>Pants uses <code>Ivy</code> to fetch libraries external to the repo (also called 3rdparty libraries).
+Ivy uses an XML configuration file.  By default, pants uses the configuration that ships with Ivy,
+but if you need to change ivy settings you can specify your own in <code>pants.ini</code>:</p>
 <div class="codehilite"><pre>[ivy]
 ivy_settings: %(pants_supportdir)s/ivy/ivysettings.xml
 cache_dir: ~/.ivy2/pants
 </pre></div>
+<p>Note that pants overrides Ivy's <code>ivy.cache.dir</code> property with the value of the --ivy-cache-dir
+pants option.</p>
 <p>For more information on Ivy settings, see the <a href="http://ant.apache.org/ivy/">Ivy documentation</a></p>
 
 <table class="h-plus-pilcrow">
@@ -610,16 +586,16 @@ out how to develop a special Task to include "extra" data with published artifac
 <p>You can tell Pants to use outside caches when building. Pants automatically caches much of its
 work in its working directory. But you can tell it to use (and generate) pre-built things in
 another directory or a remote RESTful server. E.g, to use a shared server for cached builds,
-and having set up such a server, set <code>..._caches</code> options in <code>pants.ini</code>:</p>
-<div class="codehilite"><pre>[DEFAULT]
-read_artifact_caches: ['https://myserver.co/pantscache']
-write_artifact_caches: ['https://myserver.co/pantscache']
+and having set up such a server, set <code>cache</code> options in <code>pants.ini</code>:</p>
+<div class="codehilite"><pre>[cache]
+read_from: ['https://myserver.co/pantscache']
+write_to: ['https://myserver.co/pantscache']
 </pre></div>
-<p>When building, Pants first tries to read built things from places in <code>read_artifact_caches</code>.
-If it builds something, it caches those built things in places in  <code>write_artifact_caches</code>.
+<p>When building, Pants first tries to read built things from places in <code>read_from</code>.
+If it builds something, it caches those built things in places in  <code>write_to</code>.
 (It's handy that these are separate settings; if members of your organization can install wacky
-tools on their laptops, you might not want their builds to write to the cache, but would want
-them to be able to read from it.)</p>
+tools on their laptops, you might not want their builds to write to a particular cache, but would 
+want them to be able to read from it.)</p>
 <p>Valid option values include</p>
 <ul>
 <li><code>[ 'https://myserver.co/pcache' ]</code> RESTful server URL</li>
@@ -627,7 +603,7 @@ them to be able to read from it.)</p>
 <li><code>[ 'https://myserver.us/pcache|https://myserver.bf/pcache' ]</code> pipe-separated list of URLs--Pants pings each and uses fastest</li>
 <li><code>[ '/tmp/pantscache', 'https://myserver.co/pcache' ]</code> try local fs first, then remote server</li>
 </ul>
-<p>For a list of allowed values see the <code>create_artifact_cache</code> docstring in
+<p>For a list of allowed values see the <code>_do_create_artifact_cache</code> docstring in
 <a href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/cache/cache_setup.py"><code>cache_setup.py</code></a></p>
 <p>To make a cache server, you need to write it. It's basically a RESTful server that can handle
 <code>GET</code>, <code>HEAD</code>, <code>PUT</code>, and <code>DELETE</code> requests on big binary blobs. If you implement this via <code>nginx</code>,
@@ -821,8 +797,8 @@ jvm_options: [
     "-Dhttps.proxyPort=456",
   ]
 </pre></div>
-<p>Alternatively, you can also set these values through the <code>&lt;properties&gt;</code> configuration item in
-<code>ivysettings.xml</code></p>
+<p>Alternatively, if you have a custom <code>ivysettings.xml</code> file, you can set these values through
+the <code>&lt;properties&gt;</code> configuration item.</p>
 
 <table class="h-plus-pilcrow">
 <tbody>
@@ -901,7 +877,7 @@ indices: [
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/markdown/html/src/docs/setup_repo.html 2015-06-16T22:28:39.357555
+from dist/markdown/html/src/docs/setup_repo.html 2015-06-24T11:28:07.523643
 </div>
 
 </div> <!-- end of mainflow -->

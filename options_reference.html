@@ -212,7 +212,7 @@ Java code, and is installed in the <tt>compile</tt> goal.
   target's resource files. The output is an unsigned .apk, an Android application package file.
   
   <li> <a href="#bash-completion">bash-completion</a> - Dump bash shell script for autocompletion of pants command lines.
-  <li> <a href="#bench">bench</a> - None
+  <li> <a href="#bench">bench</a> - Run benchmark tests.
   <li> <a href="#binary">binary</a> - Create a runnable binary.
   <li> <a href="#bootstrap">bootstrap</a> - Bootstrap tools needed for building.
   <li> <a href="#builddict">builddict</a> - Generate documentation for the Sphinx site.
@@ -426,6 +426,9 @@ target's resource files. The output is an unsigned .apk, an Android application 
 </tbody>
 </table>
 
+<p>Run benchmark tests.
+
+
 <div class="oref_ogroup_section">
 <a id="oref_cli_bench" pantsmark="oref_cli_bench"> </a>
 
@@ -502,7 +505,7 @@ target's resource files. The output is an unsigned .apk, an Android application 
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
-</br></p></div>
+</br></p></p></div>
 <div class="oref_goal_section">
 <a id="oref_goal_binary" pantsmark="oref_goal_binary"> </a>
 
@@ -1426,13 +1429,18 @@ target's resource files. The output is an unsigned .apk, an Android application 
 
       Target specs for bootstrapping the nailgun-server tool.
 
+<li><code>--jvm-options</code>
+<code>str</code>
+
+      Run checkstyle with these extra jvm options.
+
 <li><code>--checkstyle</code>
 <code>list_type</code>
       (Default: <code>[u'//:checkstyle']</code>)
 
       Target specs for bootstrapping the checkstyle tool.
 
-</li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></ul>
 </p></div>
 <div class="oref_ogroup_section">
 <a id="oref_cli_compilescalastyle" pantsmark="oref_cli_compilescalastyle"> </a>
@@ -2971,13 +2979,18 @@ between them.</p>
 
       Skip targets with no sources defined.
 
+<li><code>--[no-]allow-dups</code>
+<code>bool</code>
+
+      Allow multiple targets specifying the same sources when using the isolated strategy. If duplicates are allowed, the logic of find_sources in IsolatedCodegenStrategy will associate generated sources with least-dependent targets that generate them.
+
 <li><code>--wire-compiler</code>
 <code>list_type</code>
       (Default: <code>[u'//:wire-compiler']</code>)
 
       Target specs for bootstrapping the wire-compiler tool.
 
-</li></li></li></ul>
+</li></li></li></li></ul>
 </p></div>
 <div class="oref_ogroup_section">
 <a id="oref_cli_genaapt" pantsmark="oref_cli_genaapt"> </a>
@@ -3757,7 +3770,12 @@ containing .proto files.</p>
 
       Generate a fragment of html to embed in a page.
 
-</li></li></li></ul>
+<li><code>--[no-]ignore-failure</code>
+<code>bool</code>
+
+      Do not consider rendering errors to be build errors.
+
+</li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -4171,6 +4189,11 @@ repos = {
 
       Allow pushes only from one of these branches.
 
+<li><code>--restrict-push-urls</code>
+<code>list_type</code>
+
+      Allow pushes to only one of these urls.
+
 <li><code>--ivy_settings</code>
 <code>str</code>
 
@@ -4201,7 +4224,7 @@ repos = {
 
       A post-script to add to pushdb commit messages and push tag commit messages.
 
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -5743,33 +5766,6 @@ These command-line flags are available with all Pants goals.
 
       Include only targets with these tags (optional '+' prefix) or without these tags ('-' prefix).  Useful with ::, to find subsets of targets (e.g., integration tests.)
 
-<li><code>--[no-]read-from-artifact-cache</code>
-<code>bool</code>
-      (Default: <code>True</code>)
-
-      Read build artifacts from cache, if available.
-
-<li><code>--read-artifact-caches</code>
-<code>list_type</code>
-
-      The URIs of artifact caches to read from. Each entry is a URL of a RESTful cache, a path of a filesystem cache, or a pipe-separated list of alternate caches to choose from.
-
-<li><code>--[no-]write-to-artifact-cache</code>
-<code>bool</code>
-      (Default: <code>True</code>)
-
-      Write build artifacts to cache, if possible.
-
-<li><code>--write-artifact-caches</code>
-<code>list_type</code>
-
-      The URIs of artifact caches to write to. Each entry is a URL of a RESTful cache, a path of a filesystem cache, or a pipe-separated list of alternate caches to choose from.
-
-<li><code>--[no-]overwrite-cache-artifacts</code>
-<code>bool</code>
-
-      If writing to build artifacts to cache, overwrite (instead of skip) existing.
-
 <li><code>--[no-]print-exception-stacktrace</code>
 <code>bool</code>
 
@@ -5797,13 +5793,13 @@ These command-line flags are available with all Pants goals.
 
 <li><code>--pants-bootstrapdir</code>
 <code>str</code>
-      (Default: <code>/Users/zundel/.cache/pants</code>)
+      (Default: <code>/Users/stuhood/.cache/pants</code>)
 
       Use this dir for global cache.
 
 <li><code>--pants-configdir</code>
 <code>str</code>
-      (Default: <code>/Users/zundel/.config/pants</code>)
+      (Default: <code>/Users/stuhood/.config/pants</code>)
 
       Use this dir for global config files.
 
@@ -5812,12 +5808,6 @@ These command-line flags are available with all Pants goals.
       (Default: <code>200</code>)
 
       The cache key generation. Bump this to invalidate every artifact for a scope.
-
-<li><code>--cache-compression</code>
-<code>int</code>
-      (Default: <code>5</code>)
-
-      The gzip compression level for created artifacts.
 
 <li><code>--pants-support-baseurls</code>
 <code>list_type</code>
@@ -5837,13 +5827,13 @@ These command-line flags are available with all Pants goals.
 
       Timeout in seconds for url reads when fetching binary tools from the repos specified by --pants-support-baseurls
 
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 </p></p></p></p></body>
 <!-- main content end -->
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/builddict/options_reference.html 2015-06-16T22:28:39.625862
+from dist/builddict/options_reference.html 2015-06-24T11:28:07.872165
 </div>
 
 </div> <!-- end of mainflow -->
