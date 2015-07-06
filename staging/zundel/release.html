@@ -33,10 +33,12 @@
 
 <nav class="pagetoc">
 <ul>
+<li class="toc-h1"><a href="#prerequisites">Prerequisites</a></li>
 <li class="toc-h1"><a href="#prepare-release">Prepare Release</a></li>
-<li class="toc-h1"><a href="#dry-run">Dry Run</a></li>
+<li class="toc-h1"><a href="#dry-run-optional">Dry Run (Optional)</a></li>
 <li class="toc-h1"><a href="#publish-to-pypi">Publish to PyPi</a></li>
 <li class="toc-h1"><a href="#announce">Announce</a></li>
+<li class="toc-h1"><a href="#owners">Owners</a></li>
 </ul>
 </nav>
 
@@ -134,10 +136,56 @@ page.</p>
 <li>Publishing the release to PyPi.</li>
 <li>Announce the release on pants-devel.</li>
 </ul>
-<p>The current list of packages that are part of this release process:</p>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="prerequisites">Prerequisites</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#prerequisites">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>There are several things that require one-time setup in order to be
+able to perform pants releases.  The release script checks that all
+these steps have been performed in one way or another, but you might
+like to go through this list ahead of time rather than have the release
+script fail:</p>
 <ul>
-<li>pantsbuild.pants</li>
-<li>pantsbuild.pants.testinfra</li>
+<li>
+<p>Create a pgp signing key if you don't already have one.</p>
+<p>You might use the gpg implemntation of pgp and start here:
+https://www.gnupg.org/gph/en/manual/c14.html</p>
+</li>
+<li>
+<p>Configure git to use your pgp key for signing release tags.</p>
+<p>A description of the configuration can be found here:
+https://git-scm.com/book/tr/v2/Git-Tools-Signing-Your-Work#GPG-Introduction</p>
+</li>
+<li>
+<p>Create a pypi account if you don't already have one.</p>
+<p>You can register here: https://pypi.python.org/pypi?%3Aaction=register_form
+Don't forget to include your pgp key id even though pypi considers
+this step optional.</p>
+</li>
+<li>
+<p>Get your pypi account added as an <code>owner</code> for all pantsbuild.pants packages.</p>
+<p>You can ask any one of the <a href="#owners">Owners</a> listed below to do this.
+Once this is done and you've performed your 1st release, add yourself to
+the <a href="#owners">Owners</a> section below.</p>
+</li>
+<li>
+<p>Configure your pypi credentials locally in <code>~/.pypirc</code></p>
+<p>This will do it:</p>
+<div class="codehilite"><pre>cat <span class="s">&lt;&lt; EOF &gt; ~/.pypirc &amp;&amp; chmod 600 ~/.pypirc</span>
+<span class="s">[server-login]</span>
+<span class="s">username: &lt;fill me in&gt;</span>
+<span class="s">password: &lt;fill me in&gt;</span>
+<span class="s">EOF</span>
+</pre></div>
+</li>
 </ul>
 
 <table class="h-plus-pilcrow">
@@ -155,44 +203,41 @@ page.</p>
 Index</a> per the Python community
 convention.</p>
 <p>Although the build and publish are automated, the version bumping and
-CHANGELOG management are not. You'll need to edit the version number in
+CHANGELOG and CONTRIBUTORS management are not.</p>
+<p>You'll need to edit the version number in
 <a href="https://github.com/pantsbuild/pants/tree/master/src/python/pants/version.py">src/python/pants/version.py</a>
 and add an entry in the CHANGELOG at
-<a href="https://github.com/pantsbuild/pants/tree/master/src/python/pants/CHANGELOG.rst">src/python/pants/CHANGELOG.rst</a>
-then send this out for review.</p>
+<a href="https://github.com/pantsbuild/pants/tree/master/src/python/pants/CHANGELOG.rst">src/python/pants/CHANGELOG.rst</a>.
+You can run <code>./build-support/bin/release-changelog-helper.sh</code> to get a
+head-start on the CHANGELOG entry.</p>
+<p>To bring the CONTRIBUTORS roster in
+<a href="https://github.com/pantsbuild/pants/tree/master/CONTRIBUTORS.md">CONTRIBUTORS.md</a>
+up to date you just run <code>build-support/bin/contributors.sh</code>.</p>
+<p>Finally, send these three changes out for review.</p>
 
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h2 id="dry-run">Dry Run</h2></td>
+<td class="h-plus-pilcrow-holder"><h2 id="dry-run-optional">Dry Run (Optional)</h2></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#dry-run">¶</a>
+<a class="pilcrow-link" href="#dry-run-optional">¶</a>
 </div></td>
 </tr>
 </tbody>
 </table>
 
-<p>In order to publish the prepared release you'll need to be a
-pantsbuild.pants package owner; otherwise you'll need to hand off to
-someone who is. The list is on the <a href="https://pypi.python.org/pypi/pantsbuild.pants">pantsbuild.pants package index
-page</a> in the
-Package Index Owner field:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>curl -s <span class="s2">"https://pypi.python.org`(curl -s https://pypi.python.org/pypi/pantsbuild.pants | grep -oE  "</span>/pypi/pantsbuild.pants/<span class="o">[</span>0-9<span class="o">]</span>*<span class="se">\.</span><span class="o">[</span>0-9<span class="o">]</span>*<span class="se">\.</span><span class="o">[</span>0-9<span class="o">]</span>*<span class="s2">" | head -n1)`"</span> | grep -A1 <span class="s2">"Owner"</span>
-&lt;strong&gt;Package Index Owner:&lt;/strong&gt;
-&lt;span&gt;john.sirois, benjyw, traviscrawford, ericzundel, ity&lt;/span&gt;
-</pre></div>
-<p>All the other packages that are part of this simultaneous release
-process must have the same owner list or the release script would break.</p>
-<p>Releases should only be published from master, so get on master and
-ensure your version number commit is present. After confirming this,
-publish locally and verify the release.</p>
+<p>A dry run is not strictly required since CI includes one, but you might
+like to try one anyway; if so, releases should only be published from
+master, so get on master and ensure your version number commit is present.
+After confirming this, run.</p>
 <div class="codehilite"><pre><span class="nv">$ </span>./build-support/bin/release.sh -n
 </pre></div>
 <p>This will perform a dry run local build of the pantsbuild.pants sdist
 and other related package sdists, install them in a virtualenv and then
 smoke test basic operations.</p>
-<p>Note that the release publish flow also performs a mandatory dry run so
-executing a dry run separately is not required.</p>
+<p>Note that in addition to CI checking dry runs work, the release publish
+flow also performs a mandatory dry run so executing a dry run separately
+is not required.</p>
 
 <table class="h-plus-pilcrow">
 <tbody>
@@ -231,13 +276,84 @@ applies to other related package PyPi pages.</p>
 </pre></div>
 <p>This will attempt to install the just-published packages from pypi and
 then smoke test them.</p>
-<p>Finally, announce the release to pants-devel.</p>
+<p>Finally, announce the release to pants-devel.  You can get a
+contributor list for the email by running the following where <code>&lt;tag&gt;</code>
+if the tag for the prior release (eg: release_0.0.33)</p>
+<div class="codehilite"><pre><span class="nv">$ </span>./build-support/bin/contributors.sh -s &lt;tag&gt;
+</pre></div>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="owners">Owners</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#owners">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>The following folks are set up to publish to pypi for
+pantsbuild.pants sdists:</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Email</th>
+<th>PYPI Usename</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>John Sirois</td>
+<td>john.sirois@gmail.com</td>
+<td>john.sirois</td>
+</tr>
+<tr>
+<td>Benjy Weinberger</td>
+<td>benjyw@gmail.com</td>
+<td>benjyw</td>
+</tr>
+<tr>
+<td>Eric Ayers</td>
+<td>zundel@squareup.com</td>
+<td>ericzundel</td>
+</tr>
+<tr>
+<td>Ity Kaul</td>
+<td>itykaul@gmail.com</td>
+<td>ity</td>
+</tr>
+<tr>
+<td>Stu Hood</td>
+<td>stuhood@gmail.com</td>
+<td>stuhood</td>
+</tr>
+</tbody>
+</table>
+<p>And the current list of packages that these folks can release can
+be obtained via:</p>
+<div class="codehilite"><pre><span class="nv">$ </span>./build-support/bin/release.sh -l
+</pre></div>
+<p>Right now that's:</p>
+<ul>
+<li>pantsbuild.pants</li>
+<li>pantsbuild.pants.backend.android</li>
+<li>pantsbuild.pants.contrib.buildgen</li>
+<li>pantsbuild.pants.contrib.scrooge</li>
+<li>pantsbuild.pants.contrib.spindle</li>
+<li>pantsbuild.pants.testinfra</li>
+</ul>
+<p>You can run the following to get a full ownership roster for each
+package :</p>
+<div class="codehilite"><pre><span class="nv">$ </span>./build-support/bin/release.sh -o
+</pre></div>
 
 <!-- main content end -->
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/markdown/html/src/python/pants/docs/release.html 2015-06-16T11:37:53.913121
+from dist/markdown/html/src/python/pants/docs/release.html 2015-07-06T09:03:31.672307
 </div>
 
 </div> <!-- end of mainflow -->

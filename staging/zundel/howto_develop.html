@@ -34,11 +34,12 @@
 <nav class="pagetoc">
 <ul>
 <li class="toc-h1"><a href="#running-from-sources">Running from sources</a></li>
-<li class="toc-h1"><a href="#building-a-pants-pex-for-testing">Building a Pants PEX for Testing</a></li>
 <li class="toc-h1"><a href="#building-a-pants-pex-for-production">Building a Pants PEX for Production</a></li>
 <li class="toc-h1"><a href="#testing">Testing</a></li>
+<li class="toc-h2"><a href="#running-tests">Running Tests</a></li>
 <li class="toc-h1"><a href="#debugging">Debugging</a></li>
 <li class="toc-h1"><a href="#developing-and-debugging-a-jvm-tool">Developing and Debugging a JVM Tool</a></li>
+<li class="toc-h2"><a href="#jvm-tool-development-tips">JVM Tool Development Tips</a></li>
 </ul>
 </nav>
 
@@ -138,51 +139,11 @@ instructions for using Pants to develop other programs, please see
 </table>
 
 <p>As pants is implemented in python it can be run directly from sources.</p>
-<div class="codehilite"><pre><span class="nv">$ PANTS_DEV</span><span class="o">=</span>1 ./pants goals
-*** running pants in dev mode from ./src/python/pants/bin/pants_exe.py ***
+<div class="codehilite"><pre><span class="nv">$ </span>./pants goals
 &lt;remainder of output omitted <span class="k">for </span>brevity&gt;
 </pre></div>
 <p>Notice this invocation specifies the <code>PANTS_DEV</code> environment variable.
 By defining <code>PANTS_DEV</code> pants will be run from sources.</p>
-
-<table class="h-plus-pilcrow">
-<tbody>
-<tr>
-<td class="h-plus-pilcrow-holder"><h2 id="building-a-pants-pex-for-testing">Building a Pants PEX for Testing</h2></td>
-<td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#building-a-pants-pex-for-testing">¶</a>
-</div></td>
-</tr>
-</tbody>
-</table>
-
-<p>The <code>./pants</code> wrapper provides a convenient way to produce a <code>.pex</code> file for testing pants on
-your local workstation. If you call it without the <code>PANTS_DEV=1</code> environment described above, it</p>
-<ul>
-<li>Checks the source tree's top directory for a <code>pants.pex</code> and runs
-    it if it exists. Otherwise <code>./pants</code>...</li>
-<li>Builds a new <code>pants.pex</code>, moves it to the source tree's top
-    directory, and runs that.</li>
-</ul>
-<p>It looks something like</p>
-<div class="codehilite"><pre><span class="nv">$ </span>rm pants.pex
-<span class="nv">$ </span>./pants my-new-feature
-Building pants.pex to /Users/zundel/Src/Pants/pants.pex...
-...
-Build operating on top level addresses: <span class="nb">set</span><span class="o">([</span>BuildFileAddress<span class="o">(</span>/Users/pantsdev/Src/pants/src/python/pants/bin/BUILD, pants_local_binary<span class="o">)])</span>
-Building PythonBinary PythonBinary<span class="o">(</span>BuildFileAddress<span class="o">(</span>/Users/pantsdev/Src/pants/src/python/pants/bin/BUILD, pants_local_binary<span class="o">))</span>:
-Wrote /Users/pantsdev/Src/pants/dist/pants_local_binary.pex
-/Users/pantsdev/Src/Pants/dist/pants_local_binary.pex -&gt; /Users/pantsdev/Src/Pants/pants.pex
-AMAZING NEW FEATURE PRINTS HERE
-<span class="nv">$ </span>ls pants.pex <span class="c"># gets moved here, though originally "Wrote" to ./dist/</span>
-pants.pex
-<span class="nv">$ </span>./pants my-new-feature
-AMAZING NEW FEATURE PRINTS HERE
-</pre></div>
-<p>Using <code>./pants</code> to launch Pants thus gives a handy workflow: generate <code>pants.pex</code>.
-Go back and forth between trying the generated <code>pants.pex</code> and fixing source code as inspired by
-its misbehaviors. When the fixed source code is in a consistent state, remove <code>pants.pex</code> so
-that it will get replaced on the next <code>./pants</code> run.</p>
 
 <table class="h-plus-pilcrow">
 <tbody>
@@ -200,11 +161,61 @@ let some of your internal users try out the latest and greatest unreleased code?
 What if you want to create a custom build of pants with some unpublished patches?
 In that case, you want to build a production ready version of pants including dependencies for
 all platforms, not just your development environment.</p>
-<p>The following command will create a locally built <code>pants.pex</code> for all platforms:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants binary src/python/pants/bin:pants
-...
-SUCCESS
+<p>In the following examples, you'll be using 2 local repos.  The path to the pantsbuild/pants clone
+will be <code>/tmp/pantsbuild</code> and the path to your repo <code>/your/repo</code> in all the examples below; make
+sure to substitute your own paths when adapting this recipe to your environment.</p>
+<p>You'll need to setup some files one-time in your own repo:</p>
+<div class="codehilite"><pre><span class="nv">$ </span>cat pants-production.requirements.txt
+<span class="c"># Replace this path with the path to your pantsbuild.pants clone.</span>
+-f /tmp/pantsbuild/dist/
+pantsbuild.pants
+
+<span class="nv">$ </span>cat BUILD.pants-production
+python_requirements<span class="o">(</span><span class="s1">'pants-production.requirements.txt'</span><span class="o">)</span>
+
+python_binary<span class="o">(</span>
+  <span class="nv">name</span><span class="o">=</span><span class="s1">'pants'</span>,
+  <span class="nv">entry_point</span><span class="o">=</span><span class="s1">'pants.bin.pants_exe:main'</span>,
+  <span class="c"># You may want to tweak the list of supported platforms to match your environment.</span>
+  <span class="nv">platforms</span><span class="o">=[</span>
+    <span class="s1">'current'</span>,
+    <span class="s1">'linux-x86_64'</span>,
+    <span class="s1">'macosx-10.4-x86_64'</span>,
+  <span class="o">]</span>,
+  <span class="c"># You may want to adjust the python interpreter constraints, but note that pants requires</span>
+  <span class="c"># python2.7 currently.</span>
+  <span class="nv">compatibility</span><span class="o">=</span><span class="s1">'CPython&gt;=2.7,&lt;3'</span>,
+  <span class="nv">dependencies</span><span class="o">=[</span>
+    <span class="s1">':pantsbuild.pants'</span>,
+    <span class="c"># List any other pants backend local or remote deps here, ie:</span>
+    <span class="c"># ':pantsbuild.pants.contrib.spindle' or 'src/python/your/pants/plugin'</span>
+  <span class="o">]</span>
+<span class="o">)</span>
+
+<span class="nv">$ </span>cat pants-production.ini
+<span class="o">[</span>python-repos<span class="o">]</span>
+<span class="c"># You should replace these repos with your own housing pre-built eggs or wheels for the</span>
+<span class="c"># platforms you support.</span>
+repos: <span class="o">[</span>
+    <span class="s2">"https://pantsbuild.github.io/cheeseshop/third_party/python/dist/index.html"</span>,
+    <span class="s2">"https://pantsbuild.github.io/cheeseshop/third_party/python/index.html"</span>
+  <span class="o">]</span>
+
+indexes: <span class="o">[</span><span class="s2">"https://pypi.python.org/simple/"</span><span class="o">]</span>
 </pre></div>
+<p>To (re-)generate a <code>pants.pex</code> you then run these 2 commands:</p>
+<ol>
+<li>
+<p>In your pantsbuild/pants clone, create a local pants release from master:</p>
+<div class="codehilite"><pre><span class="nv">$ </span>rm -rf dist <span class="o">&amp;&amp;</span> ./build-support/bin/release.sh -n
+</pre></div>
+</li>
+<li>
+<p>In your own repo the following command will create a locally built <code>pants.pex</code> for all platforms:</p>
+<div class="codehilite"><pre><span class="nv">$ </span>/tmp/pantsbuild/pants --config-override<span class="o">=</span>pants-production.ini clean-all binary //:pants
+</pre></div>
+</li>
+</ol>
 <p>The resulting <code>pants.pex</code> will be in the <code>dist/</code> directory:</p>
 <div class="codehilite"><pre><span class="nv">$ </span>ls -l dist/pants.pex
 -rwxr-xr-x  1 pantsdev  pantsdev  5561254 Oct  8 09:52 dist/pants.pex
@@ -216,11 +227,6 @@ SUCCESS
 A user can just copy this pex to the top of their Pants workspace and use it:</p>
 <div class="codehilite"><pre><span class="nv">$ </span>cp /mnt/fd0/pants.pex .
 <span class="nv">$ </span>./pants.pex goal <span class="nb">test </span>examples/tests/java/org/pantsbuild/example/hello/greet:
-</pre></div>
-<p>There are some parameters in <code>src/python/pants/bin/BUILD</code> that you may want to tweak for your
-production distribution. For example, you may want to force the Python interpreter to be a
-specific version:</p>
-<div class="codehilite"><pre><span class="n">PANTS_COMPATIBILITY</span> <span class="o">=</span> <span class="s">'CPython&gt;=2.7,&lt;2.8'</span>
 </pre></div>
 
 <table class="h-plus-pilcrow">
@@ -375,6 +381,18 @@ debug them is to disable nailgun by specifying the command line option
 <div class="codehilite"><pre><span class="k">[DEFAULT]</span>
 <span class="err">use_nailgun:</span> <span class="err">False</span>
 </pre></div>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="jvm-tool-development-tips">JVM Tool Development Tips</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#jvm-tool-development-tips">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
 <p>If you need to debug the tool under nailgun, make
 sure you run <code>pants goal ng-killall</code> or <code>pants goal clean-all</code> after you update the
 jar file so that any running nailgun servers are restarted on the next invocation
@@ -384,12 +402,30 @@ cache a shaded version under <code>~/.cache/pants/artifact_cache/</code>.  Clear
 before testing a new version of the tool as follows:</p>
 <div class="codehilite"><pre><span class="nv">$ </span>rm -rf ~/.cache.pants/artifact_cache
 </pre></div>
+<p>If you have trouble resolving the file with Ivy after making the
+above changes to <code>BUILD.tools</code>:</p>
+<ul>
+<li>Make sure your url is absolute and contains three slashes (<code>///</code>) at the start
+of the path.</li>
+<li>
+<p>If your repo has an <code>ivysettings.xml</code> file (the pants repo currently does not),
+try adding a minimal <code>&lt;filesystem&gt;</code> resolver that doesn't enforce a pom being
+present as follows:</p>
+<div class="codehilite"><pre><span class="nt">&lt;resolvers&gt;</span>
+  <span class="nt">&lt;chain</span> <span class="na">name=</span><span class="s">"chain-repos"</span> <span class="na">returnFirst=</span><span class="s">"true"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;filesystem</span> <span class="na">name=</span><span class="s">"internal"</span><span class="nt">&gt;&lt;/filesystem&gt;</span>
+    ...
+  <span class="nt">&lt;/chain&gt;</span>
+<span class="nt">&lt;/resolvers&gt;</span>
+</pre></div>
+</li>
+</ul>
 
 <!-- main content end -->
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/markdown/html/src/python/pants/docs/howto_develop.html 2015-06-16T11:37:53.490793
+from dist/markdown/html/src/python/pants/docs/howto_develop.html 2015-07-06T09:03:31.275235
 </div>
 
 </div> <!-- end of mainflow -->

@@ -212,7 +212,7 @@ Java code, and is installed in the <tt>compile</tt> goal.
   target's resource files. The output is an unsigned .apk, an Android application package file.
   
   <li> <a href="#bash-completion">bash-completion</a> - Dump bash shell script for autocompletion of pants command lines.
-  <li> <a href="#bench">bench</a> - None
+  <li> <a href="#bench">bench</a> - Run benchmark tests.
   <li> <a href="#binary">binary</a> - Create a runnable binary.
   <li> <a href="#bootstrap">bootstrap</a> - Bootstrap tools needed for building.
   <li> <a href="#builddict">builddict</a> - Generate documentation for the Sphinx site.
@@ -426,6 +426,9 @@ target's resource files. The output is an unsigned .apk, an Android application 
 </tbody>
 </table>
 
+<p>Run benchmark tests.
+
+
 <div class="oref_ogroup_section">
 <a id="oref_cli_bench" pantsmark="oref_cli_bench"> </a>
 
@@ -442,21 +445,6 @@ target's resource files. The output is an unsigned .apk, an Android application 
 
 <p>Implemented by <code>pants.backend.jvm.tasks.benchmark_run.BenchmarkRun</code>
 <ul>
-<li><code>--jvm-options</code>
-<code>str</code>
-
-      Run the JVM with these extra jvm options.
-
-<li><code>--args</code>
-<code>str</code>
-
-      Run the JVM with these extra program args.
-
-<li><code>--[no-]debug</code>
-<code>bool</code>
-
-      Run the JVM with remote debugging.
-
 <li><code>--confs</code>
 <code>str</code>
       (Default: <code>[u'default']</code>)
@@ -473,19 +461,6 @@ target's resource files. The output is an unsigned .apk, an Android application 
 
       Enable memory profiling.
 
-<li><code>--debug-port</code>
-<code>int</code>
-      (Default: <code>5005</code>)
-
-      The JVM will listen for a debugger on this port.
-
-<li><code>--debug-args</code>
-<code>list_type</code>
-      (Default: <code>[u'-Xdebug', u'-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address={debug_port}']</code>)
-      (Default: <code>[u'-Xdebug', u'-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address={debug_port}']</code>)
-
-      The JVM remote-debugging arguments. {debug_port} will be replaced with the value of the --debug-port option.
-
 <li><code>--benchmark-tool</code>
 <code>list_type</code>
       (Default: <code>[u'//:benchmark-caliper-0.5']</code>)
@@ -498,11 +473,11 @@ target's resource files. The output is an unsigned .apk, an Android application 
 
       Target specs for bootstrapping the benchmark-agent tool.
 
-</li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
-</br></p></div>
+</br></p></p></div>
 <div class="oref_goal_section">
 <a id="oref_goal_binary" pantsmark="oref_goal_binary"> </a>
 
@@ -1426,13 +1401,18 @@ target's resource files. The output is an unsigned .apk, an Android application 
 
       Target specs for bootstrapping the nailgun-server tool.
 
+<li><code>--jvm-options</code>
+<code>str</code>
+
+      Run checkstyle with these extra jvm options.
+
 <li><code>--checkstyle</code>
 <code>list_type</code>
       (Default: <code>[u'//:checkstyle']</code>)
 
       Target specs for bootstrapping the checkstyle tool.
 
-</li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></ul>
 </p></div>
 <div class="oref_ogroup_section">
 <a id="oref_cli_compilescalastyle" pantsmark="oref_cli_compilescalastyle"> </a>
@@ -1481,13 +1461,18 @@ target's resource files. The output is an unsigned .apk, an Android application 
 
       Path to optional scalastyle excludes file. Each line is a regex. (Blank lines and lines starting with '#' are ignored.) A file is skipped if its path (relative to the repo root) matches any of these regexes.
 
+<li><code>--jvm-options</code>
+<code>str</code>
+
+      Run scalastyle with these extra jvm options.
+
 <li><code>--scalastyle</code>
 <code>list_type</code>
       (Default: <code>[u'//:scalastyle']</code>)
 
       Target specs for bootstrapping the scalastyle tool.
 
-</li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></ul>
 </p></div>
 <div class="oref_ogroup_section">
 <a id="oref_cli_compilecppcompile" pantsmark="oref_cli_compilecppcompile"> </a>
@@ -1826,12 +1811,22 @@ set of a target.</p>
 <li><code>--[no-]minimal</code>
 <code>bool</code>
 
-      For a textual dependency tree, only prints a dependency the 1st time it is encountered.  For graph output this does nothing.
+      For a textual dependency tree, only prints a dependency the 1st time it is encountered. This is a no-op for --graph.
 
 <li><code>--[no-]graph</code>
 <code>bool</code>
 
       Specifies the internal dependency graph should be output in the dot digraph format.
+
+<li><code>--[no-]tree</code>
+<code>bool</code>
+
+      For text output, show an ascii tree to help visually line up indentions.
+
+<li><code>--[no-]show-types</code>
+<code>bool</code>
+
+      Show types of objects in depmap --graph.
 
 <li><code>--separator</code>
 <code>str</code>
@@ -1842,9 +1837,9 @@ set of a target.</p>
 <li><code>--path-to</code>
 <code>str</code>
 
-      Show only items on the path to the given target.
+      Show only items on the path to the given target. This is a no-op for --graph.
 
-</li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -1952,21 +1947,6 @@ set of a target.</p>
 
 <p>Implemented by <code>pants.backend.jvm.tasks.javadoc_gen.JavadocGen</code>
 <ul>
-<li><code>--jvm-options</code>
-<code>str</code>
-
-      Run the JVM with these extra jvm options.
-
-<li><code>--args</code>
-<code>str</code>
-
-      Run the JVM with these extra program args.
-
-<li><code>--[no-]debug</code>
-<code>bool</code>
-
-      Run the JVM with remote debugging.
-
 <li><code>--confs</code>
 <code>str</code>
       (Default: <code>[u'default']</code>)
@@ -2004,20 +1984,7 @@ set of a target.</p>
 
       Skip javadoc generation.
 
-<li><code>--debug-port</code>
-<code>int</code>
-      (Default: <code>5005</code>)
-
-      The JVM will listen for a debugger on this port.
-
-<li><code>--debug-args</code>
-<code>list_type</code>
-      (Default: <code>[u'-Xdebug', u'-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address={debug_port}']</code>)
-      (Default: <code>[u'-Xdebug', u'-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address={debug_port}']</code>)
-
-      The JVM remote-debugging arguments. {debug_port} will be replaced with the value of the --debug-port option.
-
-</li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></ul>
 </p></div>
 <div class="oref_ogroup_section">
 <a id="oref_cli_docscaladoc" pantsmark="oref_cli_docscaladoc"> </a>
@@ -2035,21 +2002,6 @@ set of a target.</p>
 
 <p>Implemented by <code>pants.backend.jvm.tasks.scaladoc_gen.ScaladocGen</code>
 <ul>
-<li><code>--jvm-options</code>
-<code>str</code>
-
-      Run the JVM with these extra jvm options.
-
-<li><code>--args</code>
-<code>str</code>
-
-      Run the JVM with these extra program args.
-
-<li><code>--[no-]debug</code>
-<code>bool</code>
-
-      Run the JVM with remote debugging.
-
 <li><code>--confs</code>
 <code>str</code>
       (Default: <code>[u'default']</code>)
@@ -2087,20 +2039,7 @@ set of a target.</p>
 
       Skip scaladoc generation.
 
-<li><code>--debug-port</code>
-<code>int</code>
-      (Default: <code>5005</code>)
-
-      The JVM will listen for a debugger on this port.
-
-<li><code>--debug-args</code>
-<code>list_type</code>
-      (Default: <code>[u'-Xdebug', u'-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address={debug_port}']</code>)
-      (Default: <code>[u'-Xdebug', u'-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address={debug_port}']</code>)
-
-      The JVM remote-debugging arguments. {debug_port} will be replaced with the value of the --debug-port option.
-
-</li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -2457,12 +2396,22 @@ set of a target.</p>
 
       Causes libraries to be output.
 
+<li><code>--[no-]libraries-sources</code>
+<code>bool</code>
+
+      Causes libraries with sources to be output.
+
+<li><code>--[no-]libraries-javadocs</code>
+<code>bool</code>
+
+      Causes libraries with javadocs to be output.
+
 <li><code>--[no-]sources</code>
 <code>bool</code>
 
       Causes sources to be output.
 
-</li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -2961,13 +2910,18 @@ between them.</p>
 
       Skip targets with no sources defined.
 
+<li><code>--[no-]allow-dups</code>
+<code>bool</code>
+
+      Allow multiple targets specifying the same sources when using the isolated strategy. If duplicates are allowed, the logic of find_sources in IsolatedCodegenStrategy will associate generated sources with least-dependent targets that generate them.
+
 <li><code>--wire-compiler</code>
 <code>list_type</code>
       (Default: <code>[u'//:wire-compiler']</code>)
 
       Target specs for bootstrapping the wire-compiler tool.
 
-</li></li></li></ul>
+</li></li></li></li></ul>
 </p></div>
 <div class="oref_ogroup_section">
 <a id="oref_cli_genaapt" pantsmark="oref_cli_genaapt"> </a>
@@ -3747,7 +3701,12 @@ containing .proto files.</p>
 
       Generate a fragment of html to embed in a page.
 
-</li></li></li></ul>
+<li><code>--[no-]ignore-failure</code>
+<code>bool</code>
+
+      Do not consider rendering errors to be build errors.
+
+</li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -4161,6 +4120,11 @@ repos = {
 
       Allow pushes only from one of these branches.
 
+<li><code>--restrict-push-urls</code>
+<code>list_type</code>
+
+      Allow pushes to only one of these urls.
+
 <li><code>--ivy_settings</code>
 <code>str</code>
 
@@ -4191,7 +4155,7 @@ repos = {
 
       A post-script to add to pushdb commit messages and push tag commit messages.
 
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -4264,21 +4228,6 @@ repos = {
 
 <p>Implemented by <code>pants.backend.jvm.tasks.scala_repl.ScalaRepl</code>
 <ul>
-<li><code>--jvm-options</code>
-<code>str</code>
-
-      Run the JVM with these extra jvm options.
-
-<li><code>--args</code>
-<code>str</code>
-
-      Run the JVM with these extra program args.
-
-<li><code>--[no-]debug</code>
-<code>bool</code>
-
-      Run the JVM with remote debugging.
-
 <li><code>--confs</code>
 <code>str</code>
       (Default: <code>[u'default']</code>)
@@ -4291,26 +4240,13 @@ repos = {
 
       The entry point for running the repl.
 
-<li><code>--debug-port</code>
-<code>int</code>
-      (Default: <code>5005</code>)
-
-      The JVM will listen for a debugger on this port.
-
-<li><code>--debug-args</code>
-<code>list_type</code>
-      (Default: <code>[u'-Xdebug', u'-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address={debug_port}']</code>)
-      (Default: <code>[u'-Xdebug', u'-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address={debug_port}']</code>)
-
-      The JVM remote-debugging arguments. {debug_port} will be replaced with the value of the --debug-port option.
-
 <li><code>--scala-repl</code>
 <code>list_type</code>
       (Default: <code>[u'//:scala-repl']</code>)
 
       Target specs for bootstrapping the scala-repl tool.
 
-</li></li></li></li></li></li></li></li></ul>
+</li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -4348,21 +4284,6 @@ repos = {
 
 <p>Implemented by <code>pants.backend.jvm.tasks.scala_repl.ScalaRepl</code>
 <ul>
-<li><code>--jvm-options</code>
-<code>str</code>
-
-      Run the JVM with these extra jvm options.
-
-<li><code>--args</code>
-<code>str</code>
-
-      Run the JVM with these extra program args.
-
-<li><code>--[no-]debug</code>
-<code>bool</code>
-
-      Run the JVM with remote debugging.
-
 <li><code>--confs</code>
 <code>str</code>
       (Default: <code>[u'default']</code>)
@@ -4375,26 +4296,13 @@ repos = {
 
       The entry point for running the repl.
 
-<li><code>--debug-port</code>
-<code>int</code>
-      (Default: <code>5005</code>)
-
-      The JVM will listen for a debugger on this port.
-
-<li><code>--debug-args</code>
-<code>list_type</code>
-      (Default: <code>[u'-Xdebug', u'-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address={debug_port}']</code>)
-      (Default: <code>[u'-Xdebug', u'-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address={debug_port}']</code>)
-
-      The JVM remote-debugging arguments. {debug_port} will be replaced with the value of the --debug-port option.
-
 <li><code>--scala-repl</code>
 <code>list_type</code>
       (Default: <code>[u'//:scala-repl']</code>)
 
       Target specs for bootstrapping the scala-repl tool.
 
-</li></li></li></li></li></li></li></li></ul>
+</li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -4690,21 +4598,6 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 
 <p>Implemented by <code>pants.backend.jvm.tasks.jvm_run.JvmRun</code>
 <ul>
-<li><code>--jvm-options</code>
-<code>str</code>
-
-      Run the JVM with these extra jvm options.
-
-<li><code>--args</code>
-<code>str</code>
-
-      Run the JVM with these extra program args.
-
-<li><code>--[no-]debug</code>
-<code>bool</code>
-
-      Run the JVM with remote debugging.
-
 <li><code>--confs</code>
 <code>str</code>
       (Default: <code>[u'default']</code>)
@@ -4722,20 +4615,7 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 
       Set the working directory. If no argument is passed, use the target path.
 
-<li><code>--debug-port</code>
-<code>int</code>
-      (Default: <code>5005</code>)
-
-      The JVM will listen for a debugger on this port.
-
-<li><code>--debug-args</code>
-<code>list_type</code>
-      (Default: <code>[u'-Xdebug', u'-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address={debug_port}']</code>)
-      (Default: <code>[u'-Xdebug', u'-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address={debug_port}']</code>)
-
-      The JVM remote-debugging arguments. {debug_port} will be replaced with the value of the --debug-port option.
-
-</li></li></li></li></li></li></li></li></ul>
+</li></li></li></ul>
 </p></div>
 <div class="oref_ogroup_section">
 <a id="oref_cli_runcpprun" pantsmark="oref_cli_runcpprun"> </a>
@@ -4804,21 +4684,6 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 
 <p>Implemented by <code>pants.backend.jvm.tasks.jvm_run.JvmRun</code>
 <ul>
-<li><code>--jvm-options</code>
-<code>str</code>
-
-      Run the JVM with these extra jvm options.
-
-<li><code>--args</code>
-<code>str</code>
-
-      Run the JVM with these extra program args.
-
-<li><code>--[no-]debug</code>
-<code>bool</code>
-
-      Run the JVM with remote debugging.
-
 <li><code>--confs</code>
 <code>str</code>
       (Default: <code>[u'default']</code>)
@@ -4836,20 +4701,7 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 
       Set the working directory. If no argument is passed, use the target path.
 
-<li><code>--debug-port</code>
-<code>int</code>
-      (Default: <code>5005</code>)
-
-      The JVM will listen for a debugger on this port.
-
-<li><code>--debug-args</code>
-<code>list_type</code>
-      (Default: <code>[u'-Xdebug', u'-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address={debug_port}']</code>)
-      (Default: <code>[u'-Xdebug', u'-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address={debug_port}']</code>)
-
-      The JVM remote-debugging arguments. {debug_port} will be replaced with the value of the --debug-port option.
-
-</li></li></li></li></li></li></li></li></ul>
+</li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -5255,21 +5107,6 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 
 <p>Implemented by <code>pants.backend.jvm.tasks.junit_run.JUnitRun</code>
 <ul>
-<li><code>--jvm-options</code>
-<code>str</code>
-
-      Run the JVM with these extra jvm options.
-
-<li><code>--args</code>
-<code>str</code>
-
-      Run the JVM with these extra program args.
-
-<li><code>--[no-]debug</code>
-<code>bool</code>
-
-      Run the JVM with remote debugging.
-
 <li><code>--confs</code>
 <code>str</code>
       (Default: <code>[u'default']</code>)
@@ -5376,19 +5213,6 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 
       Which coverage subsystem to use.
 
-<li><code>--debug-port</code>
-<code>int</code>
-      (Default: <code>5005</code>)
-
-      The JVM will listen for a debugger on this port.
-
-<li><code>--debug-args</code>
-<code>list_type</code>
-      (Default: <code>[u'-Xdebug', u'-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address={debug_port}']</code>)
-      (Default: <code>[u'-Xdebug', u'-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address={debug_port}']</code>)
-
-      The JVM remote-debugging arguments. {debug_port} will be replaced with the value of the --debug-port option.
-
 <li><code>--junit</code>
 <code>list_type</code>
       (Default: <code>[u'//:junit']</code>)
@@ -5419,7 +5243,7 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 
       Target specs for bootstrapping the cobertura-report tool.
 
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -5733,33 +5557,6 @@ These command-line flags are available with all Pants goals.
 
       Include only targets with these tags (optional '+' prefix) or without these tags ('-' prefix).  Useful with ::, to find subsets of targets (e.g., integration tests.)
 
-<li><code>--[no-]read-from-artifact-cache</code>
-<code>bool</code>
-      (Default: <code>True</code>)
-
-      Read build artifacts from cache, if available.
-
-<li><code>--read-artifact-caches</code>
-<code>list_type</code>
-
-      The URIs of artifact caches to read from. Each entry is a URL of a RESTful cache, a path of a filesystem cache, or a pipe-separated list of alternate caches to choose from.
-
-<li><code>--[no-]write-to-artifact-cache</code>
-<code>bool</code>
-      (Default: <code>True</code>)
-
-      Write build artifacts to cache, if possible.
-
-<li><code>--write-artifact-caches</code>
-<code>list_type</code>
-
-      The URIs of artifact caches to write to. Each entry is a URL of a RESTful cache, a path of a filesystem cache, or a pipe-separated list of alternate caches to choose from.
-
-<li><code>--[no-]overwrite-cache-artifacts</code>
-<code>bool</code>
-
-      If writing to build artifacts to cache, overwrite (instead of skip) existing.
-
 <li><code>--[no-]print-exception-stacktrace</code>
 <code>bool</code>
 
@@ -5803,12 +5600,6 @@ These command-line flags are available with all Pants goals.
 
       The cache key generation. Bump this to invalidate every artifact for a scope.
 
-<li><code>--cache-compression</code>
-<code>int</code>
-      (Default: <code>5</code>)
-
-      The gzip compression level for created artifacts.
-
 <li><code>--pants-support-baseurls</code>
 <code>list_type</code>
       (Default: <code>[u'https://dl.bintray.com/pantsbuild/bin/build-support']</code>)
@@ -5827,13 +5618,13 @@ These command-line flags are available with all Pants goals.
 
       Timeout in seconds for url reads when fetching binary tools from the repos specified by --pants-support-baseurls
 
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 </p></p></p></p></body>
 <!-- main content end -->
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/builddict/options_reference.html 2015-06-16T11:37:53.776993
+from dist/builddict/options_reference.html 2015-07-06T09:03:31.547037
 </div>
 
 </div> <!-- end of mainflow -->
