@@ -1,0 +1,5367 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!--
+  Copyright 2014 Pants project contributors (see CONTRIBUTORS.md).
+  Licensed under the Apache License, Version 2.0 (see LICENSE).
+-->
+
+<head>
+  <meta charset="utf-8" />
+  <title>Pants Options Reference</title>
+  <link rel="stylesheet" href="s.css">
+  <script src="s.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="logo.ico">
+  <!-- In case this is a "test publish", tell search engines where real version lives: -->
+  <link rel="canonical" href="https://pantsbuild.github.io/options_reference.html">
+</head>
+
+<body>
+
+<div id="navtoggler">
+&#x25c4; <!-- triangle -->
+</div>
+<div class="mainflow">
+<nav class="breadcrumbs">
+<ul>
+<li><a href="index.html">Pants Build</a>
+<li><a href="options_reference.html">Pants Options Reference</a>
+</ul>
+</nav>
+
+<nav class="pagetoc">
+<ul>
+<li class="toc-h1"><a href="#apk">apk</a></li>
+<li class="toc-h2"><a href="#group_apk">apk</a></li>
+<li class="toc-h1"><a href="#bash-completion">bash-completion</a></li>
+<li class="toc-h2"><a href="#group_bashcompletion">bash-completion</a></li>
+<li class="toc-h1"><a href="#bench">bench</a></li>
+<li class="toc-h2"><a href="#group_bench">bench</a></li>
+<li class="toc-h1"><a href="#binary">binary</a></li>
+<li class="toc-h2"><a href="#group_binarypythonbinarycreate">binary.python-binary-create</a></li>
+<li class="toc-h2"><a href="#group_binary">binary</a></li>
+<li class="toc-h2"><a href="#group_binarydup">binary.dup</a></li>
+<li class="toc-h2"><a href="#group_binarydex">binary.dex</a></li>
+<li class="toc-h2"><a href="#group_binarycpplibrary">binary.cpp-library</a></li>
+<li class="toc-h2"><a href="#group_binarycppbinary">binary.cpp-binary</a></li>
+<li class="toc-h1"><a href="#bootstrap">bootstrap</a></li>
+<li class="toc-h2"><a href="#group_bootstrapbootstrapjvmtools">bootstrap.bootstrap-jvm-tools</a></li>
+<li class="toc-h1"><a href="#builddict">builddict</a></li>
+<li class="toc-h2"><a href="#group_builddict">builddict</a></li>
+<li class="toc-h1"><a href="#bundle">bundle</a></li>
+<li class="toc-h2"><a href="#group_bundle">bundle</a></li>
+<li class="toc-h2"><a href="#group_bundledup">bundle.dup</a></li>
+<li class="toc-h2"><a href="#group_bundlezipalign">bundle.zipalign</a></li>
+<li class="toc-h1"><a href="#changed">changed</a></li>
+<li class="toc-h2"><a href="#group_changed">changed</a></li>
+<li class="toc-h1"><a href="#check_published_deps">check_published_deps</a></li>
+<li class="toc-h2"><a href="#group_checkpublisheddeps">check_published_deps</a></li>
+<li class="toc-h1"><a href="#clean-all">clean-all</a></li>
+<li class="toc-h2"><a href="#group_cleanallngkillall">clean-all.ng-killall</a></li>
+<li class="toc-h2"><a href="#group_cleanallinvalidate">clean-all.invalidate</a></li>
+<li class="toc-h2"><a href="#group_cleanall">clean-all</a></li>
+<li class="toc-h1"><a href="#clean-all-async">clean-all-async</a></li>
+<li class="toc-h2"><a href="#group_cleanallasyncngkillall">clean-all-async.ng-killall</a></li>
+<li class="toc-h2"><a href="#group_cleanallasyncinvalidate">clean-all-async.invalidate</a></li>
+<li class="toc-h2"><a href="#group_cleanallasync">clean-all-async</a></li>
+<li class="toc-h1"><a href="#compile">compile</a></li>
+<li class="toc-h2"><a href="#group_compile">compile</a></li>
+<li class="toc-h2"><a href="#group_compilejvm">compile.jvm</a></li>
+<li class="toc-h2"><a href="#group_compilepythoneval">compile.python-eval</a></li>
+<li class="toc-h2"><a href="#group_compilecheckstyle">compile.checkstyle</a></li>
+<li class="toc-h2"><a href="#group_compilescalastyle">compile.scalastyle</a></li>
+<li class="toc-h2"><a href="#group_compilecppcompile">compile.cpp-compile</a></li>
+<li class="toc-h1"><a href="#compile-changed">compile-changed</a></li>
+<li class="toc-h2"><a href="#group_compilechanged">compile-changed</a></li>
+<li class="toc-h1"><a href="#deferred-sources">deferred-sources</a></li>
+<li class="toc-h2"><a href="#group_deferredsources">deferred-sources</a></li>
+<li class="toc-h1"><a href="#dependees">dependees</a></li>
+<li class="toc-h2"><a href="#group_dependees">dependees</a></li>
+<li class="toc-h1"><a href="#dependencies">dependencies</a></li>
+<li class="toc-h2"><a href="#group_dependencies">dependencies</a></li>
+<li class="toc-h1"><a href="#depmap">depmap</a></li>
+<li class="toc-h2"><a href="#group_depmap">depmap</a></li>
+<li class="toc-h1"><a href="#detect-duplicates">detect-duplicates</a></li>
+<li class="toc-h2"><a href="#group_detectduplicates">detect-duplicates</a></li>
+<li class="toc-h1"><a href="#doc">doc</a></li>
+<li class="toc-h2"><a href="#group_docjavadoc">doc.javadoc</a></li>
+<li class="toc-h2"><a href="#group_docscaladoc">doc.scaladoc</a></li>
+<li class="toc-h1"><a href="#eclipse">eclipse</a></li>
+<li class="toc-h2"><a href="#group_eclipse">eclipse</a></li>
+<li class="toc-h1"><a href="#ensime">ensime</a></li>
+<li class="toc-h2"><a href="#group_ensime">ensime</a></li>
+<li class="toc-h1"><a href="#export">export</a></li>
+<li class="toc-h2"><a href="#group_export">export</a></li>
+<li class="toc-h1"><a href="#filedeps">filedeps</a></li>
+<li class="toc-h2"><a href="#group_filedeps">filedeps</a></li>
+<li class="toc-h1"><a href="#filemap">filemap</a></li>
+<li class="toc-h2"><a href="#group_filemap">filemap</a></li>
+<li class="toc-h1"><a href="#filter">filter</a></li>
+<li class="toc-h2"><a href="#group_filter">filter</a></li>
+<li class="toc-h1"><a href="#gen">gen</a></li>
+<li class="toc-h2"><a href="#group_genthrift">gen.thrift</a></li>
+<li class="toc-h2"><a href="#group_genprotoc">gen.protoc</a></li>
+<li class="toc-h2"><a href="#group_genantlr">gen.antlr</a></li>
+<li class="toc-h2"><a href="#group_genragel">gen.ragel</a></li>
+<li class="toc-h2"><a href="#group_genjaxb">gen.jaxb</a></li>
+<li class="toc-h2"><a href="#group_genwire">gen.wire</a></li>
+<li class="toc-h2"><a href="#group_genaapt">gen.aapt</a></li>
+<li class="toc-h2"><a href="#group_genscrooge">gen.scrooge</a></li>
+<li class="toc-h2"><a href="#group_genspindle">gen.spindle</a></li>
+<li class="toc-h1"><a href="#goals">goals</a></li>
+<li class="toc-h2"><a href="#group_goals">goals</a></li>
+<li class="toc-h1"><a href="#idea">idea</a></li>
+<li class="toc-h2"><a href="#group_idea">idea</a></li>
+<li class="toc-h1"><a href="#imports">imports</a></li>
+<li class="toc-h2"><a href="#group_importsivyimports">imports.ivy-imports</a></li>
+<li class="toc-h1"><a href="#invalidate">invalidate</a></li>
+<li class="toc-h2"><a href="#group_invalidatengkillall">invalidate.ng-killall</a></li>
+<li class="toc-h2"><a href="#group_invalidate">invalidate</a></li>
+<li class="toc-h1"><a href="#jar">jar</a></li>
+<li class="toc-h2"><a href="#group_jar">jar</a></li>
+<li class="toc-h1"><a href="#killserver">killserver</a></li>
+<li class="toc-h2"><a href="#group_killserver">killserver</a></li>
+<li class="toc-h1"><a href="#list">list</a></li>
+<li class="toc-h2"><a href="#group_list">list</a></li>
+<li class="toc-h1"><a href="#markdown">markdown</a></li>
+<li class="toc-h2"><a href="#group_markdown">markdown</a></li>
+<li class="toc-h1"><a href="#minimize">minimize</a></li>
+<li class="toc-h2"><a href="#group_minimize">minimize</a></li>
+<li class="toc-h1"><a href="#ng-killall">ng-killall</a></li>
+<li class="toc-h2"><a href="#group_ngkillall">ng-killall</a></li>
+<li class="toc-h1"><a href="#path">path</a></li>
+<li class="toc-h2"><a href="#group_path">path</a></li>
+<li class="toc-h1"><a href="#pathdeps">pathdeps</a></li>
+<li class="toc-h2"><a href="#group_pathdeps">pathdeps</a></li>
+<li class="toc-h1"><a href="#paths">paths</a></li>
+<li class="toc-h2"><a href="#group_paths">paths</a></li>
+<li class="toc-h1"><a href="#publish">publish</a></li>
+<li class="toc-h2"><a href="#group_publishjar">publish.jar</a></li>
+<li class="toc-h1"><a href="#repl">repl</a></li>
+<li class="toc-h2"><a href="#group_replpy">repl.py</a></li>
+<li class="toc-h2"><a href="#group_replscala">repl.scala</a></li>
+<li class="toc-h1"><a href="#repl-dirty">repl-dirty</a></li>
+<li class="toc-h2"><a href="#group_repldirtyscaladirty">repl-dirty.scala-dirty</a></li>
+<li class="toc-h1"><a href="#resolve">resolve</a></li>
+<li class="toc-h2"><a href="#group_resolveivy">resolve.ivy</a></li>
+<li class="toc-h1"><a href="#resources">resources</a></li>
+<li class="toc-h2"><a href="#group_resourcesprepare">resources.prepare</a></li>
+<li class="toc-h2"><a href="#group_resourcesservices">resources.services</a></li>
+<li class="toc-h1"><a href="#roots">roots</a></li>
+<li class="toc-h2"><a href="#group_roots">roots</a></li>
+<li class="toc-h1"><a href="#run">run</a></li>
+<li class="toc-h2"><a href="#group_runpy">run.py</a></li>
+<li class="toc-h2"><a href="#group_runjvm">run.jvm</a></li>
+<li class="toc-h2"><a href="#group_runcpprun">run.cpp-run</a></li>
+<li class="toc-h1"><a href="#run-dirty">run-dirty</a></li>
+<li class="toc-h2"><a href="#group_rundirtyjvmdirty">run-dirty.jvm-dirty</a></li>
+<li class="toc-h1"><a href="#server">server</a></li>
+<li class="toc-h2"><a href="#group_server">server</a></li>
+<li class="toc-h1"><a href="#setup-py">setup-py</a></li>
+<li class="toc-h2"><a href="#group_setuppy">setup-py</a></li>
+<li class="toc-h1"><a href="#sign">sign</a></li>
+<li class="toc-h2"><a href="#group_sign">sign</a></li>
+<li class="toc-h1"><a href="#sort">sort</a></li>
+<li class="toc-h2"><a href="#group_sort">sort</a></li>
+<li class="toc-h1"><a href="#targets">targets</a></li>
+<li class="toc-h2"><a href="#group_targets">targets</a></li>
+<li class="toc-h1"><a href="#test">test</a></li>
+<li class="toc-h2"><a href="#group_testrunprepcommand">test.run_prep_command</a></li>
+<li class="toc-h2"><a href="#group_test">test</a></li>
+<li class="toc-h2"><a href="#group_testpytest">test.pytest</a></li>
+<li class="toc-h2"><a href="#group_testjunit">test.junit</a></li>
+<li class="toc-h1"><a href="#test-changed">test-changed</a></li>
+<li class="toc-h2"><a href="#group_testchanged">test-changed</a></li>
+<li class="toc-h1"><a href="#thrift-linter">thrift-linter</a></li>
+<li class="toc-h2"><a href="#group_thriftlinter">thrift-linter</a></li>
+<li class="toc-h1"><a href="#unpack-jars">unpack-jars</a></li>
+<li class="toc-h2"><a href="#group_unpackjars">unpack-jars</a></li>
+<li class="toc-h1"><a href="#Common">Common</a></li>
+</ul>
+</nav>
+
+<!-- main content start -->
+<body>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h1 id="heading_optionsreference_101">Options Reference</h1></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#heading_optionsreference_101">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>
+This page documents Pants options: command-line options, options in a <tt>pants.ini</tt> file.
+These options are organized by <em>goal</em>. Goals are actions that can be taken on build targets.
+A goal identifies some high-level goal that you wish to accomplish, such as compiling your code.
+
+<p>
+Some goals have sub-goals, or <em>tasks</em>. For example, the <tt>compile.jvm</tt> task compiles
+Java code, and is installed in the <tt>compile</tt> goal.
+
+<p><b>Goals and Tasks summary</b>
+<ul>
+<li> <a href="#apk">apk</a> - Build an android bundle with compiled code and assets.
+
+  This class gathers compiled classes (an Android dex archive) and packages it with the
+  target's resource files. The output is an unsigned .apk, an Android application package file.
+  
+  <li> <a href="#bash-completion">bash-completion</a> - Dump bash shell script for autocompletion of pants command lines.
+  <li> <a href="#bench">bench</a> - Run benchmark tests.
+  <li> <a href="#binary">binary</a> - Create a runnable binary.
+  <li> <a href="#bootstrap">bootstrap</a> - Bootstrap tools needed for building.
+  <li> <a href="#builddict">builddict</a> - Generate documentation for the Sphinx site.
+  <li> <a href="#bundle">bundle</a> - Create an application bundle from binary targets.
+  <li> <a href="#changed">changed</a> - Print the targets changed since some prior commit.
+  <li> <a href="#check_published_deps">check_published_deps</a> - Find references to outdated artifacts.
+  <li> <a href="#clean-all">clean-all</a> - Clean all build output.
+  <li> <a href="#clean-all-async">clean-all-async</a> - [deprecated] Clean all build output in a background process.
+  <li> <a href="#compile">compile</a> - Compile source code.
+  <li> <a href="#compile-changed">compile-changed</a> - Compile changed targets.
+  <li> <a href="#deferred-sources">deferred-sources</a> - Map unpacked sources from archives.
+  <li> <a href="#dependees">dependees</a> - Print the target's dependees.
+  <li> <a href="#dependencies">dependencies</a> - Print the target's dependencies.
+  <li> <a href="#depmap">depmap</a> - Depict the target's dependencies.
+  <li> <a href="#detect-duplicates">detect-duplicates</a> - Detect duplicate classes and resources on the classpath.
+  <li> <a href="#doc">doc</a> - Create documentation.
+  <li> <a href="#eclipse">eclipse</a> - Create an Eclipse project from the given targets.
+  <li> <a href="#ensime">ensime</a> - Create an Ensime project from the given targets.
+  <li> <a href="#export">export</a> - Export project information for targets in JSON format. Use with resolve goal to get detailed information about libraries.
+  <li> <a href="#filedeps">filedeps</a> - Print out the source and BUILD files the target depends on.
+  <li> <a href="#filemap">filemap</a> - Outputs a mapping from source file to owning target.
+  <li> <a href="#filter">filter</a> - Filter the input targets based on various criteria.
+
+  Each of the filtering options below is a comma-separated list of filtering criteria, with an
+  implied logical OR between them, so that a target passes the filter if it matches any of the
+  criteria in the list.  A '-' prefix inverts the sense of the entire comma-separated list, so that
+  a target passes the filter only if it matches none of the criteria in the list.
+
+  Each of the filtering options may be specified multiple times, with an implied logical AND
+  between them.
+  
+  <li> <a href="#gen">gen</a> - Generate code.
+  <li> <a href="#goals">goals</a> - List all documented goals.
+  <li> <a href="#idea">idea</a> - Create an IntelliJ IDEA project from the given targets.
+  <li> <a href="#imports">imports</a> - 
+  <li> <a href="#invalidate">invalidate</a> - Invalidate all targets.
+  <li> <a href="#jar">jar</a> - Jars jvm libraries and optionally their sources and their docs.
+  <li> <a href="#killserver">killserver</a> - Kill the reporting server.
+  <li> <a href="#list">list</a> - List available BUILD targets.
+  <li> <a href="#markdown">markdown</a> - Generate html from markdown docs.
+  <li> <a href="#minimize">minimize</a> - Print the minimal cover of the given targets.
+  <li> <a href="#ng-killall">ng-killall</a> - Kill running nailgun servers.
+  <li> <a href="#path">path</a> - Find a dependency path from one target to another.
+  <li> <a href="#pathdeps">pathdeps</a> - Print out all paths containing BUILD files the target depends on.
+  <li> <a href="#paths">paths</a> - Find all dependency paths from one target to another.
+  <li> <a href="#publish">publish</a> - Publish artifacts.
+  <li> <a href="#repl">repl</a> - Run a REPL.
+  <li> <a href="#repl-dirty">repl-dirty</a> - Run a REPL, skipping compilation.
+  <li> <a href="#resolve">resolve</a> - Resolve dependencies and produce dependency reports.
+  <li> <a href="#resources">resources</a> - 
+  <li> <a href="#roots">roots</a> - Print the workspace's source roots and associated target types.
+  <li> <a href="#run">run</a> - Run a binary target.
+  <li> <a href="#run-dirty">run-dirty</a> - Run a binary target, skipping compilation.
+  <li> <a href="#server">server</a> - Run the pants reporting server.
+  <li> <a href="#setup-py">setup-py</a> - Build setup.py-based Python projects from python_library targets.
+  <li> <a href="#sign">sign</a> - Sign Android packages with keystores using the jarsigner tool.
+  <li> <a href="#sort">sort</a> - Topologically sort the targets.
+  <li> <a href="#targets">targets</a> - List target types and BUILD file symbols (python_tests, jar, etc).
+  <li> <a href="#test">test</a> - Test compiled code.
+  <li> <a href="#test-changed">test-changed</a> - Test changed targets.
+  <li> <a href="#thrift-linter">thrift-linter</a> - Check thrift files for non-recommended usage patterns.
+  <li> <a href="#unpack-jars">unpack-jars</a> - Unpack artifacts specified by unpacked_jars() targets.
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+<style>
+div.oref_goal_section {
+  margin-left: 2%;
+}
+div.oref_goal_section h2 {
+  border-top: 4px solid #9bf;
+  margin-left: -2%;
+}
+div.oref_ogroup_section {
+  margin-left: 2%;
+}
+div.oref_ogroup_section h3 {
+  border-top: 1px dotted #bcd;
+  margin-left: -2%;
+}
+</style>
+<div class="oref_goal_section">
+<a id="oref_goal_apk" pantsmark="oref_goal_apk"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="apk">apk</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#apk">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Build an android bundle with compiled code and assets.
+
+  This class gathers compiled classes (an Android dex archive) and packages it with the
+  target's resource files. The output is an unsigned .apk, an Android application package file.
+  
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_apk" pantsmark="oref_cli_apk"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_apk">apk</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_apk">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.android.tasks.aapt_builder.AaptBuilder</code>
+<div>
+<p>Build an android bundle with compiled code and assets.</p>
+<p>This class gathers compiled classes (an Android dex archive) and packages it with the
+target's resource files. The output is an unsigned .apk, an Android application package file.</p>
+</div>
+<ul>
+<li><code>--apk-sdk-path=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Use the Android SDK at this path.
+
+<li><code>--apk-target-sdk=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Use this Android SDK to compile resources. Overrides AndroidManifest.xml.
+
+<li><code>--apk-build-tools-version=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Use this Android build-tools version to compile resources.
+
+<li><code>--apk-ignored-assets=&lt;PATTERN&gt;</code>
+<code>str</code>
+      (Default: <code>!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir&gt;_*:!CVS:!thumbs.db:!picasa.ini:!*~:BUILD*</code>)
+
+      Patterns the aapt tools should ignore as they search the resource_dir.
+
+</li></li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_bash-completion" pantsmark="oref_goal_bash-completion"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="bash-completion">bash-completion</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#bash-completion">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Dump bash shell script for autocompletion of pants command lines.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_bashcompletion" pantsmark="oref_cli_bashcompletion"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_bashcompletion">bash-completion</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_bashcompletion">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.core.tasks.bash_completion.BashCompletionTask</code>
+<div>
+<p>Generate a Bash shell script that teaches Bash how to autocomplete pants command lines.</p>
+</div>
+<ul>
+<li><code>--bash-completion-sep=&lt;separator&gt;</code>
+<code>str</code>
+      (Default: <code>\n</code>)
+
+      String to use to separate results.
+
+<li><code>--bash-completion-output-file=&lt;path&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Write the console output to this file instead.
+
+</li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_bench" pantsmark="oref_goal_bench"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="bench">bench</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#bench">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Run benchmark tests.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_bench" pantsmark="oref_cli_bench"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_bench">bench</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_bench">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.benchmark_run.BenchmarkRun</code>
+<ul>
+<li><code>--bench-confs="['str1','str2',...]" (--bench-confs="['str1','str2',...]") ...</code>
+<code>str</code>
+      (Default: <code>['default']</code>)
+
+      Use only these Ivy configurations of external deps.
+
+<li><code>--bench-target=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Name of the benchmark class. This is a mandatory argument.
+
+<li><code>--[no-]bench-memory</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Enable memory profiling.
+
+</li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_binary" pantsmark="oref_goal_binary"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="binary">binary</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#binary">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Create a runnable binary.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_binarypythonbinarycreate" pantsmark="oref_cli_binarypythonbinarycreate"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_binarypythonbinarycreate">binary.python-binary-create</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_binarypythonbinarycreate">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.python.tasks.python_binary_create.PythonBinaryCreate</code>
+<ul>
+</ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_binary" pantsmark="oref_cli_binary"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_binary">binary</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_binary">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.binary_create.BinaryCreate</code>
+<div>
+<p>Creates a runnable monolithic binary deploy jar.</p>
+</div>
+<ul>
+<li><code>--[no-]binary-use-nailgun</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Use nailgun to make repeated invocations of this task quicker.
+
+</li></ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_binarydup" pantsmark="oref_cli_binarydup"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_binarydup">binary.dup</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_binarydup">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.detect_duplicates.DuplicateDetector</code>
+<div>
+<p>Detect classes and resources with the same qualified name on the classpath.</p>
+</div>
+<ul>
+<li><code>--[no-]binary-dup-use-nailgun</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Use nailgun to make repeated invocations of this task quicker.
+
+<li><code>--[no-]binary-dup-fail-fast</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Fail fast if duplicate classes/resources are found.
+
+<li><code>--binary-dup-excludes="['str1','str2',...]" (--binary-dup-excludes="['str1','str2',...]") ...</code>
+<code>str</code>
+      (Default: <code>['dependencies,license,notice,.DS_Store,notice.txt,cmdline.arg.info.txt.1,license.txt']</code>)
+
+      Case insensitive filenames (without directory) to exclude from duplicate check. Filenames can be specified in a comma-separated list or by using multiple instances of this flag.
+
+<li><code>--binary-dup-max-dups=&lt;int&gt;</code>
+<code>int</code>
+      (Default: <code>10</code>)
+
+      Maximum number of duplicate classes to display per artifact.
+
+</li></li></li></li></ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_binarydex" pantsmark="oref_cli_binarydex"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_binarydex">binary.dex</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_binarydex">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.android.tasks.dx_compile.DxCompile</code>
+<div>
+<p>Compile java classes into dex files, Dalvik executables.</p>
+</div>
+<ul>
+<li><code>--[no-]binary-dex-use-nailgun</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Use nailgun to make repeated invocations of this task quicker.
+
+<li><code>--binary-dex-sdk-path=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Use the Android SDK at this path.
+
+<li><code>--binary-dex-build-tools-version=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Create the dex file using this version of the Android build tools.
+
+<li><code>--binary-dex-jvm-options=&lt;option&gt;... (--binary-dex-jvm-options=&lt;option&gt;...) ...</code>
+<code>str</code>
+      (Default: <code>['-Xmx1g','-XX:MaxPermSize=256m']</code>)
+
+      Run dx with these JVM options.
+
+</li></li></li></li></ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_binarycpplibrary" pantsmark="oref_cli_binarycpplibrary"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_binarycpplibrary">binary.cpp-library</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_binarycpplibrary">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.contrib.cpp.tasks.cpp_library_create.CppLibraryCreate</code>
+<div>
+<p>Builds a static library from C++ sources.</p>
+</div>
+<ul>
+<li><code>--binary-cpp-library-compiler=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Set a specific compiler to use (eg, g++-4.8, clang++)
+
+</li></ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_binarycppbinary" pantsmark="oref_cli_binarycppbinary"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_binarycppbinary">binary.cpp-binary</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_binarycppbinary">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.contrib.cpp.tasks.cpp_binary_create.CppBinaryCreate</code>
+<div>
+<p>Builds an executable file from C++ sources and libraries.</p>
+</div>
+<ul>
+<li><code>--binary-cpp-binary-compiler=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Set a specific compiler to use (eg, g++-4.8, clang++)
+
+<li><code>--binary-cpp-binary-ld-options=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Append these options to the link command line.
+
+</li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_bootstrap" pantsmark="oref_goal_bootstrap"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="bootstrap">bootstrap</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#bootstrap">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Bootstrap tools needed for building.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_bootstrapbootstrapjvmtools" pantsmark="oref_cli_bootstrapbootstrapjvmtools"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_bootstrapbootstrapjvmtools">bootstrap.bootstrap-jvm-tools</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_bootstrapbootstrapjvmtools">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.bootstrap_jvm_tools.BootstrapJvmTools</code>
+<ul>
+<li><code>--[no-]bootstrap-bootstrap-jvm-tools-use-nailgun</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Use nailgun to make repeated invocations of this task quicker.
+
+<li><code></code>
+<code>str</code>
+      (Default: <code>['-Xmx1g','-XX:MaxPermSize=256m']</code>)
+
+      Run Ivy with these extra jvm options.
+
+<li><code>--bootstrap-bootstrap-jvm-tools-jvm-options=&lt;option&gt;... (--bootstrap-bootstrap-jvm-tools-jvm-options=&lt;option&gt;...) ...</code>
+<code>str</code>
+      (Default: <code>['-Xmx1g','-XX:MaxPermSize=256m']</code>)
+
+      Run the tool shader with these extra jvm options.
+
+</li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_builddict" pantsmark="oref_goal_builddict"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="builddict">builddict</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#builddict">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Generate documentation for the Sphinx site.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_builddict" pantsmark="oref_cli_builddict"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_builddict">builddict</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_builddict">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.core.tasks.builddictionary.BuildBuildDictionary</code>
+<div>
+<p>Generate documentation for the Sphinx site.</p>
+</div>
+<ul>
+<li><code>--builddict-omit-impl-re="['str1','str2',...]" (--builddict-omit-impl-re="['str1','str2',...]") ...</code>
+<code>str</code>
+      (Default: <code>[]</code>)
+
+      Omit goals who have a task matching one of these regexps.
+
+</li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_bundle" pantsmark="oref_goal_bundle"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="bundle">bundle</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#bundle">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Create an application bundle from binary targets.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_bundle" pantsmark="oref_cli_bundle"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_bundle">bundle</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_bundle">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.bundle_create.BundleCreate</code>
+<ul>
+<li><code>--[no-]bundle-use-nailgun</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Use nailgun to make repeated invocations of this task quicker.
+
+<li><code>--[no-]bundle-deployjar</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Expand 3rdparty jars into loose classfiles in the bundle's root dir. If unset, the root will contain internal classfiles only, and 3rdparty jars will go into the bundle's libs dir.
+
+<li><code>--bundle-archive=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Create an archive of this type from the bundle.
+
+<li><code>--[no-]bundle-archive-prefix</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      If --archive is specified, use the target basename as the path prefix.
+
+</li></li></li></li></ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_bundledup" pantsmark="oref_cli_bundledup"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_bundledup">bundle.dup</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_bundledup">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.detect_duplicates.DuplicateDetector</code>
+<div>
+<p>Detect classes and resources with the same qualified name on the classpath.</p>
+</div>
+<ul>
+<li><code>--[no-]bundle-dup-use-nailgun</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Use nailgun to make repeated invocations of this task quicker.
+
+<li><code>--[no-]bundle-dup-fail-fast</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Fail fast if duplicate classes/resources are found.
+
+<li><code>--bundle-dup-excludes="['str1','str2',...]" (--bundle-dup-excludes="['str1','str2',...]") ...</code>
+<code>str</code>
+      (Default: <code>['dependencies,license,notice,.DS_Store,notice.txt,cmdline.arg.info.txt.1,license.txt']</code>)
+
+      Case insensitive filenames (without directory) to exclude from duplicate check. Filenames can be specified in a comma-separated list or by using multiple instances of this flag.
+
+<li><code>--bundle-dup-max-dups=&lt;int&gt;</code>
+<code>int</code>
+      (Default: <code>10</code>)
+
+      Maximum number of duplicate classes to display per artifact.
+
+</li></li></li></li></ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_bundlezipalign" pantsmark="oref_cli_bundlezipalign"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_bundlezipalign">bundle.zipalign</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_bundlezipalign">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.android.tasks.zipalign.Zipalign</code>
+<div>
+<p>Task to run zipalign, an archive alignment tool.</p>
+</div>
+<ul>
+<li><code>--bundle-zipalign-sdk-path=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Use the Android SDK at this path.
+
+</li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_changed" pantsmark="oref_goal_changed"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="changed">changed</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#changed">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Print the targets changed since some prior commit.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_changed" pantsmark="oref_cli_changed"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_changed">changed</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_changed">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.core.tasks.what_changed.WhatChanged</code>
+<div>
+<p>Emits the targets that have been modified since a given commit.</p>
+</div>
+<ul>
+<li><code>--changed-sep=&lt;separator&gt;</code>
+<code>str</code>
+      (Default: <code>\n</code>)
+
+      String to use to separate results.
+
+<li><code>--changed-output-file=&lt;path&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Write the console output to this file instead.
+
+<li><code>--[no-]changed-fast</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Stop searching for owners once a source is mapped to at least owning target.
+
+<li><code>--changed-changes-since=&lt;str&gt;/--changed-parent=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Calculate changes since this tree-ish/scm ref (defaults to current HEAD/tip).
+
+<li><code>--changed-diffspec=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Calculate changes contained within given scm spec (commit range/sha/ref/etc).
+
+<li><code>--changed-include-dependees=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>none</code>)
+
+      Include direct or transitive dependees of changed targets.
+
+<li><code>--[no-]changed-files</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Show changed files instead of the targets that own them.
+
+</li></li></li></li></li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_check_published_deps" pantsmark="oref_goal_check_published_deps"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="check_published_deps">check_published_deps</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#check_published_deps">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Find references to outdated artifacts.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_checkpublisheddeps" pantsmark="oref_cli_checkpublisheddeps"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_checkpublisheddeps">check_published_deps</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_checkpublisheddeps">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.check_published_deps.CheckPublishedDeps</code>
+<ul>
+<li><code>--check_published_deps-sep=&lt;separator&gt;</code>
+<code>str</code>
+      (Default: <code>\n</code>)
+
+      String to use to separate results.
+
+<li><code>--check_published_deps-output-file=&lt;path&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Write the console output to this file instead.
+
+<li><code>--[no-]check_published_deps-print-uptodate</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Print up-to-date dependencies.
+
+</li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_clean-all" pantsmark="oref_goal_clean-all"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="clean-all">clean-all</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#clean-all">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Clean all build output.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_cleanallngkillall" pantsmark="oref_cli_cleanallngkillall"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_cleanallngkillall">clean-all.ng-killall</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_cleanallngkillall">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.nailgun_task.NailgunKillall</code>
+<div>
+<p>A task to manually kill nailguns.</p>
+</div>
+<ul>
+<li><code>--[no-]clean-all-ng-killall-everywhere</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Kill all nailguns servers launched by pants for all workspaces on the system.
+
+</li></ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_cleanallinvalidate" pantsmark="oref_cli_cleanallinvalidate"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_cleanallinvalidate">clean-all.invalidate</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_cleanallinvalidate">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.core.tasks.clean.Invalidator</code>
+<div>
+<p>Invalidate the entire build.</p>
+</div>
+<ul>
+</ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_cleanall" pantsmark="oref_cli_cleanall"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_cleanall">clean-all</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_cleanall">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.core.tasks.clean.Cleaner</code>
+<div>
+<p>Clean all current build products.</p>
+</div>
+<ul>
+</ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_clean-all-async" pantsmark="oref_goal_clean-all-async"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="clean-all-async">clean-all-async</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#clean-all-async">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>[deprecated] Clean all build output in a background process.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_cleanallasyncngkillall" pantsmark="oref_cli_cleanallasyncngkillall"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_cleanallasyncngkillall">clean-all-async.ng-killall</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_cleanallasyncngkillall">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.nailgun_task.NailgunKillall</code>
+<div>
+<p>A task to manually kill nailguns.</p>
+</div>
+<ul>
+<li><code>--[no-]clean-all-async-ng-killall-everywhere</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Kill all nailguns servers launched by pants for all workspaces on the system.
+
+</li></ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_cleanallasyncinvalidate" pantsmark="oref_cli_cleanallasyncinvalidate"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_cleanallasyncinvalidate">clean-all-async.invalidate</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_cleanallasyncinvalidate">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.core.tasks.clean.Invalidator</code>
+<div>
+<p>Invalidate the entire build.</p>
+</div>
+<ul>
+</ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_cleanallasync" pantsmark="oref_cli_cleanallasync"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_cleanallasync">clean-all-async</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_cleanallasync">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.core.register.AsyncCleaner</code>
+<ul>
+</ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_compile" pantsmark="oref_goal_compile"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="compile">compile</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#compile">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Compile source code.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_compile" pantsmark="oref_cli_compile"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_compile">compile</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_compile">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.core.tasks.noop.NoopCompile</code>
+<div>
+<p>A no-op that provides a product type that can be used to force scheduling.</p>
+</div>
+<ul>
+</ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_compilejvm" pantsmark="oref_cli_compilejvm"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_compilejvm">compile.jvm</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_compilejvm">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.core.tasks.group_task.SingletonGroupTask</code>
+<ul>
+</ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_compilepythoneval" pantsmark="oref_cli_compilepythoneval"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_compilepythoneval">compile.python-eval</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_compilepythoneval">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.python.tasks.python_eval.PythonEval</code>
+<ul>
+<li><code>--[no-]compile-python-eval-fail-slow</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Compile all targets and present the full list of errors.
+
+<li><code>--[no-]compile-python-eval-closure</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Eval all targets in the closure individually instead of just the targets specified on the command line.
+
+</li></li></ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_compilecheckstyle" pantsmark="oref_cli_compilecheckstyle"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_compilecheckstyle">compile.checkstyle</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_compilecheckstyle">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.checkstyle.Checkstyle</code>
+<ul>
+<li><code>--[no-]compile-checkstyle-use-nailgun</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Use nailgun to make repeated invocations of this task quicker.
+
+<li><code>--[no-]compile-checkstyle-skip</code>
+<code>bool</code>
+      (Default: <code>None</code>)
+
+      Skip checkstyle.
+
+<li><code>--compile-checkstyle-configuration=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>&lt;buildroot&gt;/build-support/checkstyle/coding_style.xml</code>)
+
+      Path to the checkstyle configuration file.
+
+<li><code>--compile-checkstyle-properties="{ 'key1': val1,'key2': val2,...}"</code>
+<code>dict_type</code>
+      (Default: <code>{  }</code>)
+
+      Dictionary of property mappings to use for checkstyle.properties.
+
+<li><code>--compile-checkstyle-confs=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>[u'default']</code>)
+
+      One or more ivy configurations to resolve for this target. This parameter is not intended for general use.
+
+</li></li></li></li></li></ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_compilescalastyle" pantsmark="oref_cli_compilescalastyle"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_compilescalastyle">compile.scalastyle</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_compilescalastyle">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.scalastyle.Scalastyle</code>
+<div>
+<p>Checks scala source files to ensure they're stylish.</p>
+<p>Scalastyle only checks scala sources in non-synthetic targets.</p>
+</div>
+<ul>
+<li><code>--[no-]compile-scalastyle-use-nailgun</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Use nailgun to make repeated invocations of this task quicker.
+
+<li><code>--[no-]compile-scalastyle-skip</code>
+<code>bool</code>
+      (Default: <code>None</code>)
+
+      Skip scalastyle.
+
+</li></li></ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_compilecppcompile" pantsmark="oref_cli_compilecppcompile"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_compilecppcompile">compile.cpp-compile</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_compilecppcompile">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.contrib.cpp.tasks.cpp_compile.CppCompile</code>
+<div>
+<p>Compiles object files from C++ sources.</p>
+</div>
+<ul>
+<li><code>--compile-cpp-compile-compiler=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Set a specific compiler to use (eg, g++-4.8, clang++)
+
+<li><code>--compile-cpp-compile-cc-options=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Append these options to the compiler command line.
+
+<li><code>--compile-cpp-compile-cc-extensions=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>[u'cc', u'cxx', u'cpp']</code>)
+
+      The list of extensions (without the .) to consider when determining if a file is a C++ source file.
+
+</li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_compile-changed" pantsmark="oref_goal_compile-changed"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="compile-changed">compile-changed</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#compile-changed">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Compile changed targets.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_compilechanged" pantsmark="oref_cli_compilechanged"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_compilechanged">compile-changed</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_compilechanged">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.core.tasks.changed_target_goals.CompileChanged</code>
+<div>
+<p>Find and compile changed targets.</p>
+</div>
+<ul>
+<li><code>--[no-]compile-changed-fast</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Stop searching for owners once a source is mapped to at least owning target.
+
+<li><code>--compile-changed-changes-since=&lt;str&gt;/--compile-changed-parent=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Calculate changes since this tree-ish/scm ref (defaults to current HEAD/tip).
+
+<li><code>--compile-changed-diffspec=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Calculate changes contained within given scm spec (commit range/sha/ref/etc).
+
+<li><code>--compile-changed-include-dependees=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>none</code>)
+
+      Include direct or transitive dependees of changed targets.
+
+</li></li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_deferred-sources" pantsmark="oref_goal_deferred-sources"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="deferred-sources">deferred-sources</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#deferred-sources">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Map unpacked sources from archives.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_deferredsources" pantsmark="oref_cli_deferredsources"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_deferredsources">deferred-sources</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_deferredsources">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.core.tasks.deferred_sources_mapper.DeferredSourcesMapper</code>
+<div>
+<p>Map DeferredSorucesFields to files that produce product 'unpacked_archives', like UnpackJars</p>
+<p>If you want a task to be able to map sources like this, make it require the  'deferred_sources'
+product.</p>
+</div>
+<ul>
+</ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_dependees" pantsmark="oref_goal_dependees"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="dependees">dependees</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#dependees">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Print the target's dependees.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_dependees" pantsmark="oref_cli_dependees"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_dependees">dependees</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_dependees">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.core.tasks.dependees.ReverseDepmap</code>
+<div>
+<p>Outputs all targets whose dependencies include at least one of the input targets.</p>
+</div>
+<ul>
+<li><code>--dependees-sep=&lt;separator&gt;</code>
+<code>str</code>
+      (Default: <code>\n</code>)
+
+      String to use to separate results.
+
+<li><code>--dependees-output-file=&lt;path&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Write the console output to this file instead.
+
+<li><code>--[no-]dependees-transitive</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      List transitive dependees.
+
+<li><code>--[no-]dependees-closed</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Include the input targets in the output along with the dependees.
+
+<li><code>--dependees-type="['str1','str2',...]" (--dependees-type="['str1','str2',...]") ...</code>
+<code>str</code>
+      (Default: <code>[]</code>)
+
+      Identifies target types to include. Multiple type inclusions can be specified at once in a comma separated list or else by using multiple instances of this flag.
+
+</li></li></li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_dependencies" pantsmark="oref_goal_dependencies"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="dependencies">dependencies</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#dependencies">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Print the target's dependencies.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_dependencies" pantsmark="oref_cli_dependencies"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_dependencies">dependencies</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_dependencies">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.project_info.tasks.dependencies.Dependencies</code>
+<div>
+<p>Generates a textual list (using the target format) for the dependency set of a target.</p>
+</div>
+<ul>
+<li><code>--dependencies-sep=&lt;separator&gt;</code>
+<code>str</code>
+      (Default: <code>\n</code>)
+
+      String to use to separate results.
+
+<li><code>--dependencies-output-file=&lt;path&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Write the console output to this file instead.
+
+<li><code>--[no-]dependencies-internal-only</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Specifies that only internal dependencies should be included in the graph output (no external jars).
+
+<li><code>--[no-]dependencies-external-only</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Specifies that only external dependencies should be included in the graph output (only external jars).
+
+</li></li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_depmap" pantsmark="oref_goal_depmap"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="depmap">depmap</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#depmap">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Depict the target's dependencies.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_depmap" pantsmark="oref_cli_depmap"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_depmap">depmap</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_depmap">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.project_info.tasks.depmap.Depmap</code>
+<div>
+<p>Generates either a textual dependency tree or a graphviz digraph dot file for the dependency
+set of a target.</p>
+</div>
+<ul>
+<li><code>--depmap-sep=&lt;separator&gt;</code>
+<code>str</code>
+      (Default: <code>\n</code>)
+
+      String to use to separate results.
+
+<li><code>--depmap-output-file=&lt;path&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Write the console output to this file instead.
+
+<li><code>--[no-]depmap-internal-only</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Specifies that only internal dependencies should be included in the graph output (no external jars).
+
+<li><code>--[no-]depmap-external-only</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Specifies that only external dependencies should be included in the graph output (only external jars).
+
+<li><code>--[no-]depmap-minimal</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      For a textual dependency tree, only prints a dependency the 1st time it is encountered. This is a no-op for --graph.
+
+<li><code>--[no-]depmap-graph</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Specifies the internal dependency graph should be output in the dot digraph format.
+
+<li><code>--[no-]depmap-tree</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      For text output, show an ascii tree to help visually line up indentions.
+
+<li><code>--[no-]depmap-show-types</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Show types of objects in depmap --graph.
+
+<li><code>--depmap-separator=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>-</code>)
+
+      Specifies the separator to use between the org/name/rev components of a dependency's fully qualified name.
+
+<li><code>--depmap-path-to=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Show only items on the path to the given target. This is a no-op for --graph.
+
+</li></li></li></li></li></li></li></li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_detect-duplicates" pantsmark="oref_goal_detect-duplicates"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="detect-duplicates">detect-duplicates</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#detect-duplicates">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Detect duplicate classes and resources on the classpath.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_detectduplicates" pantsmark="oref_cli_detectduplicates"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_detectduplicates">detect-duplicates</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_detectduplicates">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.detect_duplicates.DuplicateDetector</code>
+<div>
+<p>Detect classes and resources with the same qualified name on the classpath.</p>
+</div>
+<ul>
+<li><code>--[no-]detect-duplicates-use-nailgun</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Use nailgun to make repeated invocations of this task quicker.
+
+<li><code>--[no-]detect-duplicates-fail-fast</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Fail fast if duplicate classes/resources are found.
+
+<li><code>--detect-duplicates-excludes="['str1','str2',...]" (--detect-duplicates-excludes="['str1','str2',...]") ...</code>
+<code>str</code>
+      (Default: <code>['dependencies,license,notice,.DS_Store,notice.txt,cmdline.arg.info.txt.1,license.txt']</code>)
+
+      Case insensitive filenames (without directory) to exclude from duplicate check. Filenames can be specified in a comma-separated list or by using multiple instances of this flag.
+
+<li><code>--detect-duplicates-max-dups=&lt;int&gt;</code>
+<code>int</code>
+      (Default: <code>10</code>)
+
+      Maximum number of duplicate classes to display per artifact.
+
+</li></li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_doc" pantsmark="oref_goal_doc"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="doc">doc</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#doc">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Create documentation.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_docjavadoc" pantsmark="oref_cli_docjavadoc"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_docjavadoc">doc.javadoc</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_docjavadoc">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.javadoc_gen.JavadocGen</code>
+<ul>
+<li><code>--doc-javadoc-confs="['str1','str2',...]" (--doc-javadoc-confs="['str1','str2',...]") ...</code>
+<code>str</code>
+      (Default: <code>['default']</code>)
+
+      Use only these Ivy configurations of external deps.
+
+<li><code>--[no-]doc-javadoc-include-codegen</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Create javadoc for generated code.
+
+<li><code>--[no-]doc-javadoc-transitive</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Create javadoc for the transitive closure of internal targets reachable from the roots specified on the command line.
+
+<li><code>--[no-]doc-javadoc-combined</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Generate javadoc for all targets combined, instead of each target individually.
+
+<li><code>--[no-]doc-javadoc-open</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Open the generated javadoc in a browser (implies --combined).
+
+<li><code>--[no-]doc-javadoc-ignore-failure</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Do not consider javadoc errors to be build errors.
+
+<li><code>--[no-]doc-javadoc-skip</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Skip javadoc generation.
+
+</li></li></li></li></li></li></li></ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_docscaladoc" pantsmark="oref_cli_docscaladoc"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_docscaladoc">doc.scaladoc</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_docscaladoc">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.scaladoc_gen.ScaladocGen</code>
+<ul>
+<li><code>--doc-scaladoc-confs="['str1','str2',...]" (--doc-scaladoc-confs="['str1','str2',...]") ...</code>
+<code>str</code>
+      (Default: <code>['default']</code>)
+
+      Use only these Ivy configurations of external deps.
+
+<li><code>--[no-]doc-scaladoc-include-codegen</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Create scaladoc for generated code.
+
+<li><code>--[no-]doc-scaladoc-transitive</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Create scaladoc for the transitive closure of internal targets reachable from the roots specified on the command line.
+
+<li><code>--[no-]doc-scaladoc-combined</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Generate scaladoc for all targets combined, instead of each target individually.
+
+<li><code>--[no-]doc-scaladoc-open</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Open the generated scaladoc in a browser (implies --combined).
+
+<li><code>--[no-]doc-scaladoc-ignore-failure</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Do not consider scaladoc errors to be build errors.
+
+<li><code>--[no-]doc-scaladoc-skip</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Skip scaladoc generation.
+
+</li></li></li></li></li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_eclipse" pantsmark="oref_goal_eclipse"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="eclipse">eclipse</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#eclipse">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Create an Eclipse project from the given targets.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_eclipse" pantsmark="oref_cli_eclipse"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_eclipse">eclipse</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_eclipse">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.project_info.tasks.eclipse_gen.EclipseGen</code>
+<ul>
+<li><code>--eclipse-project-name=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>project</code>)
+
+      Specifies the name to use for the generated project.
+
+<li><code>--eclipse-project-dir=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Specifies the directory to output the generated project files to.
+
+<li><code>--eclipse-project-cwd=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Specifies the directory the generated project should use as the cwd for processes it launches.  Note that specifying this trumps --eclipse-project-dir and not all project related files will be stored there.
+
+<li><code>--[no-]eclipse-intransitive</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Limits the sources included in the generated project to just those owned by the targets specified on the command line.
+
+<li><code>--[no-]eclipse-python</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Adds python support to the generated project configuration.
+
+<li><code>--[no-]eclipse-java</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Includes java sources in the project; otherwise compiles them and adds them to the project classpath.
+
+<li><code>--eclipse-java-language-level=&lt;int&gt;</code>
+<code>int</code>
+      (Default: <code>7</code>)
+
+      Sets the java language and jdk used to compile the project's java sources.
+
+<li><code>--eclipse-java-jdk-name=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Sets the jdk used to compile the project's java sources. If unset the default jdk name for the --java-language-level is used
+
+<li><code>--[no-]eclipse-scala</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Includes scala sources in the project; otherwise compiles them and adds them to the project classpath.
+
+<li><code>--[no-]eclipse-use-source-root</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Use source_root() settings to collapse sourcepaths in project and determine which paths are used for tests.  This is usually what you want if your repo  uses a maven style directory layout.
+
+<li><code>--[no-]eclipse-infer-test-from-siblings</code>
+<code>bool</code>
+      (Default: <code>None</code>)
+
+      When determining if a path should be added to the IDE, check to see if any of its sibling source_root() entries define test targets.  This is usually what you want so that resource directories under test source roots are picked up as test paths.
+
+<li><code>--eclipse-debug_port=&lt;int&gt;</code>
+<code>int</code>
+      (Default: <code>5005</code>)
+
+      Port to use for launching tasks under the debugger.
+
+<li><code>--[no-]eclipse-source-jars</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Pull source jars from external dependencies into the project.
+
+<li><code>--[no-]eclipse-javadoc-jars</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Pull javadoc jars from external dependencies into the project
+
+<li><code>--eclipse-version=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>3.6</code>)
+
+      The Eclipse version the project configuration should be generated for.
+
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_ensime" pantsmark="oref_goal_ensime"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="ensime">ensime</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#ensime">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Create an Ensime project from the given targets.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_ensime" pantsmark="oref_cli_ensime"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_ensime">ensime</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_ensime">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.project_info.tasks.ensime_gen.EnsimeGen</code>
+<ul>
+<li><code>--ensime-project-name=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>project</code>)
+
+      Specifies the name to use for the generated project.
+
+<li><code>--ensime-project-dir=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Specifies the directory to output the generated project files to.
+
+<li><code>--ensime-project-cwd=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Specifies the directory the generated project should use as the cwd for processes it launches.  Note that specifying this trumps --ensime-project-dir and not all project related files will be stored there.
+
+<li><code>--[no-]ensime-intransitive</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Limits the sources included in the generated project to just those owned by the targets specified on the command line.
+
+<li><code>--[no-]ensime-python</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Adds python support to the generated project configuration.
+
+<li><code>--[no-]ensime-java</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Includes java sources in the project; otherwise compiles them and adds them to the project classpath.
+
+<li><code>--ensime-java-language-level=&lt;int&gt;</code>
+<code>int</code>
+      (Default: <code>7</code>)
+
+      Sets the java language and jdk used to compile the project's java sources.
+
+<li><code>--ensime-java-jdk-name=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Sets the jdk used to compile the project's java sources. If unset the default jdk name for the --java-language-level is used
+
+<li><code>--[no-]ensime-scala</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Includes scala sources in the project; otherwise compiles them and adds them to the project classpath.
+
+<li><code>--[no-]ensime-use-source-root</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Use source_root() settings to collapse sourcepaths in project and determine which paths are used for tests.  This is usually what you want if your repo  uses a maven style directory layout.
+
+<li><code>--[no-]ensime-infer-test-from-siblings</code>
+<code>bool</code>
+      (Default: <code>None</code>)
+
+      When determining if a path should be added to the IDE, check to see if any of its sibling source_root() entries define test targets.  This is usually what you want so that resource directories under test source roots are picked up as test paths.
+
+<li><code>--ensime-debug_port=&lt;int&gt;</code>
+<code>int</code>
+      (Default: <code>5005</code>)
+
+      Port to use for launching tasks under the debugger.
+
+<li><code>--[no-]ensime-source-jars</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Pull source jars from external dependencies into the project.
+
+<li><code>--[no-]ensime-javadoc-jars</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Pull javadoc jars from external dependencies into the project
+
+<li><code>--ensime-scala-language-level=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>2.10</code>)
+
+      Set the scala language level used for Ensime linting.
+
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_export" pantsmark="oref_goal_export"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="export">export</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#export">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Export project information for targets in JSON format. Use with resolve goal to get detailed information about libraries.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_export" pantsmark="oref_cli_export"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_export">export</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_export">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.project_info.tasks.export.Export</code>
+<div>
+<p>Generates a JSON description of the targets as configured in pants.</p>
+<p>Intended for exporting project information for IDE, such as the IntelliJ Pants plugin.</p>
+</div>
+<ul>
+<li><code>--export-sep=&lt;separator&gt;</code>
+<code>str</code>
+      (Default: <code>\n</code>)
+
+      String to use to separate results.
+
+<li><code>--export-output-file=&lt;path&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Write the console output to this file instead.
+
+<li><code>--[no-]export-formatted</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Causes output to be a single line of JSON.
+
+<li><code>--[no-]export-libraries</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Causes libraries to be output.
+
+<li><code>--[no-]export-libraries-sources</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Causes libraries with sources to be output.
+
+<li><code>--[no-]export-libraries-javadocs</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Causes libraries with javadocs to be output.
+
+<li><code>--[no-]export-sources</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Causes sources to be output.
+
+</li></li></li></li></li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_filedeps" pantsmark="oref_goal_filedeps"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="filedeps">filedeps</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#filedeps">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Print out the source and BUILD files the target depends on.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_filedeps" pantsmark="oref_cli_filedeps"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_filedeps">filedeps</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_filedeps">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.project_info.tasks.filedeps.FileDeps</code>
+<div>
+<p>List all transitive file dependencies of the targets specified on the command line.</p>
+<p>Files are listed with absolute paths and any BUILD files implied in the transitive closure of
+targets are also included.</p>
+</div>
+<ul>
+<li><code>--filedeps-sep=&lt;separator&gt;</code>
+<code>str</code>
+      (Default: <code>\n</code>)
+
+      String to use to separate results.
+
+<li><code>--filedeps-output-file=&lt;path&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Write the console output to this file instead.
+
+<li><code>--[no-]filedeps-globs</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Instead of outputting filenames, output globs (ignoring excludes)
+
+</li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_filemap" pantsmark="oref_goal_filemap"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="filemap">filemap</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#filemap">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Outputs a mapping from source file to owning target.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_filemap" pantsmark="oref_cli_filemap"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_filemap">filemap</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_filemap">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.core.tasks.filemap.Filemap</code>
+<div>
+<p>Outputs a mapping from source file to the target that owns the source file.</p>
+</div>
+<ul>
+<li><code>--filemap-sep=&lt;separator&gt;</code>
+<code>str</code>
+      (Default: <code>\n</code>)
+
+      String to use to separate results.
+
+<li><code>--filemap-output-file=&lt;path&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Write the console output to this file instead.
+
+</li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_filter" pantsmark="oref_goal_filter"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="filter">filter</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#filter">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Filter the input targets based on various criteria.
+
+  Each of the filtering options below is a comma-separated list of filtering criteria, with an
+  implied logical OR between them, so that a target passes the filter if it matches any of the
+  criteria in the list.  A '-' prefix inverts the sense of the entire comma-separated list, so that
+  a target passes the filter only if it matches none of the criteria in the list.
+
+  Each of the filtering options may be specified multiple times, with an implied logical AND
+  between them.
+  
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_filter" pantsmark="oref_cli_filter"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_filter">filter</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_filter">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.core.tasks.filter.Filter</code>
+<div>
+<p>Filter the input targets based on various criteria.</p>
+<p>Each of the filtering options below is a comma-separated list of filtering criteria, with an
+implied logical OR between them, so that a target passes the filter if it matches any of the
+criteria in the list.  A '-' prefix inverts the sense of the entire comma-separated list, so that
+a target passes the filter only if it matches none of the criteria in the list.</p>
+<p>Each of the filtering options may be specified multiple times, with an implied logical AND
+between them.</p>
+</div>
+<ul>
+<li><code>--filter-sep=&lt;separator&gt;</code>
+<code>str</code>
+      (Default: <code>\n</code>)
+
+      String to use to separate results.
+
+<li><code>--filter-output-file=&lt;path&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Write the console output to this file instead.
+
+<li><code>--filter-type=[+-]type1,type2,... (--filter-type=[+-]type1,type2,...) ...</code>
+<code>str</code>
+      (Default: <code>[]</code>)
+
+      Filter on these target types.
+
+<li><code>--filter-target=[+-]spec1,spec2,... (--filter-target=[+-]spec1,spec2,...) ...</code>
+<code>str</code>
+      (Default: <code>[]</code>)
+
+      Filter on these target addresses.
+
+<li><code>--filter-ancestor=[+-]spec1,spec2,... (--filter-ancestor=[+-]spec1,spec2,...) ...</code>
+<code>str</code>
+      (Default: <code>[]</code>)
+
+      Filter on targets that these targets depend on.
+
+<li><code>--filter-regex=[+-]regex1,regex2,... (--filter-regex=[+-]regex1,regex2,...) ...</code>
+<code>str</code>
+      (Default: <code>[]</code>)
+
+      Filter on target addresses matching these regexes.
+
+<li><code>--filter-tag=[+-]tag1,tag2,... (--filter-tag=[+-]tag1,tag2,...) ...</code>
+<code>str</code>
+      (Default: <code>[]</code>)
+
+      Filter on targets with these tags.
+
+<li><code>--filter-tag-regex=[+-]regex1,regex2,... (--filter-tag-regex=[+-]regex1,regex2,...) ...</code>
+<code>str</code>
+      (Default: <code>[]</code>)
+
+      Filter on targets with tags matching these regexes.
+
+</li></li></li></li></li></li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_gen" pantsmark="oref_goal_gen"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="gen">gen</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#gen">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Generate code.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_genthrift" pantsmark="oref_cli_genthrift"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_genthrift">gen.thrift</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_genthrift">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.codegen.tasks.apache_thrift_gen.ApacheThriftGen</code>
+<ul>
+<li><code>--gen-thrift-lang="['str1','str2',...]" (--gen-thrift-lang="['str1','str2',...]") ...</code>
+<code>str</code>
+      (Default: <code>[]</code>)
+
+      Force generation of thrift code for these languages.
+
+<li><code>--[no-]gen-thrift-strict</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Run thrift compiler with strict warnings.
+
+</li></li></ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_genprotoc" pantsmark="oref_cli_genprotoc"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_genprotoc">gen.protoc</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_genprotoc">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.codegen.tasks.protobuf_gen.ProtobufGen</code>
+<ul>
+</ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_genantlr" pantsmark="oref_cli_genantlr"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_genantlr">gen.antlr</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_genantlr">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.codegen.tasks.antlr_gen.AntlrGen</code>
+<ul>
+<li><code>--[no-]gen-antlr-use-nailgun</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Use nailgun to make repeated invocations of this task quicker.
+
+</li></ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_genragel" pantsmark="oref_cli_genragel"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_genragel">gen.ragel</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_genragel">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.codegen.tasks.ragel_gen.RagelGen</code>
+<ul>
+</ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_genjaxb" pantsmark="oref_cli_genjaxb"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_genjaxb">gen.jaxb</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_genjaxb">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.codegen.tasks.jaxb_gen.JaxbGen</code>
+<div>
+<p>Generates java source files from jaxb schema (.xsd).</p>
+</div>
+<ul>
+<li><code>--[no-]gen-jaxb-use-nailgun</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Use nailgun to make repeated invocations of this task quicker.
+
+</li></ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_genwire" pantsmark="oref_cli_genwire"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_genwire">gen.wire</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_genwire">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.codegen.tasks.wire_gen.WireGen</code>
+<ul>
+<li><code>--gen-wire-javadeps="['str1','str2',...]"</code>
+<code>list_type</code>
+      (Default: <code>['//:wire-runtime']</code>)
+
+      Runtime dependencies for wire-using Java code.
+
+</li></ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_genaapt" pantsmark="oref_cli_genaapt"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_genaapt">gen.aapt</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_genaapt">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.android.tasks.aapt_gen.AaptGen</code>
+<div>
+<p>Handle the processing of resources for Android targets with the
+Android Asset Packaging Tool (aapt).</p>
+<p>The aapt tool supports 6 major commands: [dump, list, add, remove, crunch, package]
+For right now, pants is only supporting 'package'. More to come as we support Release builds
+(crunch, at minimum).</p>
+<p>Commands and flags for aapt can be seen here:
+<a class="reference external" href="https://android.googlesource.com/platform/frameworks/base/+/master/tools/aapt/Command.cpp">https://android.googlesource.com/platform/frameworks/base/+/master/tools/aapt/Command.cpp</a></p>
+</div>
+<ul>
+<li><code>--gen-aapt-sdk-path=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Use the Android SDK at this path.
+
+<li><code>--gen-aapt-target-sdk=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Use this Android SDK to compile resources. Overrides AndroidManifest.xml.
+
+<li><code>--gen-aapt-build-tools-version=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Use this Android build-tools version to compile resources.
+
+<li><code>--gen-aapt-ignored-assets=&lt;PATTERN&gt;</code>
+<code>str</code>
+      (Default: <code>!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir&gt;_*:!CVS:!thumbs.db:!picasa.ini:!*~:BUILD*</code>)
+
+      Patterns the aapt tools should ignore as they search the resource_dir.
+
+</li></li></li></li></ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_genscrooge" pantsmark="oref_cli_genscrooge"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_genscrooge">gen.scrooge</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_genscrooge">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.contrib.scrooge.tasks.scrooge_gen.ScroogeGen</code>
+<ul>
+<li><code>--[no-]gen-scrooge-use-nailgun</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Use nailgun to make repeated invocations of this task quicker.
+
+<li><code>--[no-]gen-scrooge-verbose</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Emit verbose output.
+
+<li><code>--[no-]gen-scrooge-strict</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Enable strict compilation.
+
+</li></li></li></ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_genspindle" pantsmark="oref_cli_genspindle"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_genspindle">gen.spindle</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_genspindle">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.contrib.spindle.tasks.spindle_gen.SpindleGen</code>
+<ul>
+<li><code>--[no-]gen-spindle-use-nailgun</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Use nailgun to make repeated invocations of this task quicker.
+
+</li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_goals" pantsmark="oref_goal_goals"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="goals">goals</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#goals">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>List all documented goals.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_goals" pantsmark="oref_cli_goals"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_goals">goals</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_goals">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.core.tasks.list_goals.ListGoals</code>
+<ul>
+<li><code>--goals-sep=&lt;separator&gt;</code>
+<code>str</code>
+      (Default: <code>\n</code>)
+
+      String to use to separate results.
+
+<li><code>--goals-output-file=&lt;path&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Write the console output to this file instead.
+
+<li><code>--[no-]goals-graph</code>
+<code>bool</code>
+      (Default: <code>None</code>)
+
+      Generate a graphviz graph of installed goals.
+
+<li><code>--[no-]goals-all</code>
+<code>bool</code>
+      (Default: <code>None</code>)
+
+      List all goals even if no description is available.
+
+</li></li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_idea" pantsmark="oref_goal_idea"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="idea">idea</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#idea">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Create an IntelliJ IDEA project from the given targets.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_idea" pantsmark="oref_cli_idea"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_idea">idea</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_idea">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.project_info.tasks.idea_gen.IdeaGen</code>
+<ul>
+<li><code>--idea-project-name=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>project</code>)
+
+      Specifies the name to use for the generated project.
+
+<li><code>--idea-project-dir=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>&lt;buildroot&gt;/sandbox/users/jsirois/ide-projects/idea</code>)
+
+      Specifies the directory to output the generated project files to.
+
+<li><code>--idea-project-cwd=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>&lt;buildroot&gt;</code>)
+
+      Specifies the directory the generated project should use as the cwd for processes it launches.  Note that specifying this trumps --idea-project-dir and not all project related files will be stored there.
+
+<li><code>--[no-]idea-intransitive</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Limits the sources included in the generated project to just those owned by the targets specified on the command line.
+
+<li><code>--[no-]idea-python</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Adds python support to the generated project configuration.
+
+<li><code>--[no-]idea-java</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Includes java sources in the project; otherwise compiles them and adds them to the project classpath.
+
+<li><code>--idea-java-language-level=&lt;int&gt;</code>
+<code>int</code>
+      (Default: <code>6</code>)
+
+      Sets the java language and jdk used to compile the project's java sources.
+
+<li><code>--idea-java-jdk-name=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Sets the jdk used to compile the project's java sources. If unset the default jdk name for the --java-language-level is used
+
+<li><code>--[no-]idea-scala</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Includes scala sources in the project; otherwise compiles them and adds them to the project classpath.
+
+<li><code>--[no-]idea-use-source-root</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Use source_root() settings to collapse sourcepaths in project and determine which paths are used for tests.  This is usually what you want if your repo  uses a maven style directory layout.
+
+<li><code>--[no-]idea-infer-test-from-siblings</code>
+<code>bool</code>
+      (Default: <code>None</code>)
+
+      When determining if a path should be added to the IDE, check to see if any of its sibling source_root() entries define test targets.  This is usually what you want so that resource directories under test source roots are picked up as test paths.
+
+<li><code>--idea-debug_port=&lt;int&gt;</code>
+<code>int</code>
+      (Default: <code>5005</code>)
+
+      Port to use for launching tasks under the debugger.
+
+<li><code>--[no-]idea-source-jars</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Pull source jars from external dependencies into the project.
+
+<li><code>--[no-]idea-javadoc-jars</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Pull javadoc jars from external dependencies into the project
+
+<li><code>--idea-version=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>11</code>)
+
+      The IntelliJ IDEA version the project config should be generated for.
+
+<li><code>--[no-]idea-merge</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Merge any manual customizations in existing Intellij IDEA configuration. If False, manual customizations will be over-written.
+
+<li><code>--[no-]idea-open</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Attempts to open the generated project in IDEA.
+
+<li><code>--[no-]idea-bash</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Adds a bash facet to the generated project configuration.
+
+<li><code>--idea-scala-language-level=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>2.11</code>)
+
+      Set the scala language level used for IDEA linting.
+
+<li><code>--idea-scala-maximum-heap-size-mb=&lt;int&gt;</code>
+<code>int</code>
+      (Default: <code>1024</code>)
+
+      Sets the maximum heap size (in megabytes) for scalac.
+
+<li><code>--[no-]idea-fsc</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      If the project contains any scala targets this specifies the fsc compiler should be enabled.
+
+<li><code>--idea-java-encoding=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>UTF-8</code>)
+
+      Sets the file encoding for java files in this project.
+
+<li><code>--idea-java-maximum-heap-size-mb=&lt;int&gt;</code>
+<code>int</code>
+      (Default: <code>1024</code>)
+
+      Sets the maximum heap size (in megabytes) for javac.
+
+<li><code>--[no-]idea-exclude-maven-target</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Exclude 'target' directories for directories containing pom.xml files.  These directories contain generated code andcopies of files staged for deployment.
+
+<li><code>--idea-exclude_folders="['str1','str2',...]" (--idea-exclude_folders="['str1','str2',...]") ...</code>
+<code>str</code>
+      (Default: <code>['.pants.d/compile','.pants.d/ivy','.pants.d/python','.pants.d/resources']</code>)
+
+      Adds folders to be excluded from the project configuration.
+
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_imports" pantsmark="oref_goal_imports"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="imports">imports</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#imports">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_importsivyimports" pantsmark="oref_cli_importsivyimports"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_importsivyimports">imports.ivy-imports</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_importsivyimports">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.ivy_imports.IvyImports</code>
+<div>
+<p>Resolves all jar files for the import_jar_libraries property on a target.</p>
+<p>Looks for targets that have an ImportJarsMixin.</p>
+<p>One use case is for  JavaProtobufLibrary, which includes imports for jars
+containing .proto files.</p>
+</div>
+<ul>
+<li><code>--[no-]imports-ivy-imports-use-nailgun</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Use nailgun to make repeated invocations of this task quicker.
+
+<li><code>--imports-ivy-imports-jvm-options=&lt;option&gt;... (--imports-ivy-imports-jvm-options=&lt;option&gt;...) ...</code>
+<code>str</code>
+      (Default: <code>['-Xmx1g','-XX:MaxPermSize=256m']</code>)
+
+      Run Ivy with these extra jvm options.
+
+</li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_invalidate" pantsmark="oref_goal_invalidate"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="invalidate">invalidate</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#invalidate">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Invalidate all targets.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_invalidatengkillall" pantsmark="oref_cli_invalidatengkillall"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_invalidatengkillall">invalidate.ng-killall</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_invalidatengkillall">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.nailgun_task.NailgunKillall</code>
+<div>
+<p>A task to manually kill nailguns.</p>
+</div>
+<ul>
+<li><code>--[no-]invalidate-ng-killall-everywhere</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Kill all nailguns servers launched by pants for all workspaces on the system.
+
+</li></ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_invalidate" pantsmark="oref_cli_invalidate"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_invalidate">invalidate</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_invalidate">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.core.tasks.clean.Invalidator</code>
+<div>
+<p>Invalidate the entire build.</p>
+</div>
+<ul>
+</ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_jar" pantsmark="oref_goal_jar"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="jar">jar</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#jar">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Jars jvm libraries and optionally their sources and their docs.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_jar" pantsmark="oref_cli_jar"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_jar">jar</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_jar">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.jar_create.JarCreate</code>
+<div>
+<p>Jars jvm libraries and optionally their sources and their docs.</p>
+</div>
+<ul>
+<li><code>--[no-]jar-use-nailgun</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Use nailgun to make repeated invocations of this task quicker.
+
+<li><code>--[no-]jar-compressed</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Create compressed jars.
+
+</li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_killserver" pantsmark="oref_goal_killserver"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="killserver">killserver</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#killserver">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Kill the reporting server.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_killserver" pantsmark="oref_cli_killserver"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_killserver">killserver</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_killserver">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.core.tasks.reporting_server.KillServer</code>
+<div>
+<p>Kills the reporting server.</p>
+</div>
+<ul>
+</ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_list" pantsmark="oref_goal_list"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="list">list</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#list">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>List available BUILD targets.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_list" pantsmark="oref_cli_list"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_list">list</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_list">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.core.tasks.listtargets.ListTargets</code>
+<div>
+<p>Lists all targets matching the target specs.</p>
+<p>If no targets are specified, lists all targets in the workspace.</p>
+</div>
+<ul>
+<li><code>--list-sep=&lt;separator&gt;</code>
+<code>str</code>
+      (Default: <code>\n</code>)
+
+      String to use to separate results.
+
+<li><code>--list-output-file=&lt;path&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Write the console output to this file instead.
+
+<li><code>--[no-]list-provides</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      List only targets that provide an artifact, displaying the columns specified by --provides-columns.
+
+<li><code>--list-provides-columns=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>address,artifact_id</code>)
+
+      Display these columns when --provides is specified. Available columns are: address, artifact_id, repo_name, repo_url, push_db_basedir
+
+<li><code>--[no-]list-documented</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Print only targets that are documented with a description.
+
+</li></li></li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_markdown" pantsmark="oref_goal_markdown"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="markdown">markdown</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#markdown">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Generate html from markdown docs.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_markdown" pantsmark="oref_cli_markdown"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_markdown">markdown</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_markdown">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.core.tasks.markdown_to_html.MarkdownToHtml</code>
+<ul>
+<li><code>--markdown-code-style=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>friendly</code>)
+
+      Use this stylesheet for code highlights.
+
+<li><code>--[no-]markdown-open</code>
+<code>bool</code>
+      (Default: <code>None</code>)
+
+      Open the generated documents in a browser.
+
+<li><code>--[no-]markdown-fragment</code>
+<code>bool</code>
+      (Default: <code>None</code>)
+
+      Generate a fragment of html to embed in a page.
+
+<li><code>--[no-]markdown-ignore-failure</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Do not consider rendering errors to be build errors.
+
+</li></li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_minimize" pantsmark="oref_goal_minimize"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="minimize">minimize</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#minimize">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Print the minimal cover of the given targets.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_minimize" pantsmark="oref_cli_minimize"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_minimize">minimize</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_minimize">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.core.tasks.minimal_cover.MinimalCover</code>
+<div>
+<p>Outputs a minimal covering set of targets.</p>
+<p>For a given set of input targets, the output targets transitive dependency set will include all
+the input targets without gaps.</p>
+</div>
+<ul>
+<li><code>--minimize-sep=&lt;separator&gt;</code>
+<code>str</code>
+      (Default: <code>\n</code>)
+
+      String to use to separate results.
+
+<li><code>--minimize-output-file=&lt;path&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Write the console output to this file instead.
+
+</li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_ng-killall" pantsmark="oref_goal_ng-killall"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="ng-killall">ng-killall</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#ng-killall">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Kill running nailgun servers.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_ngkillall" pantsmark="oref_cli_ngkillall"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_ngkillall">ng-killall</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_ngkillall">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.nailgun_task.NailgunKillall</code>
+<div>
+<p>A task to manually kill nailguns.</p>
+</div>
+<ul>
+<li><code>--[no-]ng-killall-everywhere</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Kill all nailguns servers launched by pants for all workspaces on the system.
+
+</li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_path" pantsmark="oref_goal_path"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="path">path</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#path">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Find a dependency path from one target to another.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_path" pantsmark="oref_cli_path"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_path">path</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_path">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.core.tasks.paths.Path</code>
+<ul>
+<li><code>--path-sep=&lt;separator&gt;</code>
+<code>str</code>
+      (Default: <code>\n</code>)
+
+      String to use to separate results.
+
+<li><code>--path-output-file=&lt;path&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Write the console output to this file instead.
+
+</li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_pathdeps" pantsmark="oref_goal_pathdeps"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="pathdeps">pathdeps</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#pathdeps">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Print out all paths containing BUILD files the target depends on.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_pathdeps" pantsmark="oref_cli_pathdeps"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_pathdeps">pathdeps</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_pathdeps">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.core.tasks.pathdeps.PathDeps</code>
+<ul>
+<li><code>--pathdeps-sep=&lt;separator&gt;</code>
+<code>str</code>
+      (Default: <code>\n</code>)
+
+      String to use to separate results.
+
+<li><code>--pathdeps-output-file=&lt;path&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Write the console output to this file instead.
+
+</li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_paths" pantsmark="oref_goal_paths"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="paths">paths</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#paths">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Find all dependency paths from one target to another.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_paths" pantsmark="oref_cli_paths"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_paths">paths</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_paths">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.core.tasks.paths.Paths</code>
+<ul>
+<li><code>--paths-sep=&lt;separator&gt;</code>
+<code>str</code>
+      (Default: <code>\n</code>)
+
+      String to use to separate results.
+
+<li><code>--paths-output-file=&lt;path&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Write the console output to this file instead.
+
+</li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_publish" pantsmark="oref_goal_publish"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="publish">publish</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#publish">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Publish artifacts.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_publishjar" pantsmark="oref_cli_publishjar"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_publishjar">publish.jar</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_publishjar">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.jar_publish.JarPublish</code>
+<div>
+<p>Publish jars to a maven repository.</p>
+<p>At a high-level, pants uses <a class="reference external" href="http://ant.apache.org/ivy/">Apache Ivy</a> to
+publish artifacts to Maven-style repositories. Pants performs prerequisite
+tasks like compiling, creating jars, and generating <tt class="docutils literal">pom.xml</tt> files then
+invokes Ivy to actually publish the artifacts, so publishing is largely
+configured in <tt class="docutils literal">ivysettings.xml</tt>. <tt class="docutils literal">BUILD</tt> and <tt class="docutils literal">pants.ini</tt> files
+primarily provide linkage between publishable targets and the
+Ivy <tt class="docutils literal">resolvers</tt> used to publish them.</p>
+<p>The following target types are publishable:
+<a class="reference external" href="build_dictionary.html#java_library">java_library</a>,
+<a class="reference external" href="build_dictionary.html#scala_library">scala_library</a>,
+<a class="reference external" href="build_dictionary.html#java_thrift_library">java_thrift_library</a>,
+<a class="reference external" href="build_dictionary.html#annotation_processor">annotation_processor</a>.
+Targets to publish and their dependencies must be publishable target
+types and specify the <tt class="docutils literal">provides</tt> argument. One exception is
+<a class="reference external" href="build_dictionary.html#jar">jar</a>s - pants will generate a pom file that
+depends on the already-published jar.</p>
+<p>Example usage:</p>
+<pre class="literal-block">
+# By default pants will perform a dry-run.
+./pants clean-all publish src/java/com/twitter/mybird
+
+# Actually publish.
+./pants clean-all publish src/java/com/twitter/mybird --no-publish-dryrun
+</pre>
+<p>Please see <tt class="docutils literal">./pants publish <span class="pre">-h</span></tt> for a detailed description of all
+publishing options.</p>
+<p>Publishing can be configured with the following options:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">--repos</span></tt> - Required dictionary of settings for repos that may be pushed to.</li>
+<li><tt class="docutils literal"><span class="pre">--jvm-options</span></tt> - Optional list of JVM command-line args when invoking Ivy.</li>
+<li><tt class="docutils literal"><span class="pre">--restrict-push-branches</span></tt> - Optional list of branches to restrict publishing to.</li>
+</ul>
+<p>Example repos dictionary:</p>
+<pre class="literal-block">
+repos = {
+  # repository target name is paired with this key
+  'myrepo': {
+    # ivysettings.xml resolver to use for publishing
+    'resolver': 'maven.example.com',
+    # ivy configurations to publish
+    'confs': ['default', 'sources', 'javadoc'],
+    # address of a Credentials target to use when publishing
+    'auth': 'address/of/credentials:target',
+    # help message if unable to initialize the Credentials target.
+    'help': 'Please check your credentials and try again.',
+  },
+}
+</pre>
+</div>
+<ul>
+<li><code>--[no-]publish-jar-use-nailgun</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Use nailgun to make repeated invocations of this task quicker.
+
+<li><code>--publish-jar-scm-push-attempts=&lt;int&gt;</code>
+<code>int</code>
+      (Default: <code>5</code>)
+
+      Try pushing the pushdb to the SCM this many times before aborting.
+
+<li><code>--[no-]publish-jar-dryrun</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Run through a push without actually pushing artifacts, editing publish dbs or otherwise writing data
+
+<li><code>--[no-]publish-jar-commit</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Commit the push db. Turn off for local testing.
+
+<li><code>--publish-jar-local=&lt;PATH&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Publish jars to a maven repository on the local filesystem at this path.
+
+<li><code>--[no-]publish-jar-local-snapshot</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      If --local is specified, publishes jars with -SNAPSHOT revision suffixes.
+
+<li><code>--publish-jar-named-snapshot=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Publish all artifacts with the given snapshot name, replacing their version. This is not Semantic Versioning compatible, but is easier to consume in cases where many artifacts must align.
+
+<li><code>--[no-]publish-jar-transitive</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Publish the specified targets and all their internal dependencies transitively.
+
+<li><code>--[no-]publish-jar-force</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Force pushing jars even if there have been no changes since the last push.
+
+<li><code>--publish-jar-override="['str1','str2',...]" (--publish-jar-override="['str1','str2',...]") ...</code>
+<code>str</code>
+      (Default: <code>[]</code>)
+
+      Specifies a published jar revision override in the form: ([org]#[name]|[target spec])=[new revision] For example, to specify 2 overrides: --override=com.foo.bar#baz=0.1.2  --override=src/java/com/foo/bar/qux=1.0.0
+
+<li><code>--publish-jar-restart-at=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Restart a fail push at the given jar.  Jars can be identified by maven coordinate [org]#[name] or target. For example: --restart-at=com.twitter.common#quantity Or: --restart-at=src/java/com/twitter/common/base
+
+<li><code>--[no-]publish-jar-changelog</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      A changelog.txt file will be created and printed to the console for each artifact published
+
+</li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_repl" pantsmark="oref_goal_repl"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="repl">repl</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#repl">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Run a REPL.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_replpy" pantsmark="oref_cli_replpy"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_replpy">repl.py</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_replpy">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.python.tasks.python_repl.PythonRepl</code>
+<ul>
+<li><code>--[no-]repl-py-ipython</code>
+<code>bool</code>
+      (Default: <code>None</code>)
+
+      Run an IPython REPL instead of the standard python one.
+
+</li></ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_replscala" pantsmark="oref_cli_replscala"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_replscala">repl.scala</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_replscala">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.scala_repl.ScalaRepl</code>
+<ul>
+<li><code>--repl-scala-confs="['str1','str2',...]" (--repl-scala-confs="['str1','str2',...]") ...</code>
+<code>str</code>
+      (Default: <code>['default']</code>)
+
+      Use only these Ivy configurations of external deps.
+
+<li><code>--repl-scala-main=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>scala.tools.nsc.MainGenericRunner</code>)
+
+      The entry point for running the repl.
+
+</li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_repl-dirty" pantsmark="oref_goal_repl-dirty"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="repl-dirty">repl-dirty</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#repl-dirty">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Run a REPL, skipping compilation.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_repldirtyscaladirty" pantsmark="oref_cli_repldirtyscaladirty"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_repldirtyscaladirty">repl-dirty.scala-dirty</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_repldirtyscaladirty">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.scala_repl.ScalaRepl</code>
+<ul>
+<li><code>--repl-dirty-scala-dirty-confs="['str1','str2',...]" (--repl-dirty-scala-dirty-confs="['str1','str2',...]") ...</code>
+<code>str</code>
+      (Default: <code>['default']</code>)
+
+      Use only these Ivy configurations of external deps.
+
+<li><code>--repl-dirty-scala-dirty-main=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>scala.tools.nsc.MainGenericRunner</code>)
+
+      The entry point for running the repl.
+
+</li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_resolve" pantsmark="oref_goal_resolve"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="resolve">resolve</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#resolve">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Resolve dependencies and produce dependency reports.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_resolveivy" pantsmark="oref_cli_resolveivy"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_resolveivy">resolve.ivy</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_resolveivy">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.ivy_resolve.IvyResolve</code>
+<ul>
+<li><code>--[no-]resolve-ivy-use-nailgun</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Use nailgun to make repeated invocations of this task quicker.
+
+<li><code>--resolve-ivy-jvm-options=&lt;option&gt;... (--resolve-ivy-jvm-options=&lt;option&gt;...) ...</code>
+<code>str</code>
+      (Default: <code>['-Xmx1g','-XX:MaxPermSize=256m']</code>)
+
+      Run Ivy with these extra jvm options.
+
+<li><code>--resolve-ivy-override="['str1','str2',...]" (--resolve-ivy-override="['str1','str2',...]") ...</code>
+<code>str</code>
+      (Default: <code>[]</code>)
+
+      Specifies a jar dependency override in the form: [org]#[name]=(revision|url) Multiple overrides can be specified using repeated invocations of this flag. For example, to specify 2 overrides: --override=com.foo#bar=0.1.2 --override=com.baz#spam=file:///tmp/spam.jar
+
+<li><code>--[no-]resolve-ivy-report</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Generate an ivy resolve html report
+
+<li><code>--[no-]resolve-ivy-open</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Attempt to open the generated ivy resolve report in a browser (implies --report)
+
+<li><code>--resolve-ivy-outdir=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>&lt;buildroot&gt;/dist</code>)
+
+      Emit ivy report outputs in to this directory.
+
+<li><code>--resolve-ivy-args="['str1','str2',...]" (--resolve-ivy-args="['str1','str2',...]") ...</code>
+<code>str</code>
+      (Default: <code>[]</code>)
+
+      Pass these extra args to ivy.
+
+<li><code>--resolve-ivy-confs="['str1','str2',...]" (--resolve-ivy-confs="['str1','str2',...]") ...</code>
+<code>str</code>
+      (Default: <code>['default']</code>)
+
+      Pass a configuration to ivy in addition to the default ones.
+
+<li><code>--resolve-ivy-mutable-pattern=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      If specified, all artifact revisions matching this pattern will be treated as mutable unless a matching artifact explicitly marks mutable as False.
+
+</li></li></li></li></li></li></li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_resources" pantsmark="oref_goal_resources"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="resources">resources</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#resources">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_resourcesprepare" pantsmark="oref_cli_resourcesprepare"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_resourcesprepare">resources.prepare</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_resourcesprepare">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.prepare_resources.PrepareResources</code>
+<div>
+<p>Prepares loose resource files associated with a target.</p>
+<p>Currently this task does no form of resource filtering, it just copies resource files to
+dedicated, isolated resource chroots for use in the classpath as well as for packaging purposes.</p>
+</div>
+<ul>
+</ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_resourcesservices" pantsmark="oref_cli_resourcesservices"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_resourcesservices">resources.services</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_resourcesservices">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.prepare_services.PrepareServices</code>
+<div>
+<p>Generates service provider configuration for targets that host service implementations.</p>
+<p>This automates maintenance of jvm service provider configuration files as described here:
+<a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p>
+</div>
+<ul>
+</ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_roots" pantsmark="oref_goal_roots"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="roots">roots</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#roots">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Print the workspace's source roots and associated target types.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_roots" pantsmark="oref_cli_roots"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_roots">roots</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_roots">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.core.tasks.roots.ListRoots</code>
+<div>
+<p>List the registered source roots of the repo.</p>
+</div>
+<ul>
+<li><code>--roots-sep=&lt;separator&gt;</code>
+<code>str</code>
+      (Default: <code>\n</code>)
+
+      String to use to separate results.
+
+<li><code>--roots-output-file=&lt;path&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Write the console output to this file instead.
+
+</li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_run" pantsmark="oref_goal_run"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="run">run</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#run">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Run a binary target.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_runpy" pantsmark="oref_cli_runpy"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_runpy">run.py</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_runpy">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.python.tasks.python_run.PythonRun</code>
+<ul>
+<li><code>--run-py-args="['str1','str2',...]" (--run-py-args="['str1','str2',...]") ...</code>
+<code>str</code>
+      (Default: <code>[]</code>)
+
+      Run with these extra args to main().
+
+</li></ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_runjvm" pantsmark="oref_cli_runjvm"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_runjvm">run.jvm</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_runjvm">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.jvm_run.JvmRun</code>
+<ul>
+<li><code>--run-jvm-confs="['str1','str2',...]" (--run-jvm-confs="['str1','str2',...]") ...</code>
+<code>str</code>
+      (Default: <code>['default']</code>)
+
+      Use only these Ivy configurations of external deps.
+
+<li><code>--run-jvm-only-write-cmd-line=&lt;file&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Instead of running, just write the cmd line to this file.
+
+<li><code>--run-jvm-cwd=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>CWD NOT PRESENT</code>)
+
+      Set the working directory. If no argument is passed, use the target path.
+
+<li><code>--run-jvm-main=&lt;main class&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Invoke this class (overrides "main"" attribute in jvm_binary targets)
+
+</li></li></li></li></ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_runcpprun" pantsmark="oref_cli_runcpprun"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_runcpprun">run.cpp-run</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_runcpprun">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.contrib.cpp.tasks.cpp_run.CppRun</code>
+<div>
+<p>Runs a cpp binary</p>
+</div>
+<ul>
+<li><code>--run-cpp-run-compiler=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Set a specific compiler to use (eg, g++-4.8, clang++)
+
+<li><code>--run-cpp-run-args="['str1','str2',...]" (--run-cpp-run-args="['str1','str2',...]") ...</code>
+<code>str</code>
+      (Default: <code>[]</code>)
+
+      Append these options to the executable command line.
+
+</li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_run-dirty" pantsmark="oref_goal_run-dirty"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="run-dirty">run-dirty</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#run-dirty">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Run a binary target, skipping compilation.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_rundirtyjvmdirty" pantsmark="oref_cli_rundirtyjvmdirty"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_rundirtyjvmdirty">run-dirty.jvm-dirty</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_rundirtyjvmdirty">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.jvm_run.JvmRun</code>
+<ul>
+<li><code>--run-dirty-jvm-dirty-confs="['str1','str2',...]" (--run-dirty-jvm-dirty-confs="['str1','str2',...]") ...</code>
+<code>str</code>
+      (Default: <code>['default']</code>)
+
+      Use only these Ivy configurations of external deps.
+
+<li><code>--run-dirty-jvm-dirty-only-write-cmd-line=&lt;file&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Instead of running, just write the cmd line to this file.
+
+<li><code>--run-dirty-jvm-dirty-cwd=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>CWD NOT PRESENT</code>)
+
+      Set the working directory. If no argument is passed, use the target path.
+
+<li><code>--run-dirty-jvm-dirty-main=&lt;main class&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Invoke this class (overrides "main"" attribute in jvm_binary targets)
+
+</li></li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_server" pantsmark="oref_goal_server"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="server">server</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#server">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Run the pants reporting server.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_server" pantsmark="oref_cli_server"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_server">server</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_server">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.core.tasks.reporting_server.RunServer</code>
+<div>
+<p>Runs the reporting server.</p>
+</div>
+<ul>
+<li><code>--server-port=&lt;int&gt;</code>
+<code>int</code>
+      (Default: <code>0</code>)
+
+      Serve on this port. Leave unset to choose a free port automatically (recommended if using pants concurrently in multiple workspaces on the same host).
+
+<li><code>--server-allowed-clients="['str1','str2',...]" (--server-allowed-clients="['str1','str2',...]") ...</code>
+<code>str</code>
+      (Default: <code>['127.0.0.1']</code>)
+
+      Only requests from these IPs may access this server. Useful for temporarily showing build results to a colleague. The special value ALL means any client may connect. Use with caution, as your source code is exposed to all allowed clients!
+
+<li><code>--[no-]server-open</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Attempt to open the server web ui in a browser.
+
+</li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_setup-py" pantsmark="oref_goal_setup-py"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="setup-py">setup-py</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#setup-py">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Build setup.py-based Python projects from python_library targets.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_setuppy" pantsmark="oref_cli_setuppy"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_setuppy">setup-py</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_setuppy">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.python.tasks.setup_py.SetupPy</code>
+<div>
+<p>Generate setup.py-based Python projects from python_library targets.</p>
+</div>
+<ul>
+<li><code>--setup-py-run=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      The command to run against setup.py.  Don't forget to quote any additional parameters.  If no run command is specified, pants will by default generate and dump the source distribution.
+
+<li><code>--[no-]setup-py-recursive</code>
+<code>bool</code>
+      (Default: <code>None</code>)
+
+      Transitively run setup_py on all provided downstream targets.
+
+</li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_sign" pantsmark="oref_goal_sign"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="sign">sign</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#sign">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Sign Android packages with keystores using the jarsigner tool.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_sign" pantsmark="oref_cli_sign"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_sign">sign</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_sign">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.android.tasks.sign_apk.SignApkTask</code>
+<div>
+<p>Sign Android packages with keystores using the jarsigner tool.</p>
+</div>
+<ul>
+<li><code>--sign-keystore-config-location=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>/home/jsirois/.config/pants/android/keystore/default_config.ini</code>)
+
+      Location of the .ini file containing keystore definitions.
+
+</li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_sort" pantsmark="oref_goal_sort"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="sort">sort</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#sort">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Topologically sort the targets.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_sort" pantsmark="oref_cli_sort"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_sort">sort</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_sort">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.core.tasks.sorttargets.SortTargets</code>
+<ul>
+<li><code>--sort-sep=&lt;separator&gt;</code>
+<code>str</code>
+      (Default: <code>\n</code>)
+
+      String to use to separate results.
+
+<li><code>--sort-output-file=&lt;path&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Write the console output to this file instead.
+
+<li><code>--[no-]sort-reverse</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Sort least-dependent to most-dependent.
+
+</li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_targets" pantsmark="oref_goal_targets"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="targets">targets</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#targets">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>List target types and BUILD file symbols (python_tests, jar, etc).
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_targets" pantsmark="oref_cli_targets"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_targets">targets</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_targets">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.core.tasks.targets_help.TargetsHelp</code>
+<div>
+<p>Show online help for symbols usable in BUILD files (java_library, etc).</p>
+</div>
+<ul>
+<li><code>--targets-sep=&lt;separator&gt;</code>
+<code>str</code>
+      (Default: <code>\n</code>)
+
+      String to use to separate results.
+
+<li><code>--targets-output-file=&lt;path&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Write the console output to this file instead.
+
+<li><code>--targets-details=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Display details about the specific target type or BUILD symbol.
+
+</li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_test" pantsmark="oref_goal_test"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="test">test</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#test">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Test compiled code.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_testrunprepcommand" pantsmark="oref_cli_testrunprepcommand"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_testrunprepcommand">test.run_prep_command</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_testrunprepcommand">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.core.tasks.run_prep_command.RunPrepCommand</code>
+<ul>
+</ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_test" pantsmark="oref_cli_test"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_test">test</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_test">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.core.tasks.noop.NoopTest</code>
+<div>
+<p>A no-op that provides a product type that can be used to force scheduling.</p>
+</div>
+<ul>
+</ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_testpytest" pantsmark="oref_cli_testpytest"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_testpytest">test.pytest</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_testpytest">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.python.tasks.pytest_run.PytestRun</code>
+<ul>
+<li><code>--[no-]test-pytest-fast</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Run all tests in a single chroot. If turned off, each test target will create a new chroot, which will be much slower, but more correct, as theisolation verifies that all dependencies are correctly declared.
+
+<li><code>--[no-]test-pytest-fail-slow</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Do not fail fast on the first test failure in a suite; instead run all tests and report errors only after all tests complete.
+
+<li><code>--test-pytest-junit-xml-dir=&lt;DIR&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Specifying a directory causes junit xml results files to be emitted under that dir for each test run.
+
+<li><code>--test-pytest-profile=&lt;FILE&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Specifying a file path causes tests to be profiled with the profiling data emitted to that file (prefix). Note that tests may run in a different cwd, so it's best to use an absolute path to make it easy to find the subprocess profiles later.
+
+<li><code>--test-pytest-options="['str1','str2',...]" (--test-pytest-options="['str1','str2',...]") ...</code>
+<code>str</code>
+      (Default: <code>[]</code>)
+
+      Pass these options to pytest.
+
+<li><code>--test-pytest-coverage=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Emit coverage information for specified paths/modules. Value has two forms: "module:list,of,modules" or "path:list,of,paths"
+
+<li><code>--test-pytest-shard=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Subset of tests to run, in the form M/N, 0 &lt;= M &lt; N. For example, 1/3 means run tests number 2, 5, 8, 11, ...
+
+</li></li></li></li></li></li></li></ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_testjunit" pantsmark="oref_cli_testjunit"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_testjunit">test.junit</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_testjunit">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.junit_run.JUnitRun</code>
+<ul>
+<li><code>--test-junit-confs="['str1','str2',...]" (--test-junit-confs="['str1','str2',...]") ...</code>
+<code>str</code>
+      (Default: <code>['default']</code>)
+
+      Use only these Ivy configurations of external deps.
+
+<li><code>--[no-]test-junit-skip</code>
+<code>bool</code>
+      (Default: <code>None</code>)
+
+      Skip running junit.
+
+<li><code>--[no-]test-junit-fail-fast</code>
+<code>bool</code>
+      (Default: <code>None</code>)
+
+      Fail fast on the first test failure in a suite.
+
+<li><code>--test-junit-batch-size=&lt;int&gt;</code>
+<code>int</code>
+      (Default: <code>9223372036854775807</code>)
+
+      Run at most this many tests in a single test process.
+
+<li><code>--test-junit-test="['str1','str2',...]" (--test-junit-test="['str1','str2',...]") ...</code>
+<code>str</code>
+      (Default: <code>[]</code>)
+
+      Force running of just these tests.  Tests can be specified using any of: [classname], [classname]#[methodname], [filename] or [filename]#[methodname]
+
+<li><code>--[no-]test-junit-per-test-timer</code>
+<code>bool</code>
+      (Default: <code>None</code>)
+
+      Show progress and timer for each test.
+
+<li><code>--[no-]test-junit-default-parallel</code>
+<code>bool</code>
+      (Default: <code>None</code>)
+
+      Run classes without @TestParallel or @TestSerial annotations in parallel.
+
+<li><code>--test-junit-parallel-threads=&lt;int&gt;</code>
+<code>int</code>
+      (Default: <code>0</code>)
+
+      Number of threads to run tests in parallel. 0 for autoset.
+
+<li><code>--test-junit-test-shard=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Subset of tests to run, in the form M/N, 0 &lt;= M &lt; N. For example, 1/3 means run tests number 2, 5, 8, 11, ...
+
+<li><code>--[no-]test-junit-suppress-output</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Redirect test output to files in .pants.d/test/junit.
+
+<li><code>--test-junit-cwd=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Set the working directory. If no argument is passed, use the build root. If cwd is set on a target, it will supersede this argument.
+
+<li><code>--test-junit-coverage-patterns="['str1','str2',...]" (--test-junit-coverage-patterns="['str1','str2',...]") ...</code>
+<code>str</code>
+      (Default: <code>[]</code>)
+
+      Restrict coverage measurement. Values are class name prefixes in dotted form with ? and * wildcards. If preceded with a - the pattern is excluded. For example, to include all code in org.pantsbuild.raven except claws and the eye you would use: --coverage_patterns=org.pantsbuild.raven.* --coverage_patterns=-org.pantsbuild.raven.claw --coverage_patterns=-org.pantsbuild.raven.Eye.
+
+<li><code>--test-junit-coverage-jvm-options="['str1','str2',...]" (--test-junit-coverage-jvm-options="['str1','str2',...]") ...</code>
+<code>str</code>
+      (Default: <code>[]</code>)
+
+      JVM flags to be added when running the coverage processor. For example: --coverage-jvm-options=-Xmx4g --coverage-jvm-options=-XX:MaxPermSize=1g
+
+<li><code>--[no-]test-junit-coverage-console</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Output a simple coverage report to the console.
+
+<li><code>--[no-]test-junit-coverage-xml</code>
+<code>bool</code>
+      (Default: <code>None</code>)
+
+      Output an XML coverage report.
+
+<li><code>--[no-]test-junit-coverage-html</code>
+<code>bool</code>
+      (Default: <code>None</code>)
+
+      Output an HTML coverage report.
+
+<li><code>--[no-]test-junit-coverage-html-open</code>
+<code>bool</code>
+      (Default: <code>None</code>)
+
+      Open the generated HTML coverage report in a browser. Implies --coverage-html.
+
+<li><code>--[no-]test-junit-coverage-force</code>
+<code>bool</code>
+      (Default: <code>None</code>)
+
+      Attempt to run the reporting phase of coverage even if tests failed (defaults to False, as otherwise the coverage results would be unreliable).
+
+<li><code>--[no-]test-junit-coverage</code>
+<code>bool</code>
+      (Default: <code>None</code>)
+
+      Collect code coverage data.
+
+<li><code>--test-junit-coverage-processor=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>emma</code>)
+
+      Which coverage subsystem to use.
+
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_test-changed" pantsmark="oref_goal_test-changed"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="test-changed">test-changed</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#test-changed">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Test changed targets.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_testchanged" pantsmark="oref_cli_testchanged"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_testchanged">test-changed</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_testchanged">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.core.tasks.changed_target_goals.TestChanged</code>
+<div>
+<p>Find and test changed targets.</p>
+</div>
+<ul>
+<li><code>--[no-]test-changed-fast</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Stop searching for owners once a source is mapped to at least owning target.
+
+<li><code>--test-changed-changes-since=&lt;str&gt;/--test-changed-parent=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Calculate changes since this tree-ish/scm ref (defaults to current HEAD/tip).
+
+<li><code>--test-changed-diffspec=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Calculate changes contained within given scm spec (commit range/sha/ref/etc).
+
+<li><code>--test-changed-include-dependees=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>none</code>)
+
+      Include direct or transitive dependees of changed targets.
+
+</li></li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_thrift-linter" pantsmark="oref_goal_thrift-linter"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="thrift-linter">thrift-linter</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#thrift-linter">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Check thrift files for non-recommended usage patterns.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_thriftlinter" pantsmark="oref_cli_thriftlinter"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_thriftlinter">thrift-linter</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_thriftlinter">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.contrib.scrooge.tasks.thrift_linter.ThriftLinter</code>
+<div>
+<p>Print linter warnings for thrift files.</p>
+</div>
+<ul>
+<li><code>--[no-]thrift-linter-use-nailgun</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Use nailgun to make repeated invocations of this task quicker.
+
+<li><code>--[no-]thrift-linter-skip</code>
+<code>bool</code>
+      (Default: <code>None</code>)
+
+      Skip thrift linting.
+
+<li><code>--[no-]thrift-linter-strict</code>
+<code>bool</code>
+      (Default: <code>None</code>)
+
+      Fail the goal if thrift linter errors are found. Overrides the `strict-default` option.
+
+</li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_unpack-jars" pantsmark="oref_goal_unpack-jars"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="unpack-jars">unpack-jars</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#unpack-jars">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Unpack artifacts specified by unpacked_jars() targets.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_unpackjars" pantsmark="oref_cli_unpackjars"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_unpackjars">unpack-jars</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_unpackjars">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.unpack_jars.UnpackJars</code>
+<div>
+<p>Looks for UnpackedJars targets and unpacks them.</p>
+<p>Adds an entry to SourceRoot for the contents.  Initially only
+supported by JavaProtobufLibrary.</p>
+</div>
+<ul>
+</ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="Common">Common</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#Common">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>
+These command-line flags are available with all Pants goals.
+
+<ul>
+<li><code>--pants-workdir=&lt;dir&gt;</code>
+<code>str</code>
+      (Default: <code>&lt;buildroot&gt;/.pants.d</code>)
+
+      Write intermediate output files to this dir.
+
+<li><code>--pants-supportdir=&lt;dir&gt;</code>
+<code>str</code>
+      (Default: <code>&lt;buildroot&gt;/build-support</code>)
+
+      Use support files from this dir.
+
+<li><code>--pants-distdir=&lt;dir&gt;</code>
+<code>str</code>
+      (Default: <code>&lt;buildroot&gt;/dist</code>)
+
+      Write end-product artifacts to this dir.
+
+<li><code>--config-override=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      A second config file, to override pants.ini.
+
+<li><code>--[no-]pantsrc</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Use pantsrc files.
+
+<li><code>--pantsrc-files=&lt;path&gt; (--pantsrc-files=&lt;path&gt;) ...</code>
+<code>str</code>
+      (Default: <code>['/etc/pantsrc','~/.pants.rc']</code>)
+
+      Override config with values from these files. Later files override earlier ones.
+
+<li><code>--pythonpath="['str1','str2',...]" (--pythonpath="['str1','str2',...]") ...</code>
+<code>str</code>
+      (Default: <code>['&lt;buildroot&gt;/pants-plugins/src/python','&lt;buildroot&gt;/contrib/scrooge/src/python','&lt;buildroot&gt;/contrib/spindle/src/python','&lt;buildroot&gt;/contrib/cpp/src/python']</code>)
+
+      Add these directories to PYTHONPATH to search for plugins.
+
+<li><code>--target-spec-file="['str1','str2',...]" (--target-spec-file="['str1','str2',...]") ...</code>
+<code>str</code>
+      (Default: <code>[]</code>)
+
+      Read additional specs from this file, one per line
+
+<li><code>-d=&lt;dir&gt;/--logdir=&lt;dir&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Write logs to files under this directory.
+
+<li><code>-l=&lt;str&gt;/--level=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>info</code>)
+
+      Set the logging level.
+
+<li><code>-q/--[no-]quiet</code>
+<code>bool</code>
+      (Default: <code>None</code>)
+
+      Squelches all console output apart from errors.
+
+<li><code>-t=&lt;seconds&gt;/--timeout=&lt;seconds&gt;</code>
+<code>int</code>
+      (Default: <code>None</code>)
+
+      Number of seconds to wait for http connections.
+
+<li><code>-x/--[no-]time</code>
+<code>bool</code>
+      (Default: <code>None</code>)
+
+      Times tasks and goals and outputs a report.
+
+<li><code>-e/--[no-]explain</code>
+<code>bool</code>
+      (Default: <code>None</code>)
+
+      Explain the execution of goals.
+
+<li><code>-k/--[no-]kill-nailguns</code>
+<code>bool</code>
+      (Default: <code>None</code>)
+
+      Kill nailguns before exiting
+
+<li><code>-i=&lt;requirement&gt; (-i=&lt;requirement&gt;) .../--interpreter=&lt;requirement&gt; (--interpreter=&lt;requirement&gt;) ...</code>
+<code>str</code>
+      (Default: <code>[]</code>)
+
+      Constrain what Python interpreters to use.  Uses Requirement format from pkg_resources, e.g. 'CPython&gt;=2.6,&lt;3' or 'PyPy'. By default, no constraints are used.  Multiple constraints may be added.  They will be ORed together.
+
+<li><code>--[no-]colors</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Set whether log messages are displayed in color.
+
+<li><code>--spec-excludes="['str1','str2',...]" (--spec-excludes="['str1','str2',...]") ...</code>
+<code>str</code>
+      (Default: <code>['&lt;buildroot&gt;/.pants.d']</code>)
+
+      Ignore these paths when evaluating the command-line target specs.  Useful with ::, to avoid descending into unneeded directories.
+
+<li><code>--exclude-target-regexp=&lt;regexp&gt; (--exclude-target-regexp=&lt;regexp&gt;) ...</code>
+<code>str</code>
+      (Default: <code>[]</code>)
+
+      Exclude targets that match these regexes. Useful with ::, to ignore broken BUILD files.
+
+<li><code>--tag=[+-]tag1,tag2,... (--tag=[+-]tag1,tag2,...) ...</code>
+<code>str</code>
+      (Default: <code>[]</code>)
+
+      Include only targets with these tags (optional '+' prefix) or without these tags ('-' prefix).  Useful with ::, to find subsets of targets (e.g., integration tests.)
+
+<li><code>--[no-]print-exception-stacktrace</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Print to console the full exception stack trace if encountered.
+
+<li><code>--[no-]fail-fast</code>
+<code>bool</code>
+      (Default: <code>None</code>)
+
+      When parsing specs, will stop on the first erronous BUILD file encountered. Otherwise, will parse all builds in a spec and then throw an Exception.
+
+<li><code>--build-file-rev=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Read BUILD files from this scm rev instead of from the working tree.  This is useful for implementing pants-aware sparse checkouts.
+
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</p></p></p></p></body>
+<!-- main content end -->
+
+<div class="generated">
+Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
+from dist/builddict/options_reference.html 2015-07-17T08:18:20.075457
+</div>
+
+</div> <!-- end of mainflow -->
+
+<nav class="bignav">
+  <div class="bignav-logo">
+    <a href="index.html">
+      <img src="logo.ico" alt="[pantsbuild logo]">
+    </a>
+  </div>
+  <form class="search" action="https://www.google.com/search">
+  <input name="as_q" class="query" placeholder="Search">
+  <input name="as_sitesearch" value="pantsbuild.github.io" type="hidden">
+  </form>
+
+<div class="site-toc">
+<ul>
+<li class="toc-h1 ">
+<a href="first_concepts.html">Pants Conceptual Overview</a>
+</li>
+<li class="toc-h1 ">
+<a href="first_tutorial.html">First Tutorial</a>
+</li>
+<li class="toc-h1 ">
+<a href="target_addresses.html">Target Addresses</a>
+</li>
+<li class="toc-h1 ">
+<a href="JVMProjects.html">JVM Projects with Pants</a>
+</li>
+<li class="toc-h2 ">
+<a href="3rdparty_jvm.html">JVM 3rdparty Pattern</a>
+</li>
+<li class="toc-h2 ">
+<a href="scala.html">Scala Projects with Pants</a>
+</li>
+<li class="toc-h2 ">
+<a href="from_maven.html">Pants for Maven Experts</a>
+</li>
+<li class="toc-h1 ">
+<a href="python-readme.html">Python Projects with Pants</a>
+</li>
+<li class="toc-h2 ">
+<a href="3rdparty_py.html">Python 3rdparty Pattern</a>
+</li>
+<li class="toc-h2 ">
+<a href="pex_design.html">PEX Design</a>
+</li>
+<li class="toc-h1 ">
+<a href="page.html">README Files and Markdown</a>
+</li>
+<li class="toc-h1 ">
+<a href="build_files.html">BUILD files</a>
+</li>
+<li class="toc-h1 ">
+<a href="invoking.html">Invoking Pants Build</a>
+</li>
+<li class="toc-h1 ">
+<a href="tshoot.html">Troubleshooting</a>
+</li>
+<li class="toc-h1 ">
+<a href="3rdparty.html">Third-Party Dependencies</a>
+</li>
+<li class="toc-h2 ">
+<a href="3rdparty_jvm.html">JVM 3rdparty Pattern</a>
+</li>
+<li class="toc-h2 ">
+<a href="3rdparty_py.html">Python 3rdparty Pattern</a>
+</li>
+<li class="toc-h1 ">
+<a href="ThriftDeps.html">Using Pants with Thrift Dependencies</a>
+</li>
+<li class="toc-h1 ">
+<a href="publish.html">Publishing Artifacts</a>
+</li>
+<li class="toc-h1 ">
+<a href="with_emacs.html">Emacs With Pants</a>
+</li>
+<li class="toc-h1 ">
+<a href="with_intellij.html">Using Pants with IntelliJ IDEA</a>
+</li>
+<li class="toc-h1 ">
+<a href="install.html">Installing Pants</a>
+</li>
+<li class="toc-h1 ">
+<a href="setup_repo.html">Set up Your Source Tree for Pants</a>
+</li>
+<li class="toc-h1 ">
+<a href="build_dictionary.html">Pants BUILD Dictionary</a>
+</li>
+<li class="toc-h1 toc-here">
+Pants Options Reference
+</li>
+<li class="toc-h1 ">
+<a href="changelog.html">RELEASE HISTORY</a>
+</li>
+<li class="toc-h1 ">
+<a href="export.html">Export Format</a>
+</li>
+<li class="toc-h1 ">
+<a href="dev.html">Pants Developer Center</a>
+</li>
+<li class="toc-h2 ">
+<a href="howto_contribute.html">Pants Contributors Guide</a>
+</li>
+<li class="toc-h2 ">
+<a href="howto_ask.html">How To Ask</a>
+</li>
+<li class="toc-h2 ">
+<a href="howto_develop.html">Pants Developers Guide</a>
+</li>
+<li class="toc-h2 ">
+<a href="dev_tasks.html">Task Developer's Guide</a>
+</li>
+<li class="toc-h3 ">
+<a href="dev_tasks_publish_extras.html">Develop a Task to Publish &quot;Extra&quot; Artifacts</a>
+</li>
+<li class="toc-h2 ">
+<a href="howto_plugin.html">Developing a Pants Plugin</a>
+</li>
+<li class="toc-h2 ">
+<a href="intellij.html">Pants Development with IntelliJ IDEA</a>
+</li>
+<li class="toc-h2 ">
+<a href="internals.html">Pants Internals</a>
+</li>
+<li class="toc-h2 ">
+<a href="release.html">Release Process</a>
+</li>
+<li class="toc-h3 ">
+<a href="release_jvm.html">JVM Artifact Release Process</a>
+</li>
+<li class="toc-h2 ">
+<a href="docs.html">About the documentation</a>
+</li>
+<li class="toc-h2 ">
+<a href="credits.html">Credits</a>
+</li>
+</ul>
+</div>
+</nav>
+
+<div class="ci-status">
+<a href="https://travis-ci.org/pantsbuild/pants">
+<img src="https://travis-ci.org/pantsbuild/pants.png?branch=master"
+     alt="Are the tests passing?" title="Are the tests passing?"></a><br>
+<a href="https://coveralls.io/r/pantsbuild/pants?branch=master">
+<img src="https://coveralls.io/repos/pantsbuild/pants/badge.png?branch=master"
+     alt="Test Coverage Status" title="Test Coverage Status"></a>
+</div>
+
+</body>
+</html>
