@@ -120,6 +120,10 @@
 <li class="toc-h2"><a href="#group_invalidate">invalidate</a></li>
 <li class="toc-h1"><a href="#jar">jar</a></li>
 <li class="toc-h2"><a href="#group_jar">jar</a></li>
+<li class="toc-h1"><a href="#jvm-platform-explain">jvm-platform-explain</a></li>
+<li class="toc-h2"><a href="#group_jvmplatformexplain">jvm-platform-explain</a></li>
+<li class="toc-h1"><a href="#jvm-platform-validate">jvm-platform-validate</a></li>
+<li class="toc-h2"><a href="#group_jvmplatformvalidate">jvm-platform-validate</a></li>
 <li class="toc-h1"><a href="#killserver">killserver</a></li>
 <li class="toc-h2"><a href="#group_killserver">killserver</a></li>
 <li class="toc-h1"><a href="#list">list</a></li>
@@ -251,6 +255,28 @@ Java code, and is installed in the <tt>compile</tt> goal.
   <li> <a href="#imports">imports</a> - 
   <li> <a href="#invalidate">invalidate</a> - Invalidate all targets.
   <li> <a href="#jar">jar</a> - Jars jvm libraries and optionally their sources and their docs.
+  <li> <a href="#jvm-platform-explain">jvm-platform-explain</a> - Console task which provides helpful analysis about jvm platform dependencies.
+
+  This can be very useful when debugging inter-dependencies in large sets of targets with a variety
+  of jvm platforms.
+
+  By default, this calculates the minimum and maximum possible -target level of each JvmTarget
+  specified, printing the range for each one on the console. This is determined by a target's
+  dependencies and dependees: a target cannot have a higher -target level than its dependees, and
+  it cannot have a lower -target level than any of its dependencies.
+
+  Additional flags fine-tune this output, including printing more detailed analysis of which
+  dependencies/dependees are limiting a target, or filtering the output to only targets you care
+  about.
+
+  Besides this functionality, --upgradeable and --downgradeable can print lists of targets which
+  can (again, based on the limits of their dependencies and dependees) afford to be upgraded or
+  downgraded to a different version.
+  
+  <li> <a href="#jvm-platform-validate">jvm-platform-validate</a> - Validation step that runs well in advance of jvm compile.
+
+  Ensures that no jvm targets depend on other targets which use a newer platform.
+  
   <li> <a href="#killserver">killserver</a> - Kill the reporting server.
   <li> <a href="#list">list</a> - List available BUILD targets.
   <li> <a href="#markdown">markdown</a> - Generate html from markdown docs.
@@ -276,7 +302,7 @@ Java code, and is installed in the <tt>compile</tt> goal.
   <li> <a href="#test-changed">test-changed</a> - Test changed targets.
   <li> <a href="#thrift-linter">thrift-linter</a> - Check thrift files for non-recommended usage patterns.
   <li> <a href="#unpack-jars">unpack-jars</a> - Unpack artifacts specified by unpacked_jars() targets.
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 <style>
 div.oref_goal_section {
   margin-left: 2%;
@@ -620,7 +646,14 @@ target's resource files. The output is an unsigned .apk, an Android application 
 
 <p>Implemented by <code>pants.backend.android.tasks.dx_compile.DxCompile</code>
 <div>
-<p>Compile java classes into dex files, Dalvik executables.</p>
+<p>Compile java classes into dex files, Dalvik executables, for AndroidBinary targets.</p>
+<p>Gather the class files of the AndroidBinary and all of its dependencies. This includes the
+AndroidLibrary targets that the AndroidBinary depends on. AndroidLibrary artifacts (.jars and
+.aars) were unpacked during the UnpackLibraries task. The DxCompile task will gather all
+those classes and compile them into a dex file. When gathering the classes, the DxCompile
+task will filter unpacked AndroidLibraries in order to honor any include/exclude patterns.</p>
+<p>This task will silently skip any duplicate class files but will raise a
+DuplicateClassFileException if it detects a version conflict in any AndroidLibrary artifacts.</p>
 </div>
 <ul>
 <li><code>--[no-]binary-dex-use-nailgun</code>
@@ -2864,13 +2897,19 @@ between them.</p>
 
 <p>Implemented by <code>pants.backend.android.tasks.aapt_gen.AaptGen</code>
 <div>
-<p>Handle the processing of resources for Android targets with the
-Android Asset Packaging Tool (aapt).</p>
-<p>The aapt tool supports 6 major commands: [dump, list, add, remove, crunch, package]
-For right now, pants is only supporting 'package'. More to come as we support Release builds
-(crunch, at minimum).</p>
+<p>Handle the processing of resources for Android targets with the Android Asset Packaging Tool
+(aapt). The aapt tool supports 6 major commands: [dump, list, add, remove, crunch, package]
+For right now, pants supports 'package'.</p>
 <p>Commands and flags for aapt can be seen here:
 <a class="reference external" href="https://android.googlesource.com/platform/frameworks/base/+/master/tools/aapt/Command.cpp">https://android.googlesource.com/platform/frameworks/base/+/master/tools/aapt/Command.cpp</a></p>
+<p>The resources are processed against a set of APIs found in the android.jar that corresponds to
+the target's target_sdk. AndroidBinary files must declare a target_sdk in their manifest.
+AndroidLibrary targets are processed with the target_sdk of the dependee AndroidBinary.
+An AndroidLibrary will need to be processed once for every target_sdk that it supports.</p>
+<p>Each AndroidLibrary is processed individually. AndroidBinary targets are processed along with
+all of the AndroidLibrary targets in its transitive closure. The output of an AaptGen invocation
+is an R.java file that allows programmatic access to resources, one each for all AndroidBinary
+and AndroidLibrary targets.</p>
 </div>
 <ul>
 <li><code>--gen-aapt-sdk-path=&lt;str&gt;</code>
@@ -3430,6 +3469,181 @@ containing .proto files.</p>
       Create compressed jars.
 
 </li></li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_jvm-platform-explain" pantsmark="oref_goal_jvm-platform-explain"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="jvm-platform-explain">jvm-platform-explain</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#jvm-platform-explain">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Console task which provides helpful analysis about jvm platform dependencies.
+
+  This can be very useful when debugging inter-dependencies in large sets of targets with a variety
+  of jvm platforms.
+
+  By default, this calculates the minimum and maximum possible -target level of each JvmTarget
+  specified, printing the range for each one on the console. This is determined by a target's
+  dependencies and dependees: a target cannot have a higher -target level than its dependees, and
+  it cannot have a lower -target level than any of its dependencies.
+
+  Additional flags fine-tune this output, including printing more detailed analysis of which
+  dependencies/dependees are limiting a target, or filtering the output to only targets you care
+  about.
+
+  Besides this functionality, --upgradeable and --downgradeable can print lists of targets which
+  can (again, based on the limits of their dependencies and dependees) afford to be upgraded or
+  downgraded to a different version.
+  
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_jvmplatformexplain" pantsmark="oref_cli_jvmplatformexplain"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_jvmplatformexplain">jvm-platform-explain</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_jvmplatformexplain">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.jvm_platform_analysis.JvmPlatformExplain</code>
+<div>
+<p>Console task which provides helpful analysis about jvm platform dependencies.</p>
+<p>This can be very useful when debugging inter-dependencies in large sets of targets with a variety
+of jvm platforms.</p>
+<p>By default, this calculates the minimum and maximum possible -target level of each JvmTarget
+specified, printing the range for each one on the console. This is determined by a target's
+dependencies and dependees: a target cannot have a higher -target level than its dependees, and
+it cannot have a lower -target level than any of its dependencies.</p>
+<p>Additional flags fine-tune this output, including printing more detailed analysis of which
+dependencies/dependees are limiting a target, or filtering the output to only targets you care
+about.</p>
+<p>Besides this functionality, --upgradeable and --downgradeable can print lists of targets which
+can (again, based on the limits of their dependencies and dependees) afford to be upgraded or
+downgraded to a different version.</p>
+</div>
+<ul>
+<li><code>--jvm-platform-explain-sep=&lt;separator&gt;</code>
+<code>str</code>
+      (Default: <code>\n</code>)
+
+      String to use to separate results.
+
+<li><code>--jvm-platform-explain-output-file=&lt;path&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Write the console output to this file instead.
+
+<li><code>--[no-]jvm-platform-explain-ranges</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      For each target, list the minimum and maximum possible jvm target level, based on its dependencies and dependees, respectively.
+
+<li><code>--[no-]jvm-platform-explain-detailed</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Always list the dependencies and dependees that contributed to the assessment of legal jvm target levels (rather than only on failure).
+
+<li><code>--[no-]jvm-platform-explain-only-broken</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Only print jvm target level ranges for targets with currently invalid ranges.
+
+<li><code>--[no-]jvm-platform-explain-upgradeable</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Print a list of targets which can be upgraded to a higher version than they currently are.
+
+<li><code>--[no-]jvm-platform-explain-downgradeable</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Print a list of targets which can be downgraded to a lower version than they currently are.
+
+<li><code>--jvm-platform-explain-filter=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Limit jvm platform possibility explanation to targets whose specs match this regex pattern.
+
+</li></li></li></li></li></li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_jvm-platform-validate" pantsmark="oref_goal_jvm-platform-validate"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="jvm-platform-validate">jvm-platform-validate</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#jvm-platform-validate">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Validation step that runs well in advance of jvm compile.
+
+  Ensures that no jvm targets depend on other targets which use a newer platform.
+  
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_jvmplatformvalidate" pantsmark="oref_cli_jvmplatformvalidate"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_jvmplatformvalidate">jvm-platform-validate</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_jvmplatformvalidate">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.jvm_platform_analysis.JvmPlatformValidate</code>
+<div>
+<p>Validation step that runs well in advance of jvm compile.</p>
+<p>Ensures that no jvm targets depend on other targets which use a newer platform.</p>
+</div>
+<ul>
+<li><code>--jvm-platform-validate-check=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>fatal</code>)
+
+      Check to make sure no jvm targets target an earlier jdk than their dependencies
+
+<li><code>--[no-]jvm-platform-validate-children-before-parents</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Organize output in the form target -&gt; dependencies, rather than target -&gt; dependees.
+
+</li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -5260,8 +5474,7 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 <p>Implemented by <code>pants.backend.jvm.tasks.unpack_jars.UnpackJars</code>
 <div>
 <p>Looks for UnpackedJars targets and unpacks them.</p>
-<p>Adds an entry to SourceRoot for the contents.  Initially only
-supported by JavaProtobufLibrary.</p>
+<p>Adds an entry to SourceRoot for the contents.</p>
 </div>
 <ul>
 </ul>
@@ -5455,13 +5668,19 @@ These command-line flags are available with all Pants goals.
 
       Read BUILD files from this scm rev instead of from the working tree.  This is useful for implementing pants-aware sparse checkouts.
 
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+<li><code>--[no-]lock</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Use a global lock to exclude other versions of pants from running during criticaloperations.
+
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 </p></p></p></p></body>
 <!-- main content end -->
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/builddict/options_reference.html 2015-07-28T09:27:51.772145
+from dist/builddict/options_reference.html 2015-08-07T10:19:44.610030
 </div>
 
 </div> <!-- end of mainflow -->
