@@ -42,6 +42,7 @@
 <li class="toc-h1"><a href="#buildfile_path">buildfile_path</a></li>
 <li class="toc-h1"><a href="#bundle">bundle</a></li>
 <li class="toc-h1"><a href="#ConfluencePublish">ConfluencePublish</a></li>
+<li class="toc-h1"><a href="#contrib_plugin">contrib_plugin</a></li>
 <li class="toc-h1"><a href="#contrib_setup_py">contrib_setup_py</a></li>
 <li class="toc-h1"><a href="#cpp_binary">cpp_binary</a></li>
 <li class="toc-h1"><a href="#cpp_library">cpp_library</a></li>
@@ -56,6 +57,9 @@
 <li class="toc-h1"><a href="#get_buildroot">get_buildroot</a></li>
 <li class="toc-h1"><a href="#github">github</a></li>
 <li class="toc-h1"><a href="#globs">globs</a></li>
+<li class="toc-h1"><a href="#go_binary">go_binary</a></li>
+<li class="toc-h1"><a href="#go_library">go_library</a></li>
+<li class="toc-h1"><a href="#go_remote_library">go_remote_library</a></li>
 <li class="toc-h1"><a href="#ivy_artifact">ivy_artifact</a></li>
 <li class="toc-h1"><a href="#jar">jar</a></li>
 <li class="toc-h1"><a href="#jar_library">jar_library</a></li>
@@ -79,6 +83,7 @@
 <li class="toc-h1"><a href="#page">page</a></li>
 <li class="toc-h1"><a href="#pants">pants</a></li>
 <li class="toc-h1"><a href="#pants_library">pants_library</a></li>
+<li class="toc-h1"><a href="#pants_plugin">pants_plugin</a></li>
 <li class="toc-h1"><a href="#pants_setup_py">pants_setup_py</a></li>
 <li class="toc-h1"><a href="#pants_version">pants_version</a></li>
 <li class="toc-h1"><a href="#prep_command">prep_command</a></li>
@@ -181,6 +186,7 @@ span.bdict_param_muffle_p p {
 <a href="#buildfile_path">buildfile_path</a>
 <a href="#bundle">bundle</a>
 <a href="#ConfluencePublish">ConfluencePublish</a>
+<a href="#contrib_plugin">contrib_plugin</a>
 <a href="#contrib_setup_py">contrib_setup_py</a>
 <a href="#cpp_binary">cpp_binary</a>
 <a href="#cpp_library">cpp_library</a>
@@ -195,6 +201,9 @@ span.bdict_param_muffle_p p {
 <a href="#get_buildroot">get_buildroot</a>
 <a href="#github">github</a>
 <a href="#globs">globs</a>
+<a href="#go_binary">go_binary</a>
+<a href="#go_library">go_library</a>
+<a href="#go_remote_library">go_remote_library</a>
 <a href="#ivy_artifact">ivy_artifact</a>
 <a href="#jar">jar</a>
 <a href="#jar_library">jar_library</a>
@@ -218,6 +227,7 @@ span.bdict_param_muffle_p p {
 <a href="#page">page</a>
 <a href="#pants">pants</a>
 <a href="#pants_library">pants_library</a>
+<a href="#pants_plugin">pants_plugin</a>
 <a href="#pants_setup_py">pants_setup_py</a>
 <a href="#pants_version">pants_version</a>
 <a href="#prep_command">prep_command</a>
@@ -333,7 +343,7 @@ span.bdict_param_muffle_p p {
 </tbody>
 </table>
 
-<p class="bdict_argspec">android_binary(name, build_tools_version=u'19.1.0', manifest=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, tags=None, description=None)
+<p class="bdict_argspec">android_binary(name, build_tools_version=u'19.1.0', manifest=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
 
 <div>
 <p>Produces an Android binary.</p>
@@ -372,6 +382,14 @@ lists of strings, each string the fully qualified class name of a class owned
 by this target that implements the service interface and should be
 discoverable by the jvm service provider discovery mechanism described here:
 <a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">platform</b>
+  (<em class="bdict_param_type">str </em>)
+  <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to use
+for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
+the platform will default to the first one of these that exist: (1) the default_platform
+specified for jvm-platform, (2) a platform constructed from whatever java version is returned
+by Distribution.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -455,7 +473,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">android_library(name, libraries=None, include_patterns=None, exclude_patterns=None, build_tools_version=u'19.1.0', manifest=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, tags=None, description=None)
+<p class="bdict_argspec">android_library(name, libraries=None, include_patterns=None, exclude_patterns=None, build_tools_version=u'19.1.0', manifest=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
 
 <div>
 <p>Android library projects that access Android API or Android resources.</p>
@@ -508,6 +526,14 @@ by this target that implements the service interface and should be
 discoverable by the jvm service provider discovery mechanism described here:
 <a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p></span>
 </div>
+<div class="bdict_param"><b class="bdict_param_name">platform</b>
+  (<em class="bdict_param_type">str </em>)
+  <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to use
+for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
+the platform will default to the first one of these that exist: (1) the default_platform
+specified for jvm-platform, (2) a platform constructed from whatever java version is returned
+by Distribution.cached().version.</p></span>
+</div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
   <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
@@ -544,7 +570,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">android_resources(name, resource_dir=None, build_tools_version=u'19.1.0', manifest=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, tags=None, description=None)
+<p class="bdict_argspec">android_resources(name, resource_dir=None, build_tools_version=u'19.1.0', manifest=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
 
 <div>
 <p>Processes android resources to generate R.java</p>
@@ -589,6 +615,14 @@ by this target that implements the service interface and should be
 discoverable by the jvm service provider discovery mechanism described here:
 <a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p></span>
 </div>
+<div class="bdict_param"><b class="bdict_param_name">platform</b>
+  (<em class="bdict_param_type">str </em>)
+  <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to use
+for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
+the platform will default to the first one of these that exist: (1) the default_platform
+specified for jvm-platform, (2) a platform constructed from whatever java version is returned
+by Distribution.cached().version.</p></span>
+</div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
   <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
@@ -625,7 +659,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">annotation_processor(name, processors=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, tags=None, description=None)
+<p class="bdict_argspec">annotation_processor(name, processors=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
 
 <div>
 <p>Produces a Java library containing one or more annotation processors.</p>
@@ -668,6 +702,14 @@ lists of strings, each string the fully qualified class name of a class owned
 by this target that implements the service interface and should be
 discoverable by the jvm service provider discovery mechanism described here:
 <a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">platform</b>
+  (<em class="bdict_param_type">str </em>)
+  <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to use
+for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
+the platform will default to the first one of these that exist: (1) the default_platform
+specified for jvm-platform, (2) a platform constructed from whatever java version is returned
+by Distribution.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -744,7 +786,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">benchmark(name, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, tags=None, description=None)
+<p class="bdict_argspec">benchmark(name, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
 
 <div>
 <p>A caliper benchmark.</p>
@@ -776,6 +818,14 @@ lists of strings, each string the fully qualified class name of a class owned
 by this target that implements the service interface and should be
 discoverable by the jvm service provider discovery mechanism described here:
 <a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">platform</b>
+  (<em class="bdict_param_type">str </em>)
+  <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to use
+for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
+the platform will default to the first one of these that exist: (1) the default_platform
+specified for jvm-platform, (2) a platform constructed from whatever java version is returned
+by Distribution.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -904,6 +954,100 @@ E.g., <tt class="docutils literal"><span class="pre">relative_to='common'</span>
 <p class="bdict_impl">Implemented by <tt>pants.backend.core.tasks.confluence_publish.ConfluencePublish</tt>
 </p></p></div>
 <div class="bdict_section">
+<a id="bdict_contrib_plugin" pantsmark="bdict_contrib_plugin"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="contrib_plugin">contrib_plugin</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#contrib_plugin">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">contrib_plugin(name, distribution_name=None, description=None, additional_classifiers=None, build_file_aliases=False, global_subsystems=False, register_goals=False, sources_rel_path=None, sources=None, resources=None, resource_targets=None, provides=None, compatibility=None, tags=None)
+
+<div>
+<p>Describes a contributed pants plugin published by pantsbuild.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">distribution_name</b>
+  (<em class="bdict_param_type">str </em>)
+  <span class="bdict_param_muffle_p"><p>The name of the plugin package; must start with
+'pantsbuild.pants.'.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">str </em>)
+  <span class="bdict_param_muffle_p"><p>A brief description of what the plugin provides.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">additional_classifiers</b>
+  (<em class="bdict_param_type">list </em>)
+  <span class="bdict_param_muffle_p"><p>Any additional trove classifiers that apply to the plugin,
+see: <a class="reference external" href="https://pypi.python.org/pypi?%3Aaction=list_classifiers">https://pypi.python.org/pypi?%3Aaction=list_classifiers</a></p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">build_file_aliases</b>
+  (<em class="bdict_param_type">bool </em>)
+  <span class="bdict_param_muffle_p"><p>If <cite>True</cite>, register.py:build_file_aliases must be defined and
+registers the 'build_file_aliases' 'pantsbuild.plugin'
+entrypoint.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">global_subsystems</b>
+  (<em class="bdict_param_type">bool </em>)
+  <span class="bdict_param_muffle_p"><p>If <cite>True</cite>, register.py:global_subsystems must be defined and
+registers the 'global_subsystems' 'pantsbuild.plugin' entrypoint.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">register_goals</b>
+  (<em class="bdict_param_type">bool </em>)
+  <span class="bdict_param_muffle_p"><p>If <cite>True</cite>, register.py:register_goals must be defined and
+registers the 'register_goals' 'pantsbuild.plugin' entrypoint.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> List of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.
+These dependencies may
+be <tt class="docutils literal">python_library</tt>-like targets (<tt class="docutils literal">python_library</tt>,
+<tt class="docutils literal">python_thrift_library</tt>, <tt class="docutils literal">python_antlr_library</tt> and so forth) or
+<tt class="docutils literal">python_requirement_library</tt> targets.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">sources</b>
+  (<em class="bdict_param_type"> ``Fileset`` or list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Files to "include". Paths are relative to the
+BUILD file's directory.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">resources</b>
+<span class="bdict_param_muffle_p"><p>non-Python resources, e.g. templates, keys, other data
+(it is
+recommended that your application uses the pkgutil package to access these
+resources in a .zip-module friendly way.)</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">provides</b>
+<span class="bdict_param_muffle_p"><p>The <a class="reference external" href="#setup_py">setup_py</a> to publish that represents this
+target outside the repo.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">compatibility</b>
+<span class="bdict_param_muffle_p"><p>either a string or list of strings that represents
+interpreter compatibility for this target, using the Requirement-style
+format, e.g. <tt class="docutils literal"><span class="pre">'CPython&gt;=3',</span> or just <span class="pre">['&gt;=2.7','&lt;3']</span></tt> for requirements
+agnostic to interpreter class.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
+build file defines the target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>internal_backend.utilities.register.ContribPlugin</tt>
+</p></p></div>
+<div class="bdict_section">
 <a id="bdict_contrib_setup_py" pantsmark="bdict_contrib_setup_py"> </a>
 
 <table class="h-plus-pilcrow">
@@ -917,7 +1061,7 @@ E.g., <tt class="docutils literal"><span class="pre">relative_to='common'</span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">contrib_setup_py(name, description, additional_classifiers=None)
+<p class="bdict_argspec">contrib_setup_py(name, description, additional_classifiers=None, **kwargs)
 
 
 
@@ -944,6 +1088,9 @@ E.g., <tt class="docutils literal"><span class="pre">relative_to='common'</span>
   (<em class="bdict_param_type">list </em>)
   <span class="bdict_param_muffle_p"><p>Any additional trove classifiers that apply to the plugin,
 see: <a class="reference external" href="https://pypi.python.org/pypi?%3Aaction=list_classifiers">https://pypi.python.org/pypi?%3Aaction=list_classifiers</a></p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">kwargs</b>
+<span class="bdict_param_muffle_p"><p>Any additional keyword arguments to be passed to <a class="reference external" href="https://pythonhosted.org/setuptools/setuptools.html">setuptools.setup</a>.</p></span>
 </div>
 </p></div>
 <p class="bdict_impl">Implemented by <tt>internal_backend.utilities.register.contrib_setup_py</tt>
@@ -1426,6 +1573,189 @@ and the new grammar will not support arithmetic.</p>
 <p class="bdict_impl">Implemented by <tt>pants.backend.core.wrapped_globs.Globs</tt>
 </p></p></div>
 <div class="bdict_section">
+<a id="bdict_go_binary" pantsmark="bdict_go_binary"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="go_binary">go_binary</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#go_binary">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">go_binary(name, tags=None, description=None)
+
+
+
+
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
+build file defines the target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> list of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.contrib.go.targets.go_binary.GoBinary</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_go_library" pantsmark="bdict_go_library"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="go_library">go_library</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#go_library">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">go_library(name, tags=None, description=None)
+
+
+
+
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
+build file defines the target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> list of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.contrib.go.targets.go_library.GoLibrary</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_go_remote_library" pantsmark="bdict_go_remote_library"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="go_remote_library">go_remote_library</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#go_remote_library">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">go_remote_library(name, zip_url, rev=u'', tags=None, description=None)
+
+
+
+
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">zip_url</b>
+  (<em class="bdict_param_type">str </em>)
+  <span class="bdict_param_muffle_p"><ul>
+<li><p class="first">Any URL from which a zipfile can be downloaded containing the source code of the
+remote library.</p>
+</li>
+<li><p class="first">Can be a template string using variables {host}, {id}, {rev}.
+Example: "{host}/{id}/{rev}.zip"</p>
+<div class="system-message">
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">&lt;string&gt;</tt>, line 5)</p>
+<p>Unexpected indentation.</p>
+</div>
+<blockquote>
+<ul>
+<li><dl class="first docutils">
+<dt>{host} The host address to download zip files from. Specified by an option to</dt>
+<dd><p class="first last">GoFetch, '--remote-lib-host'.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>{id} The global import identifier of the library, which is specified by the path to</dt>
+<dd><p class="first last">the BUILD file relative to the source root of all 3rd party Go libraries.
+For example, If the 3rd party source root is "3rdparty/go", a target at
+"3rdparty/go/github.com/user/lib" would have an {id} of "github.com/user/lib".</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">{rev} See :param rev:</p>
+</li>
+</ul>
+</blockquote>
+</li>
+<li><p class="first">The zip file is expected to have zipped the library directory itself, and NOT the
+direct contents of the library.</p>
+<div class="system-message">
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">&lt;string&gt;</tt>, line 14)</p>
+<p>Unexpected indentation.</p>
+</div>
+<blockquote>
+<dl class="docutils">
+<dt>Expected: <cite>zip -r mylib.zip mylib/</cite></dt>
+<dd><p class="first last">Not: <cite>zip -r mylib.zip mylib/*</cite></p>
+</dd>
+</dl>
+</blockquote>
+</li>
+</ul></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">rev</b>
+  (<em class="bdict_param_type">str </em>)
+  <span class="bdict_param_muffle_p"><p>Identifies which version of the remote library to download.
+This could be a commit SHA (git), node id (hg), etc.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
+build file defines the target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> list of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.contrib.go.targets.go_remote_library.GoRemoteLibrary</tt>
+</p></p></div>
+<div class="bdict_section">
 <a id="bdict_ivy_artifact" pantsmark="bdict_ivy_artifact"> </a>
 
 <table class="h-plus-pilcrow">
@@ -1685,7 +2015,7 @@ no explicit rules apply to the entry.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">java_agent(name, sources=None, excludes=None, resources=None, premain=None, agent_class=None, can_redefine=False, can_retransform=False, can_set_native_method_prefix=False, sources_rel_path=None, provides=None, configurations=None, no_cache=False, services=None, tags=None, description=None)
+<p class="bdict_argspec">java_agent(name, sources=None, excludes=None, resources=None, premain=None, agent_class=None, can_redefine=False, can_retransform=False, can_set_native_method_prefix=False, sources_rel_path=None, provides=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
 
 <div>
 <p>Defines a java agent entrypoint.</p>
@@ -1752,6 +2082,14 @@ by this target that implements the service interface and should be
 discoverable by the jvm service provider discovery mechanism described here:
 <a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p></span>
 </div>
+<div class="bdict_param"><b class="bdict_param_name">platform</b>
+  (<em class="bdict_param_type">str </em>)
+  <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to use
+for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
+the platform will default to the first one of these that exist: (1) the default_platform
+specified for jvm-platform, (2) a platform constructed from whatever java version is returned
+by Distribution.cached().version.</p></span>
+</div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
   <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
@@ -1788,7 +2126,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">java_antlr_library(name=None, sources=None, provides=None, excludes=None, compiler=u'antlr3', package=None, sources_rel_path=None, resources=None, configurations=None, no_cache=False, services=None, tags=None, description=None)
+<p class="bdict_argspec">java_antlr_library(name=None, sources=None, provides=None, excludes=None, compiler=u'antlr3', package=None, sources_rel_path=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
 
 <div>
 <p>Generates a stub Java library from Antlr grammar files.</p>
@@ -1834,6 +2172,14 @@ by this target that implements the service interface and should be
 discoverable by the jvm service provider discovery mechanism described here:
 <a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p></span>
 </div>
+<div class="bdict_param"><b class="bdict_param_name">platform</b>
+  (<em class="bdict_param_type">str </em>)
+  <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to use
+for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
+the platform will default to the first one of these that exist: (1) the default_platform
+specified for jvm-platform, (2) a platform constructed from whatever java version is returned
+by Distribution.cached().version.</p></span>
+</div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
   <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
@@ -1870,7 +2216,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">java_library(name, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, tags=None, description=None)
+<p class="bdict_argspec">java_library(name, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
 
 <div>
 <p>A collection of Java code.</p>
@@ -1916,6 +2262,14 @@ by this target that implements the service interface and should be
 discoverable by the jvm service provider discovery mechanism described here:
 <a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p></span>
 </div>
+<div class="bdict_param"><b class="bdict_param_name">platform</b>
+  (<em class="bdict_param_type">str </em>)
+  <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to use
+for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
+the platform will default to the first one of these that exist: (1) the default_platform
+specified for jvm-platform, (2) a platform constructed from whatever java version is returned
+by Distribution.cached().version.</p></span>
+</div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
   <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
@@ -1952,7 +2306,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">java_protobuf_library(name, buildflags=None, imports=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, tags=None, description=None)
+<p class="bdict_argspec">java_protobuf_library(name, buildflags=None, imports=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
 
 <div>
 <p>Generates a stub Java library from protobuf IDL files.</p>
@@ -1992,6 +2346,14 @@ by this target that implements the service interface and should be
 discoverable by the jvm service provider discovery mechanism described here:
 <a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p></span>
 </div>
+<div class="bdict_param"><b class="bdict_param_name">platform</b>
+  (<em class="bdict_param_type">str </em>)
+  <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to use
+for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
+the platform will default to the first one of these that exist: (1) the default_platform
+specified for jvm-platform, (2) a platform constructed from whatever java version is returned
+by Distribution.cached().version.</p></span>
+</div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
   <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
@@ -2028,7 +2390,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">java_ragel_library(name, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, tags=None, description=None)
+<p class="bdict_argspec">java_ragel_library(name, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
 
 <div>
 <p>Generates a stub Java library from a Ragel file.</p>
@@ -2059,6 +2421,14 @@ lists of strings, each string the fully qualified class name of a class owned
 by this target that implements the service interface and should be
 discoverable by the jvm service provider discovery mechanism described here:
 <a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">platform</b>
+  (<em class="bdict_param_type">str </em>)
+  <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to use
+for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
+the platform will default to the first one of these that exist: (1) the default_platform
+specified for jvm-platform, (2) a platform constructed from whatever java version is returned
+by Distribution.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -2115,7 +2485,7 @@ Old name for <a href="#junit_tests">junit_tests</a>
 </tbody>
 </table>
 
-<p class="bdict_argspec">java_thrift_library(name, compiler=None, language=None, rpc_style=None, namespace_map=None, thrift_linter_strict=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, tags=None, description=None)
+<p class="bdict_argspec">java_thrift_library(name, compiler=None, language=None, rpc_style=None, namespace_map=None, thrift_linter_strict=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
 
 <div>
 <p>Generates a stub Java or Scala library from thrift IDL files.</p>
@@ -2165,6 +2535,14 @@ by this target that implements the service interface and should be
 discoverable by the jvm service provider discovery mechanism described here:
 <a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p></span>
 </div>
+<div class="bdict_param"><b class="bdict_param_name">platform</b>
+  (<em class="bdict_param_type">str </em>)
+  <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to use
+for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
+the platform will default to the first one of these that exist: (1) the default_platform
+specified for jvm-platform, (2) a platform constructed from whatever java version is returned
+by Distribution.cached().version.</p></span>
+</div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
   <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
@@ -2201,7 +2579,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">java_wire_library(name, service_writer=None, service_writer_options=None, roots=None, registry_class=None, enum_options=None, no_options=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, tags=None, description=None)
+<p class="bdict_argspec">java_wire_library(name, service_writer=None, service_writer_options=None, roots=None, registry_class=None, enum_options=None, no_options=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
 
 <div>
 <p>Generates a stub Java library from protobuf IDL files.</p>
@@ -2260,6 +2638,14 @@ by this target that implements the service interface and should be
 discoverable by the jvm service provider discovery mechanism described here:
 <a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p></span>
 </div>
+<div class="bdict_param"><b class="bdict_param_name">platform</b>
+  (<em class="bdict_param_type">str </em>)
+  <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to use
+for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
+the platform will default to the first one of these that exist: (1) the default_platform
+specified for jvm-platform, (2) a platform constructed from whatever java version is returned
+by Distribution.cached().version.</p></span>
+</div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
   <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
@@ -2296,7 +2682,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">jaxb_library(name, package=None, language=u'java', sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, tags=None, description=None)
+<p class="bdict_argspec">jaxb_library(name, package=None, language=u'java', sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
 
 <div>
 <p>Generates a stub Java library from jaxb xsd files.</p>
@@ -2339,6 +2725,14 @@ by this target that implements the service interface and should be
 discoverable by the jvm service provider discovery mechanism described here:
 <a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p></span>
 </div>
+<div class="bdict_param"><b class="bdict_param_name">platform</b>
+  (<em class="bdict_param_type">str </em>)
+  <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to use
+for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
+the platform will default to the first one of these that exist: (1) the default_platform
+specified for jvm-platform, (2) a platform constructed from whatever java version is returned
+by Distribution.cached().version.</p></span>
+</div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
   <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
@@ -2375,7 +2769,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">junit_tests(name, cwd=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, tags=None, description=None)
+<p class="bdict_argspec">junit_tests(name, cwd=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
 
 <div>
 <p>Tests JVM sources with JUnit.</p>
@@ -2411,6 +2805,14 @@ lists of strings, each string the fully qualified class name of a class owned
 by this target that implements the service interface and should be
 discoverable by the jvm service provider discovery mechanism described here:
 <a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">platform</b>
+  (<em class="bdict_param_type">str </em>)
+  <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to use
+for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
+the platform will default to the first one of these that exist: (1) the default_platform
+specified for jvm-platform, (2) a platform constructed from whatever java version is returned
+by Distribution.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -2511,7 +2913,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">jvm_binary(name=None, main=None, basename=None, source=None, deploy_excludes=None, deploy_jar_rules=None, manifest_entries=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, tags=None, description=None)
+<p class="bdict_argspec">jvm_binary(name=None, main=None, basename=None, source=None, deploy_excludes=None, deploy_jar_rules=None, manifest_entries=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
 
 <div>
 <p>Produces a JVM binary optionally identifying a launcher main class.</p>
@@ -2589,6 +2991,14 @@ lists of strings, each string the fully qualified class name of a class owned
 by this target that implements the service interface and should be
 discoverable by the jvm service provider discovery mechanism described here:
 <a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">platform</b>
+  (<em class="bdict_param_type">str </em>)
+  <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to use
+for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
+the platform will default to the first one of these that exist: (1) the default_platform
+specified for jvm-platform, (2) a platform constructed from whatever java version is returned
+by Distribution.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -2873,6 +3283,100 @@ In old Pants versions, a reference to a Pants targets.
 <p class="bdict_impl">Implemented by <tt>internal_backend.repositories.register.org_pantsbuild_publication_metadata</tt>
 </p></p></div>
 <div class="bdict_section">
+<a id="bdict_pants_plugin" pantsmark="bdict_pants_plugin"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="pants_plugin">pants_plugin</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#pants_plugin">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">pants_plugin(name, distribution_name=None, description=None, additional_classifiers=None, build_file_aliases=False, global_subsystems=False, register_goals=False, sources_rel_path=None, sources=None, resources=None, resource_targets=None, provides=None, compatibility=None, tags=None)
+
+<div>
+<p>Describes a pants plugin published by pantsbuild.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">distribution_name</b>
+  (<em class="bdict_param_type">str </em>)
+  <span class="bdict_param_muffle_p"><p>The name of the plugin package; must start with
+'pantsbuild.pants.'.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">str </em>)
+  <span class="bdict_param_muffle_p"><p>A brief description of what the plugin provides.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">additional_classifiers</b>
+  (<em class="bdict_param_type">list </em>)
+  <span class="bdict_param_muffle_p"><p>Any additional trove classifiers that apply to the plugin,
+see: <a class="reference external" href="https://pypi.python.org/pypi?%3Aaction=list_classifiers">https://pypi.python.org/pypi?%3Aaction=list_classifiers</a></p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">build_file_aliases</b>
+  (<em class="bdict_param_type">bool </em>)
+  <span class="bdict_param_muffle_p"><p>If <cite>True</cite>, register.py:build_file_aliases must be defined and
+registers the 'build_file_aliases' 'pantsbuild.plugin'
+entrypoint.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">global_subsystems</b>
+  (<em class="bdict_param_type">bool </em>)
+  <span class="bdict_param_muffle_p"><p>If <cite>True</cite>, register.py:global_subsystems must be defined and
+registers the 'global_subsystems' 'pantsbuild.plugin' entrypoint.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">register_goals</b>
+  (<em class="bdict_param_type">bool </em>)
+  <span class="bdict_param_muffle_p"><p>If <cite>True</cite>, register.py:register_goals must be defined and
+registers the 'register_goals' 'pantsbuild.plugin' entrypoint.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> List of target specs</em>)
+  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.
+These dependencies may
+be <tt class="docutils literal">python_library</tt>-like targets (<tt class="docutils literal">python_library</tt>,
+<tt class="docutils literal">python_thrift_library</tt>, <tt class="docutils literal">python_antlr_library</tt> and so forth) or
+<tt class="docutils literal">python_requirement_library</tt> targets.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">sources</b>
+  (<em class="bdict_param_type"> ``Fileset`` or list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Files to "include". Paths are relative to the
+BUILD file's directory.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">resources</b>
+<span class="bdict_param_muffle_p"><p>non-Python resources, e.g. templates, keys, other data
+(it is
+recommended that your application uses the pkgutil package to access these
+resources in a .zip-module friendly way.)</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">provides</b>
+<span class="bdict_param_muffle_p"><p>The <a class="reference external" href="#setup_py">setup_py</a> to publish that represents this
+target outside the repo.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">compatibility</b>
+<span class="bdict_param_muffle_p"><p>either a string or list of strings that represents
+interpreter compatibility for this target, using the Requirement-style
+format, e.g. <tt class="docutils literal"><span class="pre">'CPython&gt;=3',</span> or just <span class="pre">['&gt;=2.7','&lt;3']</span></tt> for requirements
+agnostic to interpreter class.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
+build file defines the target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
+<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
+by downstream/custom tasks for reasoning about build graph. NOT included in payloads
+and thus not used in fingerprinting, thus not suitable for anything that affects how
+a particular target is built.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>internal_backend.utilities.register.PantsPlugin</tt>
+</p></p></div>
+<div class="bdict_section">
 <a id="bdict_pants_setup_py" pantsmark="bdict_pants_setup_py"> </a>
 
 <table class="h-plus-pilcrow">
@@ -2886,7 +3390,7 @@ In old Pants versions, a reference to a Pants targets.
 </tbody>
 </table>
 
-<p class="bdict_argspec">pants_setup_py(name, description, namespace_packages=None, additional_classifiers=None)
+<p class="bdict_argspec">pants_setup_py(name, description, additional_classifiers=None, **kwargs)
 
 
 
@@ -2913,6 +3417,9 @@ In old Pants versions, a reference to a Pants targets.
   (<em class="bdict_param_type">list </em>)
   <span class="bdict_param_muffle_p"><p>Any additional trove classifiers that apply to the package,
 see: <a class="reference external" href="https://pypi.python.org/pypi?%3Aaction=list_classifiers">https://pypi.python.org/pypi?%3Aaction=list_classifiers</a></p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">kwargs</b>
+<span class="bdict_param_muffle_p"><p>Any additional keyword arguments to be passed to <a class="reference external" href="https://pythonhosted.org/setuptools/setuptools.html">setuptools.setup</a>.</p></span>
 </div>
 </p></div>
 <p class="bdict_impl">Implemented by <tt>internal_backend.utilities.register.pants_setup_py</tt>
@@ -3672,7 +4179,7 @@ make BUILD files easier to parse, and the new grammar will not support arithmeti
 </tbody>
 </table>
 
-<p class="bdict_argspec">scala_library(name, java_sources=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, tags=None, description=None)
+<p class="bdict_argspec">scala_library(name, java_sources=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
 
 <div>
 <p>A collection of Scala code.</p>
@@ -3725,6 +4232,14 @@ by this target that implements the service interface and should be
 discoverable by the jvm service provider discovery mechanism described here:
 <a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p></span>
 </div>
+<div class="bdict_param"><b class="bdict_param_name">platform</b>
+  (<em class="bdict_param_type">str </em>)
+  <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to use
+for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
+the platform will default to the first one of these that exist: (1) the default_platform
+specified for jvm-platform, (2) a platform constructed from whatever java version is returned
+by Distribution.cached().version.</p></span>
+</div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
   <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
@@ -3761,7 +4276,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">scalac_plugin(name, classname=None, plugin=None, java_sources=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, tags=None, description=None)
+<p class="bdict_argspec">scalac_plugin(name, classname=None, plugin=None, java_sources=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
 
 <div>
 <p>Defines a target that produces a scalac_plugin.</p>
@@ -3814,6 +4329,14 @@ lists of strings, each string the fully qualified class name of a class owned
 by this target that implements the service interface and should be
 discoverable by the jvm service provider discovery mechanism described here:
 <a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">platform</b>
+  (<em class="bdict_param_type">str </em>)
+  <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to use
+for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
+the platform will default to the first one of these that exist: (1) the default_platform
+specified for jvm-platform, (2) a platform constructed from whatever java version is returned
+by Distribution.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -3990,7 +4513,7 @@ The <tt class="docutils literal">source_root</tt> command specifies that <em>som
 </tbody>
 </table>
 
-<p class="bdict_argspec">spindle_thrift_library(name, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, tags=None, description=None)
+<p class="bdict_argspec">spindle_thrift_library(name, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
 
 <div>
 <p>Defines a target that builds scala_record stubs from a thrift IDL file.</p>
@@ -4024,6 +4547,14 @@ lists of strings, each string the fully qualified class name of a class owned
 by this target that implements the service interface and should be
 discoverable by the jvm service provider discovery mechanism described here:
 <a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">platform</b>
+  (<em class="bdict_param_type">str </em>)
+  <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to use
+for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
+the platform will default to the first one of these that exist: (1) the default_platform
+specified for jvm-platform, (2) a platform constructed from whatever java version is returned
+by Distribution.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -4235,7 +4766,7 @@ For example, the following keys are supported for Atlassian's Confluence:</p></s
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/builddict/build_dictionary.html 2015-07-27T07:51:10.357961
+from dist/builddict/build_dictionary.html 2015-08-14T16:54:46.162744
 </div>
 
 </div> <!-- end of mainflow -->

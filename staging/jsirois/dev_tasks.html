@@ -35,9 +35,11 @@
 <ul>
 <li class="toc-h1"><a href="#hello-task">Hello Task</a></li>
 <li class="toc-h1"><a href="#task-installation-associate-task-with-goals">Task Installation: Associate Task with Goal[s]</a></li>
+<li class="toc-h1"><a href="#products-how-one-task-consumes-the-output-of-another">Products: How one Task consumes the output of another</a></li>
 <li class="toc-h1"><a href="#product_types-and-require_data-why-test-comes-after-compile">product_types and require_data: Why &quot;test&quot; comes after &quot;compile&quot;</a></li>
-<li class="toc-h1"><a href="#products-map-how-one-task-uses-products-of-another">Products Map: how one task uses products of another</a></li>
 <li class="toc-h1"><a href="#task-configuration">Task Configuration</a></li>
+<li class="toc-h2"><a href="#scopes">Scopes</a></li>
+<li class="toc-h2"><a href="#fine-tuning-options">Fine-tuning Options</a></li>
 <li class="toc-h1"><a href="#grouptask">GroupTask</a></li>
 <li class="toc-h1"><a href="#jvm-tool-bootstrapping">JVM Tool Bootstrapping</a></li>
 <li class="toc-h1"><a href="#enabling-artifact-caching-for-tasks">Enabling Artifact Caching For Tasks</a></li>
@@ -172,34 +174,18 @@ just those targets that match some criteria.</p>
 
 <p>Defining a Task is nice, but doesn't hook it up so users can get to it.
 <em>Install</em> a task to make it available to users. To do this, you register
-it with Pants, associating it with a goal. A plugin's <code>register.py</code>
+it with Pants, associating it with a goal. A <a href="howto_plugin.html">plugin's</a> <code>register.py</code>
 registers goals in its <code>register_goals</code> function. Here's an excerpt from
-<a href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/backend/jvm/register.py">Pants' own JVM
+<a href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/backend/python/register.py">Pants' own Python
 backend</a>:</p>
 <p>
 <div class="md-included-snippet"><div class="codehilite"><pre><span class="k">def</span> <span class="nf">register_goals</span><span class="p">():</span>
-  <span class="n">ng_killall</span> <span class="o">=</span> <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'ng-killall'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">NailgunKillall</span><span class="p">)</span>
-  <span class="n">ng_killall</span><span class="o">.</span><span class="n">install</span><span class="p">()</span><span class="o">.</span><span class="n">with_description</span><span class="p">(</span><span class="s">'Kill running nailgun servers.'</span><span class="p">)</span>
-
-  <span class="n">Goal</span><span class="o">.</span><span class="n">by_name</span><span class="p">(</span><span class="s">'invalidate'</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="n">ng_killall</span><span class="p">,</span> <span class="n">first</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-  <span class="n">Goal</span><span class="o">.</span><span class="n">by_name</span><span class="p">(</span><span class="s">'clean-all'</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="n">ng_killall</span><span class="p">,</span> <span class="n">first</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-  <span class="n">Goal</span><span class="o">.</span><span class="n">by_name</span><span class="p">(</span><span class="s">'clean-all-async'</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="n">ng_killall</span><span class="p">,</span> <span class="n">first</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-
-  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'bootstrap-jvm-tools'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">BootstrapJvmTools</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s">'bootstrap'</span><span class="p">)</span><span class="o">.</span><span class="n">with_description</span><span class="p">(</span>
-      <span class="s">'Bootstrap tools needed for building.'</span><span class="p">)</span>
-
-  <span class="c"># Dependency resolution.</span>
-  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'ivy'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">IvyResolve</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s">'resolve'</span><span class="p">)</span><span class="o">.</span><span class="n">with_description</span><span class="p">(</span>
-      <span class="s">'Resolve dependencies and produce dependency reports.'</span><span class="p">)</span>
-
-  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'ivy-imports'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">IvyImports</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s">'imports'</span><span class="p">)</span>
-
-  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'unpack-jars'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">UnpackJars</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">()</span><span class="o">.</span><span class="n">with_description</span><span class="p">(</span>
-    <span class="s">'Unpack artifacts specified by unpacked_jars() targets.'</span><span class="p">)</span>
-
-  <span class="c"># Resource preparation.</span>
-  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'prepare'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">PrepareResources</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s">'resources'</span><span class="p">)</span>
-  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'services'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">PrepareServices</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s">'resources'</span><span class="p">)</span>
+  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'python-binary-create'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">PythonBinaryCreate</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s">'binary'</span><span class="p">)</span>
+  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'pytest'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">PytestRun</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s">'test'</span><span class="p">)</span>
+  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'py'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">PythonRun</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s">'run'</span><span class="p">)</span>
+  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'py'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">PythonRepl</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s">'repl'</span><span class="p">)</span>
+  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'setup-py'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">SetupPy</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">()</span><span class="o">.</span><span class="n">with_description</span><span class="p">(</span>
+    <span class="s">'Build setup.py-based Python projects from python_library targets.'</span><span class="p">)</span>
 </pre></div></div>
 </p>
 <p>That <code>task(...)</code> is a name for
@@ -208,6 +194,29 @@ installs the task in a goal with the same name. To install a task in
 goal <code>foo</code>, use <code>Goal.by_name('foo').install</code>. You can install more than
 one task in a goal; e.g., there are separate tasks to run Java tests and
 Python tests; but both are in the <code>test</code> goal.</p>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="products-how-one-task-consumes-the-output-of-another">Products: How one Task consumes the output of another</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#products-how-one-task-consumes-the-output-of-another">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>One task might need to consume the "products" (outputs) of another. E.g., the Java test runner
+task uses Java <code>.class</code> files that the Java compile task produces. Pants
+tasks keep track of this in the
+<a href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/goal/products.py">pants.goal.products.ProductMapping</a>
+that is provided in the task's context at <code>self.context.products</code>.</p>
+<p>The <code>ProductMapping</code> is basically a dict. Calling
+<code>self.context.products.get('jar_dependencies')</code> looks up
+<code>jar_dependencies</code> in that dict. Tasks can set/change the value stored
+at that key; later tasks can read (and perhaps further change) that
+value. That value might be, say, a dictionary that maps target specs to
+file paths.</p>
 
 <table class="h-plus-pilcrow">
 <tbody>
@@ -227,22 +236,16 @@ tell Pants about these inter-task dependencies...</p>
 <p>The "early" task class defines a <code>product_types</code> class method that
 returns a list of strings:</p>
 <p>
-<div class="md-included-snippet"><div class="codehilite"><pre>  <span class="nd">@classmethod</span>
-  <span class="k">def</span> <span class="nf">product_types</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
-    <span class="c"># TODO(mateor) Create a more robust ivy_import product, that exposes the path to the jar</span>
-    <span class="c"># and a slot for the metadata from the IvyModuleRef:</span>
-    <span class="c"># https://github.com/pantsbuild/pants/blob/master/src/python/pants/backend/jvm/ivy_utils.py#L38-38</span>
-    <span class="k">return</span> <span class="p">[</span><span class="s">'ivy_imports'</span><span class="p">]</span>  <span class="c"># Guaranteed to populate target =&gt; { builddir: [jar_filenames]}</span>
+<div class="md-included-snippet"><div class="codehilite"><pre>  <span class="k">def</span> <span class="nf">product_types</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="s">'resources_by_target'</span><span class="p">]</span>
 </pre></div></div>
 </p>
 <p>The "late" task defines a <code>prepare</code> method that calls
 <code>round_manager.require_data</code> to "require" one of those same strings:</p>
 <p>
-<div class="md-included-snippet"><div class="codehilite"><pre>  <span class="nd">@classmethod</span>
-  <span class="k">def</span> <span class="nf">prepare</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">round_manager</span><span class="p">):</span>
-    <span class="nb">super</span><span class="p">(</span><span class="n">ProtobufGen</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">prepare</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">round_manager</span><span class="p">)</span>
-    <span class="n">round_manager</span><span class="o">.</span><span class="n">require_data</span><span class="p">(</span><span class="s">'ivy_imports'</span><span class="p">)</span>
-    <span class="n">round_manager</span><span class="o">.</span><span class="n">require_data</span><span class="p">(</span><span class="s">'deferred_sources'</span><span class="p">)</span>
+<div class="md-included-snippet"><div class="codehilite"><pre>  <span class="k">def</span> <span class="nf">prepare</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">round_manager</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">DuplicateDetector</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">prepare</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">round_manager</span><span class="p">)</span>
+    <span class="n">round_manager</span><span class="o">.</span><span class="n">require_data</span><span class="p">(</span><span class="s">'resources_by_target'</span><span class="p">)</span>
 </pre></div></div>
 </p>
 <p>Pants uses this information to determine which tasks must run first to
@@ -267,28 +270,6 @@ this function to find out which targets to generate the product for:</p>
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h2 id="products-map-how-one-task-uses-products-of-another">Products Map: how one task uses products of another</h2></td>
-<td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#products-map-how-one-task-uses-products-of-another">¶</a>
-</div></td>
-</tr>
-</tbody>
-</table>
-
-<p>One task might need the products of another. E.g., the Java test runner
-task uses Java <code>.class</code> files that the Java compile task produces. Pants
-tasks keep track of this in a
-<a href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/goal/products.py">pants.goal.products.ProductMapping.</a></p>
-<p>The <code>ProductMapping</code> is basically a dict. Calling
-<code>self.context.products.get('jar_dependencies')</code> looks up
-<code>jar_dependencies</code> in that dict. Tasks can set/change the value stored
-at that key; later tasks can read (and perhaps further change) that
-value. That value might be, say, a dictionary that maps target specs to
-file paths.</p>
-
-<table class="h-plus-pilcrow">
-<tbody>
-<tr>
 <td class="h-plus-pilcrow-holder"><h2 id="task-configuration">Task Configuration</h2></td>
 <td><div class="pilcrow-div">
 <a class="pilcrow-link" href="#task-configuration">¶</a>
@@ -297,35 +278,81 @@ file paths.</p>
 </tbody>
 </table>
 
-<p>Tasks may be configured via options.</p>
-<p>To define an option, handle your Task's <code>register_options</code>
+<p>Tasks may be configured via the options system.</p>
+<p>To define an option, implement your Task's <code>register_options</code>
 class method and call the passed-in <code>register</code> function:</p>
 <p>
-<div class="md-included-snippet"><div class="codehilite"><pre>  <span class="nd">@classmethod</span>
-  <span class="k">def</span> <span class="nf">register_options</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">register</span><span class="p">):</span>
-    <span class="nb">super</span><span class="p">(</span><span class="n">ListGoals</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">register_options</span><span class="p">(</span><span class="n">register</span><span class="p">)</span>
-    <span class="n">register</span><span class="p">(</span><span class="s">'--graph'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">'store_true'</span><span class="p">,</span>
-             <span class="n">help</span><span class="o">=</span><span class="s">'Generate a graphviz graph of installed goals.'</span><span class="p">)</span>
-    <span class="n">register</span><span class="p">(</span><span class="s">'--all'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">'store_true'</span><span class="p">,</span>
-             <span class="n">help</span><span class="o">=</span><span class="s">'List all goals even if no description is available.'</span><span class="p">)</span>
+<div class="md-included-snippet"><div class="codehilite"><pre>  <span class="k">def</span> <span class="nf">register_options</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">register</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">Checkstyle</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">register_options</span><span class="p">(</span><span class="n">register</span><span class="p">)</span>
+    <span class="n">register</span><span class="p">(</span><span class="s">'--skip'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">'store_true'</span><span class="p">,</span> <span class="n">fingerprint</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+             <span class="n">help</span><span class="o">=</span><span class="s">'Skip checkstyle.'</span><span class="p">)</span>
+    <span class="n">register</span><span class="p">(</span><span class="s">'--configuration'</span><span class="p">,</span> <span class="n">advanced</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">file_option</span><span class="p">,</span> <span class="n">fingerprint</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+             <span class="n">help</span><span class="o">=</span><span class="s">'Path to the checkstyle configuration file.'</span><span class="p">)</span>
+    <span class="n">register</span><span class="p">(</span><span class="s">'--properties'</span><span class="p">,</span> <span class="n">advanced</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">dict_option</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">{},</span> <span class="n">fingerprint</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+             <span class="n">help</span><span class="o">=</span><span class="s">'Dictionary of property mappings to use for checkstyle.properties.'</span><span class="p">)</span>
 </pre></div></div>
 </p>
 <p>Option values are available via <code>self.get_options()</code>:</p>
-<div class="codehilite"><pre><span class="c"># Did user pass in the --my-option CLI flag (or set it in .ini)?</span>
+<div class="codehilite"><pre><span class="c"># Did user pass in the --my-option CLI flag (or set it in pants.ini)?</span>
 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_options</span><span class="p">()</span><span class="o">.</span><span class="n">my_option</span><span class="p">:</span>
 </pre></div>
-<p>Every task has an options scope: If the task is registered as <code>task</code> in goal <code>goal</code>, then its
-scope is <code>goal.task</code>, unless goal and task are the same string, in which case the scope is simply
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="scopes">Scopes</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#scopes">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Every task has an options <em>scope</em>: If the task is registered as <code>my-task</code> in goal <code>my-goal</code>, then its
+scope is <code>my-goal.my-task</code>, unless goal and task are the same string, in which case the scope is simply
 that string. For example, the <code>JavaCompile</code> task has scope <code>compile.java</code>, and the <code>filemap</code>
 task has the scope <code>filemap</code>.</p>
 <p>The scope is used to set options values. E.g., the value of <code>self.get_options().my_option</code> for a
 task with scope <code>scope</code> is set by, in this order:
   - The value of the cmd-line flag <code>--scope-my-option</code>.
   - The value of the environment variable <code>PANTS_SCOPE_MY_OPTION</code>.
-  - The value of the config var <code>my_option</code> in section <code>scope</code>.</p>
+  - The value of the pants.ini var <code>my_option</code> in section <code>scope</code>.</p>
 <p>Note that if the task being run is specified explicitly on the command line, you can omit the
 scope from the cmd-line flag name. For example, instead of
-<code>./pants compile --compile-java-foo-bar</code> you can do <code>./pants compile.java --foo-bar</code>.</p>
+<code>./pants compile --compile-java-foo-bar</code> you can do <code>./pants compile.java --foo-bar</code>. See
+<a href="invoking.html">Invoking Pants</a> for more information.</p>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="fine-tuning-options">Fine-tuning Options</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#fine-tuning-options">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>When calling the <code>register</code> function, passing a few additional arguments
+will affect the behaviour of the registered option. The most common parameters are:</p>
+<ul>
+<li><code>type</code>: Constrains the type of the option. Takes a python type constructor (like <code>int</code>), or a
+  constructor like <code>list_option</code> from <a href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/option/custom_types.py">pants.option.custom_types</a>. If not specified, the option will be a string.</li>
+<li><code>default</code>: Sets a default value that will be used if the option is not specified by the user.</li>
+<li><code>action</code>: A string action that specifies that passing the registered option should do something other than
+  set a literal value (which is the default when no <code>action</code> is specified.) The two most common actions are:<ul>
+<li><em>store_true</em>: Causes the presence of the option to set the option value to <code>True</code>. Also automatically
+creates an inverse option prefixed with "--no-".</li>
+<li><em>append</em>: If an option is specified multiple times, the <code>append</code> action will append them to a list
+representing the option's value.</li>
+</ul>
+</li>
+<li><code>advanced</code>: Indicates that an option is intended either for use by power users, or for use in
+  pants.ini. By default, advanced options are not displayed in <code>./pants help</code>.</li>
+<li><code>fingerprint</code>: Indicates that the value of the registered option affects the products
+  of the task, such that changing the option would result in different products. When <code>True</code>,
+  changing the option will cause targets built by the task to be invalidated and rebuilt.</li>
+</ul>
 
 <table class="h-plus-pilcrow">
 <tbody>
@@ -460,7 +487,7 @@ independently.</p>
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/markdown/html/src/python/pants/docs/dev_tasks.html 2015-07-27T07:51:10.443097
+from dist/markdown/html/src/python/pants/docs/dev_tasks.html 2015-08-14T16:54:46.246945
 </div>
 
 </div> <!-- end of mainflow -->
