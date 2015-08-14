@@ -43,8 +43,8 @@
 <li class="toc-h2"><a href="#group_binary">binary</a></li>
 <li class="toc-h2"><a href="#group_binarydup">binary.dup</a></li>
 <li class="toc-h2"><a href="#group_binarydex">binary.dex</a></li>
-<li class="toc-h2"><a href="#group_binarycpplibrary">binary.cpp-library</a></li>
-<li class="toc-h2"><a href="#group_binarycppbinary">binary.cpp-binary</a></li>
+<li class="toc-h2"><a href="#group_binarycpplib">binary.cpplib</a></li>
+<li class="toc-h2"><a href="#group_binarycpp">binary.cpp</a></li>
 <li class="toc-h1"><a href="#bootstrap">bootstrap</a></li>
 <li class="toc-h2"><a href="#group_bootstrapbootstrapjvmtools">bootstrap.bootstrap-jvm-tools</a></li>
 <li class="toc-h1"><a href="#builddict">builddict</a></li>
@@ -71,7 +71,8 @@
 <li class="toc-h2"><a href="#group_compilepythoneval">compile.python-eval</a></li>
 <li class="toc-h2"><a href="#group_compilecheckstyle">compile.checkstyle</a></li>
 <li class="toc-h2"><a href="#group_compilescalastyle">compile.scalastyle</a></li>
-<li class="toc-h2"><a href="#group_compilecppcompile">compile.cpp-compile</a></li>
+<li class="toc-h2"><a href="#group_compilecpp">compile.cpp</a></li>
+<li class="toc-h2"><a href="#group_compilego">compile.go</a></li>
 <li class="toc-h1"><a href="#compile-changed">compile-changed</a></li>
 <li class="toc-h2"><a href="#group_compilechanged">compile-changed</a></li>
 <li class="toc-h1"><a href="#deferred-sources">deferred-sources</a></li>
@@ -120,6 +121,10 @@
 <li class="toc-h2"><a href="#group_invalidate">invalidate</a></li>
 <li class="toc-h1"><a href="#jar">jar</a></li>
 <li class="toc-h2"><a href="#group_jar">jar</a></li>
+<li class="toc-h1"><a href="#jvm-platform-explain">jvm-platform-explain</a></li>
+<li class="toc-h2"><a href="#group_jvmplatformexplain">jvm-platform-explain</a></li>
+<li class="toc-h1"><a href="#jvm-platform-validate">jvm-platform-validate</a></li>
+<li class="toc-h2"><a href="#group_jvmplatformvalidate">jvm-platform-validate</a></li>
 <li class="toc-h1"><a href="#killserver">killserver</a></li>
 <li class="toc-h2"><a href="#group_killserver">killserver</a></li>
 <li class="toc-h1"><a href="#list">list</a></li>
@@ -145,6 +150,7 @@
 <li class="toc-h2"><a href="#group_repldirtyscaladirty">repl-dirty.scala-dirty</a></li>
 <li class="toc-h1"><a href="#resolve">resolve</a></li>
 <li class="toc-h2"><a href="#group_resolveivy">resolve.ivy</a></li>
+<li class="toc-h2"><a href="#group_resolvego">resolve.go</a></li>
 <li class="toc-h1"><a href="#resources">resources</a></li>
 <li class="toc-h2"><a href="#group_resourcesprepare">resources.prepare</a></li>
 <li class="toc-h2"><a href="#group_resourcesservices">resources.services</a></li>
@@ -153,7 +159,8 @@
 <li class="toc-h1"><a href="#run">run</a></li>
 <li class="toc-h2"><a href="#group_runpy">run.py</a></li>
 <li class="toc-h2"><a href="#group_runjvm">run.jvm</a></li>
-<li class="toc-h2"><a href="#group_runcpprun">run.cpp-run</a></li>
+<li class="toc-h2"><a href="#group_runcpp">run.cpp</a></li>
+<li class="toc-h2"><a href="#group_rungo">run.go</a></li>
 <li class="toc-h1"><a href="#run-dirty">run-dirty</a></li>
 <li class="toc-h2"><a href="#group_rundirtyjvmdirty">run-dirty.jvm-dirty</a></li>
 <li class="toc-h1"><a href="#server">server</a></li>
@@ -171,6 +178,7 @@
 <li class="toc-h2"><a href="#group_test">test</a></li>
 <li class="toc-h2"><a href="#group_testpytest">test.pytest</a></li>
 <li class="toc-h2"><a href="#group_testjunit">test.junit</a></li>
+<li class="toc-h2"><a href="#group_testgo">test.go</a></li>
 <li class="toc-h1"><a href="#test-changed">test-changed</a></li>
 <li class="toc-h2"><a href="#group_testchanged">test-changed</a></li>
 <li class="toc-h1"><a href="#thrift-linter">thrift-linter</a></li>
@@ -251,6 +259,28 @@ Java code, and is installed in the <tt>compile</tt> goal.
   <li> <a href="#imports">imports</a> - 
   <li> <a href="#invalidate">invalidate</a> - Invalidate all targets.
   <li> <a href="#jar">jar</a> - Jars jvm libraries and optionally their sources and their docs.
+  <li> <a href="#jvm-platform-explain">jvm-platform-explain</a> - Console task which provides helpful analysis about jvm platform dependencies.
+
+  This can be very useful when debugging inter-dependencies in large sets of targets with a variety
+  of jvm platforms.
+
+  By default, this calculates the minimum and maximum possible -target level of each JvmTarget
+  specified, printing the range for each one on the console. This is determined by a target's
+  dependencies and dependees: a target cannot have a higher -target level than its dependees, and
+  it cannot have a lower -target level than any of its dependencies.
+
+  Additional flags fine-tune this output, including printing more detailed analysis of which
+  dependencies/dependees are limiting a target, or filtering the output to only targets you care
+  about.
+
+  Besides this functionality, --upgradeable and --downgradeable can print lists of targets which
+  can (again, based on the limits of their dependencies and dependees) afford to be upgraded or
+  downgraded to a different version.
+  
+  <li> <a href="#jvm-platform-validate">jvm-platform-validate</a> - Validation step that runs well in advance of jvm compile.
+
+  Ensures that no jvm targets depend on other targets which use a newer platform.
+  
   <li> <a href="#killserver">killserver</a> - Kill the reporting server.
   <li> <a href="#list">list</a> - List available BUILD targets.
   <li> <a href="#markdown">markdown</a> - Generate html from markdown docs.
@@ -276,7 +306,7 @@ Java code, and is installed in the <tt>compile</tt> goal.
   <li> <a href="#test-changed">test-changed</a> - Test changed targets.
   <li> <a href="#thrift-linter">thrift-linter</a> - Check thrift files for non-recommended usage patterns.
   <li> <a href="#unpack-jars">unpack-jars</a> - Unpack artifacts specified by unpacked_jars() targets.
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 <style>
 div.oref_goal_section {
   margin-left: 2%;
@@ -468,7 +498,13 @@ target's resource files. The output is an unsigned .apk, an Android application 
 
       Enable memory profiling.
 
-</li></li></li></ul>
+<li><code>--[no-]bench-debug</code>
+<code>bool</code>
+      (Default: <code>None</code>)
+
+      Run the benchmark tool with in process debugging.
+
+</li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -533,19 +569,7 @@ target's resource files. The output is an unsigned .apk, an Android application 
 
       Use nailgun to make repeated invocations of this task quicker.
 
-<li><code>--binary-nailgun-timeout-seconds=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>10</code>)
-
-      Timeout (secs) for nailgun startup.
-
-<li><code>--binary-nailgun-connect-attempts=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>5</code>)
-
-      Max attempts for nailgun connects.
-
-</li></li></li></ul>
+</li></ul>
 </p></div>
 <div class="oref_ogroup_section">
 <a id="oref_cli_binarydup" pantsmark="oref_cli_binarydup"> </a>
@@ -572,18 +596,6 @@ target's resource files. The output is an unsigned .apk, an Android application 
 
       Use nailgun to make repeated invocations of this task quicker.
 
-<li><code>--binary-dup-nailgun-timeout-seconds=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>10</code>)
-
-      Timeout (secs) for nailgun startup.
-
-<li><code>--binary-dup-nailgun-connect-attempts=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>5</code>)
-
-      Max attempts for nailgun connects.
-
 <li><code>--[no-]binary-dup-fail-fast</code>
 <code>bool</code>
       (Default: <code>False</code>)
@@ -602,7 +614,7 @@ target's resource files. The output is an unsigned .apk, an Android application 
 
       Maximum number of duplicate classes to display per artifact.
 
-</li></li></li></li></li></li></ul>
+</li></li></li></li></ul>
 </p></div>
 <div class="oref_ogroup_section">
 <a id="oref_cli_binarydex" pantsmark="oref_cli_binarydex"> </a>
@@ -620,7 +632,14 @@ target's resource files. The output is an unsigned .apk, an Android application 
 
 <p>Implemented by <code>pants.backend.android.tasks.dx_compile.DxCompile</code>
 <div>
-<p>Compile java classes into dex files, Dalvik executables.</p>
+<p>Compile java classes into dex files, Dalvik executables, for AndroidBinary targets.</p>
+<p>Gather the class files of the AndroidBinary and all of its dependencies. This includes the
+AndroidLibrary targets that the AndroidBinary depends on. AndroidLibrary artifacts (.jars and
+.aars) were unpacked during the UnpackLibraries task. The DxCompile task will gather all
+those classes and compile them into a dex file. When gathering the classes, the DxCompile
+task will filter unpacked AndroidLibraries in order to honor any include/exclude patterns.</p>
+<p>This task will silently skip any duplicate class files but will raise a
+DuplicateClassFileException if it detects a version conflict in any AndroidLibrary artifacts.</p>
 </div>
 <ul>
 <li><code>--[no-]binary-dex-use-nailgun</code>
@@ -628,18 +647,6 @@ target's resource files. The output is an unsigned .apk, an Android application 
       (Default: <code>True</code>)
 
       Use nailgun to make repeated invocations of this task quicker.
-
-<li><code>--binary-dex-nailgun-timeout-seconds=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>10</code>)
-
-      Timeout (secs) for nailgun startup.
-
-<li><code>--binary-dex-nailgun-connect-attempts=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>5</code>)
-
-      Max attempts for nailgun connects.
 
 <li><code>--binary-dex-sdk-path=&lt;str&gt;</code>
 <code>str</code>
@@ -659,17 +666,17 @@ target's resource files. The output is an unsigned .apk, an Android application 
 
       Run dx with these JVM options.
 
-</li></li></li></li></li></li></ul>
+</li></li></li></li></ul>
 </p></div>
 <div class="oref_ogroup_section">
-<a id="oref_cli_binarycpplibrary" pantsmark="oref_cli_binarycpplibrary"> </a>
+<a id="oref_cli_binarycpplib" pantsmark="oref_cli_binarycpplib"> </a>
 
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h3 id="group_binarycpplibrary">binary.cpp-library</h3></td>
+<td class="h-plus-pilcrow-holder"><h3 id="group_binarycpplib">binary.cpplib</h3></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#group_binarycpplibrary">¶</a>
+<a class="pilcrow-link" href="#group_binarycpplib">¶</a>
 </div></td>
 </tr>
 </tbody>
@@ -680,23 +687,17 @@ target's resource files. The output is an unsigned .apk, an Android application 
 <p>Builds a static library from C++ sources.</p>
 </div>
 <ul>
-<li><code>--binary-cpp-library-compiler=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>None</code>)
-
-      Set a specific compiler to use (eg, g++-4.8, clang++)
-
-</li></ul>
+</ul>
 </p></div>
 <div class="oref_ogroup_section">
-<a id="oref_cli_binarycppbinary" pantsmark="oref_cli_binarycppbinary"> </a>
+<a id="oref_cli_binarycpp" pantsmark="oref_cli_binarycpp"> </a>
 
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h3 id="group_binarycppbinary">binary.cpp-binary</h3></td>
+<td class="h-plus-pilcrow-holder"><h3 id="group_binarycpp">binary.cpp</h3></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#group_binarycppbinary">¶</a>
+<a class="pilcrow-link" href="#group_binarycpp">¶</a>
 </div></td>
 </tr>
 </tbody>
@@ -707,19 +708,13 @@ target's resource files. The output is an unsigned .apk, an Android application 
 <p>Builds an executable file from C++ sources and libraries.</p>
 </div>
 <ul>
-<li><code>--binary-cpp-binary-compiler=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>None</code>)
-
-      Set a specific compiler to use (eg, g++-4.8, clang++)
-
-<li><code>--binary-cpp-binary-ld-options=&lt;str&gt;</code>
+<li><code>--binary-cpp-ld-options=&lt;str&gt;</code>
 <code>str</code>
       (Default: <code>None</code>)
 
       Append these options to the link command line.
 
-</li></li></ul>
+</li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -763,18 +758,6 @@ target's resource files. The output is an unsigned .apk, an Android application 
 
       Use nailgun to make repeated invocations of this task quicker.
 
-<li><code>--bootstrap-bootstrap-jvm-tools-nailgun-timeout-seconds=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>10</code>)
-
-      Timeout (secs) for nailgun startup.
-
-<li><code>--bootstrap-bootstrap-jvm-tools-nailgun-connect-attempts=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>5</code>)
-
-      Max attempts for nailgun connects.
-
 <li><code></code>
 <code>str</code>
       (Default: <code>['-Xmx1g','-XX:MaxPermSize=256m']</code>)
@@ -787,7 +770,7 @@ target's resource files. The output is an unsigned .apk, an Android application 
 
       Run the tool shader with these extra jvm options.
 
-</li></li></li></li></li></ul>
+</li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -878,18 +861,6 @@ target's resource files. The output is an unsigned .apk, an Android application 
 
       Use nailgun to make repeated invocations of this task quicker.
 
-<li><code>--bundle-nailgun-timeout-seconds=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>10</code>)
-
-      Timeout (secs) for nailgun startup.
-
-<li><code>--bundle-nailgun-connect-attempts=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>5</code>)
-
-      Max attempts for nailgun connects.
-
 <li><code>--[no-]bundle-deployjar</code>
 <code>bool</code>
       (Default: <code>False</code>)
@@ -908,7 +879,7 @@ target's resource files. The output is an unsigned .apk, an Android application 
 
       If --archive is specified, use the target basename as the path prefix.
 
-</li></li></li></li></li></li></ul>
+</li></li></li></li></ul>
 </p></div>
 <div class="oref_ogroup_section">
 <a id="oref_cli_bundledup" pantsmark="oref_cli_bundledup"> </a>
@@ -935,18 +906,6 @@ target's resource files. The output is an unsigned .apk, an Android application 
 
       Use nailgun to make repeated invocations of this task quicker.
 
-<li><code>--bundle-dup-nailgun-timeout-seconds=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>10</code>)
-
-      Timeout (secs) for nailgun startup.
-
-<li><code>--bundle-dup-nailgun-connect-attempts=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>5</code>)
-
-      Max attempts for nailgun connects.
-
 <li><code>--[no-]bundle-dup-fail-fast</code>
 <code>bool</code>
       (Default: <code>False</code>)
@@ -965,7 +924,7 @@ target's resource files. The output is an unsigned .apk, an Android application 
 
       Maximum number of duplicate classes to display per artifact.
 
-</li></li></li></li></li></li></ul>
+</li></li></li></li></ul>
 </p></div>
 <div class="oref_ogroup_section">
 <a id="oref_cli_bundlezipalign" pantsmark="oref_cli_bundlezipalign"> </a>
@@ -1412,6 +1371,9 @@ target's resource files. The output is an unsigned .apk, an Android application 
 </table>
 
 <p>Implemented by <code>pants.backend.jvm.tasks.checkstyle.Checkstyle</code>
+<div>
+<p>Check Java code for style violations.</p>
+</div>
 <ul>
 <li><code>--[no-]compile-checkstyle-use-nailgun</code>
 <code>bool</code>
@@ -1419,43 +1381,13 @@ target's resource files. The output is an unsigned .apk, an Android application 
 
       Use nailgun to make repeated invocations of this task quicker.
 
-<li><code>--compile-checkstyle-nailgun-timeout-seconds=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>10</code>)
-
-      Timeout (secs) for nailgun startup.
-
-<li><code>--compile-checkstyle-nailgun-connect-attempts=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>5</code>)
-
-      Max attempts for nailgun connects.
-
 <li><code>--[no-]compile-checkstyle-skip</code>
 <code>bool</code>
       (Default: <code>None</code>)
 
       Skip checkstyle.
 
-<li><code>--compile-checkstyle-configuration=&lt;file_type&gt;</code>
-<code>file_type</code>
-      (Default: <code>&lt;buildroot&gt;/build-support/checkstyle/coding_style.xml</code>)
-
-      Path to the checkstyle configuration file.
-
-<li><code>--compile-checkstyle-properties="{ 'key1': val1,'key2': val2,...}"</code>
-<code>dict_type</code>
-      (Default: <code>{  }</code>)
-
-      Dictionary of property mappings to use for checkstyle.properties.
-
-<li><code>--compile-checkstyle-confs=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>[u'default']</code>)
-
-      One or more ivy configurations to resolve for this target. This parameter is not intended for general use.
-
-</li></li></li></li></li></li></li></ul>
+</li></li></ul>
 </p></div>
 <div class="oref_ogroup_section">
 <a id="oref_cli_compilescalastyle" pantsmark="oref_cli_compilescalastyle"> </a>
@@ -1483,35 +1415,23 @@ target's resource files. The output is an unsigned .apk, an Android application 
 
       Use nailgun to make repeated invocations of this task quicker.
 
-<li><code>--compile-scalastyle-nailgun-timeout-seconds=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>10</code>)
-
-      Timeout (secs) for nailgun startup.
-
-<li><code>--compile-scalastyle-nailgun-connect-attempts=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>5</code>)
-
-      Max attempts for nailgun connects.
-
 <li><code>--[no-]compile-scalastyle-skip</code>
 <code>bool</code>
       (Default: <code>None</code>)
 
       Skip scalastyle.
 
-</li></li></li></li></ul>
+</li></li></ul>
 </p></div>
 <div class="oref_ogroup_section">
-<a id="oref_cli_compilecppcompile" pantsmark="oref_cli_compilecppcompile"> </a>
+<a id="oref_cli_compilecpp" pantsmark="oref_cli_compilecpp"> </a>
 
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h3 id="group_compilecppcompile">compile.cpp-compile</h3></td>
+<td class="h-plus-pilcrow-holder"><h3 id="group_compilecpp">compile.cpp</h3></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#group_compilecppcompile">¶</a>
+<a class="pilcrow-link" href="#group_compilecpp">¶</a>
 </div></td>
 </tr>
 </tbody>
@@ -1519,28 +1439,38 @@ target's resource files. The output is an unsigned .apk, an Android application 
 
 <p>Implemented by <code>pants.contrib.cpp.tasks.cpp_compile.CppCompile</code>
 <div>
-<p>Compiles object files from C++ sources.</p>
+<p>Compile C++ sources into object files.</p>
 </div>
 <ul>
-<li><code>--compile-cpp-compile-compiler=&lt;str&gt;</code>
+</ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_compilego" pantsmark="oref_cli_compilego"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_compilego">compile.go</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_compilego">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.contrib.go.tasks.go_compile.GoCompile</code>
+<div>
+<p>Compiles a Go package into either a library binary or executable binary.</p>
+<p>GoCompile will populate the "bin/" and "pkg/" directories of each target's Go
+workspace (see GoWorkspaceTask) with executables and library binaries respectively.</p>
+</div>
+<ul>
+<li><code>--compile-go-build-flags=&lt;str&gt;</code>
 <code>str</code>
-      (Default: <code>None</code>)
 
-      Set a specific compiler to use (eg, g++-4.8, clang++)
+      Build flags to pass to Go compiler.
 
-<li><code>--compile-cpp-compile-cc-options=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>None</code>)
-
-      Append these options to the compiler command line.
-
-<li><code>--compile-cpp-compile-cc-extensions=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>[u'cc', u'cxx', u'cpp']</code>)
-
-      The list of extensions (without the .) to consider when determining if a file is a C++ source file.
-
-</li></li></li></ul>
+</li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -1939,18 +1869,6 @@ set of a target.</p>
 
       Use nailgun to make repeated invocations of this task quicker.
 
-<li><code>--detect-duplicates-nailgun-timeout-seconds=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>10</code>)
-
-      Timeout (secs) for nailgun startup.
-
-<li><code>--detect-duplicates-nailgun-connect-attempts=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>5</code>)
-
-      Max attempts for nailgun connects.
-
 <li><code>--[no-]detect-duplicates-fail-fast</code>
 <code>bool</code>
       (Default: <code>False</code>)
@@ -1969,7 +1887,7 @@ set of a target.</p>
 
       Maximum number of duplicate classes to display per artifact.
 
-</li></li></li></li></li></li></ul>
+</li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -2753,19 +2671,7 @@ between them.</p>
 
       Use nailgun to make repeated invocations of this task quicker.
 
-<li><code>--gen-antlr-nailgun-timeout-seconds=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>10</code>)
-
-      Timeout (secs) for nailgun startup.
-
-<li><code>--gen-antlr-nailgun-connect-attempts=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>5</code>)
-
-      Max attempts for nailgun connects.
-
-</li></li></li></ul>
+</li></ul>
 </p></div>
 <div class="oref_ogroup_section">
 <a id="oref_cli_genragel" pantsmark="oref_cli_genragel"> </a>
@@ -2810,19 +2716,7 @@ between them.</p>
 
       Use nailgun to make repeated invocations of this task quicker.
 
-<li><code>--gen-jaxb-nailgun-timeout-seconds=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>10</code>)
-
-      Timeout (secs) for nailgun startup.
-
-<li><code>--gen-jaxb-nailgun-connect-attempts=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>5</code>)
-
-      Max attempts for nailgun connects.
-
-</li></li></li></ul>
+</li></ul>
 </p></div>
 <div class="oref_ogroup_section">
 <a id="oref_cli_genwire" pantsmark="oref_cli_genwire"> </a>
@@ -2841,7 +2735,7 @@ between them.</p>
 <p>Implemented by <code>pants.backend.codegen.tasks.wire_gen.WireGen</code>
 <ul>
 <li><code>--gen-wire-javadeps="['str1','str2',...]"</code>
-<code>list_type</code>
+<code>list_option</code>
       (Default: <code>['//:wire-runtime']</code>)
 
       Runtime dependencies for wire-using Java code.
@@ -2864,13 +2758,19 @@ between them.</p>
 
 <p>Implemented by <code>pants.backend.android.tasks.aapt_gen.AaptGen</code>
 <div>
-<p>Handle the processing of resources for Android targets with the
-Android Asset Packaging Tool (aapt).</p>
-<p>The aapt tool supports 6 major commands: [dump, list, add, remove, crunch, package]
-For right now, pants is only supporting 'package'. More to come as we support Release builds
-(crunch, at minimum).</p>
+<p>Handle the processing of resources for Android targets with the Android Asset Packaging Tool
+(aapt). The aapt tool supports 6 major commands: [dump, list, add, remove, crunch, package]
+For right now, pants supports 'package'.</p>
 <p>Commands and flags for aapt can be seen here:
 <a class="reference external" href="https://android.googlesource.com/platform/frameworks/base/+/master/tools/aapt/Command.cpp">https://android.googlesource.com/platform/frameworks/base/+/master/tools/aapt/Command.cpp</a></p>
+<p>The resources are processed against a set of APIs found in the android.jar that corresponds to
+the target's target_sdk. AndroidBinary files must declare a target_sdk in their manifest.
+AndroidLibrary targets are processed with the target_sdk of the dependee AndroidBinary.
+An AndroidLibrary will need to be processed once for every target_sdk that it supports.</p>
+<p>Each AndroidLibrary is processed individually. AndroidBinary targets are processed along with
+all of the AndroidLibrary targets in its transitive closure. The output of an AaptGen invocation
+is an R.java file that allows programmatic access to resources, one each for all AndroidBinary
+and AndroidLibrary targets.</p>
 </div>
 <ul>
 <li><code>--gen-aapt-sdk-path=&lt;str&gt;</code>
@@ -2921,18 +2821,6 @@ For right now, pants is only supporting 'package'. More to come as we support Re
 
       Use nailgun to make repeated invocations of this task quicker.
 
-<li><code>--gen-scrooge-nailgun-timeout-seconds=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>10</code>)
-
-      Timeout (secs) for nailgun startup.
-
-<li><code>--gen-scrooge-nailgun-connect-attempts=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>5</code>)
-
-      Max attempts for nailgun connects.
-
 <li><code>--[no-]gen-scrooge-verbose</code>
 <code>bool</code>
       (Default: <code>False</code>)
@@ -2945,7 +2833,7 @@ For right now, pants is only supporting 'package'. More to come as we support Re
 
       Enable strict compilation.
 
-</li></li></li></li></li></ul>
+</li></li></li></ul>
 </p></div>
 <div class="oref_ogroup_section">
 <a id="oref_cli_genspindle" pantsmark="oref_cli_genspindle"> </a>
@@ -2969,19 +2857,7 @@ For right now, pants is only supporting 'package'. More to come as we support Re
 
       Use nailgun to make repeated invocations of this task quicker.
 
-<li><code>--gen-spindle-nailgun-timeout-seconds=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>10</code>)
-
-      Timeout (secs) for nailgun startup.
-
-<li><code>--gen-spindle-nailgun-connect-attempts=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>5</code>)
-
-      Max attempts for nailgun connects.
-
-</li></li></li></ul>
+</li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -3278,25 +3154,13 @@ containing .proto files.</p>
 
       Use nailgun to make repeated invocations of this task quicker.
 
-<li><code>--imports-ivy-imports-nailgun-timeout-seconds=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>10</code>)
-
-      Timeout (secs) for nailgun startup.
-
-<li><code>--imports-ivy-imports-nailgun-connect-attempts=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>5</code>)
-
-      Max attempts for nailgun connects.
-
 <li><code>--imports-ivy-imports-jvm-options=&lt;option&gt;... (--imports-ivy-imports-jvm-options=&lt;option&gt;...) ...</code>
 <code>str</code>
       (Default: <code>['-Xmx1g','-XX:MaxPermSize=256m']</code>)
 
       Run Ivy with these extra jvm options.
 
-</li></li></li></li></ul>
+</li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -3411,25 +3275,188 @@ containing .proto files.</p>
 
       Use nailgun to make repeated invocations of this task quicker.
 
-<li><code>--jar-nailgun-timeout-seconds=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>10</code>)
-
-      Timeout (secs) for nailgun startup.
-
-<li><code>--jar-nailgun-connect-attempts=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>5</code>)
-
-      Max attempts for nailgun connects.
-
 <li><code>--[no-]jar-compressed</code>
 <code>bool</code>
       (Default: <code>True</code>)
 
       Create compressed jars.
 
-</li></li></li></li></ul>
+</li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_jvm-platform-explain" pantsmark="oref_goal_jvm-platform-explain"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="jvm-platform-explain">jvm-platform-explain</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#jvm-platform-explain">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Console task which provides helpful analysis about jvm platform dependencies.
+
+  This can be very useful when debugging inter-dependencies in large sets of targets with a variety
+  of jvm platforms.
+
+  By default, this calculates the minimum and maximum possible -target level of each JvmTarget
+  specified, printing the range for each one on the console. This is determined by a target's
+  dependencies and dependees: a target cannot have a higher -target level than its dependees, and
+  it cannot have a lower -target level than any of its dependencies.
+
+  Additional flags fine-tune this output, including printing more detailed analysis of which
+  dependencies/dependees are limiting a target, or filtering the output to only targets you care
+  about.
+
+  Besides this functionality, --upgradeable and --downgradeable can print lists of targets which
+  can (again, based on the limits of their dependencies and dependees) afford to be upgraded or
+  downgraded to a different version.
+  
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_jvmplatformexplain" pantsmark="oref_cli_jvmplatformexplain"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_jvmplatformexplain">jvm-platform-explain</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_jvmplatformexplain">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.jvm_platform_analysis.JvmPlatformExplain</code>
+<div>
+<p>Console task which provides helpful analysis about jvm platform dependencies.</p>
+<p>This can be very useful when debugging inter-dependencies in large sets of targets with a variety
+of jvm platforms.</p>
+<p>By default, this calculates the minimum and maximum possible -target level of each JvmTarget
+specified, printing the range for each one on the console. This is determined by a target's
+dependencies and dependees: a target cannot have a higher -target level than its dependees, and
+it cannot have a lower -target level than any of its dependencies.</p>
+<p>Additional flags fine-tune this output, including printing more detailed analysis of which
+dependencies/dependees are limiting a target, or filtering the output to only targets you care
+about.</p>
+<p>Besides this functionality, --upgradeable and --downgradeable can print lists of targets which
+can (again, based on the limits of their dependencies and dependees) afford to be upgraded or
+downgraded to a different version.</p>
+</div>
+<ul>
+<li><code>--jvm-platform-explain-sep=&lt;separator&gt;</code>
+<code>str</code>
+      (Default: <code>\n</code>)
+
+      String to use to separate results.
+
+<li><code>--jvm-platform-explain-output-file=&lt;path&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Write the console output to this file instead.
+
+<li><code>--[no-]jvm-platform-explain-ranges</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      For each target, list the minimum and maximum possible jvm target level, based on its dependencies and dependees, respectively.
+
+<li><code>--[no-]jvm-platform-explain-detailed</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Always list the dependencies and dependees that contributed to the assessment of legal jvm target levels (rather than only on failure).
+
+<li><code>--[no-]jvm-platform-explain-only-broken</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Only print jvm target level ranges for targets with currently invalid ranges.
+
+<li><code>--[no-]jvm-platform-explain-upgradeable</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Print a list of targets which can be upgraded to a higher version than they currently are.
+
+<li><code>--[no-]jvm-platform-explain-downgradeable</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Print a list of targets which can be downgraded to a lower version than they currently are.
+
+<li><code>--jvm-platform-explain-filter=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Limit jvm platform possibility explanation to targets whose specs match this regex pattern.
+
+</li></li></li></li></li></li></li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_jvm-platform-validate" pantsmark="oref_goal_jvm-platform-validate"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="jvm-platform-validate">jvm-platform-validate</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#jvm-platform-validate">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Validation step that runs well in advance of jvm compile.
+
+  Ensures that no jvm targets depend on other targets which use a newer platform.
+  
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_jvmplatformvalidate" pantsmark="oref_cli_jvmplatformvalidate"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_jvmplatformvalidate">jvm-platform-validate</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_jvmplatformvalidate">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.jvm_platform_analysis.JvmPlatformValidate</code>
+<div>
+<p>Validation step that runs well in advance of jvm compile.</p>
+<p>Ensures that no jvm targets depend on other targets which use a newer platform.</p>
+</div>
+<ul>
+<li><code>--jvm-platform-validate-check=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>off</code>)
+
+      Check to make sure no jvm targets target an earlier jdk than their dependencies
+
+<li><code>--[no-]jvm-platform-validate-children-before-parents</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Organize output in the form target -&gt; dependencies, rather than target -&gt; dependees.
+
+</li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -3951,18 +3978,6 @@ repos = {
 
       Use nailgun to make repeated invocations of this task quicker.
 
-<li><code>--publish-jar-nailgun-timeout-seconds=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>10</code>)
-
-      Timeout (secs) for nailgun startup.
-
-<li><code>--publish-jar-nailgun-connect-attempts=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>5</code>)
-
-      Max attempts for nailgun connects.
-
 <li><code>--publish-jar-scm-push-attempts=&lt;int&gt;</code>
 <code>int</code>
       (Default: <code>5</code>)
@@ -4029,7 +4044,7 @@ repos = {
 
       A changelog.txt file will be created and printed to the console for each artifact published
 
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -4197,18 +4212,6 @@ repos = {
 
       Use nailgun to make repeated invocations of this task quicker.
 
-<li><code>--resolve-ivy-nailgun-timeout-seconds=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>10</code>)
-
-      Timeout (secs) for nailgun startup.
-
-<li><code>--resolve-ivy-nailgun-connect-attempts=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>5</code>)
-
-      Max attempts for nailgun connects.
-
 <li><code>--resolve-ivy-jvm-options=&lt;option&gt;... (--resolve-ivy-jvm-options=&lt;option&gt;...) ...</code>
 <code>str</code>
       (Default: <code>['-Xmx1g','-XX:MaxPermSize=256m']</code>)
@@ -4235,7 +4238,7 @@ repos = {
 
 <li><code>--resolve-ivy-outdir=&lt;str&gt;</code>
 <code>str</code>
-      (Default: <code>&lt;buildroot&gt;/dist</code>)
+      (Default: <code>None</code>)
 
       Emit ivy report outputs in to this directory.
 
@@ -4257,7 +4260,33 @@ repos = {
 
       If specified, all artifact revisions matching this pattern will be treated as mutable unless a matching artifact explicitly marks mutable as False.
 
-</li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_resolvego" pantsmark="oref_cli_resolvego"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_resolvego">resolve.go</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_resolvego">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.contrib.go.tasks.go_fetch.GoFetch</code>
+<div>
+<p>Downloads a 3rd party Go library.</p>
+</div>
+<ul>
+<li><code>--resolve-go-remote-lib-host=&lt;str&gt;</code>
+<code>str</code>
+
+      Host to fetch Go remote libraries from. Go remote library targets may include this host in their `zip_url` field via template variable {host}.
+
+</li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -4462,14 +4491,14 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 </li></li></li></li></ul>
 </p></div>
 <div class="oref_ogroup_section">
-<a id="oref_cli_runcpprun" pantsmark="oref_cli_runcpprun"> </a>
+<a id="oref_cli_runcpp" pantsmark="oref_cli_runcpp"> </a>
 
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h3 id="group_runcpprun">run.cpp-run</h3></td>
+<td class="h-plus-pilcrow-holder"><h3 id="group_runcpp">run.cpp</h3></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#group_runcpprun">¶</a>
+<a class="pilcrow-link" href="#group_runcpp">¶</a>
 </div></td>
 </tr>
 </tbody>
@@ -4480,19 +4509,34 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 <p>Runs a cpp binary</p>
 </div>
 <ul>
-<li><code>--run-cpp-run-compiler=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>None</code>)
-
-      Set a specific compiler to use (eg, g++-4.8, clang++)
-
-<li><code>--run-cpp-run-args="['str1','str2',...]" (--run-cpp-run-args="['str1','str2',...]") ...</code>
+<li><code>--run-cpp-args="['str1','str2',...]" (--run-cpp-args="['str1','str2',...]") ...</code>
 <code>str</code>
       (Default: <code>[]</code>)
 
       Append these options to the executable command line.
 
-</li></li></ul>
+</li></ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_rungo" pantsmark="oref_cli_rungo"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_rungo">run.go</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_rungo">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.contrib.go.tasks.go_run.GoRun</code>
+<div>
+<p>Runs an executable Go binary.</p>
+</div>
+<ul>
+</ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -4709,7 +4753,7 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 <ul>
 <li><code>--sign-keystore-config-location=&lt;str&gt;</code>
 <code>str</code>
-      (Default: <code>/Users/zundel/.config/pants/android/keystore/default_config.ini</code>)
+      (Default: <code>/Users/stuhood/.config/pants/android/keystore/default_config.ini</code>)
 
       Location of the .ini file containing keystore definitions.
 
@@ -5087,6 +5131,38 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 
 </li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 </p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_testgo" pantsmark="oref_cli_testgo"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_testgo">test.go</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_testgo">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.contrib.go.tasks.go_test.GoTest</code>
+<div>
+<p>Runs <cite>go test</cite> on Go packages.</p>
+<p>To run a library's tests, GoTest only requires a Go workspace to be initialized
+(see GoWorkspaceTask) with links to necessary source files. It does not require
+GoCompile to first compile the library to be tested -- in fact, GoTest will ignore
+any binaries in "$GOPATH/pkg/", because Go test files (which live in the package
+they are testing) are ignored in normal compilation, so Go test must compile everything
+from scratch.</p>
+</div>
+<ul>
+<li><code>--test-go-build-and-test-flags=&lt;str&gt;</code>
+<code>str</code>
+
+      Flags to pass in to `go test` tool.
+
+</li></ul>
+</p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
 </br></p></p></div>
@@ -5197,18 +5273,6 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 
       Use nailgun to make repeated invocations of this task quicker.
 
-<li><code>--thrift-linter-nailgun-timeout-seconds=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>10</code>)
-
-      Timeout (secs) for nailgun startup.
-
-<li><code>--thrift-linter-nailgun-connect-attempts=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>5</code>)
-
-      Max attempts for nailgun connects.
-
 <li><code>--[no-]thrift-linter-skip</code>
 <code>bool</code>
       (Default: <code>None</code>)
@@ -5221,7 +5285,7 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 
       Fail the goal if thrift linter errors are found. Overrides the `strict-default` option.
 
-</li></li></li></li></li></ul>
+</li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -5260,8 +5324,7 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 <p>Implemented by <code>pants.backend.jvm.tasks.unpack_jars.UnpackJars</code>
 <div>
 <p>Looks for UnpackedJars targets and unpacks them.</p>
-<p>Adds an entry to SourceRoot for the contents.  Initially only
-supported by JavaProtobufLibrary.</p>
+<p>Adds an entry to SourceRoot for the contents.</p>
 </div>
 <ul>
 </ul>
@@ -5317,60 +5380,6 @@ creation of the dex file.</p>
 These command-line flags are available with all Pants goals.
 
 <ul>
-<li><code>--pants-workdir=&lt;dir&gt;</code>
-<code>str</code>
-      (Default: <code>&lt;buildroot&gt;/.pants.d</code>)
-
-      Write intermediate output files to this dir.
-
-<li><code>--pants-supportdir=&lt;dir&gt;</code>
-<code>str</code>
-      (Default: <code>&lt;buildroot&gt;/build-support</code>)
-
-      Use support files from this dir.
-
-<li><code>--pants-distdir=&lt;dir&gt;</code>
-<code>str</code>
-      (Default: <code>&lt;buildroot&gt;/dist</code>)
-
-      Write end-product artifacts to this dir.
-
-<li><code>--config-override=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>None</code>)
-
-      A second config file, to override pants.ini.
-
-<li><code>--[no-]pantsrc</code>
-<code>bool</code>
-      (Default: <code>True</code>)
-
-      Use pantsrc files.
-
-<li><code>--pantsrc-files=&lt;path&gt; (--pantsrc-files=&lt;path&gt;) ...</code>
-<code>str</code>
-      (Default: <code>['/etc/pantsrc','~/.pants.rc']</code>)
-
-      Override config with values from these files. Later files override earlier ones.
-
-<li><code>--pythonpath="['str1','str2',...]" (--pythonpath="['str1','str2',...]") ...</code>
-<code>str</code>
-      (Default: <code>['&lt;buildroot&gt;/pants-plugins/src/python','&lt;buildroot&gt;/contrib/scrooge/src/python','&lt;buildroot&gt;/contrib/spindle/src/python','&lt;buildroot&gt;/contrib/cpp/src/python']</code>)
-
-      Add these directories to PYTHONPATH to search for plugins.
-
-<li><code>--target-spec-file="['str1','str2',...]" (--target-spec-file="['str1','str2',...]") ...</code>
-<code>str</code>
-      (Default: <code>[]</code>)
-
-      Read additional specs from this file, one per line
-
-<li><code>-d=&lt;dir&gt;/--logdir=&lt;dir&gt;</code>
-<code>str</code>
-      (Default: <code>None</code>)
-
-      Write logs to files under this directory.
-
 <li><code>-l=&lt;str&gt;/--level=&lt;str&gt;</code>
 <code>str</code>
       (Default: <code>info</code>)
@@ -5383,17 +5392,23 @@ These command-line flags are available with all Pants goals.
 
       Squelches all console output apart from errors.
 
-<li><code>-t=&lt;seconds&gt;/--timeout=&lt;seconds&gt;</code>
-<code>int</code>
-      (Default: <code>None</code>)
+<li><code>--[no-]colors</code>
+<code>bool</code>
+      (Default: <code>True</code>)
 
-      Number of seconds to wait for http connections.
+      Set whether log messages are displayed in color.
+
+<li><code>--target-spec-file="['str1','str2',...]" (--target-spec-file="['str1','str2',...]") ...</code>
+<code>str</code>
+      (Default: <code>[]</code>)
+
+      Read additional specs from this file, one per line
 
 <li><code>-x/--[no-]time</code>
 <code>bool</code>
       (Default: <code>None</code>)
 
-      Times tasks and goals and outputs a report.
+      Output a timing report at the end of the run.
 
 <li><code>-e/--[no-]explain</code>
 <code>bool</code>
@@ -5401,67 +5416,19 @@ These command-line flags are available with all Pants goals.
 
       Explain the execution of goals.
 
-<li><code>-k/--[no-]kill-nailguns</code>
-<code>bool</code>
-      (Default: <code>None</code>)
-
-      Kill nailguns before exiting
-
-<li><code>-i=&lt;requirement&gt; (-i=&lt;requirement&gt;) .../--interpreter=&lt;requirement&gt; (--interpreter=&lt;requirement&gt;) ...</code>
-<code>str</code>
-      (Default: <code>[]</code>)
-
-      Constrain what Python interpreters to use.  Uses Requirement format from pkg_resources, e.g. 'CPython&gt;=2.6,&lt;3' or 'PyPy'. By default, no constraints are used.  Multiple constraints may be added.  They will be ORed together.
-
-<li><code>--[no-]colors</code>
-<code>bool</code>
-      (Default: <code>True</code>)
-
-      Set whether log messages are displayed in color.
-
-<li><code>--spec-excludes="['str1','str2',...]" (--spec-excludes="['str1','str2',...]") ...</code>
-<code>str</code>
-      (Default: <code>['&lt;buildroot&gt;/.pants.d']</code>)
-
-      Ignore these paths when evaluating the command-line target specs.  Useful with ::, to avoid descending into unneeded directories.
-
-<li><code>--exclude-target-regexp=&lt;regexp&gt; (--exclude-target-regexp=&lt;regexp&gt;) ...</code>
-<code>str</code>
-      (Default: <code>[]</code>)
-
-      Exclude targets that match these regexes. Useful with ::, to ignore broken BUILD files.
-
 <li><code>--tag=[+-]tag1,tag2,... (--tag=[+-]tag1,tag2,...) ...</code>
 <code>str</code>
       (Default: <code>[]</code>)
 
       Include only targets with these tags (optional '+' prefix) or without these tags ('-' prefix).  Useful with ::, to find subsets of targets (e.g., integration tests.)
 
-<li><code>--[no-]print-exception-stacktrace</code>
-<code>bool</code>
-      (Default: <code>True</code>)
-
-      Print to console the full exception stack trace if encountered.
-
-<li><code>--[no-]fail-fast</code>
-<code>bool</code>
-      (Default: <code>None</code>)
-
-      When parsing specs, will stop on the first erronous BUILD file encountered. Otherwise, will parse all builds in a spec and then throw an Exception.
-
-<li><code>--build-file-rev=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>None</code>)
-
-      Read BUILD files from this scm rev instead of from the working tree.  This is useful for implementing pants-aware sparse checkouts.
-
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></ul>
 </p></p></p></p></body>
 <!-- main content end -->
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/builddict/options_reference.html 2015-07-28T11:01:02.680534
+from dist/builddict/options_reference.html 2015-08-14T14:45:58.964309
 </div>
 
 </div> <!-- end of mainflow -->
