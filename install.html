@@ -33,7 +33,6 @@
 <nav class="pagetoc">
 <ul>
 <li class="toc-h1"><a href="#virtualenv-based-installation">Virtualenv-based Installation</a></li>
-<li class="toc-h1"><a href="#system-wide-installation">System-wide Installation</a></li>
 <li class="toc-h1"><a href="#pex-based-installation">PEX-based Installation</a></li>
 <li class="toc-h1"><a href="#troubleshooting">Troubleshooting</a></li>
 </ul>
@@ -117,23 +116,12 @@
 </tbody>
 </table>
 
-<p><strong>As of September 2014, alas, Pants is not something you can just
-install and use.</strong> To be precise: you can install it, but unless you've
-also
-<a href="setup_repo.html">Set up your code workspace to work with Pants</a>,
-it won't work. You can use it in a workspace in which some Pants expert has
-set it up.</p>
-<p>We're fixing this problem, but we're not done yet.</p>
-<p>If want to try out Pants and no Pants expert has set it up for you, you
-might try <a href="https://github.com/twitter/commons">https://github.com/twitter/commons</a>.
-(<a href="https://github.com/pantsbuild/pants">https://github.com/pantsbuild/pants</a> also uses Pants to build, but
-there tends to be a lot of "churn".)</p>
-<p>If you're reading this in an organization that already uses Pants, ask
-your neighbor where your source code is.</p>
-<p>There are a few ways to get a runnable version of Pants into a developer's workspace. Before
+<p>There are a few ways to get a runnable version of pants set up for your workspace. Before
 beginning, please <a href="https://github.com/pantsbuild/pants/blob/master/README.md">consult the README</a>,
 to make sure your machine fits the requirements. In particular, you'll want to make sure that you
 have Python 2.7.x -- pants itself needs to be hosted on that version.</p>
+<p>After you have pants installed, you'll need to
+<a href="setup_repo.html">Set up your code workspace to work with Pants</a>.</p>
 
 <table class="h-plus-pilcrow">
 <tbody>
@@ -146,37 +134,40 @@ have Python 2.7.x -- pants itself needs to be hosted on that version.</p>
 </tbody>
 </table>
 
-<p><a href="http://www.virtualenv.org/">Virtualenv</a> is a tool for creating isolated
-Python environments. This is the recommended way of installing pants
-locally as it does not modify the system Python libraries.</p>
-<div class="codehilite"><pre><span class="nv">$ </span>virtualenv /tmp/pants
-<span class="nv">$ </span><span class="nb">source</span> /tmp/pants/bin/activate
-<span class="nv">$ </span>pip install pantsbuild.pants
-<span class="nv">$ </span>pants
+<p>To set up pants in your repo, you can use our self-contained virtualenv-based <code>pants</code> bash script:</p>
+<div class="codehilite"><pre>  curl -O https://pantsbuild.github.io/setup/pants
+  chmod +x pants
+  touch pants.ini
 </pre></div>
-<p>To simplify a virtualenv-based installation, add a wrapper script to
-your repo. For an example, see the
-<a href="https://github.com/twitter/commons/blob/master/pants"><code>twitter/commons</code> script <code>./pants</code></a>,
-and its helper scripts.</p>
-
-<table class="h-plus-pilcrow">
-<tbody>
-<tr>
-<td class="h-plus-pilcrow-holder"><h2 id="system-wide-installation">System-wide Installation</h2></td>
-<td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#system-wide-installation">¶</a>
-</div></td>
-</tr>
-</tbody>
-</table>
-
-<p>To install pants for all users on your system:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>pip install pantsbuild.pants
+<p>The first time you run the new <code>./pants</code> script it will install the latest version of pants and then
+run it.  It's recommended though, that you pin the version of pants.  To do this, first find out the
+version of pants you just installed:</p>
+<div class="codehilite"><pre>  ./pants --version
+  0.0.42
 </pre></div>
-<p>This installs pants (and its dependencies) into your Python distribution
-site-packages, making it available to all users on your system. This
-installation method requires root access and may cause dependency
-conflicts with other pip-installed applications.</p>
+<p>Then add an entry like so to pants.ini with that version:</p>
+<div class="codehilite"><pre>  <span class="k">[DEFAULT]</span>
+  <span class="err">pants_version:</span> <span class="err">0.0.42</span>
+</pre></div>
+<p>When you'd like to upgrade pants, just edit the version in pants.ini and pants will self-update on
+the next run.  This script stores the various pants versions you use centrally in
+<code>~/.cache/pants/setup</code>.  When you switch back and forth between branches pants will select the
+correct version from your local cache and use that.</p>
+<p>If you use pants plugins published to pypi you can configure them by adding a <code>plugins</code> list as
+follows:</p>
+<div class="codehilite"><pre>  <span class="k">[DEFAULT]</span>
+  <span class="err">pants_version:</span> <span class="err">0.0.42</span>
+
+  <span class="err">plugins:</span> <span class="err">[</span>
+      <span class="na">'pantsbuild.pants.contrib.go</span><span class="o">=</span><span class="s">=0.0.42',</span>
+<span class="s">      'pantsbuild.pants.contrib.scrooge==0.0.42',</span>
+<span class="s">    ]</span>
+</pre></div>
+<p>Pants notices you changed your plugins and it installs them.
+NB: The formatting of the plugins list is important; all lines below the <code>plugins:</code> line must be
+indented by at least one white space to form logical continuation lines. This is standard for python
+ini files, see <a href="http://tools.ietf.org/html/rfc822.html#section-3.1">RFC #822</a> section 3.1.1 for the
+full rules python uses to parse ini file entries.</p>
 
 <table class="h-plus-pilcrow">
 <tbody>
@@ -190,10 +181,11 @@ conflicts with other pip-installed applications.</p>
 </table>
 
 <p>To support hermetic builds and not depend on a local pants installation (e.g.: CI machines may
-prohibit software installation), some sites fetch a pre-build <code>pants.pex</code> whose version is
-checked-into <code>pants.ini</code>. To upgrade pants, generate a <code>pants.pex</code> and upload it to a file
-server at a location computable from the version number. Set up the workspace's <code>./pants</code> script
-to check the <code>.ini</code> file for a version number and download from the correct spot.</p>
+prohibit software installation), some sites fetch a pre-built <code>pants.pex</code> using the <code>pants_version</code>
+defined in <code>pants.ini</code>. To upgrade pants, they generate a <code>pants.pex</code> and upload it to a file
+server at a location computable from the version number. They then set up write their own <code>./pants</code>
+script that checks the <code>pants.ini</code> <code>pants_version</code> and downloads the appropriate pex from the file
+server to the correct spot.</p>
 
 <table class="h-plus-pilcrow">
 <tbody>
@@ -223,7 +215,7 @@ unset any compiler-related environment variables (i.e. run <code>unset CC</code>
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/markdown/html/src/docs/install.html 2015-08-14T14:45:59.106727
+from dist/markdown/html/src/docs/install.html 2015-08-14T19:07:37.625816
 </div>
 
 </div> <!-- end of mainflow -->
