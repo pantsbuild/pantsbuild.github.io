@@ -59,6 +59,7 @@
 <li class="toc-h1"><a href="#globs">globs</a></li>
 <li class="toc-h1"><a href="#go_binary">go_binary</a></li>
 <li class="toc-h1"><a href="#go_library">go_library</a></li>
+<li class="toc-h1"><a href="#go_remote_libraries">go_remote_libraries</a></li>
 <li class="toc-h1"><a href="#go_remote_library">go_remote_library</a></li>
 <li class="toc-h1"><a href="#ivy_artifact">ivy_artifact</a></li>
 <li class="toc-h1"><a href="#jar">jar</a></li>
@@ -203,6 +204,7 @@ span.bdict_param_muffle_p p {
 <a href="#globs">globs</a>
 <a href="#go_binary">go_binary</a>
 <a href="#go_library">go_library</a>
+<a href="#go_remote_libraries">go_remote_libraries</a>
 <a href="#go_remote_library">go_remote_library</a>
 <a href="#ivy_artifact">ivy_artifact</a>
 <a href="#jar">jar</a>
@@ -1659,6 +1661,42 @@ a particular target is built.</p></span>
 <p class="bdict_impl">Implemented by <tt>pants.contrib.go.targets.go_library.GoLibrary</tt>
 </p></p></div>
 <div class="bdict_section">
+<a id="bdict_go_remote_libraries" pantsmark="bdict_go_remote_libraries"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="go_remote_libraries">go_remote_libraries</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#go_remote_libraries">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">go_remote_libraries(ctx)
+
+
+
+
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">packages</b>
+  (<em class="bdict_param_type">list </em>)
+  <span class="bdict_param_muffle_p"><p>The package import paths within the remote library; by default just the
+root package will be available (equivalent to passing <cite>packages=['']</cite>).</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">rev</b>
+  (<em class="bdict_param_type">str </em>)
+  <span class="bdict_param_muffle_p"><p>Identifies which version of the remote library to download. This could be a
+commit SHA (git), node id (hg), etc.  If left unspecified the version will
+default to the latest available.  It's highly recommended to not accept the
+default and instead pin the rev explicitly for repeatable builds.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.base.build_file_aliases.curry_context.pants.contrib.go.targets.go_remote_library.from_packages</tt>
+</p></p></div>
+<div class="bdict_section">
 <a id="bdict_go_remote_library" pantsmark="bdict_go_remote_library"> </a>
 
 <table class="h-plus-pilcrow">
@@ -1672,66 +1710,24 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">go_remote_library(name, zip_url, rev=u'', tags=None, description=None)
+<p class="bdict_argspec">go_remote_library(name, pkg=u'', rev=u'', tags=None, description=None)
 
-
-
-
+<div>
+<p>Represents a remote Go package.</p>
+</div>
 <div class="bdict_params_section">
 <p><b>Params:</b>
-<div class="bdict_param"><b class="bdict_param_name">zip_url</b>
+<div class="bdict_param"><b class="bdict_param_name">pkg</b>
   (<em class="bdict_param_type">str </em>)
-  <span class="bdict_param_muffle_p"><ul>
-<li><p class="first">Any URL from which a zipfile can be downloaded containing the source code of the
-remote library.</p>
-</li>
-<li><p class="first">Can be a template string using variables {host}, {id}, {rev}.
-Example: "{host}/{id}/{rev}.zip"</p>
-<div class="system-message">
-<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">&lt;string&gt;</tt>, line 5)</p>
-<p>Unexpected indentation.</p>
-</div>
-<blockquote>
-<ul>
-<li><dl class="first docutils">
-<dt>{host} The host address to download zip files from. Specified by an option to</dt>
-<dd><p class="first last">GoFetch, '--remote-lib-host'.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt>{id} The global import identifier of the library, which is specified by the path to</dt>
-<dd><p class="first last">the BUILD file relative to the source root of all 3rd party Go libraries.
-For example, If the 3rd party source root is "3rdparty/go", a target at
-"3rdparty/go/github.com/user/lib" would have an {id} of "github.com/user/lib".</p>
-</dd>
-</dl>
-</li>
-<li><p class="first">{rev} See :param rev:</p>
-</li>
-</ul>
-</blockquote>
-</li>
-<li><p class="first">The zip file is expected to have zipped the library directory itself, and NOT the
-direct contents of the library.</p>
-<div class="system-message">
-<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">&lt;string&gt;</tt>, line 14)</p>
-<p>Unexpected indentation.</p>
-</div>
-<blockquote>
-<dl class="docutils">
-<dt>Expected: <cite>zip -r mylib.zip mylib/</cite></dt>
-<dd><p class="first last">Not: <cite>zip -r mylib.zip mylib/*</cite></p>
-</dd>
-</dl>
-</blockquote>
-</li>
-</ul></span>
+  <span class="bdict_param_muffle_p"><p>The package import path within the remote library; by default the root package
+path (equivalent to passing <cite>pkg='.'</cite> or <cite>pkg=''</cite>).</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">rev</b>
   (<em class="bdict_param_type">str </em>)
-  <span class="bdict_param_muffle_p"><p>Identifies which version of the remote library to download.
-This could be a commit SHA (git), node id (hg), etc.</p></span>
+  <span class="bdict_param_muffle_p"><p>Identifies which version of the remote library to download. This could be a
+commit SHA (git), node id (hg), etc.  If left unspecified the version will
+default to the latest available.  It's highly recommended to not accept the
+default and instead pin the rev explicitly for repeatable builds.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -2769,7 +2765,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">junit_tests(name, cwd=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
+<p class="bdict_argspec">junit_tests(name, cwd=None, test_platform=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
 
 <div>
 <p>Tests JVM sources with JUnit.</p>
@@ -2780,6 +2776,12 @@ a particular target is built.</p></span>
   (<em class="bdict_param_type">str </em>)
   <span class="bdict_param_muffle_p"><p>working directory (relative to the build root) for the tests under this
 target. If unspecified (None), the working directory will be controlled by junit_run's --cwd.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">test_platform</b>
+  (<em class="bdict_param_type">str </em>)
+  <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to
+use for running tests (that is, a key into the --jvm-platform-platforms dictionary). If
+unspecified, the platform will default to the same one used for compilation.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">configurations</b>
   (<em class="bdict_param_type"> tuple of strings</em>)
@@ -4766,7 +4768,7 @@ For example, the following keys are supported for Atlassian's Confluence:</p></s
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/builddict/build_dictionary.html 2015-08-16T09:40:16.032121
+from dist/builddict/build_dictionary.html 2015-08-19T17:57:03.397617
 </div>
 
 </div> <!-- end of mainflow -->
