@@ -391,7 +391,7 @@ discoverable by the jvm service provider discovery mechanism described here:
 for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
 the platform will default to the first one of these that exist: (1) the default_platform
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
-by Distribution.cached().version.</p></span>
+by DistributionLocator.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -534,7 +534,7 @@ discoverable by the jvm service provider discovery mechanism described here:
 for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
 the platform will default to the first one of these that exist: (1) the default_platform
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
-by Distribution.cached().version.</p></span>
+by DistributionLocator.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -623,7 +623,7 @@ discoverable by the jvm service provider discovery mechanism described here:
 for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
 the platform will default to the first one of these that exist: (1) the default_platform
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
-by Distribution.cached().version.</p></span>
+by DistributionLocator.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -711,7 +711,7 @@ discoverable by the jvm service provider discovery mechanism described here:
 for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
 the platform will default to the first one of these that exist: (1) the default_platform
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
-by Distribution.cached().version.</p></span>
+by DistributionLocator.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -827,7 +827,7 @@ discoverable by the jvm service provider discovery mechanism described here:
 for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
 the platform will default to the first one of these that exist: (1) the default_platform
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
-by Distribution.cached().version.</p></span>
+by DistributionLocator.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -1771,6 +1771,31 @@ a particular target is built.</p></span>
 <p>Specification for an Ivy Artifact for this jar dependency.</p>
 <p>See: <a class="reference external" href="http://ant.apache.org/ivy/history/latest-milestone/ivyfile/artifact.html">http://ant.apache.org/ivy/history/latest-milestone/ivyfile/artifact.html</a></p>
 </div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+<span class="bdict_param_muffle_p"><p>The name of the published artifact. This name must not include revision.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">type_</b>
+<span class="bdict_param_muffle_p"><p>The type of the published artifact. It's usually the same as the artifact's file
+extension, but not necessarily. For instance, ivy files are of type 'ivy' but have 'xml' as
+their file extension.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">ext</b>
+<span class="bdict_param_muffle_p"><p>The file extension of the published artifact.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">url</b>
+<span class="bdict_param_muffle_p"><p>The url at which this artifact can be found if it isn't located at the standard
+location in the repository.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">configuration</b>
+<span class="bdict_param_muffle_p"><p>The public configuration in which this artifact is published. The '*' wildcard can
+be used to designate all public configurations.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">classifier</b>
+<span class="bdict_param_muffle_p"><p>The maven classifier of this artifact.</p></span>
+</div>
+</p></div>
 <p class="bdict_impl">Implemented by <tt>pants.backend.jvm.targets.jar_dependency.IvyArtifact</tt>
 </p></p></div>
 <div class="bdict_section">
@@ -1833,9 +1858,7 @@ will properly hyperlink {@link}s.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">classifier</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>Classifier specifying the artifact variant to use.
-Use multiple <tt class="docutils literal">with_artifact</tt> statements to include multiple artifacts of the same org.name,
-but with different classifiers.</p></span>
+  <span class="bdict_param_muffle_p"><p>Classifier specifying the artifact variant to use.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">mutable</b>
   (<em class="bdict_param_type">boolean </em>)
@@ -1859,54 +1882,7 @@ Maven -SNAPSHOT style artifacts in an active development/integration cycle.</p><
 
 <p>Adds a transitive dependency of this jar to the exclude list.</p>
 </p></div>
-<p class="bdict_method_heading">with_artifact
-<div class="bdict_method">
-<p class="bdict_argspec">with_artifact(name=None, type_=None, ext=None, url=None, configuration=None, classifier=None)
-
-<p>Sets an alternative artifact to fetch or adds additional artifacts if called multiple times.</p>
-<div class="bdict_params_section">
-<p><b>Params:</b>
-<div class="bdict_param"><b class="bdict_param_name">name</b>
-<span class="bdict_param_muffle_p"><p>The name of the published artifact. This name must not include revision.</p></span>
-</div>
-<div class="bdict_param"><b class="bdict_param_name">type_</b>
-<span class="bdict_param_muffle_p"><p>The type of the published artifact. It's usually the same as the artifact's file
-extension, but not necessarily. For instance, ivy files are of type 'ivy' but have 'xml' as
-their file extension.</p></span>
-</div>
-<div class="bdict_param"><b class="bdict_param_name">ext</b>
-<span class="bdict_param_muffle_p"><p>The file extension of the published artifact.</p></span>
-</div>
-<div class="bdict_param"><b class="bdict_param_name">url</b>
-<span class="bdict_param_muffle_p"><p>The url at which this artifact can be found if it isn't located at the standard
-location in the repository.</p></span>
-</div>
-<div class="bdict_param"><b class="bdict_param_name">configuration</b>
-<span class="bdict_param_muffle_p"><p>The public configuration in which this artifact is published. The '*' wildcard can
-be used to designate all public configurations.</p></span>
-</div>
-<div class="bdict_param"><b class="bdict_param_name">classifier</b>
-<span class="bdict_param_muffle_p"><p>The maven classifier of this artifact.</p></span>
-</div>
-</p></div>
-</p></div>
-<p class="bdict_method_heading">with_docs
-<div class="bdict_method">
-<p class="bdict_argspec">with_docs()
-
-<p>This historically requested the artifact have its javadoc jar fetched.
-(This implies there <em>is</em> a javadoc jar to fetch.) Used in contexts
-that can use source jars (as of 2014, just eclipse and idea goals).</p>
-</p></div>
-<p class="bdict_method_heading">with_sources
-<div class="bdict_method">
-<p class="bdict_argspec">with_sources()
-
-<p>This historically requested the artifact have its source jar fetched.
-(This implies there <em>is</em> a source jar to fetch.) Used in contexts
-that can use source jars (as of 2014, just eclipse and idea goals).</p>
-</p></div>
-</p></p></p></p></p></p></p></div>
+</p></p></p></p></div>
 <div class="bdict_section">
 <a id="bdict_jar_library" pantsmark="bdict_jar_library"> </a>
 
@@ -2084,7 +2060,7 @@ discoverable by the jvm service provider discovery mechanism described here:
 for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
 the platform will default to the first one of these that exist: (1) the default_platform
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
-by Distribution.cached().version.</p></span>
+by DistributionLocator.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -2174,7 +2150,7 @@ discoverable by the jvm service provider discovery mechanism described here:
 for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
 the platform will default to the first one of these that exist: (1) the default_platform
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
-by Distribution.cached().version.</p></span>
+by DistributionLocator.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -2264,7 +2240,7 @@ discoverable by the jvm service provider discovery mechanism described here:
 for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
 the platform will default to the first one of these that exist: (1) the default_platform
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
-by Distribution.cached().version.</p></span>
+by DistributionLocator.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -2348,7 +2324,7 @@ discoverable by the jvm service provider discovery mechanism described here:
 for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
 the platform will default to the first one of these that exist: (1) the default_platform
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
-by Distribution.cached().version.</p></span>
+by DistributionLocator.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -2424,7 +2400,7 @@ discoverable by the jvm service provider discovery mechanism described here:
 for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
 the platform will default to the first one of these that exist: (1) the default_platform
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
-by Distribution.cached().version.</p></span>
+by DistributionLocator.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -2537,7 +2513,7 @@ discoverable by the jvm service provider discovery mechanism described here:
 for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
 the platform will default to the first one of these that exist: (1) the default_platform
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
-by Distribution.cached().version.</p></span>
+by DistributionLocator.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -2575,7 +2551,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">java_wire_library(name, service_writer=None, service_writer_options=None, roots=None, registry_class=None, enum_options=None, no_options=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
+<p class="bdict_argspec">java_wire_library(name, service_writer=None, service_writer_options=None, service_factory=None, service_factory_options=None, roots=None, registry_class=None, enum_options=None, no_options=None, sources_rel_path=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
 
 <div>
 <p>Generates a stub Java library from protobuf IDL files.</p>
@@ -2588,7 +2564,15 @@ a particular target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">service_writer_options</b>
   (<em class="bdict_param_type">list </em>)
-  <span class="bdict_param_muffle_p"><p>A list of options to pass to the service writer</p></span>
+  <span class="bdict_param_muffle_p"><p>A list of options to pass to the service writer (For</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">service_factory</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>the name of the class to pass as the --service_factory option to</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">service_factory_options</b>
+  (<em class="bdict_param_type">list </em>)
+  <span class="bdict_param_muffle_p"><p>A list of options to pass to the service factory</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">roots</b>
   (<em class="bdict_param_type">list </em>)
@@ -2640,7 +2624,7 @@ discoverable by the jvm service provider discovery mechanism described here:
 for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
 the platform will default to the first one of these that exist: (1) the default_platform
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
-by Distribution.cached().version.</p></span>
+by DistributionLocator.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -2727,7 +2711,7 @@ discoverable by the jvm service provider discovery mechanism described here:
 for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
 the platform will default to the first one of these that exist: (1) the default_platform
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
-by Distribution.cached().version.</p></span>
+by DistributionLocator.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -2814,7 +2798,7 @@ discoverable by the jvm service provider discovery mechanism described here:
 for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
 the platform will default to the first one of these that exist: (1) the default_platform
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
-by Distribution.cached().version.</p></span>
+by DistributionLocator.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -3000,7 +2984,7 @@ discoverable by the jvm service provider discovery mechanism described here:
 for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
 the platform will default to the first one of these that exist: (1) the default_platform
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
-by Distribution.cached().version.</p></span>
+by DistributionLocator.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -4240,7 +4224,7 @@ discoverable by the jvm service provider discovery mechanism described here:
 for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
 the platform will default to the first one of these that exist: (1) the default_platform
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
-by Distribution.cached().version.</p></span>
+by DistributionLocator.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -4338,7 +4322,7 @@ discoverable by the jvm service provider discovery mechanism described here:
 for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
 the platform will default to the first one of these that exist: (1) the default_platform
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
-by Distribution.cached().version.</p></span>
+by DistributionLocator.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -4556,7 +4540,7 @@ discoverable by the jvm service provider discovery mechanism described here:
 for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
 the platform will default to the first one of these that exist: (1) the default_platform
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
-by Distribution.cached().version.</p></span>
+by DistributionLocator.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -4768,7 +4752,7 @@ For example, the following keys are supported for Atlassian's Confluence:</p></s
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/builddict/build_dictionary.html 2015-08-19T17:57:03.397617
+from dist/builddict/build_dictionary.html 2015-08-26T14:06:30.654330
 </div>
 
 </div> <!-- end of mainflow -->
