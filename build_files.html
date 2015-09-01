@@ -41,7 +41,6 @@
 <li class="toc-h1"><a href="#which-build-files-are-executed-and-how">Which BUILD Files are &quot;Executed&quot;? (and how?)</a></li>
 <li class="toc-h1"><a href="#build-files_1">BUILD.* files</a></li>
 <li class="toc-h1"><a href="#what-happened-to-the-pants-wrapper-around-targets">What happened to the pants() wrapper around targets?</a></li>
-<li class="toc-h1"><a href="#using-an-older-version-of-pants">Using an older version of Pants?</a></li>
 </ul>
 </nav>
 
@@ -545,20 +544,17 @@ namespace.</p>
 </table>
 
 <p>If you have an existing project using Pants and have recently upgraded, you
-may encounter this warning:</p>
-<div class="codehilite"><pre>*** pants() wrapper is obsolete and will be removed in a future release.
+may encounter this exception:</p>
+<div class="codehilite"><pre>AddressLookupError: name 'pants' is not defined
 </pre></div>
-<p>or the BUILD may fail an error.</p>
-<div class="codehilite"><pre>NameError: name 'pants' is not defined
-</pre></div>
-<p>In pre-release versions of Pants, targets declared in the <code>dependencies</code>
-attribute had to be wrapped in a call to the <code>pants()</code> method.</p>
+<p>In previous versions of Pants, targets declared in the <code>dependencies</code>
+attribute had to be wrapped in a call to the <code>pants()</code> method:</p>
 <div class="codehilite"><pre><span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'foo'</span><span class="p">,</span>
     <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="n">pants</span><span class="p">(</span><span class="s">'bar'</span><span class="p">)])</span>
 </pre></div>
-<p>The <code>pants()</code> method has since been replaced with a noop and as of Pants
-0.0.24 is officially deprecated. The above snippet should be re-written
-to use the target as a plain string.</p>
+<p>The <code>pants()</code> method has since been replaced with a noop and as of Pants 0.0.24 is officially
+deprecated. As of pants 0.0.46, use of this method now triggers an exception. Thus, the above
+snippet should be re-written to use the target as a plain string:</p>
 <div class="codehilite"><pre><span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'foo'</span><span class="p">,</span>
     <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s">'bar'</span><span class="p">])</span>
 </pre></div>
@@ -568,51 +564,11 @@ references from your BUILD files with a regular expression.</p>
 <span class="nv">$ </span>sed -i <span class="s2">""</span> -e <span class="s1">'s/pants(\([^)]*\))/\1/g'</span> <span class="sb">`</span>find . -name <span class="s2">"BUILD*"</span><span class="sb">`</span>
 </pre></div>
 
-<table class="h-plus-pilcrow">
-<tbody>
-<tr>
-<td class="h-plus-pilcrow-holder"><h2 id="using-an-older-version-of-pants">Using an older version of Pants?</h2></td>
-<td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#using-an-older-version-of-pants">¶</a>
-</div></td>
-</tr>
-</tbody>
-</table>
-
-<p>If you are following along in these examples and are using a version of
-pants prior to the 2014 open source release you might see one of the
-following messages:</p>
-<p>From a <code>python_*</code> target dependencies attribute:</p>
-<div class="codehilite"><pre>AttributeError: 'str' object has no attribute 'resolve'
-</pre></div>
-<p>From a <code>java_library</code> dependencies attribute:</p>
-<div class="codehilite"><pre>The following targets could not be loaded:
-  src/java/com/twitter/foo/bar/baz =&gt;
-    TargetDefinitionException: Error with src/java/com/foo/bar/baz/BUILD:baz:
-       Expected elements of list to be (&lt;class 'twitter.pants.targets.external_dependency.ExternalDependency'&gt;, &lt;class 'twitter.pants.targets.anonymous.AnonymousDeps'&gt;,
-         &lt;class 'twitter.pants.base.target.Target'&gt;), got value 3rdparty:guava of type &lt;type 'str'&gt;
-</pre></div>
-<p>From a <code>java_library</code> resources attribute:</p>
-<div class="codehilite"><pre>IOError: [Errno 2] No such file or directory: '/Users/pantsaddict/workspace/src/resources/com/foo/bar'
-</pre></div>
-<p>From a <code>junit_tests</code> resources attribute:</p>
-<div class="codehilite"><pre>ValueError: Expected elements of list to be &lt;class 'twitter.pants.base.target.Target'&gt;, got value tests/scala/foo/bar/baz/resources of type &lt;type 'str'&gt;
-</pre></div>
-<p>From a <code>provides</code> repo attribute:</p>
-<div class="codehilite"><pre>ValueError: repo must be Repository or Pants but was foo/bar/baz:baz
-</pre></div>
-<p>All of these errors likely mean that you need to wrap the strings
-mentioned in the error message with the <code>pants()</code> wrapper function in
-your BUILD files. The open source Pants release deprecated the use of
-this wrapper and thus examples in this documentation don't include it.
-For more information, see the
-<a href="build_files.html#build_pants_wrapper_gone" pantsref="build_pants_wrapper_gone"><code>pants</code> wrapper</a> notes above.</p>
-
 <!-- main content end -->
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/markdown/html/src/docs/build_files.html 2015-08-30T20:48:41.240888
+from dist/markdown/html/src/docs/build_files.html 2015-08-31T17:23:41.763585
 </div>
 
 </div> <!-- end of mainflow -->
