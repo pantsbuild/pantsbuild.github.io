@@ -45,10 +45,13 @@
 <li class="toc-h2"><a href="#group_binarydex">binary.dex</a></li>
 <li class="toc-h2"><a href="#group_binarycpplib">binary.cpplib</a></li>
 <li class="toc-h2"><a href="#group_binarycpp">binary.cpp</a></li>
+<li class="toc-h2"><a href="#group_binarygo">binary.go</a></li>
 <li class="toc-h1"><a href="#bootstrap">bootstrap</a></li>
 <li class="toc-h2"><a href="#group_bootstrapbootstrapjvmtools">bootstrap.bootstrap-jvm-tools</a></li>
 <li class="toc-h1"><a href="#builddict">builddict</a></li>
 <li class="toc-h2"><a href="#group_builddict">builddict</a></li>
+<li class="toc-h1"><a href="#buildgen">buildgen</a></li>
+<li class="toc-h2"><a href="#group_buildgengo">buildgen.go</a></li>
 <li class="toc-h1"><a href="#bundle">bundle</a></li>
 <li class="toc-h2"><a href="#group_bundle">bundle</a></li>
 <li class="toc-h2"><a href="#group_bundledup">bundle.dup</a></li>
@@ -68,9 +71,11 @@
 <li class="toc-h1"><a href="#compile">compile</a></li>
 <li class="toc-h2"><a href="#group_compile">compile</a></li>
 <li class="toc-h2"><a href="#group_compilejvm">compile.jvm</a></li>
+<li class="toc-h2"><a href="#group_compilejvmdepcheck">compile.jvm-dep-check</a></li>
 <li class="toc-h2"><a href="#group_compilepythoneval">compile.python-eval</a></li>
 <li class="toc-h2"><a href="#group_compilecheckstyle">compile.checkstyle</a></li>
 <li class="toc-h2"><a href="#group_compilescalastyle">compile.scalastyle</a></li>
+<li class="toc-h2"><a href="#group_compilepythonstyle">compile.pythonstyle</a></li>
 <li class="toc-h2"><a href="#group_compilecpp">compile.cpp</a></li>
 <li class="toc-h2"><a href="#group_compilego">compile.go</a></li>
 <li class="toc-h1"><a href="#compile-changed">compile-changed</a></li>
@@ -146,11 +151,13 @@
 <li class="toc-h1"><a href="#repl">repl</a></li>
 <li class="toc-h2"><a href="#group_replpy">repl.py</a></li>
 <li class="toc-h2"><a href="#group_replscala">repl.scala</a></li>
+<li class="toc-h2"><a href="#group_replnode">repl.node</a></li>
 <li class="toc-h1"><a href="#repl-dirty">repl-dirty</a></li>
 <li class="toc-h2"><a href="#group_repldirtyscaladirty">repl-dirty.scala-dirty</a></li>
 <li class="toc-h1"><a href="#resolve">resolve</a></li>
 <li class="toc-h2"><a href="#group_resolveivy">resolve.ivy</a></li>
 <li class="toc-h2"><a href="#group_resolvego">resolve.go</a></li>
+<li class="toc-h2"><a href="#group_resolvenpm">resolve.npm</a></li>
 <li class="toc-h1"><a href="#resources">resources</a></li>
 <li class="toc-h2"><a href="#group_resourcesprepare">resources.prepare</a></li>
 <li class="toc-h2"><a href="#group_resourcesservices">resources.services</a></li>
@@ -225,12 +232,13 @@ Java code, and is installed in the <tt>compile</tt> goal.
   <li> <a href="#binary">binary</a> - Create a runnable binary.
   <li> <a href="#bootstrap">bootstrap</a> - Bootstrap tools needed for building.
   <li> <a href="#builddict">builddict</a> - Generate documentation for the Sphinx site.
+  <li> <a href="#buildgen">buildgen</a> - Automatically generate BUILD files.
   <li> <a href="#bundle">bundle</a> - Create an application bundle from binary targets.
   <li> <a href="#changed">changed</a> - Print the targets changed since some prior commit.
   <li> <a href="#check_published_deps">check_published_deps</a> - Find references to outdated artifacts.
   <li> <a href="#clean-all">clean-all</a> - Clean all build output.
   <li> <a href="#clean-all-async">clean-all-async</a> - [deprecated] Clean all build output in a background process.
-  <li> <a href="#compile">compile</a> - Compile source code.
+  <li> <a href="#compile">compile</a> - Check that used dependencies have been requested.
   <li> <a href="#compile-changed">compile-changed</a> - Compile changed targets.
   <li> <a href="#deferred-sources">deferred-sources</a> - Map unpacked sources from archives.
   <li> <a href="#dependees">dependees</a> - Print the target's dependees.
@@ -306,7 +314,7 @@ Java code, and is installed in the <tt>compile</tt> goal.
   <li> <a href="#test-changed">test-changed</a> - Test changed targets.
   <li> <a href="#thrift-linter">thrift-linter</a> - Check thrift files for non-recommended usage patterns.
   <li> <a href="#unpack-jars">unpack-jars</a> - Unpack artifacts specified by unpacked_jars() targets.
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 <style>
 div.oref_goal_section {
   margin-left: 2%;
@@ -498,7 +506,13 @@ target's resource files. The output is an unsigned .apk, an Android application 
 
       Enable memory profiling.
 
-</li></li></li></ul>
+<li><code>--[no-]bench-debug</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Run the benchmark tool with in process debugging.
+
+</li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -710,6 +724,27 @@ DuplicateClassFileException if it detects a version conflict in any AndroidLibra
 
 </li></ul>
 </p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_binarygo" pantsmark="oref_cli_binarygo"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_binarygo">binary.go</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_binarygo">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.contrib.go.tasks.go_binary_create.GoBinaryCreate</code>
+<div>
+<p>Creates self contained go executables.</p>
+</div>
+<ul>
+</ul>
+</p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
 </br></p></p></div>
@@ -812,6 +847,47 @@ DuplicateClassFileException if it detects a version conflict in any AndroidLibra
       Omit goals who have a task matching one of these regexps.
 
 </li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_buildgen" pantsmark="oref_goal_buildgen"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="buildgen">buildgen</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#buildgen">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Automatically generate BUILD files.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_buildgengo" pantsmark="oref_cli_buildgengo"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_buildgengo">buildgen.go</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_buildgengo">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.contrib.go.tasks.go_buildgen.GoBuildgen</code>
+<div>
+<p>Automatically generates Go BUILD files.</p>
+</div>
+<ul>
+</ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -1278,7 +1354,7 @@ DuplicateClassFileException if it detects a version conflict in any AndroidLibra
 </tbody>
 </table>
 
-<p>Compile source code.
+<p>Check that used dependencies have been requested.
 
 
 <div class="oref_ogroup_section">
@@ -1319,6 +1395,57 @@ DuplicateClassFileException if it detects a version conflict in any AndroidLibra
 <p>Implemented by <code>pants.backend.core.tasks.group_task.SingletonGroupTask</code>
 <ul>
 </ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_compilejvmdepcheck" pantsmark="oref_cli_compilejvmdepcheck"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_compilejvmdepcheck">compile.jvm-dep-check</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_compilejvmdepcheck">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.jvm_dependency_check.JvmDependencyCheck</code>
+<div>
+<p>Checks true dependencies of a JVM target and ensures that they are consistent with BUILD files.</p>
+</div>
+<ul>
+<li><code>--[no-]compile-jvm-dep-check-skip</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Skip this entire task.
+
+<li><code>--compile-jvm-dep-check-missing-deps=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>warn</code>)
+
+      Check for missing dependencies in compiled code. Reports actual dependencies A -&gt; B where there is no transitive BUILD file dependency path from A to B. If fatal, missing deps are treated as a build error.
+
+<li><code>--compile-jvm-dep-check-missing-direct-deps=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>off</code>)
+
+      Check for missing direct dependencies in compiled code. Reports actual dependencies A -&gt; B where there is no direct BUILD file dependency path from A to B. This is a very strict check; In practice it is common to rely on transitive, indirect dependencies, e.g., due to type inference or when the main target in a BUILD file is modified to depend on other targets in the same BUILD file, as an implementation detail. However it may still be useful to use this on occasion.
+
+<li><code>--compile-jvm-dep-check-missing-deps-whitelist="['str1','str2',...]"</code>
+<code>list_option</code>
+      (Default: <code>[]</code>)
+
+      Don't report these targets even if they have missing deps.
+
+<li><code>--compile-jvm-dep-check-unnecessary-deps=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>off</code>)
+
+      Check for declared dependencies in compiled code that are not needed. This is a very strict check. For example, generated code will often legitimately have BUILD dependencies that are unused in practice.
+
+</li></li></li></li></li></ul>
 </p></div>
 <div class="oref_ogroup_section">
 <a id="oref_cli_compilepythoneval" pantsmark="oref_cli_compilepythoneval"> </a>
@@ -1377,7 +1504,7 @@ DuplicateClassFileException if it detects a version conflict in any AndroidLibra
 
 <li><code>--[no-]compile-checkstyle-skip</code>
 <code>bool</code>
-      (Default: <code>None</code>)
+      (Default: <code>False</code>)
 
       Skip checkstyle.
 
@@ -1411,11 +1538,59 @@ DuplicateClassFileException if it detects a version conflict in any AndroidLibra
 
 <li><code>--[no-]compile-scalastyle-skip</code>
 <code>bool</code>
-      (Default: <code>None</code>)
+      (Default: <code>False</code>)
 
       Skip scalastyle.
 
 </li></li></ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_compilepythonstyle" pantsmark="oref_cli_compilepythonstyle"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_compilepythonstyle">compile.pythonstyle</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_compilepythonstyle">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.python.tasks.checkstyle.checker.PythonCheckStyleTask</code>
+<ul>
+<li><code>--compile-pythonstyle-severity=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>COMMENT</code>)
+
+      Only messages at this severity or higher are logged. [COMMENT WARNING ERROR].
+
+<li><code>--[no-]compile-pythonstyle-strict</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      If enabled, have non-zero exit status for any nit at WARNING or higher.
+
+<li><code>--[no-]compile-pythonstyle-skip</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      If enabled, skip this style checker.
+
+<li><code>--compile-pythonstyle-suppress=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Takes a XML file where specific rules on specific files will be skipped.
+
+<li><code>--[no-]compile-pythonstyle-fail</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Prevent test failure but still produce output for problems.
+
+</li></li></li></li></li></ul>
 </p></div>
 <div class="oref_ogroup_section">
 <a id="oref_cli_compilecpp" pantsmark="oref_cli_compilecpp"> </a>
@@ -2121,7 +2296,7 @@ set of a target.</p>
 
 <li><code>--[no-]eclipse-infer-test-from-siblings</code>
 <code>bool</code>
-      (Default: <code>None</code>)
+      (Default: <code>False</code>)
 
       When determining if a path should be added to the IDE, check to see if any of its sibling source_root() entries define test targets.  This is usually what you want so that resource directories under test source roots are picked up as test paths.
 
@@ -2249,7 +2424,7 @@ set of a target.</p>
 
 <li><code>--[no-]ensime-infer-test-from-siblings</code>
 <code>bool</code>
-      (Default: <code>None</code>)
+      (Default: <code>False</code>)
 
       When determining if a path should be added to the IDE, check to see if any of its sibling source_root() entries define test targets.  This is usually what you want so that resource directories under test source roots are picked up as test paths.
 
@@ -2903,13 +3078,13 @@ and AndroidLibrary targets.</p>
 
 <li><code>--[no-]goals-graph</code>
 <code>bool</code>
-      (Default: <code>None</code>)
+      (Default: <code>False</code>)
 
       Generate a graphviz graph of installed goals.
 
 <li><code>--[no-]goals-all</code>
 <code>bool</code>
-      (Default: <code>None</code>)
+      (Default: <code>False</code>)
 
       List all goals even if no description is available.
 
@@ -3013,7 +3188,7 @@ and AndroidLibrary targets.</p>
 
 <li><code>--[no-]idea-infer-test-from-siblings</code>
 <code>bool</code>
-      (Default: <code>None</code>)
+      (Default: <code>False</code>)
 
       When determining if a path should be added to the IDE, check to see if any of its sibling source_root() entries define test targets.  This is usually what you want so that resource directories under test source roots are picked up as test paths.
 
@@ -3055,7 +3230,7 @@ and AndroidLibrary targets.</p>
 
 <li><code>--[no-]idea-bash</code>
 <code>bool</code>
-      (Default: <code>None</code>)
+      (Default: <code>False</code>)
 
       Adds a bash facet to the generated project configuration.
 
@@ -3101,7 +3276,13 @@ and AndroidLibrary targets.</p>
 
       Adds folders to be excluded from the project configuration.
 
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+<li><code>--[no-]idea-annotation-processing-enabled</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Tell IntelliJ IDEA to run annotation processors.
+
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -3393,7 +3574,13 @@ downgraded to a different version.</p>
 
       Limit jvm platform possibility explanation to targets whose specs match this regex pattern.
 
-</li></li></li></li></li></li></li></li></ul>
+<li><code>--[no-]jvm-platform-explain-transitive</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      List transitive dependencies in analysis output.
+
+</li></li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -3440,7 +3627,7 @@ downgraded to a different version.</p>
 <ul>
 <li><code>--jvm-platform-validate-check=&lt;str&gt;</code>
 <code>str</code>
-      (Default: <code>off</code>)
+      (Default: <code>fatal</code>)
 
       Check to make sure no jvm targets target an earlier jdk than their dependencies
 
@@ -3609,13 +3796,13 @@ downgraded to a different version.</p>
 
 <li><code>--[no-]markdown-open</code>
 <code>bool</code>
-      (Default: <code>None</code>)
+      (Default: <code>False</code>)
 
       Open the generated documents in a browser.
 
 <li><code>--[no-]markdown-fragment</code>
 <code>bool</code>
-      (Default: <code>None</code>)
+      (Default: <code>False</code>)
 
       Generate a fragment of html to embed in a page.
 
@@ -4078,7 +4265,7 @@ repos = {
 <ul>
 <li><code>--[no-]repl-py-ipython</code>
 <code>bool</code>
-      (Default: <code>None</code>)
+      (Default: <code>False</code>)
 
       Run an IPython REPL instead of the standard python one.
 
@@ -4113,6 +4300,27 @@ repos = {
       The entry point for running the repl.
 
 </li></li></ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_replnode" pantsmark="oref_cli_replnode"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_replnode">repl.node</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_replnode">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.contrib.node.tasks.node_repl.NodeRepl</code>
+<div>
+<p>Launches a Node.js REPL session.</p>
+</div>
+<ul>
+</ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -4232,7 +4440,7 @@ repos = {
 
 <li><code>--resolve-ivy-outdir=&lt;str&gt;</code>
 <code>str</code>
-      (Default: <code>&lt;buildroot&gt;/dist</code>)
+      (Default: <code>None</code>)
 
       Emit ivy report outputs in to this directory.
 
@@ -4272,15 +4480,32 @@ repos = {
 
 <p>Implemented by <code>pants.contrib.go.tasks.go_fetch.GoFetch</code>
 <div>
-<p>Downloads a 3rd party Go library.</p>
+<p>Fetches third-party Go libraries.</p>
 </div>
 <ul>
-<li><code>--resolve-go-remote-lib-host=&lt;str&gt;</code>
-<code>str</code>
+</ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_resolvenpm" pantsmark="oref_cli_resolvenpm"> </a>
 
-      Host to fetch Go remote libraries from. Go remote library targets may include this host in their `zip_url` field via template variable {host}.
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_resolvenpm">resolve.npm</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_resolvenpm">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
 
-</li></ul>
+<p>Implemented by <code>pants.contrib.node.tasks.npm_resolve.NpmResolve</code>
+<div>
+<p>Resolves node modules to isolated chroots.</p>
+<p>See: see <a class="reference external" href="https://docs.npmjs.com/cli/install">npm install</a></p>
+</div>
+<ul>
+</ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -4700,7 +4925,7 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 
 <li><code>--[no-]setup-py-recursive</code>
 <code>bool</code>
-      (Default: <code>None</code>)
+      (Default: <code>False</code>)
 
       Transitively run setup_py on all provided downstream targets.
 
@@ -5011,21 +5236,15 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 
 <li><code>--[no-]test-junit-skip</code>
 <code>bool</code>
-      (Default: <code>None</code>)
+      (Default: <code>False</code>)
 
       Skip running junit.
 
 <li><code>--[no-]test-junit-fail-fast</code>
 <code>bool</code>
-      (Default: <code>None</code>)
+      (Default: <code>False</code>)
 
       Fail fast on the first test failure in a suite.
-
-<li><code>--test-junit-batch-size=&lt;int&gt;</code>
-<code>int</code>
-      (Default: <code>9223372036854775807</code>)
-
-      Run at most this many tests in a single test process.
 
 <li><code>--test-junit-test="['str1','str2',...]" (--test-junit-test="['str1','str2',...]") ...</code>
 <code>str</code>
@@ -5035,27 +5254,9 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 
 <li><code>--[no-]test-junit-per-test-timer</code>
 <code>bool</code>
-      (Default: <code>None</code>)
+      (Default: <code>False</code>)
 
       Show progress and timer for each test.
-
-<li><code>--[no-]test-junit-default-parallel</code>
-<code>bool</code>
-      (Default: <code>None</code>)
-
-      Run classes without @TestParallel or @TestSerial annotations in parallel.
-
-<li><code>--test-junit-parallel-threads=&lt;int&gt;</code>
-<code>int</code>
-      (Default: <code>0</code>)
-
-      Number of threads to run tests in parallel. 0 for autoset.
-
-<li><code>--test-junit-test-shard=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>None</code>)
-
-      Subset of tests to run, in the form M/N, 0 &lt;= M &lt; N. For example, 1/3 means run tests number 2, 5, 8, 11, ...
 
 <li><code>--[no-]test-junit-suppress-output</code>
 <code>bool</code>
@@ -5063,67 +5264,19 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 
       Redirect test output to files in .pants.d/test/junit.
 
-<li><code>--test-junit-cwd=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>None</code>)
-
-      Set the working directory. If no argument is passed, use the build root. If cwd is set on a target, it will supersede this argument.
-
-<li><code>--test-junit-coverage-patterns="['str1','str2',...]" (--test-junit-coverage-patterns="['str1','str2',...]") ...</code>
-<code>str</code>
-      (Default: <code>[]</code>)
-
-      Restrict coverage measurement. Values are class name prefixes in dotted form with ? and * wildcards. If preceded with a - the pattern is excluded. For example, to include all code in org.pantsbuild.raven except claws and the eye you would use: --coverage_patterns=org.pantsbuild.raven.* --coverage_patterns=-org.pantsbuild.raven.claw --coverage_patterns=-org.pantsbuild.raven.Eye.
-
-<li><code>--test-junit-coverage-jvm-options="['str1','str2',...]" (--test-junit-coverage-jvm-options="['str1','str2',...]") ...</code>
-<code>str</code>
-      (Default: <code>[]</code>)
-
-      JVM flags to be added when running the coverage processor. For example: --coverage-jvm-options=-Xmx4g --coverage-jvm-options=-XX:MaxPermSize=1g
-
-<li><code>--[no-]test-junit-coverage-console</code>
+<li><code>--[no-]test-junit-coverage-open</code>
 <code>bool</code>
-      (Default: <code>True</code>)
+      (Default: <code>False</code>)
 
-      Output a simple coverage report to the console.
-
-<li><code>--[no-]test-junit-coverage-xml</code>
-<code>bool</code>
-      (Default: <code>None</code>)
-
-      Output an XML coverage report.
-
-<li><code>--[no-]test-junit-coverage-html</code>
-<code>bool</code>
-      (Default: <code>None</code>)
-
-      Output an HTML coverage report.
-
-<li><code>--[no-]test-junit-coverage-html-open</code>
-<code>bool</code>
-      (Default: <code>None</code>)
-
-      Open the generated HTML coverage report in a browser. Implies --coverage-html.
-
-<li><code>--[no-]test-junit-coverage-force</code>
-<code>bool</code>
-      (Default: <code>None</code>)
-
-      Attempt to run the reporting phase of coverage even if tests failed (defaults to False, as otherwise the coverage results would be unreliable).
+      Open the generated HTML coverage report in a browser. Implies --coverage.
 
 <li><code>--[no-]test-junit-coverage</code>
 <code>bool</code>
-      (Default: <code>None</code>)
+      (Default: <code>False</code>)
 
       Collect code coverage data.
 
-<li><code>--test-junit-coverage-processor=&lt;str&gt;</code>
-<code>str</code>
-      (Default: <code>emma</code>)
-
-      Which coverage subsystem to use.
-
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></ul>
 </p></div>
 <div class="oref_ogroup_section">
 <a id="oref_cli_testgo" pantsmark="oref_cli_testgo"> </a>
@@ -5150,12 +5303,18 @@ they are testing) are ignored in normal compilation, so Go test must compile eve
 from scratch.</p>
 </div>
 <ul>
+<li><code>--[no-]test-go-remote</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Enables running tests found in go_remote_libraries.
+
 <li><code>--test-go-build-and-test-flags=&lt;str&gt;</code>
 <code>str</code>
 
       Flags to pass in to `go test` tool.
 
-</li></ul>
+</li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -5269,13 +5428,13 @@ from scratch.</p>
 
 <li><code>--[no-]thrift-linter-skip</code>
 <code>bool</code>
-      (Default: <code>None</code>)
+      (Default: <code>False</code>)
 
       Skip thrift linting.
 
 <li><code>--[no-]thrift-linter-strict</code>
 <code>bool</code>
-      (Default: <code>None</code>)
+      (Default: <code>False</code>)
 
       Fail the goal if thrift linter errors are found. Overrides the `strict-default` option.
 
@@ -5382,7 +5541,7 @@ These command-line flags are available with all Pants goals.
 
 <li><code>-q/--[no-]quiet</code>
 <code>bool</code>
-      (Default: <code>None</code>)
+      (Default: <code>False</code>)
 
       Squelches all console output apart from errors.
 
@@ -5392,6 +5551,12 @@ These command-line flags are available with all Pants goals.
 
       Set whether log messages are displayed in color.
 
+<li><code>-V=&lt;str&gt;/--pants-version=&lt;str&gt;/--version=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>BETA</code>)
+
+      Prints pants' version number and exits.
+
 <li><code>--target-spec-file="['str1','str2',...]" (--target-spec-file="['str1','str2',...]") ...</code>
 <code>str</code>
       (Default: <code>[]</code>)
@@ -5400,13 +5565,13 @@ These command-line flags are available with all Pants goals.
 
 <li><code>-x/--[no-]time</code>
 <code>bool</code>
-      (Default: <code>None</code>)
+      (Default: <code>False</code>)
 
       Output a timing report at the end of the run.
 
 <li><code>-e/--[no-]explain</code>
 <code>bool</code>
-      (Default: <code>None</code>)
+      (Default: <code>False</code>)
 
       Explain the execution of goals.
 
@@ -5416,13 +5581,13 @@ These command-line flags are available with all Pants goals.
 
       Include only targets with these tags (optional '+' prefix) or without these tags ('-' prefix).  Useful with ::, to find subsets of targets (e.g., integration tests.)
 
-</li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></ul>
 </p></p></p></p></body>
 <!-- main content end -->
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/builddict/options_reference.html 2015-08-14T14:06:42.055965
+from dist/builddict/options_reference.html 2015-09-04T14:20:29.848802
 </div>
 
 </div> <!-- end of mainflow -->
