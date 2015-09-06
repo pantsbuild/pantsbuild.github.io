@@ -82,6 +82,8 @@
 <li class="toc-h2"><a href="#group_compilechanged">compile-changed</a></li>
 <li class="toc-h1"><a href="#deferred-sources">deferred-sources</a></li>
 <li class="toc-h2"><a href="#group_deferredsources">deferred-sources</a></li>
+<li class="toc-h1"><a href="#dep-usage">dep-usage</a></li>
+<li class="toc-h2"><a href="#group_depusagejvm">dep-usage.jvm</a></li>
 <li class="toc-h1"><a href="#dependees">dependees</a></li>
 <li class="toc-h2"><a href="#group_dependees">dependees</a></li>
 <li class="toc-h1"><a href="#dependencies">dependencies</a></li>
@@ -151,6 +153,7 @@
 <li class="toc-h1"><a href="#repl">repl</a></li>
 <li class="toc-h2"><a href="#group_replpy">repl.py</a></li>
 <li class="toc-h2"><a href="#group_replscala">repl.scala</a></li>
+<li class="toc-h2"><a href="#group_replnode">repl.node</a></li>
 <li class="toc-h1"><a href="#repl-dirty">repl-dirty</a></li>
 <li class="toc-h2"><a href="#group_repldirtyscaladirty">repl-dirty.scala-dirty</a></li>
 <li class="toc-h1"><a href="#resolve">resolve</a></li>
@@ -240,6 +243,7 @@ Java code, and is installed in the <tt>compile</tt> goal.
   <li> <a href="#compile">compile</a> - Check that used dependencies have been requested.
   <li> <a href="#compile-changed">compile-changed</a> - Compile changed targets.
   <li> <a href="#deferred-sources">deferred-sources</a> - Map unpacked sources from archives.
+  <li> <a href="#dep-usage">dep-usage</a> - Collect target dependency usage data.
   <li> <a href="#dependees">dependees</a> - Print the target's dependees.
   <li> <a href="#dependencies">dependencies</a> - Print the target's dependencies.
   <li> <a href="#depmap">depmap</a> - Depict the target's dependencies.
@@ -313,7 +317,7 @@ Java code, and is installed in the <tt>compile</tt> goal.
   <li> <a href="#test-changed">test-changed</a> - Test changed targets.
   <li> <a href="#thrift-linter">thrift-linter</a> - Check thrift files for non-recommended usage patterns.
   <li> <a href="#unpack-jars">unpack-jars</a> - Unpack artifacts specified by unpacked_jars() targets.
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 <style>
 div.oref_goal_section {
   margin-left: 2%;
@@ -1418,7 +1422,7 @@ DuplicateClassFileException if it detects a version conflict in any AndroidLibra
 <code>bool</code>
       (Default: <code>False</code>)
 
-      Skip dependency check.
+      Skip this entire task.
 
 <li><code>--compile-jvm-dep-check-missing-deps=&lt;str&gt;</code>
 <code>str</code>
@@ -1747,6 +1751,82 @@ product.</p>
 </div>
 <ul>
 </ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_dep-usage" pantsmark="oref_goal_dep-usage"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="dep-usage">dep-usage</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#dep-usage">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Collect target dependency usage data.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_depusagejvm" pantsmark="oref_cli_depusagejvm"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_depusagejvm">dep-usage.jvm</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_depusagejvm">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.jvm_dependency_usage.JvmDependencyUsage</code>
+<div>
+<p>Determines the dependency usage ratios of targets.</p>
+<p>Analyzes the relationship between the products a target T produces vs. the products
+which T's dependents actually require (this is done by observing analysis files).
+If the ratio of required products to available products is low, then this is a sign
+that target T isn't factored well.</p>
+<p>A graph is formed from these results, where each node of the graph is a target, and
+each edge is a product usage ratio between a target and its dependency. The nodes
+also contain additional information to guide refactoring -- for example, the estimated
+job size of each target, which indicates the impact a poorly factored target has on
+the build times. (see DependencyUsageGraph-&gt;to_json)</p>
+<p>The graph is outputted into a JSON file, with the intent of consuming and analyzing
+the graph via some external tool.</p>
+</div>
+<ul>
+<li><code>--[no-]dep-usage-jvm-skip</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Skip this entire task.
+
+<li><code>--dep-usage-jvm-size-estimator=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>filesize</code>)
+
+      The method of target size estimation.
+
+<li><code>--[no-]dep-usage-jvm-transitive</code>
+<code>bool</code>
+      (Default: <code>True</code>)
+
+      Score all targets in the build graph transitively.
+
+<li><code>--dep-usage-jvm-output-file=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <code>None</code>)
+
+      Output dependency usage graph as JSON to the specified file.
+
+</li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -2902,13 +2982,7 @@ between them.</p>
 
 <p>Implemented by <code>pants.backend.codegen.tasks.wire_gen.WireGen</code>
 <ul>
-<li><code>--gen-wire-javadeps="['str1','str2',...]"</code>
-<code>list_option</code>
-      (Default: <code>['//:wire-runtime']</code>)
-
-      Runtime dependencies for wire-using Java code.
-
-</li></ul>
+</ul>
 </p></div>
 <div class="oref_ogroup_section">
 <a id="oref_cli_genaapt" pantsmark="oref_cli_genaapt"> </a>
@@ -3275,7 +3349,13 @@ and AndroidLibrary targets.</p>
 
       Adds folders to be excluded from the project configuration.
 
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+<li><code>--[no-]idea-annotation-processing-enabled</code>
+<code>bool</code>
+      (Default: <code>False</code>)
+
+      Tell IntelliJ IDEA to run annotation processors.
+
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -4293,6 +4373,27 @@ repos = {
       The entry point for running the repl.
 
 </li></li></ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_replnode" pantsmark="oref_cli_replnode"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_replnode">repl.node</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_replnode">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.contrib.node.tasks.node_repl.NodeRepl</code>
+<div>
+<p>Launches a Node.js REPL session.</p>
+</div>
+<ul>
+</ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -5525,7 +5626,7 @@ These command-line flags are available with all Pants goals.
 
 <li><code>-V=&lt;str&gt;/--pants-version=&lt;str&gt;/--version=&lt;str&gt;</code>
 <code>str</code>
-      (Default: <code>0.0.45</code>)
+      (Default: <code>0.0.46</code>)
 
       Prints pants' version number and exits.
 
@@ -5559,7 +5660,7 @@ These command-line flags are available with all Pants goals.
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/builddict/options_reference.html 2015-08-30T20:27:14.058574
+from dist/builddict/options_reference.html 2015-09-06T14:17:29.048137
 </div>
 
 </div> <!-- end of mainflow -->
