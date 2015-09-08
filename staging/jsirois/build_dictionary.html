@@ -106,6 +106,10 @@
 <li class="toc-h1"><a href="#scalac_plugin">scalac_plugin</a></li>
 <li class="toc-h1"><a href="#scm">scm</a></li>
 <li class="toc-h1"><a href="#setup_py">setup_py</a></li>
+<li class="toc-h1"><a href="#shading_exclude">shading_exclude</a></li>
+<li class="toc-h1"><a href="#shading_exclude_package">shading_exclude_package</a></li>
+<li class="toc-h1"><a href="#shading_relocate">shading_relocate</a></li>
+<li class="toc-h1"><a href="#shading_relocate_package">shading_relocate_package</a></li>
 <li class="toc-h1"><a href="#Skip">Skip</a></li>
 <li class="toc-h1"><a href="#source_root">source_root</a></li>
 <li class="toc-h1"><a href="#spindle_thrift_library">spindle_thrift_library</a></li>
@@ -253,6 +257,10 @@ span.bdict_param_muffle_p p {
 <a href="#scalac_plugin">scalac_plugin</a>
 <a href="#scm">scm</a>
 <a href="#setup_py">setup_py</a>
+<a href="#shading_exclude">shading_exclude</a>
+<a href="#shading_exclude_package">shading_exclude_package</a>
+<a href="#shading_relocate">shading_relocate</a>
+<a href="#shading_relocate_package">shading_relocate_package</a>
 <a href="#Skip">Skip</a>
 <a href="#source_root">source_root</a>
 <a href="#spindle_thrift_library">spindle_thrift_library</a>
@@ -305,6 +313,10 @@ span.bdict_param_muffle_p p {
 <a href="#scala_library">scala_library</a>
 <a href="#scalac_plugin">scalac_plugin</a>
 <a href="#scm">scm</a>
+<a href="#shading_exclude">shading_exclude</a>
+<a href="#shading_exclude_package">shading_exclude_package</a>
+<a href="#shading_relocate">shading_relocate</a>
+<a href="#shading_relocate_package">shading_relocate_package</a>
 <a href="#Skip">Skip</a>
 <a href="#target">target</a>
 <a href="#unpacked_jars">unpacked_jars</a>
@@ -2910,7 +2922,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">jvm_binary(name=None, main=None, basename=None, source=None, deploy_excludes=None, deploy_jar_rules=None, manifest_entries=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
+<p class="bdict_argspec">jvm_binary(name=None, main=None, basename=None, source=None, deploy_excludes=None, deploy_jar_rules=None, manifest_entries=None, shading_rules=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
 
 <div>
 <p>Produces a JVM binary optionally identifying a launcher main class.</p>
@@ -2941,13 +2953,6 @@ present as the source of this target or depended-upon library.</p></span>
   <span class="bdict_param_muffle_p"><p>Name of one <tt class="docutils literal">.java</tt> or <tt class="docutils literal">.scala</tt> file (a good
 place for a <tt class="docutils literal">main</tt>).</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">sources</b>
-<span class="bdict_param_muffle_p"><p>Overridden by source. If you want more than one source
-file, use a library and have the jvm_binary depend on that library.</p></span>
-</div>
-<div class="bdict_param"><b class="bdict_param_name">resources</b>
-<span class="bdict_param_muffle_p"><p>List of <tt class="docutils literal">resource</tt>s to include in bundle.</p></span>
-</div>
 <div class="bdict_param"><b class="bdict_param_name">dependencies</b>
   (<em class="bdict_param_type"> list of target specs</em>)
   <span class="bdict_param_muffle_p"><p>Targets (probably <tt class="docutils literal">java_library</tt> and
@@ -2969,14 +2974,26 @@ deploy jar.</p></span>
 <span class="bdict_param_muffle_p"><p>dict that specifies entries for <a class="reference external" href="#manifest_entries">ManifestEntries</a>
 for adding to MANIFEST.MF when packaging this binary.</p></span>
 </div>
+<div class="bdict_param"><b class="bdict_param_name">shading_rules</b>
+  (<em class="bdict_param_type">list </em>)
+  <span class="bdict_param_muffle_p"><p>Optional list of shading rules to apply when building a shaded
+(aka monolithic aka fat) binary jar. The order of the rules matters: the first rule which
+matches a fully-qualified class name is used to shade it. See shading_relocate(),
+shading_exclude(), shading_relocate_package(), and shading_exclude_package().</p></span>
+</div>
 <div class="bdict_param"><b class="bdict_param_name">configurations</b>
   (<em class="bdict_param_type"> tuple of strings</em>)
-  <span class="bdict_param_muffle_p"><p>Ivy configurations to resolve for this target.
+  <span class="bdict_param_muffle_p"><p>One or more ivy configurations to resolve for this target.
 This parameter is not intended for general use.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">excludes</b>
 <span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
 transitive dependencies against.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">sources</b>
+  (<em class="bdict_param_type"> ``Fileset`` (from globs or rglobs) or list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Source code files to build. Paths are relative to the BUILD
+file's directory.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">no_cache</b>
 <span class="bdict_param_muffle_p"><p>If True, this should not be stored in the artifact cache</p></span>
@@ -4562,6 +4579,181 @@ with_binaries({'my-command': ':my_library_bin'})</p>
 </p></div>
 </p></p></p></p></div>
 <div class="bdict_section">
+<a id="bdict_shading_exclude" pantsmark="bdict_shading_exclude"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="shading_exclude">shading_exclude</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#shading_exclude">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">shading_exclude(cls, pattern)
+
+
+
+<p>Creates a rule which excludes the given pattern from shading.</p>
+<p>Examples:</p>
+<pre class="literal-block">
+# Don't shade the org.foobar.example.Main class
+shading_exclude('org.foobar.example.Main')
+
+# Don't shade anything under org.foobar.example
+shading_exclude('org.foobar.example.**')
+</pre>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">pattern</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Any fully-qualified classname which matches this pattern will NOT be
+shaded. '*' is a wildcard that matches any individual package component, and '**' is a
+wildcard that matches any trailing pattern (ie the rest of the string).</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.java.jar.shader.new</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_shading_exclude_package" pantsmark="bdict_shading_exclude_package"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="shading_exclude_package">shading_exclude_package</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#shading_exclude_package">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">shading_exclude_package(cls, package_name, recursive=True)
+
+
+
+<p>Convenience constructor for a package exclusion rule.</p>
+<p>Essentially equivalent to just using <tt class="docutils literal"><span class="pre">shading_exclude('package_name.**')</span></tt>.</p>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">package_name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Package name to exclude (eg, <tt class="docutils literal">org.pantsbuild.example</tt>).</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">recursive</b>
+  (<em class="bdict_param_type">bool </em>)
+  <span class="bdict_param_muffle_p"><p>Whether to exclude everything under any subpackage of <tt class="docutils literal">package_name</tt>,
+or just direct children of the package. (Defaults to True).</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.java.jar.shader.new</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_shading_relocate" pantsmark="bdict_shading_relocate"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="shading_relocate">shading_relocate</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#shading_relocate">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">shading_relocate(cls, from_pattern, shade_pattern=None, shade_prefix=None)
+
+
+
+<p>Creates a rule which shades jar entries from one pattern to another.</p>
+<p>Examples:</p>
+<pre class="literal-block">
+# Rename everything in the org.foobar.example package
+# to __shaded_by_pants__.org.foobar.example.
+shading_relocate('org.foobar.example.**')
+
+# Rename org.foobar.example.Main to __shaded_by_pants__.org.foobar.example.Main
+shading_relocate('org.foobar.example.Main')
+
+# Rename org.foobar.example.Main to org.foobar.example.NotMain
+shading_relocate('org.foobar.example.Main', 'org.foobar.example.NotMain')
+
+# Rename all 'Main' classes under any direct subpackage of org.foobar.
+shading_relocate('org.foobar.*.Main')
+
+# Rename org.foobar package to com.barfoo package
+shading_relocate('org.foobar.**', 'com.barfoo.@1')
+
+# Rename everything in org.foobar.example package to __hello__.org.foobar.example
+shading_relocate('org.foobar.example.**', shade_prefix='__hello__')
+</pre>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">from_pattern</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Any fully-qualified classname which matches this pattern will be
+shaded. '*' is a wildcard that matches any individual package component, and '**' is a
+wildcard that matches any trailing pattern (ie the rest of the string).</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">shade_pattern</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The shaded pattern to use, where <tt class="docutils literal">@1</tt>, <tt class="docutils literal">@2</tt>, <tt class="docutils literal">@3</tt>, etc are
+references to the groups matched by wildcards (groups are numbered from left to right). If
+omitted, this pattern is inferred from the input pattern, prefixed by the <tt class="docutils literal">shade_prefix</tt>
+(if provided). (Eg, a <tt class="docutils literal">from_pattern</tt> of <tt class="docutils literal"><span class="pre">com.*.foo.bar.**</span></tt> implies a default
+<tt class="docutils literal">shade_pattern</tt> of <tt class="docutils literal"><span class="pre">__shaded_by_pants__.com.@1.foo.@2</span></tt>)</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">shade_prefix</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Prefix to prepend when generating a <tt class="docutils literal">shade_pattern</tt> (if a
+<tt class="docutils literal">shade_pattern</tt> is not provided by the user). Defaults to '<tt class="docutils literal">__shaded_by_pants__.</tt>'.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.java.jar.shader.new</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_shading_relocate_package" pantsmark="bdict_shading_relocate_package"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="shading_relocate_package">shading_relocate_package</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#shading_relocate_package">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">shading_relocate_package(self, package_name, shade_prefix=None, recursive=True)
+
+
+
+<p>Convenience constructor for a package relocation rule.</p>
+<p>Essentially equivalent to just using <tt class="docutils literal"><span class="pre">shading_relocate('package_name.**')</span></tt>.</p>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">package_name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Package name to shade (eg, <tt class="docutils literal">org.pantsbuild.example</tt>).</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">shade_prefix</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Optional prefix to apply to the package. Defaults to
+<tt class="docutils literal">__shaded_by_pants__.</tt>.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">recursive</b>
+  (<em class="bdict_param_type">bool </em>)
+  <span class="bdict_param_muffle_p"><p>Whether to rename everything under any subpackage of <tt class="docutils literal">package_name</tt>,
+or just direct children of the package. (Defaults to True).</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.java.jar.shader.new</tt>
+</p></p></div>
+<div class="bdict_section">
 <a id="bdict_Skip" pantsmark="bdict_Skip"> </a>
 
 <table class="h-plus-pilcrow">
@@ -4884,7 +5076,7 @@ For example, the following keys are supported for Atlassian's Confluence:</p></s
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/builddict/build_dictionary.html 2015-09-08T14:13:33.429182
+from dist/builddict/build_dictionary.html 2015-09-08T17:10:51.470981
 </div>
 
 </div> <!-- end of mainflow -->
