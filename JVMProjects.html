@@ -45,6 +45,7 @@
 <li class="toc-h2"><a href="#contents-of-a-bundle">Contents of a Bundle</a></li>
 <li class="toc-h2"><a href="#deploying-a-bundle">Deploying a Bundle</a></li>
 <li class="toc-h1"><a href="#omit-parts-from-binary">Omit Parts from Binary</a></li>
+<li class="toc-h1"><a href="#shading">Shading</a></li>
 <li class="toc-h1"><a href="#further-reading">Further Reading</a></li>
 </ul>
 </nav>
@@ -653,6 +654,62 @@ org/pantsbuild/example/hello/world.txt
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
+<td class="h-plus-pilcrow-holder"><h2 id="shading">Shading</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#shading">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Sometimes you have dependencies that have conflicting package or class names. This typically occurs
+in the following scenario: Your jvm_binary depends on a 3rdparty library A (rev 1.0), and a 3rdparty
+library B (rev 1.3). It turns out that A happens to also depend on B, but it depends on B (rev 2.0),
+which is backwards-incompatible with rev 1.3. Now B (1.3) and B (2.0) define different versions of
+the same classes, with the same fully-qualified class names, and you're pulling them all onto the
+classpath for your project.</p>
+<p>This is where shading comes in: you can rename the fully-qualified names of the classes that
+conflict, typically by applying a prefix (eg, <code>__shaded_by_pants__.org.foobar.example</code>).</p>
+<p>Pants uses jarjar for shading, and allows shading rules to be specified on <code>jvm_binary</code> targets with
+the <code>shading_rules</code> argument. The <code>shading_rules</code> argument is a list of rules. Available rules
+include: <a href="build_dictionary.html#bdict_shading_relocate" pantsref="bdict_shading_relocate"><code>shading_relocate</code></a>,
+<a href="build_dictionary.html#bdict_shading_exclude" pantsref="bdict_shading_exclude"><code>shading_exclude</code></a>,
+<a href="build_dictionary.html#bdict_shading_relocate_package" pantsref="bdict_shading_relocate_package"><code>shading_relocate_package</code></a>, and
+<a href="build_dictionary.html#bdict_shading_exclude_package" pantsref="bdict_shading_exclude_package"><code>shading_exclude_package</code></a>.</p>
+<p>The order of rules in the list matters, as typical of shading
+logic in general.</p>
+<p>These rules are powerful enough to take advantage of jarjar's more
+advanced syntax, like using wildcards in the middle of package
+names. E.g., this syntax works:</p>
+<div class="codehilite"><pre><span class="c"># Destination pattern will be inferred to be</span>
+<span class="c"># __shaded_by_pants__.com.@1.foo.bar.@2</span>
+<span class="n">shading_relocate</span><span class="p">(</span><span class="s">'com.*.foo.bar.**'</span><span class="p">)</span>
+</pre></div>
+<p>Which can also be done by:</p>
+<p>:::python
+   shading_relocate_package('com.*.foo.bar')</p>
+<p>The default shading prefix is <code>__shaded_by_pants__</code>, but you can change it:</p>
+<div class="codehilite"><pre><span class="n">shading_relocate_package</span><span class="p">(</span><span class="s">'com.foo.bar'</span><span class="p">,</span> <span class="n">shade_prefix</span><span class="o">=</span><span class="s">'__my_prefix__.'</span><span class="p">)</span>
+</pre></div>
+<p>You can rename a specific class:</p>
+<div class="codehilite"><pre><span class="n">shading_relocate</span><span class="p">(</span><span class="s">'com.example.foo.Main'</span><span class="p">,</span> <span class="s">'org.example.bar.NotMain'</span><span class="p">)</span>
+</pre></div>
+<p>If you want to shade everything in a package except a particular file (or subpackage), you can use
+the <a href="build_dictionary.html#bdict_shading_exclude" pantsref="bdict_shading_exclude"><code>shading_exclude</code></a> rule.</p>
+<div class="codehilite"><pre><span class="n">shading_exclude</span><span class="p">(</span><span class="s">'com.example.foobar.Main'</span><span class="p">)</span> <span class="c"># Omit the Main class.</span>
+<span class="n">shading_exclude_package</span><span class="p">(</span><span class="s">'com.example.foobar.api'</span><span class="p">)</span> <span class="c"># Omit the api subpackage.</span>
+<span class="n">shading_relocate_package</span><span class="p">(</span><span class="s">'com.example.foobar'</span><span class="p">)</span>
+</pre></div>
+<p>Again, order matters here: excludes have to appear <strong>first</strong>.</p>
+<p>To see an example, take a look at <code>testprojects/src/java/org/pantsbuild/testproject/shading/BUILD</code>,
+and try running</p>
+<div class="codehilite"><pre>./pants binary testprojects/src/java/org/pantsbuild/testproject/shading
+jar -tf dist/shading.jar
+</pre></div>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
 <td class="h-plus-pilcrow-holder"><h2 id="further-reading">Further Reading</h2></td>
 <td><div class="pilcrow-div">
 <a class="pilcrow-link" href="#further-reading">¶</a>
@@ -670,7 +727,7 @@ org/pantsbuild/example/hello/world.txt
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/markdown/html/examples/src/java/org/pantsbuild/example/readme.html 2015-09-07T04:28:05.325436
+from dist/markdown/html/examples/src/java/org/pantsbuild/example/readme.html 2015-09-09T05:20:06.338894
 </div>
 
 </div> <!-- end of mainflow -->
