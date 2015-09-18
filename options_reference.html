@@ -136,12 +136,16 @@
 <li class="toc-h2"><a href="#group_killserver">killserver</a></li>
 <li class="toc-h1"><a href="#list">list</a></li>
 <li class="toc-h2"><a href="#group_list">list</a></li>
+<li class="toc-h1"><a href="#list-owners">list-owners</a></li>
+<li class="toc-h2"><a href="#group_listowners">list-owners</a></li>
 <li class="toc-h1"><a href="#markdown">markdown</a></li>
 <li class="toc-h2"><a href="#group_markdown">markdown</a></li>
 <li class="toc-h1"><a href="#minimize">minimize</a></li>
 <li class="toc-h2"><a href="#group_minimize">minimize</a></li>
 <li class="toc-h1"><a href="#ng-killall">ng-killall</a></li>
 <li class="toc-h2"><a href="#group_ngkillall">ng-killall</a></li>
+<li class="toc-h1"><a href="#options">options</a></li>
+<li class="toc-h2"><a href="#group_options">options</a></li>
 <li class="toc-h1"><a href="#path">path</a></li>
 <li class="toc-h2"><a href="#group_path">path</a></li>
 <li class="toc-h1"><a href="#pathdeps">pathdeps</a></li>
@@ -294,9 +298,11 @@ Java code, and is installed in the <code>compile</code> goal.
   
   <li> <a href="#killserver">killserver</a> - Kill the reporting server.
   <li> <a href="#list">list</a> - List available BUILD targets.
+  <li> <a href="#list-owners">list-owners</a> - Print targets that own the specified source
   <li> <a href="#markdown">markdown</a> - Generate html from markdown docs.
   <li> <a href="#minimize">minimize</a> - Print the minimal cover of the given targets.
   <li> <a href="#ng-killall">ng-killall</a> - Kill running nailgun servers.
+  <li> <a href="#options">options</a> - List what options pants has set.
   <li> <a href="#path">path</a> - Find a dependency path from one target to another.
   <li> <a href="#pathdeps">pathdeps</a> - Print out all paths containing BUILD files the target depends on.
   <li> <a href="#paths">paths</a> - Find all dependency paths from one target to another.
@@ -317,7 +323,7 @@ Java code, and is installed in the <code>compile</code> goal.
   <li> <a href="#test-changed">test-changed</a> - Test changed targets.
   <li> <a href="#thrift-linter">thrift-linter</a> - Check thrift files for non-recommended usage patterns.
   <li> <a href="#unpack-jars">unpack-jars</a> - Unpack artifacts specified by unpacked_jars() targets.
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 <style>
 div.oref_goal_section {
   margin-left: 2%;
@@ -1545,7 +1551,19 @@ DuplicateClassFileException if it detects a version conflict in any AndroidLibra
 
       Skip scalastyle.
 
-</li></li></ul>
+<li><code>--[no-]compile-scalastyle-verbose</code>
+<code>bool</code>
+      (Default: <pre style="display: inline">False</pre>)
+
+      Enable verbose scalastyle output.
+
+<li><code>--[no-]compile-scalastyle-quiet</code>
+<code>bool</code>
+      (Default: <pre style="display: inline">False</pre>)
+
+      Silence scalastyle error messages.
+
+</li></li></li></li></ul>
 </p></div>
 <div class="oref_ogroup_section">
 <a id="oref_cli_compilepythonstyle" pantsmark="oref_cli_compilepythonstyle"> </a>
@@ -3207,13 +3225,13 @@ and AndroidLibrary targets.</p>
 
 <li><code>--idea-project-dir=&lt;str&gt;</code>
 <code>str</code>
-      (Default: <pre style="display: inline">None</pre>)
+      (Default: <pre style="display: inline">&lt;buildroot&gt;/sandbox/users/jsirois/ide-projects/idea</pre>)
 
       Specifies the directory to output the generated project files to.
 
 <li><code>--idea-project-cwd=&lt;str&gt;</code>
 <code>str</code>
-      (Default: <pre style="display: inline">None</pre>)
+      (Default: <pre style="display: inline">&lt;buildroot&gt;</pre>)
 
       Specifies the directory the generated project should use as the cwd for processes it launches.  Note that specifying this trumps --idea-project-dir and not all project related files will be stored there.
 
@@ -3225,7 +3243,7 @@ and AndroidLibrary targets.</p>
 
 <li><code>--[no-]idea-python</code>
 <code>bool</code>
-      (Default: <pre style="display: inline">False</pre>)
+      (Default: <pre style="display: inline">True</pre>)
 
       Adds python support to the generated project configuration.
 
@@ -3237,7 +3255,7 @@ and AndroidLibrary targets.</p>
 
 <li><code>--idea-java-language-level=&lt;int&gt;</code>
 <code>int</code>
-      (Default: <pre style="display: inline">7</pre>)
+      (Default: <pre style="display: inline">6</pre>)
 
       Sets the java language and jdk used to compile the project's java sources.
 
@@ -3303,13 +3321,13 @@ and AndroidLibrary targets.</p>
 
 <li><code>--[no-]idea-bash</code>
 <code>bool</code>
-      (Default: <pre style="display: inline">False</pre>)
+      (Default: <pre style="display: inline">True</pre>)
 
       Adds a bash facet to the generated project configuration.
 
 <li><code>--idea-scala-language-level=&lt;str&gt;</code>
 <code>str</code>
-      (Default: <pre style="display: inline">2.9</pre>)
+      (Default: <pre style="display: inline">2.11</pre>)
 
       Set the scala language level used for IDEA linting.
 
@@ -3390,10 +3408,8 @@ and AndroidLibrary targets.</p>
 
 <p>Implemented by <code>pants.backend.jvm.tasks.ivy_imports.IvyImports</code>
 <div>
-<p>Resolves all jar files for the import_jar_libraries property on a target.</p>
-<p>Looks for targets that have an ImportJarsMixin.</p>
-<p>One use case is for  JavaProtobufLibrary, which includes imports for jars
-containing .proto files.</p>
+<p>Resolves all jar files for the import_jar_libraries property on all <cite>ImportJarsMixin</cite> targets.</p>
+<p>One use case is for  JavaProtobufLibrary, which includes imports for jars containing .proto files.</p>
 </div>
 <ul>
 <li><code>--[no-]imports-ivy-imports-use-nailgun</code>
@@ -3829,6 +3845,67 @@ downgraded to a different version.</p>
 <a href="#Common">Common</a>
 </br></p></p></div>
 <div class="oref_goal_section">
+<a id="oref_goal_list-owners" pantsmark="oref_goal_list-owners"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="list-owners">list-owners</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#list-owners">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Print targets that own the specified source
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_listowners" pantsmark="oref_cli_listowners"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_listowners">list-owners</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_listowners">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.core.tasks.list_owners.ListOwners</code>
+<div>
+<p>Given a source file, list all targets that own it:</p>
+<pre class="literal-block">
+$ pants targets -- path/to/my/source.java
+</pre>
+<div class="system-message">
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">&lt;string&gt;</tt>, line 4)</p>
+Inconsistent literal block quoting.</div>
+<p>path/to/my:target1
+another/path:target2</p>
+</div>
+<ul>
+<li><code>--list-owners-sep=&lt;separator&gt;</code>
+<code>str</code>
+      (Default: <pre style="display: inline">\n</pre>)
+
+      String to use to separate results.
+
+<li><code>--list-owners-output-file=&lt;path&gt;</code>
+<code>str</code>
+      (Default: <pre style="display: inline">None</pre>)
+
+      Write the console output to this file instead.
+
+</li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
 <a id="oref_goal_markdown" pantsmark="oref_goal_markdown"> </a>
 
 <table class="h-plus-pilcrow">
@@ -3988,6 +4065,92 @@ the input targets without gaps.</p>
       Kill all nailguns servers launched by pants for all workspaces on the system.
 
 </li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_options" pantsmark="oref_goal_options"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="options">options</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#options">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>List what options pants has set.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_options" pantsmark="oref_cli_options"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_options">options</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_options">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.core.tasks.explain_options_task.ExplainOptionsTask</code>
+<div>
+<p>Console task to display meta-information about options.</p>
+<p>This "meta-information" includes what values options have, and what values they <em>used</em> to have
+before they were overridden by a higher-rank value (eg, a HARDCODED value overridden by a CONFIG
+value and then a cli FLAG value).</p>
+</div>
+<ul>
+<li><code>--options-sep=&lt;separator&gt;</code>
+<code>str</code>
+      (Default: <pre style="display: inline">\n</pre>)
+
+      String to use to separate results.
+
+<li><code>--options-output-file=&lt;path&gt;</code>
+<code>str</code>
+      (Default: <pre style="display: inline">None</pre>)
+
+      Write the console output to this file instead.
+
+<li><code>--options-scope=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <pre style="display: inline">None</pre>)
+
+      Only show options in this scope.
+
+<li><code>--options-name=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <pre style="display: inline">None</pre>)
+
+      Only show options with this name.
+
+<li><code>--options-rank=&lt;str&gt;</code>
+<code>str</code>
+      (Default: <pre style="display: inline">None</pre>)
+
+      Only show options with at least this importance.
+
+<li><code>--[no-]options-show-history</code>
+<code>bool</code>
+      (Default: <pre style="display: inline">False</pre>)
+
+      Show the previous values options had before being overridden.
+
+<li><code>--[no-]options-only-overridden</code>
+<code>bool</code>
+      (Default: <pre style="display: inline">False</pre>)
+
+      Only show values that overrode defaults.
+
+</li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -4945,7 +5108,7 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 
 <li><code>--[no-]server-open</code>
 <code>bool</code>
-      (Default: <pre style="display: inline">False</pre>)
+      (Default: <pre style="display: inline">True</pre>)
 
       Attempt to open the server web ui in a browser.
 
@@ -5045,7 +5208,7 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 <ul>
 <li><code>--sign-keystore-config-location=&lt;str&gt;</code>
 <code>str</code>
-      (Default: <pre style="display: inline">/Users/stuhood/.config/pants/android/keystore/default_config.ini</pre>)
+      (Default: <pre style="display: inline">/home/jsirois/.config/pants/android/keystore/default_config.ini</pre>)
 
       Location of the .ini file containing keystore definitions.
 
@@ -5626,7 +5789,7 @@ These command-line flags are available with all Pants goals.
 
 <li><code>-V=&lt;str&gt;/--pants-version=&lt;str&gt;/--version=&lt;str&gt;</code>
 <code>str</code>
-      (Default: <pre style="display: inline">0.0.47</pre>)
+      (Default: <pre style="display: inline">0.0.48</pre>)
 
       Prints pants' version number and exits.
 
@@ -5660,7 +5823,7 @@ These command-line flags are available with all Pants goals.
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/builddict/options_reference.html 2015-09-11T17:52:43.808973
+from dist/builddict/options_reference.html 2015-09-18T17:39:40.841882
 </div>
 
 </div> <!-- end of mainflow -->
