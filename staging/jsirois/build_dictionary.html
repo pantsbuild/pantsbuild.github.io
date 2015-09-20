@@ -99,6 +99,7 @@
 <li class="toc-h1"><a href="#python_test_suite">python_test_suite</a></li>
 <li class="toc-h1"><a href="#python_tests">python_tests</a></li>
 <li class="toc-h1"><a href="#python_thrift_library">python_thrift_library</a></li>
+<li class="toc-h1"><a href="#repository">repository</a></li>
 <li class="toc-h1"><a href="#Repository">Repository</a></li>
 <li class="toc-h1"><a href="#resources">resources</a></li>
 <li class="toc-h1"><a href="#rglobs">rglobs</a></li>
@@ -250,6 +251,7 @@ span.bdict_param_muffle_p p {
 <a href="#python_test_suite">python_test_suite</a>
 <a href="#python_tests">python_tests</a>
 <a href="#python_thrift_library">python_thrift_library</a>
+<a href="#repository">repository</a>
 <a href="#Repository">Repository</a>
 <a href="#resources">resources</a>
 <a href="#rglobs">rglobs</a>
@@ -307,6 +309,7 @@ span.bdict_param_muffle_p p {
 <a href="#ossrh">ossrh</a>
 <a href="#page">page</a>
 <a href="#prep_command">prep_command</a>
+<a href="#repository">repository</a>
 <a href="#Repository">Repository</a>
 <a href="#resources">resources</a>
 <a href="#rglobs">rglobs</a>
@@ -361,7 +364,7 @@ span.bdict_param_muffle_p p {
 </tbody>
 </table>
 
-<p class="bdict_argspec">android_binary(name, build_tools_version=u'19.1.0', manifest=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
+<p class="bdict_argspec">android_binary(name, build_tools_version=u'19.1.0', manifest=None, sources=None, provides=None, excludes=None, resources=None, no_cache=False, services=None, platform=None, type_alias=None, tags=None, description=None)
 
 <div>
 <p>Produces an Android binary.</p>
@@ -375,11 +378,6 @@ Defaults to the latest full release.</p></span>
 <div class="bdict_param"><b class="bdict_param_name">manifest</b>
 <span class="bdict_param_muffle_p"><p>path/to/file of 'AndroidManifest.xml' (required name). Paths are relative
 to the BUILD file's directory.</p></span>
-</div>
-<div class="bdict_param"><b class="bdict_param_name">configurations</b>
-  (<em class="bdict_param_type"> tuple of strings</em>)
-  <span class="bdict_param_muffle_p"><p>One or more ivy configurations to resolve for this target.
-This parameter is not intended for general use.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">excludes</b>
 <span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
@@ -411,18 +409,24 @@ by DistributionLocator.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">dependencies</b>
-  (<em class="bdict_param_type"> list of target specs</em>)
-  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+  (<em class="bdict_param_type"> list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Target address specs of other targets that this target depends on.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -445,7 +449,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">android_dependency(name, jars=None, tags=None, description=None)
+<p class="bdict_argspec">android_dependency(name, jars=None, type_alias=None, tags=None, description=None)
 
 <div>
 <p>A set of artifacts that may be depended upon by Android targets.</p>
@@ -457,18 +461,24 @@ a particular target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">dependencies</b>
-  (<em class="bdict_param_type"> list of target specs</em>)
-  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+  (<em class="bdict_param_type"> list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Target address specs of other targets that this target depends on.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -491,7 +501,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">android_library(name, libraries=None, include_patterns=None, exclude_patterns=None, build_tools_version=u'19.1.0', manifest=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
+<p class="bdict_argspec">android_library(name, libraries=None, include_patterns=None, exclude_patterns=None, type_alias=None, tags=None, description=None, build_tools_version=u'19.1.0', manifest=None, sources=None, provides=None, excludes=None, resources=None, no_cache=False, services=None, platform=None)
 
 <div>
 <p>Android library projects that access Android API or Android resources.</p>
@@ -511,6 +521,31 @@ targets.</p></span>
   (<em class="bdict_param_type">list </em>)
   <span class="bdict_param_muffle_p"><p>fileset patterns to exclude from the archive</p></span>
 </div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Target address specs of other targets that this target depends on.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
 <div class="bdict_param"><b class="bdict_param_name">build_tools_version</b>
 <span class="bdict_param_muffle_p"><p>API for the Build Tools (separate from SDK version).
 Defaults to the latest full release.</p></span>
@@ -518,11 +553,6 @@ Defaults to the latest full release.</p></span>
 <div class="bdict_param"><b class="bdict_param_name">manifest</b>
 <span class="bdict_param_muffle_p"><p>path/to/file of 'AndroidManifest.xml' (required name). Paths are relative
 to the BUILD file's directory.</p></span>
-</div>
-<div class="bdict_param"><b class="bdict_param_name">configurations</b>
-  (<em class="bdict_param_type"> tuple of strings</em>)
-  <span class="bdict_param_muffle_p"><p>One or more ivy configurations to resolve for this target.
-This parameter is not intended for general use.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">excludes</b>
 <span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
@@ -552,25 +582,6 @@ the platform will default to the first one of these that exist: (1) the default_
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
 by DistributionLocator.cached().version.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">name</b>
-  (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
-</div>
-<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
-  (<em class="bdict_param_type"> list of target specs</em>)
-  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
-</div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
-</div>
-<div class="bdict_param"><b class="bdict_param_name">description</b>
-  (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
-</div>
 </p></div>
 <p class="bdict_impl">Implemented by <tt>pants.backend.android.targets.android_library.AndroidLibrary</tt>
 </p></p></div>
@@ -588,7 +599,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">android_resources(name, resource_dir=None, build_tools_version=u'19.1.0', manifest=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
+<p class="bdict_argspec">android_resources(name, resource_dir=None, build_tools_version=u'19.1.0', manifest=None, sources=None, provides=None, excludes=None, resources=None, no_cache=False, services=None, platform=None, type_alias=None, tags=None, description=None)
 
 <div>
 <p>Processes android resources to generate R.java</p>
@@ -608,11 +619,6 @@ Defaults to the latest full release.</p></span>
 <span class="bdict_param_muffle_p"><p>path/to/file of 'AndroidManifest.xml' (required name). Paths are relative
 to the BUILD file's directory.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">configurations</b>
-  (<em class="bdict_param_type"> tuple of strings</em>)
-  <span class="bdict_param_muffle_p"><p>One or more ivy configurations to resolve for this target.
-This parameter is not intended for general use.</p></span>
-</div>
 <div class="bdict_param"><b class="bdict_param_name">excludes</b>
 <span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
 transitive dependencies against.</p></span>
@@ -643,18 +649,24 @@ by DistributionLocator.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">dependencies</b>
-  (<em class="bdict_param_type"> list of target specs</em>)
-  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+  (<em class="bdict_param_type"> list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Target address specs of other targets that this target depends on.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -677,7 +689,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">annotation_processor(name, processors=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
+<p class="bdict_argspec">annotation_processor(name, processors=None, sources=None, provides=None, excludes=None, resources=None, no_cache=False, services=None, platform=None, type_alias=None, tags=None, description=None)
 
 <div>
 <p>Produces a Java library containing one or more annotation processors.</p>
@@ -695,11 +707,6 @@ annotation processors this library exports.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">provides</b>
 <span class="bdict_param_muffle_p"><p>An optional Dependency object indicating the The ivy artifact to export.</p></span>
-</div>
-<div class="bdict_param"><b class="bdict_param_name">configurations</b>
-  (<em class="bdict_param_type"> tuple of strings</em>)
-  <span class="bdict_param_muffle_p"><p>One or more ivy configurations to resolve for this target.
-This parameter is not intended for general use.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">excludes</b>
 <span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
@@ -731,18 +738,24 @@ by DistributionLocator.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">dependencies</b>
-  (<em class="bdict_param_type"> list of target specs</em>)
-  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+  (<em class="bdict_param_type"> list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Target address specs of other targets that this target depends on.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -804,7 +817,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">benchmark(name, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
+<p class="bdict_argspec">benchmark(name, sources=None, provides=None, excludes=None, resources=None, no_cache=False, services=None, platform=None, type_alias=None, tags=None, description=None)
 
 <div>
 <p>A caliper benchmark.</p>
@@ -812,11 +825,6 @@ a particular target is built.</p></span>
 </div>
 <div class="bdict_params_section">
 <p><b>Params:</b>
-<div class="bdict_param"><b class="bdict_param_name">configurations</b>
-  (<em class="bdict_param_type"> tuple of strings</em>)
-  <span class="bdict_param_muffle_p"><p>One or more ivy configurations to resolve for this target.
-This parameter is not intended for general use.</p></span>
-</div>
 <div class="bdict_param"><b class="bdict_param_name">excludes</b>
 <span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
 transitive dependencies against.</p></span>
@@ -847,18 +855,24 @@ by DistributionLocator.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">dependencies</b>
-  (<em class="bdict_param_type"> list of target specs</em>)
-  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+  (<em class="bdict_param_type"> list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Target address specs of other targets that this target depends on.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -985,7 +999,7 @@ E.g., <tt class="docutils literal"><span class="pre">relative_to='common'</span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">contrib_plugin(name, distribution_name=None, description=None, additional_classifiers=None, build_file_aliases=False, global_subsystems=False, register_goals=False, sources=None, resources=None, resource_targets=None, provides=None, compatibility=None, tags=None)
+<p class="bdict_argspec">contrib_plugin(name, distribution_name=None, description=None, additional_classifiers=None, build_file_aliases=False, global_subsystems=False, register_goals=False, sources=None, resources=None, resource_targets=None, provides=None, compatibility=None, type_alias=None, tags=None)
 
 <div>
 <p>Describes a contributed pants plugin published by pantsbuild.</p>
@@ -1053,14 +1067,20 @@ agnostic to interpreter class.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 </p></div>
 <p class="bdict_impl">Implemented by <tt>internal_backend.utilities.register.ContribPlugin</tt>
@@ -1127,7 +1147,7 @@ see: <a class="reference external" href="https://pypi.python.org/pypi?%3Aaction=
 </tbody>
 </table>
 
-<p class="bdict_argspec">cpp_binary(name, libraries=None, sources=None, tags=None, description=None)
+<p class="bdict_argspec">cpp_binary(name, libraries=None, sources=None, type_alias=None, tags=None, description=None)
 
 <div>
 <p>Produces a c++ binary.</p>
@@ -1145,18 +1165,24 @@ file's directory.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">dependencies</b>
-  (<em class="bdict_param_type"> list of target specs</em>)
-  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+  (<em class="bdict_param_type"> list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Target address specs of other targets that this target depends on.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -1179,7 +1205,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">cpp_library(name, sources=None, tags=None, description=None)
+<p class="bdict_argspec">cpp_library(name, sources=None, type_alias=None, tags=None, description=None)
 
 <div>
 <p>Represents a statically linked c++ library.</p>
@@ -1193,18 +1219,24 @@ file's directory.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">dependencies</b>
-  (<em class="bdict_param_type"> list of target specs</em>)
-  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+  (<em class="bdict_param_type"> list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Target address specs of other targets that this target depends on.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -1227,7 +1259,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">credentials(name, username=None, password=None, tags=None, description=None)
+<p class="bdict_argspec">credentials(name, username=None, password=None, type_alias=None, tags=None, description=None)
 
 <div>
 <p>Supplies credentials for a maven repository on demand.</p>
@@ -1249,14 +1281,20 @@ or more of these.</p>
   <span class="bdict_param_muffle_p"><p>Either a constant password value or else a callable that can fetch one.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">dependencies</b>
-  (<em class="bdict_param_type"> list of target specs</em>)
-  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+  (<em class="bdict_param_type"> list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Target address specs of other targets that this target depends on.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -1611,7 +1649,7 @@ and the new grammar will not support arithmetic.</p>
 </tbody>
 </table>
 
-<p class="bdict_argspec">go_binary(name, tags=None, description=None)
+<p class="bdict_argspec">go_binary(name, type_alias=None, tags=None, description=None)
 
 <div>
 <p>Represents a local Go main package.</p>
@@ -1620,18 +1658,24 @@ and the new grammar will not support arithmetic.</p>
 <p><b>Params:</b>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">dependencies</b>
-  (<em class="bdict_param_type"> list of target specs</em>)
-  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+  (<em class="bdict_param_type"> list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Target address specs of other targets that this target depends on.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -1654,7 +1698,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">go_library(name, tags=None, description=None)
+<p class="bdict_argspec">go_library(name, type_alias=None, tags=None, description=None)
 
 <div>
 <p>Represents a local Go package.</p>
@@ -1663,18 +1707,24 @@ a particular target is built.</p></span>
 <p><b>Params:</b>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">dependencies</b>
-  (<em class="bdict_param_type"> list of target specs</em>)
-  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+  (<em class="bdict_param_type"> list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Target address specs of other targets that this target depends on.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -1697,43 +1747,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">go_remote_libraries(ctx)
-
-
-
-
-<div class="bdict_params_section">
-<p><b>Params:</b>
-<div class="bdict_param"><b class="bdict_param_name">packages</b>
-  (<em class="bdict_param_type">list </em>)
-  <span class="bdict_param_muffle_p"><p>The package import paths within the remote library; by default just the
-root package will be available (equivalent to passing <cite>packages=['']</cite>).</p></span>
-</div>
-<div class="bdict_param"><b class="bdict_param_name">rev</b>
-  (<em class="bdict_param_type">str </em>)
-  <span class="bdict_param_muffle_p"><p>Identifies which version of the remote library to download. This could be a
-commit SHA (git), node id (hg), etc.  If left unspecified the version will
-default to the latest available.  It's highly recommended to not accept the
-default and instead pin the rev explicitly for repeatable builds.</p></span>
-</div>
-</p></div>
-<p class="bdict_impl">Implemented by <tt>pants.base.build_file_aliases.curry_context.pants.contrib.go.targets.go_remote_library.from_packages</tt>
-</p></p></div>
-<div class="bdict_section">
-<a id="bdict_go_remote_library" pantsmark="bdict_go_remote_library"> </a>
-
-<table class="h-plus-pilcrow">
-<tbody>
-<tr>
-<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="go_remote_library">go_remote_library</h2></td>
-<td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#go_remote_library">¶</a>
-</div></td>
-</tr>
-</tbody>
-</table>
-
-<p class="bdict_argspec">go_remote_library(name, pkg=u'', rev=u'', tags=None, description=None)
+<p class="bdict_argspec">go_remote_libraries(name, pkg=u'', rev=u'', type_alias=None, tags=None, description=None)
 
 <div>
 <p>Represents a remote Go package.</p>
@@ -1754,18 +1768,85 @@ default and instead pin the rev explicitly for repeatable builds.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">dependencies</b>
-  (<em class="bdict_param_type"> list of target specs</em>)
-  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+  (<em class="bdict_param_type"> list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Target address specs of other targets that this target depends on.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
+</div>
+</p></div>
+<p class="bdict_impl">Implemented by <tt>pants.contrib.go.targets.go_remote_library.GoRemoteLibrary</tt>
+</p></p></div>
+<div class="bdict_section">
+<a id="bdict_go_remote_library" pantsmark="bdict_go_remote_library"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="go_remote_library">go_remote_library</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#go_remote_library">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">go_remote_library(name, pkg=u'', rev=u'', type_alias=None, tags=None, description=None)
+
+<div>
+<p>Represents a remote Go package.</p>
+</div>
+<div class="bdict_params_section">
+<p><b>Params:</b>
+<div class="bdict_param"><b class="bdict_param_name">pkg</b>
+  (<em class="bdict_param_type">str </em>)
+  <span class="bdict_param_muffle_p"><p>The package import path within the remote library; by default the root package
+path (equivalent to passing <cite>pkg='.'</cite> or <cite>pkg=''</cite>).</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">rev</b>
+  (<em class="bdict_param_type">str </em>)
+  <span class="bdict_param_muffle_p"><p>Identifies which version of the remote library to download. This could be a
+commit SHA (git), node id (hg), etc.  If left unspecified the version will
+default to the latest available.  It's highly recommended to not accept the
+default and instead pin the rev explicitly for repeatable builds.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Target address specs of other targets that this target depends on.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -1920,7 +2001,7 @@ Maven -SNAPSHOT style artifacts in an active development/integration cycle.</p><
 </tbody>
 </table>
 
-<p class="bdict_argspec">jar_library(name, jars=None, tags=None, description=None)
+<p class="bdict_argspec">jar_library(name, jars=None, type_alias=None, tags=None, description=None)
 
 <div>
 <p>A set of jars that may be depended upon.</p>
@@ -1932,18 +2013,24 @@ Maven -SNAPSHOT style artifacts in an active development/integration cycle.</p><
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">dependencies</b>
-  (<em class="bdict_param_type"> list of target specs</em>)
-  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+  (<em class="bdict_param_type"> list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Target address specs of other targets that this target depends on.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -2010,7 +2097,7 @@ no explicit rules apply to the entry.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">java_agent(name, sources=None, excludes=None, resources=None, premain=None, agent_class=None, can_redefine=False, can_retransform=False, can_set_native_method_prefix=False, provides=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
+<p class="bdict_argspec">java_agent(name, sources=None, excludes=None, resources=None, premain=None, agent_class=None, can_redefine=False, can_retransform=False, can_set_native_method_prefix=False, provides=None, no_cache=False, services=None, platform=None, type_alias=None, tags=None, description=None)
 
 <div>
 <p>Defines a java agent entrypoint.</p>
@@ -2052,11 +2139,6 @@ to publish that represents this target outside the repo.</p></span>
 <tt class="docutils literal">resources</tt> targets (which in turn point to file paths). The paths
 indicate text file resources to place in this module's jar.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">configurations</b>
-  (<em class="bdict_param_type"> tuple of strings</em>)
-  <span class="bdict_param_muffle_p"><p>One or more ivy configurations to resolve for this target.
-This parameter is not intended for general use.</p></span>
-</div>
 <div class="bdict_param"><b class="bdict_param_name">excludes</b>
 <span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
 transitive dependencies against.</p></span>
@@ -2087,18 +2169,24 @@ by DistributionLocator.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">dependencies</b>
-  (<em class="bdict_param_type"> list of target specs</em>)
-  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+  (<em class="bdict_param_type"> list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Target address specs of other targets that this target depends on.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -2121,7 +2209,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">java_antlr_library(name=None, sources=None, provides=None, excludes=None, compiler=u'antlr3', package=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
+<p class="bdict_argspec">java_antlr_library(name=None, sources=None, provides=None, excludes=None, compiler=u'antlr3', package=None, resources=None, no_cache=False, services=None, platform=None, type_alias=None, tags=None, description=None)
 
 <div>
 <p>Generates a stub Java library from Antlr grammar files.</p>
@@ -2141,11 +2229,6 @@ Currently only supports 'antlr3' and 'antlr4'</p></span>
 sources.  If unset, the package will be based on the path to the sources. Note that if
 the sources are spread among different files, this must be set as the package cannot be
 inferred.</p></span>
-</div>
-<div class="bdict_param"><b class="bdict_param_name">configurations</b>
-  (<em class="bdict_param_type"> tuple of strings</em>)
-  <span class="bdict_param_muffle_p"><p>One or more ivy configurations to resolve for this target.
-This parameter is not intended for general use.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">excludes</b>
 <span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
@@ -2177,18 +2260,24 @@ by DistributionLocator.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">dependencies</b>
-  (<em class="bdict_param_type"> list of target specs</em>)
-  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+  (<em class="bdict_param_type"> list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Target address specs of other targets that this target depends on.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -2211,7 +2300,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">java_library(name, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
+<p class="bdict_argspec">java_library(name, sources=None, provides=None, excludes=None, resources=None, no_cache=False, services=None, platform=None, type_alias=None, tags=None, description=None)
 
 <div>
 <p>A collection of Java code.</p>
@@ -2231,11 +2320,6 @@ to publish that represents this target outside the repo.</p></span>
 <span class="bdict_param_muffle_p"><p>An optional list of file paths (DEPRECATED) or
 <tt class="docutils literal">resources</tt> targets (which in turn point to file paths). The paths
 indicate text file resources to place in this module's jar.</p></span>
-</div>
-<div class="bdict_param"><b class="bdict_param_name">configurations</b>
-  (<em class="bdict_param_type"> tuple of strings</em>)
-  <span class="bdict_param_muffle_p"><p>One or more ivy configurations to resolve for this target.
-This parameter is not intended for general use.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">excludes</b>
 <span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
@@ -2267,18 +2351,24 @@ by DistributionLocator.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">dependencies</b>
-  (<em class="bdict_param_type"> list of target specs</em>)
-  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+  (<em class="bdict_param_type"> list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Target address specs of other targets that this target depends on.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -2301,7 +2391,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">java_protobuf_library(name, buildflags=None, imports=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
+<p class="bdict_argspec">java_protobuf_library(name, buildflags=None, imports=None, type_alias=None, tags=None, description=None, sources=None, provides=None, excludes=None, resources=None, no_cache=False, services=None, platform=None)
 
 <div>
 <p>Generates a stub Java library from protobuf IDL files.</p>
@@ -2316,10 +2406,30 @@ a particular target is built.</p></span>
   <span class="bdict_param_muffle_p"><p>List of addresses of <a class="reference external" href="#jar_library">jar_library</a>
 targets which contain .proto definitions.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">configurations</b>
-  (<em class="bdict_param_type"> tuple of strings</em>)
-  <span class="bdict_param_muffle_p"><p>One or more ivy configurations to resolve for this target.
-This parameter is not intended for general use.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">name</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
+  (<em class="bdict_param_type"> list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Target address specs of other targets that this target depends on.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">description</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">excludes</b>
 <span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
@@ -2348,25 +2458,6 @@ for compilation (that is, a key into the --jvm-platform-platforms dictionary). I
 the platform will default to the first one of these that exist: (1) the default_platform
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
 by DistributionLocator.cached().version.</p></span>
-</div>
-<div class="bdict_param"><b class="bdict_param_name">name</b>
-  (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
-</div>
-<div class="bdict_param"><b class="bdict_param_name">dependencies</b>
-  (<em class="bdict_param_type"> list of target specs</em>)
-  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
-</div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
-</div>
-<div class="bdict_param"><b class="bdict_param_name">description</b>
-  (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>Human-readable description of this target.</p></span>
 </div>
 </p></div>
 <p class="bdict_impl">Implemented by <tt>pants.backend.codegen.targets.java_protobuf_library.JavaProtobufLibrary</tt>
@@ -2385,18 +2476,13 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">java_ragel_library(name, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
+<p class="bdict_argspec">java_ragel_library(name, sources=None, provides=None, excludes=None, resources=None, no_cache=False, services=None, platform=None, type_alias=None, tags=None, description=None)
 
 <div>
 <p>Generates a stub Java library from a Ragel file.</p>
 </div>
 <div class="bdict_params_section">
 <p><b>Params:</b>
-<div class="bdict_param"><b class="bdict_param_name">configurations</b>
-  (<em class="bdict_param_type"> tuple of strings</em>)
-  <span class="bdict_param_muffle_p"><p>One or more ivy configurations to resolve for this target.
-This parameter is not intended for general use.</p></span>
-</div>
 <div class="bdict_param"><b class="bdict_param_name">excludes</b>
 <span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
 transitive dependencies against.</p></span>
@@ -2427,18 +2513,24 @@ by DistributionLocator.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">dependencies</b>
-  (<em class="bdict_param_type"> list of target specs</em>)
-  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+  (<em class="bdict_param_type"> list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Target address specs of other targets that this target depends on.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -2480,7 +2572,7 @@ Old name for <a href="#junit_tests">junit_tests</a>
 </tbody>
 </table>
 
-<p class="bdict_argspec">java_thrift_library(name, compiler=None, language=None, rpc_style=None, namespace_map=None, thrift_linter_strict=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
+<p class="bdict_argspec">java_thrift_library(name, compiler=None, language=None, rpc_style=None, namespace_map=None, thrift_linter_strict=None, sources=None, provides=None, excludes=None, resources=None, no_cache=False, services=None, platform=None, type_alias=None, tags=None, description=None)
 
 <div>
 <p>Generates a stub Java or Scala library from thrift IDL files.</p>
@@ -2504,11 +2596,6 @@ in the global options under <tt class="docutils literal"><span class="pre">--thr
 </div>
 <div class="bdict_param"><b class="bdict_param_name">thrift_linter_strict</b>
 <span class="bdict_param_muffle_p"><p>If True, fail if thrift linter produces any warnings.</p></span>
-</div>
-<div class="bdict_param"><b class="bdict_param_name">configurations</b>
-  (<em class="bdict_param_type"> tuple of strings</em>)
-  <span class="bdict_param_muffle_p"><p>One or more ivy configurations to resolve for this target.
-This parameter is not intended for general use.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">excludes</b>
 <span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
@@ -2540,18 +2627,24 @@ by DistributionLocator.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">dependencies</b>
-  (<em class="bdict_param_type"> list of target specs</em>)
-  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+  (<em class="bdict_param_type"> list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Target address specs of other targets that this target depends on.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -2574,7 +2667,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">java_wire_library(name, service_writer=None, service_writer_options=None, service_factory=None, service_factory_options=None, roots=None, registry_class=None, enum_options=None, no_options=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
+<p class="bdict_argspec">java_wire_library(name, service_writer=None, service_writer_options=None, service_factory=None, service_factory_options=None, roots=None, registry_class=None, enum_options=None, no_options=None, sources=None, provides=None, excludes=None, resources=None, no_cache=False, services=None, platform=None, type_alias=None, tags=None, description=None)
 
 <div>
 <p>Generates a stub Java library from protobuf IDL files.</p>
@@ -2616,11 +2709,6 @@ a particular target is built.</p></span>
 <div class="bdict_param"><b class="bdict_param_name">provides</b>
 <span class="bdict_param_muffle_p"><p>An optional Dependency object indicating the The ivy artifact to export.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">configurations</b>
-  (<em class="bdict_param_type"> tuple of strings</em>)
-  <span class="bdict_param_muffle_p"><p>One or more ivy configurations to resolve for this target.
-This parameter is not intended for general use.</p></span>
-</div>
 <div class="bdict_param"><b class="bdict_param_name">excludes</b>
 <span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
 transitive dependencies against.</p></span>
@@ -2651,18 +2739,24 @@ by DistributionLocator.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">dependencies</b>
-  (<em class="bdict_param_type"> list of target specs</em>)
-  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+  (<em class="bdict_param_type"> list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Target address specs of other targets that this target depends on.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -2685,7 +2779,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">jaxb_library(name, package=None, language=u'java', sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
+<p class="bdict_argspec">jaxb_library(name, package=None, language=u'java', sources=None, provides=None, excludes=None, resources=None, no_cache=False, services=None, platform=None, type_alias=None, tags=None, description=None)
 
 <div>
 <p>Generates a stub Java library from jaxb xsd files.</p>
@@ -2702,11 +2796,6 @@ or 'net'.</p></span>
 <div class="bdict_param"><b class="bdict_param_name">language</b>
   (<em class="bdict_param_type">string </em>)
   <span class="bdict_param_muffle_p"><p>only 'java' is supported. Default: 'java'</p></span>
-</div>
-<div class="bdict_param"><b class="bdict_param_name">configurations</b>
-  (<em class="bdict_param_type"> tuple of strings</em>)
-  <span class="bdict_param_muffle_p"><p>One or more ivy configurations to resolve for this target.
-This parameter is not intended for general use.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">excludes</b>
 <span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
@@ -2738,18 +2827,24 @@ by DistributionLocator.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">dependencies</b>
-  (<em class="bdict_param_type"> list of target specs</em>)
-  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+  (<em class="bdict_param_type"> list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Target address specs of other targets that this target depends on.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -2772,7 +2867,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">junit_tests(name, cwd=None, test_platform=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
+<p class="bdict_argspec">junit_tests(name, cwd=None, test_platform=None, sources=None, provides=None, excludes=None, resources=None, no_cache=False, services=None, platform=None, type_alias=None, tags=None, description=None)
 
 <div>
 <p>Tests JVM sources with JUnit.</p>
@@ -2789,11 +2884,6 @@ target. If unspecified (None), the working directory will be controlled by junit
   <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to
 use for running tests (that is, a key into the --jvm-platform-platforms dictionary). If
 unspecified, the platform will default to the same one used for compilation.</p></span>
-</div>
-<div class="bdict_param"><b class="bdict_param_name">configurations</b>
-  (<em class="bdict_param_type"> tuple of strings</em>)
-  <span class="bdict_param_muffle_p"><p>One or more ivy configurations to resolve for this target.
-This parameter is not intended for general use.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">excludes</b>
 <span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
@@ -2825,18 +2915,24 @@ by DistributionLocator.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">dependencies</b>
-  (<em class="bdict_param_type"> list of target specs</em>)
-  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+  (<em class="bdict_param_type"> list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Target address specs of other targets that this target depends on.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -2859,7 +2955,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">jvm_app(name=None, binary=None, bundles=None, basename=None, tags=None, description=None)
+<p class="bdict_argspec">jvm_app(name=None, binary=None, bundles=None, basename=None, type_alias=None, tags=None, description=None)
 
 <div>
 <p>A JVM-based application consisting of a binary plus "extra files".</p>
@@ -2888,18 +2984,24 @@ artifact. In most cases this parameter is not necessary.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">dependencies</b>
-  (<em class="bdict_param_type"> list of target specs</em>)
-  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+  (<em class="bdict_param_type"> list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Target address specs of other targets that this target depends on.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -2922,7 +3024,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">jvm_binary(name=None, main=None, basename=None, source=None, deploy_excludes=None, deploy_jar_rules=None, manifest_entries=None, shading_rules=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
+<p class="bdict_argspec">jvm_binary(name=None, main=None, basename=None, source=None, deploy_excludes=None, deploy_jar_rules=None, manifest_entries=None, shading_rules=None, sources=None, provides=None, excludes=None, resources=None, no_cache=False, services=None, platform=None, type_alias=None, tags=None, description=None)
 
 <div>
 <p>Produces a JVM binary optionally identifying a launcher main class.</p>
@@ -2981,11 +3083,6 @@ for adding to MANIFEST.MF when packaging this binary.</p></span>
 matches a fully-qualified class name is used to shade it. See shading_relocate(),
 shading_exclude(), shading_relocate_package(), and shading_exclude_package().</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">configurations</b>
-  (<em class="bdict_param_type"> tuple of strings</em>)
-  <span class="bdict_param_muffle_p"><p>One or more ivy configurations to resolve for this target.
-This parameter is not intended for general use.</p></span>
-</div>
 <div class="bdict_param"><b class="bdict_param_name">excludes</b>
 <span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
 transitive dependencies against.</p></span>
@@ -3016,14 +3113,20 @@ by DistributionLocator.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -3137,7 +3240,7 @@ expecting to find java files in <tt class="docutils literal">src/main/java</tt>,
 </tbody>
 </table>
 
-<p class="bdict_argspec">node_module(name, sources=None, package_name=None, tags=None, description=None)
+<p class="bdict_argspec">node_module(name, sources=None, package_name=None, type_alias=None, tags=None, description=None)
 
 <div>
 <p>Represents a Node module.</p>
@@ -3156,18 +3259,24 @@ used.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">dependencies</b>
-  (<em class="bdict_param_type"> list of target specs</em>)
-  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+  (<em class="bdict_param_type"> list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Target address specs of other targets that this target depends on.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -3190,7 +3299,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">node_remote_module(name, version=None, package_name=None, tags=None, description=None)
+<p class="bdict_argspec">node_remote_module(name, version=None, package_name=None, type_alias=None, tags=None, description=None)
 
 <div>
 <p>Represents a remote Node module.</p>
@@ -3210,18 +3319,24 @@ used.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">dependencies</b>
-  (<em class="bdict_param_type"> list of target specs</em>)
-  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+  (<em class="bdict_param_type"> list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Target address specs of other targets that this target depends on.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -3293,7 +3408,7 @@ will be synthesized.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">page(name, source=None, format=None, links=None, resources=None, provides=None, tags=None, description=None)
+<p class="bdict_argspec">page(name, source=None, format=None, links=None, resources=None, provides=None, type_alias=None, tags=None, description=None)
 
 <div>
 <p>Describes a single documentation page.</p>
@@ -3336,18 +3451,24 @@ E.g., a wiki location.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">dependencies</b>
-  (<em class="bdict_param_type"> list of target specs</em>)
-  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+  (<em class="bdict_param_type"> list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Target address specs of other targets that this target depends on.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -3417,7 +3538,7 @@ In old Pants versions, a reference to a Pants targets.
 </tbody>
 </table>
 
-<p class="bdict_argspec">pants_plugin(name, distribution_name=None, description=None, additional_classifiers=None, build_file_aliases=False, global_subsystems=False, register_goals=False, sources=None, resources=None, resource_targets=None, provides=None, compatibility=None, tags=None)
+<p class="bdict_argspec">pants_plugin(name, distribution_name=None, description=None, additional_classifiers=None, build_file_aliases=False, global_subsystems=False, register_goals=False, sources=None, resources=None, resource_targets=None, provides=None, compatibility=None, type_alias=None, tags=None)
 
 <div>
 <p>Describes a pants plugin published by pantsbuild.</p>
@@ -3485,14 +3606,20 @@ agnostic to interpreter class.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 </p></div>
 <p class="bdict_impl">Implemented by <tt>internal_backend.utilities.register.PantsPlugin</tt>
@@ -3580,7 +3707,7 @@ see: <a class="reference external" href="https://pypi.python.org/pypi?%3Aaction=
 </tbody>
 </table>
 
-<p class="bdict_argspec">prep_command(name, prep_executable=None, prep_args=None, prep_environ=False, tags=None, description=None)
+<p class="bdict_argspec">prep_command(name, prep_executable=None, prep_args=None, prep_environ=False, type_alias=None, tags=None, description=None)
 
 <div>
 <p>A command that must be run before some other target can be tested.</p>
@@ -3605,18 +3732,24 @@ avoid it if at all possible.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">dependencies</b>
-  (<em class="bdict_param_type"> list of target specs</em>)
-  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+  (<em class="bdict_param_type"> list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Target address specs of other targets that this target depends on.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -3639,7 +3772,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">python_antlr_library(name, module=None, antlr_version=u'3.1.3', sources=None, resources=None, resource_targets=None, provides=None, compatibility=None, tags=None, description=None)
+<p class="bdict_argspec">python_antlr_library(name, module=None, antlr_version=u'3.1.3', sources=None, resources=None, resource_targets=None, provides=None, compatibility=None, type_alias=None, tags=None, description=None)
 
 <div>
 <p>Generates a stub Python library from Antlr grammar files.</p>
@@ -3682,14 +3815,20 @@ agnostic to interpreter class.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -3712,7 +3851,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">python_binary(name, source=None, entry_point=None, inherit_path=False, zip_safe=True, always_write_cache=False, repositories=None, indices=None, ignore_errors=False, platforms=(), sources=None, resources=None, resource_targets=None, provides=None, compatibility=None, tags=None, description=None)
+<p class="bdict_argspec">python_binary(name, source=None, entry_point=None, inherit_path=False, zip_safe=True, always_write_cache=False, repositories=None, indices=None, ignore_errors=False, platforms=(), sources=None, resources=None, resource_targets=None, provides=None, compatibility=None, type_alias=None, tags=None, description=None)
 
 <div>
 <p>Produces a Python binary.</p>
@@ -3791,14 +3930,20 @@ target outside the repo.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -3821,7 +3966,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">python_library(name, sources=None, resources=None, resource_targets=None, provides=None, compatibility=None, tags=None, description=None)
+<p class="bdict_argspec">python_library(name, sources=None, resources=None, resource_targets=None, provides=None, compatibility=None, type_alias=None, tags=None, description=None)
 
 <div>
 <p>Produces a Python library.</p>
@@ -3859,14 +4004,20 @@ agnostic to interpreter class.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -3925,7 +4076,7 @@ dependencies: <cite>celery&gt;=2.5.1</cite>, <cite>django-picklefield&gt;=0.2.0<
 </tbody>
 </table>
 
-<p class="bdict_argspec">python_requirement_library(name, requirements=None, tags=None, description=None)
+<p class="bdict_argspec">python_requirement_library(name, requirements=None, type_alias=None, tags=None, description=None)
 
 <div>
 <p>Named target for some pip requirements.</p>
@@ -3938,18 +4089,24 @@ dependencies: <cite>celery&gt;=2.5.1</cite>, <cite>django-picklefield&gt;=0.2.0<
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">dependencies</b>
-  (<em class="bdict_param_type"> list of target specs</em>)
-  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+  (<em class="bdict_param_type"> list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Target address specs of other targets that this target depends on.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -4038,7 +4195,7 @@ Deprecated way to group Python tests; use <a href="#target">target</a>
 </tbody>
 </table>
 
-<p class="bdict_argspec">python_tests(name, coverage=None, sources=None, resources=None, resource_targets=None, provides=None, compatibility=None, tags=None, description=None)
+<p class="bdict_argspec">python_tests(name, coverage=None, sources=None, resources=None, resource_targets=None, provides=None, compatibility=None, type_alias=None, tags=None, description=None)
 
 <div>
 <p>Tests a Python library.</p>
@@ -4080,14 +4237,20 @@ agnostic to interpreter class.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -4110,7 +4273,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">python_thrift_library(name, sources=None, resources=None, resource_targets=None, provides=None, compatibility=None, tags=None, description=None)
+<p class="bdict_argspec">python_thrift_library(name, sources=None, resources=None, resource_targets=None, provides=None, compatibility=None, type_alias=None, tags=None, description=None)
 
 <div>
 <p>Generates a stub Python library from thrift IDL files.</p>
@@ -4148,14 +4311,20 @@ agnostic to interpreter class.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -4165,20 +4334,20 @@ a particular target is built.</p></span>
 <p class="bdict_impl">Implemented by <tt>pants.backend.codegen.targets.python_thrift_library.PythonThriftLibrary</tt>
 </p></p></div>
 <div class="bdict_section">
-<a id="bdict_Repository" pantsmark="bdict_Repository"> </a>
+<a id="bdict_repository" pantsmark="bdict_repository"> </a>
 
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="Repository">Repository</h2></td>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="repository">repository</h2></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#Repository">¶</a>
+<a class="pilcrow-link" href="#repository">¶</a>
 </div></td>
 </tr>
 </tbody>
 </table>
 
-<p class="bdict_argspec">Repository(name=None, url=None, push_db_basedir=None, **kwargs)
+<p class="bdict_argspec">repository(name=None, url=None, push_db_basedir=None, **kwargs)
 
 <div>
 <p>An artifact repository, such as a maven repo.</p>
@@ -4197,6 +4366,28 @@ a particular target is built.</p></span>
 <p class="bdict_impl">Implemented by <tt>pants.backend.jvm.repository.Repository</tt>
 </p></p></div>
 <div class="bdict_section">
+<a id="bdict_Repository" pantsmark="bdict_Repository"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="Repository">Repository</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#Repository">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p class="bdict_argspec">Repository(*args, **kwargs)
+
+
+
+
+
+<p class="bdict_impl">Implemented by <tt>pants.backend.jvm.register.Repository</tt>
+</p></p></div>
+<div class="bdict_section">
 <a id="bdict_resources" pantsmark="bdict_resources"> </a>
 
 <table class="h-plus-pilcrow">
@@ -4210,7 +4401,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">resources(name, sources=None, tags=None, description=None)
+<p class="bdict_argspec">resources(name, sources=None, type_alias=None, tags=None, description=None)
 
 <div>
 <p>A set of files accessible as resources from the JVM classpath.</p>
@@ -4228,18 +4419,24 @@ BUILD file's directory.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">dependencies</b>
-  (<em class="bdict_param_type"> list of target specs</em>)
-  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+  (<em class="bdict_param_type"> list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Target address specs of other targets that this target depends on.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -4307,7 +4504,7 @@ make BUILD files easier to parse, and the new grammar will not support arithmeti
 </tbody>
 </table>
 
-<p class="bdict_argspec">scala_library(name, java_sources=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
+<p class="bdict_argspec">scala_library(name, java_sources=None, sources=None, provides=None, excludes=None, resources=None, no_cache=False, services=None, platform=None, type_alias=None, tags=None, description=None)
 
 <div>
 <p>A collection of Scala code.</p>
@@ -4334,11 +4531,6 @@ targets containing resources that belong on this library's classpath.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">provides</b>
 <span class="bdict_param_muffle_p"><p>An optional Dependency object indicating the The ivy artifact to export.</p></span>
-</div>
-<div class="bdict_param"><b class="bdict_param_name">configurations</b>
-  (<em class="bdict_param_type"> tuple of strings</em>)
-  <span class="bdict_param_muffle_p"><p>One or more ivy configurations to resolve for this target.
-This parameter is not intended for general use.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">excludes</b>
 <span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
@@ -4370,18 +4562,24 @@ by DistributionLocator.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">dependencies</b>
-  (<em class="bdict_param_type"> list of target specs</em>)
-  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+  (<em class="bdict_param_type"> list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Target address specs of other targets that this target depends on.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -4404,7 +4602,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">scalac_plugin(name, classname=None, plugin=None, java_sources=None, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
+<p class="bdict_argspec">scalac_plugin(name, classname=None, plugin=None, java_sources=None, sources=None, provides=None, excludes=None, resources=None, no_cache=False, services=None, platform=None, type_alias=None, tags=None, description=None)
 
 <div>
 <p>Defines a target that produces a scalac_plugin.</p>
@@ -4433,11 +4631,6 @@ targets containing resources that belong on this library's classpath.</p></span>
 <div class="bdict_param"><b class="bdict_param_name">provides</b>
 <span class="bdict_param_muffle_p"><p>An optional Dependency object indicating the The ivy artifact to export.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">configurations</b>
-  (<em class="bdict_param_type"> tuple of strings</em>)
-  <span class="bdict_param_muffle_p"><p>One or more ivy configurations to resolve for this target.
-This parameter is not intended for general use.</p></span>
-</div>
 <div class="bdict_param"><b class="bdict_param_name">excludes</b>
 <span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
 transitive dependencies against.</p></span>
@@ -4468,18 +4661,24 @@ by DistributionLocator.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">dependencies</b>
-  (<em class="bdict_param_type"> list of target specs</em>)
-  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+  (<em class="bdict_param_type"> list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Target address specs of other targets that this target depends on.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -4614,7 +4813,7 @@ shaded. '*' is a wildcard that matches any individual package component, and '**
 wildcard that matches any trailing pattern (ie the rest of the string).</p></span>
 </div>
 </p></div>
-<p class="bdict_impl">Implemented by <tt>pants.java.jar.shader.new</tt>
+<p class="bdict_impl">Implemented by <tt>pants.backend.jvm.subsystems.shader.new</tt>
 </p></p></div>
 <div class="bdict_section">
 <a id="bdict_shading_exclude_package" pantsmark="bdict_shading_exclude_package"> </a>
@@ -4648,7 +4847,7 @@ wildcard that matches any trailing pattern (ie the rest of the string).</p></spa
 or just direct children of the package. (Defaults to True).</p></span>
 </div>
 </p></div>
-<p class="bdict_impl">Implemented by <tt>pants.java.jar.shader.new</tt>
+<p class="bdict_impl">Implemented by <tt>pants.backend.jvm.subsystems.shader.new</tt>
 </p></p></div>
 <div class="bdict_section">
 <a id="bdict_shading_relocate" pantsmark="bdict_shading_relocate"> </a>
@@ -4712,7 +4911,7 @@ omitted, this pattern is inferred from the input pattern, prefixed by the <tt cl
 <tt class="docutils literal">shade_pattern</tt> is not provided by the user). Defaults to '<tt class="docutils literal">__shaded_by_pants__.</tt>'.</p></span>
 </div>
 </p></div>
-<p class="bdict_impl">Implemented by <tt>pants.java.jar.shader.new</tt>
+<p class="bdict_impl">Implemented by <tt>pants.backend.jvm.subsystems.shader.new</tt>
 </p></p></div>
 <div class="bdict_section">
 <a id="bdict_shading_relocate_package" pantsmark="bdict_shading_relocate_package"> </a>
@@ -4751,7 +4950,7 @@ omitted, this pattern is inferred from the input pattern, prefixed by the <tt cl
 or just direct children of the package. (Defaults to True).</p></span>
 </div>
 </p></div>
-<p class="bdict_impl">Implemented by <tt>pants.java.jar.shader.new</tt>
+<p class="bdict_impl">Implemented by <tt>pants.backend.jvm.subsystems.shader.new</tt>
 </p></p></div>
 <div class="bdict_section">
 <a id="bdict_Skip" pantsmark="bdict_Skip"> </a>
@@ -4816,7 +5015,7 @@ The <tt class="docutils literal">source_root</tt> command specifies that <em>som
 </tbody>
 </table>
 
-<p class="bdict_argspec">spindle_thrift_library(name, sources=None, provides=None, excludes=None, resources=None, configurations=None, no_cache=False, services=None, platform=None, tags=None, description=None)
+<p class="bdict_argspec">spindle_thrift_library(name, sources=None, provides=None, excludes=None, resources=None, no_cache=False, services=None, platform=None, type_alias=None, tags=None, description=None)
 
 <div>
 <p>Defines a target that builds scala_record stubs from a thrift IDL file.</p>
@@ -4825,11 +5024,6 @@ The <tt class="docutils literal">source_root</tt> command specifies that <em>som
 <p><b>Params:</b>
 <div class="bdict_param"><b class="bdict_param_name">provides</b>
 <span class="bdict_param_muffle_p"><p>An optional Dependency object indicating the The ivy artifact to export.</p></span>
-</div>
-<div class="bdict_param"><b class="bdict_param_name">configurations</b>
-  (<em class="bdict_param_type"> tuple of strings</em>)
-  <span class="bdict_param_muffle_p"><p>One or more ivy configurations to resolve for this target.
-This parameter is not intended for general use.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">excludes</b>
 <span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
@@ -4861,18 +5055,24 @@ by DistributionLocator.cached().version.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">dependencies</b>
-  (<em class="bdict_param_type"> list of target specs</em>)
-  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+  (<em class="bdict_param_type"> list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Target address specs of other targets that this target depends on.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -4895,7 +5095,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">target(name, tags=None, description=None)
+<p class="bdict_argspec">target(name, type_alias=None, tags=None, description=None)
 
 <div>
 <p>A set of dependencies that may be depended upon,
@@ -4906,18 +5106,24 @@ as if depending upon the set of dependencies directly.</p>
 <p><b>Params:</b>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">dependencies</b>
-  (<em class="bdict_param_type"> list of target specs</em>)
-  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+  (<em class="bdict_param_type"> list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Target address specs of other targets that this target depends on.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -4940,7 +5146,7 @@ a particular target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">unpacked_jars(name, libraries=None, include_patterns=None, exclude_patterns=None, tags=None, description=None)
+<p class="bdict_argspec">unpacked_jars(name, libraries=None, include_patterns=None, exclude_patterns=None, type_alias=None, tags=None, description=None)
 
 <div>
 <p>Describes a set of sources that are extracted from jar artifacts.</p>
@@ -4962,18 +5168,24 @@ are processed before include_patterns.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this
-build file defines the target address.</p></span>
+  <span class="bdict_param_muffle_p"><p>The name of this target, which combined with this build file defines the
+target address.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">dependencies</b>
-  (<em class="bdict_param_type"> list of target specs</em>)
-  <span class="bdict_param_muffle_p"><p>Other targets that this target depends on.</p></span>
+  (<em class="bdict_param_type"> list of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Target address specs of other targets that this target depends on.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">iterable&lt;string&gt; tags</b>
-<span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable
-by downstream/custom tasks for reasoning about build graph. NOT included in payloads
-and thus not used in fingerprinting, thus not suitable for anything that affects how
-a particular target is built.</p></span>
+<div class="bdict_param"><b class="bdict_param_name">type_alias</b>
+  (<em class="bdict_param_type">string </em>)
+  <span class="bdict_param_muffle_p"><p>The type_alias used to construct this target, may be None if
+constructed directly.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">tags</b>
+  (<em class="bdict_param_type"> :class:`collections.Iterable` of strings</em>)
+  <span class="bdict_param_muffle_p"><p>Arbitrary string tags that describe this target. Usable by downstream/custom tasks
+for reasoning about the build graph. NOT included in payloads and thus not used in
+fingerprinting, thus not suitable for anything that affects how a particular
+target is built.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">description</b>
   (<em class="bdict_param_type">string </em>)
@@ -5076,7 +5288,7 @@ For example, the following keys are supported for Atlassian's Confluence:</p></s
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/builddict/build_dictionary.html 2015-09-08T17:10:51.470981
+from dist/builddict/build_dictionary.html 2015-09-20T17:04:52.043034
 </div>
 
 </div> <!-- end of mainflow -->
