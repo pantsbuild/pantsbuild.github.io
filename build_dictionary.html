@@ -61,7 +61,6 @@
 <li class="toc-h1"><a href="#go_library">go_library</a></li>
 <li class="toc-h1"><a href="#go_remote_libraries">go_remote_libraries</a></li>
 <li class="toc-h1"><a href="#go_remote_library">go_remote_library</a></li>
-<li class="toc-h1"><a href="#ivy_artifact">ivy_artifact</a></li>
 <li class="toc-h1"><a href="#jar">jar</a></li>
 <li class="toc-h1"><a href="#jar_library">jar_library</a></li>
 <li class="toc-h1"><a href="#jar_rules">jar_rules</a></li>
@@ -213,7 +212,6 @@ span.bdict_param_muffle_p p {
 <a href="#go_library">go_library</a>
 <a href="#go_remote_libraries">go_remote_libraries</a>
 <a href="#go_remote_library">go_remote_library</a>
-<a href="#ivy_artifact">ivy_artifact</a>
 <a href="#jar">jar</a>
 <a href="#jar_library">jar_library</a>
 <a href="#jar_rules">jar_rules</a>
@@ -291,7 +289,6 @@ span.bdict_param_muffle_p p {
 <a href="#from_target">from_target</a>
 <a href="#github">github</a>
 <a href="#globs">globs</a>
-<a href="#ivy_artifact">ivy_artifact</a>
 <a href="#jar">jar</a>
 <a href="#jar_library">jar_library</a>
 <a href="#jar_rules">jar_rules</a>
@@ -1437,7 +1434,8 @@ applies to.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">action</b>
 <span class="bdict_param_muffle_p"><p>An action to take to handle one or more duplicate entries.  Must be one of:
-<tt class="docutils literal">Duplicate.SKIP</tt>, <tt class="docutils literal">Duplicate.REPLACE</tt>, <tt class="docutils literal">Duplicate.CONCAT</tt> or <tt class="docutils literal">Duplicate.FAIL</tt>.</p></span>
+<tt class="docutils literal">Duplicate.SKIP</tt>, <tt class="docutils literal">Duplicate.REPLACE</tt>, <tt class="docutils literal">Duplicate.CONCAT</tt>, <tt class="docutils literal">Duplicate.CONCAT_TEXT</tt>,
+or <tt class="docutils literal">Duplicate.FAIL</tt>.</p></span>
 </div>
 </p></div>
 <p class="bdict_impl">Implemented by <tt>pants.backend.jvm.targets.jvm_binary.Duplicate</tt>
@@ -1856,53 +1854,6 @@ target is built.</p></span>
 <p class="bdict_impl">Implemented by <tt>pants.contrib.go.targets.go_remote_library.GoRemoteLibrary</tt>
 </p></p></div>
 <div class="bdict_section">
-<a id="bdict_ivy_artifact" pantsmark="bdict_ivy_artifact"> </a>
-
-<table class="h-plus-pilcrow">
-<tbody>
-<tr>
-<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="ivy_artifact">ivy_artifact</h2></td>
-<td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#ivy_artifact">¶</a>
-</div></td>
-</tr>
-</tbody>
-</table>
-
-<p class="bdict_argspec">ivy_artifact(name, type_=None, ext=None, conf=None, url=None, classifier=None)
-
-<div>
-<p>Specification for an Ivy Artifact for this jar dependency.</p>
-<p>See: <a class="reference external" href="http://ant.apache.org/ivy/history/latest-milestone/ivyfile/artifact.html">http://ant.apache.org/ivy/history/latest-milestone/ivyfile/artifact.html</a></p>
-</div>
-<div class="bdict_params_section">
-<p><b>Params:</b>
-<div class="bdict_param"><b class="bdict_param_name">name</b>
-<span class="bdict_param_muffle_p"><p>The name of the published artifact. This name must not include revision.</p></span>
-</div>
-<div class="bdict_param"><b class="bdict_param_name">type_</b>
-<span class="bdict_param_muffle_p"><p>The type of the published artifact. It's usually the same as the artifact's file
-extension, but not necessarily. For instance, ivy files are of type 'ivy' but have 'xml' as
-their file extension.</p></span>
-</div>
-<div class="bdict_param"><b class="bdict_param_name">ext</b>
-<span class="bdict_param_muffle_p"><p>The file extension of the published artifact.</p></span>
-</div>
-<div class="bdict_param"><b class="bdict_param_name">url</b>
-<span class="bdict_param_muffle_p"><p>The url at which this artifact can be found if it isn't located at the standard
-location in the repository.</p></span>
-</div>
-<div class="bdict_param"><b class="bdict_param_name">configuration</b>
-<span class="bdict_param_muffle_p"><p>The public configuration in which this artifact is published. The '*' wildcard can
-be used to designate all public configurations.</p></span>
-</div>
-<div class="bdict_param"><b class="bdict_param_name">classifier</b>
-<span class="bdict_param_muffle_p"><p>The maven classifier of this artifact.</p></span>
-</div>
-</p></div>
-<p class="bdict_impl">Implemented by <tt>pants.backend.jvm.targets.jar_dependency.IvyArtifact</tt>
-</p></p></div>
-<div class="bdict_section">
 <a id="bdict_jar" pantsmark="bdict_jar"> </a>
 
 <table class="h-plus-pilcrow">
@@ -1916,7 +1867,7 @@ be used to designate all public configurations.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">jar(org, name, rev=None, force=False, ext=None, url=None, apidocs=None, type_=None, classifier=None, mutable=None, artifacts=None, intransitive=False)
+<p class="bdict_argspec">jar(org, name, rev=None, force=False, ext=None, url=None, apidocs=None, type_=None, classifier=None, mutable=None, intransitive=False, excludes=None)
 
 <div>
 <p>A pre-built Maven repository dependency.</p>
@@ -1958,7 +1909,7 @@ will properly hyperlink {@link}s.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">type_</b>
   (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>Artifact packaging type.</p></span>
+  <span class="bdict_param_muffle_p"><p>Artifact packaging type - Deprecated: use <cite>ext</cite> instead.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">classifier</b>
   (<em class="bdict_param_type">string </em>)
@@ -1969,24 +1920,18 @@ will properly hyperlink {@link}s.</p></span>
   <span class="bdict_param_muffle_p"><p>Inhibit caching of this mutable artifact. A common use is for
 Maven -SNAPSHOT style artifacts in an active development/integration cycle.</p></span>
 </div>
-<div class="bdict_param"><b class="bdict_param_name">artifacts</b>
-  (<em class="bdict_param_type">list </em>)
-  <span class="bdict_param_muffle_p"><p>A list of additional IvyArtifacts</p></span>
-</div>
 <div class="bdict_param"><b class="bdict_param_name">intransitive</b>
   (<em class="bdict_param_type">boolean </em>)
-  <span class="bdict_param_muffle_p"><p>Declares this Dependency intransitive, indicating only the jar for</p></span>
+  <span class="bdict_param_muffle_p"><p>Declares this Dependency intransitive, indicating only the jar for
+the dependency itself should be downloaded and placed on the classpath</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">excludes</b>
+  (<em class="bdict_param_type"> list of :class:`pants.backend.jvm.targets.exclude.Exclude`</em>)
+  <span class="bdict_param_muffle_p"><p>Transitive dependencies of this jar to exclude.</p></span>
 </div>
 </p></div>
 <p class="bdict_impl">Implemented by <tt>pants.backend.jvm.targets.jar_dependency.JarDependency</tt>
-<p><b>Methods:</b>
-<p class="bdict_method_heading">exclude
-<div class="bdict_method">
-<p class="bdict_argspec">exclude(org, name=None)
-
-<p>Adds a transitive dependency of this jar to the exclude list.</p>
-</p></div>
-</p></p></p></p></div>
+</p></p></div>
 <div class="bdict_section">
 <a id="bdict_jar_library" pantsmark="bdict_jar_library"> </a>
 
@@ -5288,7 +5233,7 @@ For example, the following keys are supported for Atlassian's Confluence:</p></s
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/builddict/build_dictionary.html 2015-09-21T16:50:26.625416
+from dist/builddict/build_dictionary.html 2015-09-25T11:48:39.469249
 </div>
 
 </div> <!-- end of mainflow -->
