@@ -155,8 +155,8 @@ and not worry about these things.)</p>
 </table>
 
 <p>Pants Build is very configurable. Your source tree's top-level directory
-should contain a <code>pants.ini</code> file that sets many, many options. You can
-modify a broad range of settings here, including specific binaries to
+should contain a <code>pants.ini</code> file that sets various options. You can
+modify a broad range of options here, including specific binaries to
 use in your toolchain, arguments to pass to tools, etc.</p>
 <p>These files are formatted as <a href="http://docs.python.org/install/index.html#inst-config-syntax">Python config
 files</a>,
@@ -184,7 +184,7 @@ several contexts, as in these excerpts that define/use <code>thrift_workdir</cod
 <p>It's also handy for defining values that are used in several contexts,
 since these values will be available in all those contexts. The code
 that combines DEFAULT values with others is in Pants'
-<a href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/base/config.py">base/config.py</a>.</p>
+<a href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/option/config.py">option/config.py</a>.</p>
 
 <table class="h-plus-pilcrow">
 <tbody>
@@ -197,19 +197,23 @@ that combines DEFAULT values with others is in Pants'
 </tbody>
 </table>
 
-<p>Pants calls out to other tools. E.g., it uses <code>jmake</code> for part of Java compilation.
-Some special files in your workspace specify versions of these to fetch.
-When setting up your Pants repo, you want to copy these files over from a working Pants
-repo and perhaps change some version numbers to fit your situation.</p>
-<p><strong>JVM</strong> <code>BUILD.tools</code> has JVM dependencies. For example, when Pants fetches <code>jmake</code>, it looks in
+<p>Pants calls out to other tools. E.g., it optionally uses <code>scalastyle</code> to check scala source code.
+Most tools come pre-configured by Pants. A few do require more setup though and these rely on
+special targets in your workspace to specify versions of the tools to fetch. These targets all live
+in the <code>BUILD.tools</code> file by convention. For example, when Pants fetches <code>scalastyle</code>, it looks in
 <code>BUILD.tools</code> for that target:</p>
 <p>
-<div class="md-included-snippet"><div class="codehilite"><pre><span class="n">jar_library</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">'jmake'</span><span class="p">,</span>
-            <span class="n">jars</span> <span class="o">=</span> <span class="p">[</span><span class="n">jar</span><span class="p">(</span><span class="n">org</span> <span class="o">=</span> <span class="s">'org.pantsbuild'</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s">'jmake'</span><span class="p">,</span> <span class="n">rev</span> <span class="o">=</span> <span class="s">'1.3.8-10'</span><span class="p">)])</span>
+<div class="md-included-snippet"><div class="codehilite"><pre><span class="n">jar_library</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">'scalastyle'</span><span class="p">,</span>
+            <span class="n">jars</span> <span class="o">=</span> <span class="p">[</span>
+              <span class="n">scala_jar</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s">'org.scalastyle'</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">'scalastyle'</span><span class="p">,</span> <span class="n">rev</span><span class="o">=</span><span class="s">'0.3.2'</span><span class="p">)</span>
+            <span class="p">])</span>
 </pre></div></div>
 </p>
-<p><strong>Python</strong> <code>build-support/python/pants.requirements.txt</code> has Pants' runtime Python requirements,
-expressed as a <code>requirements.txt</code> file.</p>
+<p>When setting up your Pants repo, you may want to copy this file over from a working Pants repo and
+perhaps change some version numbers to fit your situation.</p>
+<p><strong>Note</strong>: pants ships expecting a specific main class and command line interface for all jvm tools
+it uses; so, if the version you specify does not match either of those expectations, pants will
+fail when it tries to call the tool.</p>
 
 <table class="h-plus-pilcrow">
 <tbody>
@@ -468,13 +472,11 @@ defined in your plugin:</p>
   'public': {  # must match the name of the `Repository` object that you defined in your plugin.
     'resolver': 'maven.example.com', # must match hostname in ~/.netrc and the &lt;url&gt; parameter
                                      # in your custom ivysettings.xml.
-    'confs': ['default', 'sources', 'docs', 'changelog'],
     'auth': 'build-support:netrc',   # Pants spec to a 'credentials()' object.
     'help': 'Configure your ~/.netrc for maven.example.com access.'
   },
   'testing': {
     'resolver': 'artifactory.example.com',
-    'confs': ['default', 'sources', 'docs', 'changelog'],
     'auth': 'build-support:netrc',
     'help': 'Configure your ~/.netrc for artifactory.example.com access.'
   },
@@ -877,7 +879,7 @@ indices: [
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/markdown/html/src/docs/setup_repo.html 2015-09-08T16:20:31.955964
+from dist/markdown/html/src/docs/setup_repo.html 2015-10-02T16:47:40.429636
 </div>
 
 </div> <!-- end of mainflow -->
