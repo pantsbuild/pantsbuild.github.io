@@ -1424,15 +1424,9 @@ DuplicateClassFileException if it detects a version conflict in any AndroidLibra
 <p>Checks true dependencies of a JVM target and ensures that they are consistent with BUILD files.</p>
 </div>
 <ul>
-<li><code>--[no-]compile-jvm-dep-check-skip</code>
-<code>bool</code>
-      (Default: <pre style="display: inline">False</pre>)
-
-      Skip this entire task.
-
 <li><code>--compile-jvm-dep-check-missing-deps=&lt;str&gt;</code>
 <code>str</code>
-      (Default: <pre style="display: inline">warn</pre>)
+      (Default: <pre style="display: inline">off</pre>)
 
       Check for missing dependencies in compiled code. Reports actual dependencies A -&gt; B where there is no transitive BUILD file dependency path from A to B. If fatal, missing deps are treated as a build error.
 
@@ -1454,7 +1448,7 @@ DuplicateClassFileException if it detects a version conflict in any AndroidLibra
 
       Check for declared dependencies in compiled code that are not needed. This is a very strict check. For example, generated code will often legitimately have BUILD dependencies that are unused in practice.
 
-</li></li></li></li></li></ul>
+</li></li></li></li></ul>
 </p></div>
 <div class="oref_ogroup_section">
 <a id="oref_cli_compilepythoneval" pantsmark="oref_cli_compilepythoneval"> </a>
@@ -1820,12 +1814,6 @@ the build times. (see DependencyUsageGraph-&gt;to_json)</p>
 aggregation and analysis on a larger scale.</p>
 </div>
 <ul>
-<li><code>--[no-]dep-usage-jvm-skip</code>
-<code>bool</code>
-      (Default: <pre style="display: inline">False</pre>)
-
-      Skip this entire task.
-
 <li><code>--[no-]dep-usage-jvm-internal-only</code>
 <code>bool</code>
       (Default: <pre style="display: inline">True</pre>)
@@ -1856,7 +1844,7 @@ aggregation and analysis on a larger scale.</p>
 
       Output destination. When unset, outputs to &lt;stdout&gt;.
 
-</li></li></li></li></li></li></ul>
+</li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -2343,6 +2331,18 @@ set of a target.</p>
 
 <p>Implemented by <code>pants.backend.project_info.tasks.eclipse_gen.EclipseGen</code>
 <ul>
+<li><code>--[no-]eclipse-use-nailgun</code>
+<code>bool</code>
+      (Default: <pre style="display: inline">True</pre>)
+
+      Use nailgun to make repeated invocations of this task quicker.
+
+<li><code>--eclipse-jvm-options=&lt;option&gt;... (--eclipse-jvm-options=&lt;option&gt;...) ...</code>
+<code>str</code>
+      (Default: <pre style="display: inline">['-Xmx1g','-XX:MaxPermSize=256m']</pre>)
+
+      Run Ivy with these extra jvm options.
+
 <li><code>--eclipse-project-name=&lt;str&gt;</code>
 <code>str</code>
       (Default: <pre style="display: inline">project</pre>)
@@ -2433,7 +2433,7 @@ set of a target.</p>
 
       The Eclipse version the project configuration should be generated for.
 
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -2471,6 +2471,18 @@ set of a target.</p>
 
 <p>Implemented by <code>pants.backend.project_info.tasks.ensime_gen.EnsimeGen</code>
 <ul>
+<li><code>--[no-]ensime-use-nailgun</code>
+<code>bool</code>
+      (Default: <pre style="display: inline">True</pre>)
+
+      Use nailgun to make repeated invocations of this task quicker.
+
+<li><code>--ensime-jvm-options=&lt;option&gt;... (--ensime-jvm-options=&lt;option&gt;...) ...</code>
+<code>str</code>
+      (Default: <pre style="display: inline">['-Xmx1g','-XX:MaxPermSize=256m']</pre>)
+
+      Run Ivy with these extra jvm options.
+
 <li><code>--ensime-project-name=&lt;str&gt;</code>
 <code>str</code>
       (Default: <pre style="display: inline">project</pre>)
@@ -2561,7 +2573,7 @@ set of a target.</p>
 
       Set the scala language level used for Ensime linting.
 
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -2615,6 +2627,12 @@ set of a target.</p>
 
       Write the console output to this file instead.
 
+<li><code>--export-jvm-options=&lt;option&gt;... (--export-jvm-options=&lt;option&gt;...) ...</code>
+<code>str</code>
+      (Default: <pre style="display: inline">['-Xmx1g','-XX:MaxPermSize=256m']</pre>)
+
+      Run Ivy with these extra jvm options.
+
 <li><code>--[no-]export-formatted</code>
 <code>bool</code>
       (Default: <pre style="display: inline">True</pre>)
@@ -2645,7 +2663,7 @@ set of a target.</p>
 
       Causes sources to be output.
 
-</li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -3229,6 +3247,18 @@ and AndroidLibrary targets.</p>
 
 <p>Implemented by <code>pants.backend.project_info.tasks.idea_gen.IdeaGen</code>
 <ul>
+<li><code>--[no-]idea-use-nailgun</code>
+<code>bool</code>
+      (Default: <pre style="display: inline">True</pre>)
+
+      Use nailgun to make repeated invocations of this task quicker.
+
+<li><code>--idea-jvm-options=&lt;option&gt;... (--idea-jvm-options=&lt;option&gt;...) ...</code>
+<code>str</code>
+      (Default: <pre style="display: inline">['-Xmx1g','-XX:MaxPermSize=256m']</pre>)
+
+      Run Ivy with these extra jvm options.
+
 <li><code>--idea-project-name=&lt;str&gt;</code>
 <code>str</code>
       (Default: <pre style="display: inline">project</pre>)
@@ -3237,13 +3267,13 @@ and AndroidLibrary targets.</p>
 
 <li><code>--idea-project-dir=&lt;str&gt;</code>
 <code>str</code>
-      (Default: <pre style="display: inline">None</pre>)
+      (Default: <pre style="display: inline">&lt;buildroot&gt;/sandbox/users/jsirois/ide-projects/idea</pre>)
 
       Specifies the directory to output the generated project files to.
 
 <li><code>--idea-project-cwd=&lt;str&gt;</code>
 <code>str</code>
-      (Default: <pre style="display: inline">None</pre>)
+      (Default: <pre style="display: inline">&lt;buildroot&gt;</pre>)
 
       Specifies the directory the generated project should use as the cwd for processes it launches.  Note that specifying this trumps --idea-project-dir and not all project related files will be stored there.
 
@@ -3255,7 +3285,7 @@ and AndroidLibrary targets.</p>
 
 <li><code>--[no-]idea-python</code>
 <code>bool</code>
-      (Default: <pre style="display: inline">False</pre>)
+      (Default: <pre style="display: inline">True</pre>)
 
       Adds python support to the generated project configuration.
 
@@ -3267,7 +3297,7 @@ and AndroidLibrary targets.</p>
 
 <li><code>--idea-java-language-level=&lt;int&gt;</code>
 <code>int</code>
-      (Default: <pre style="display: inline">7</pre>)
+      (Default: <pre style="display: inline">6</pre>)
 
       Sets the java language and jdk used to compile the project's java sources.
 
@@ -3333,13 +3363,13 @@ and AndroidLibrary targets.</p>
 
 <li><code>--[no-]idea-bash</code>
 <code>bool</code>
-      (Default: <pre style="display: inline">False</pre>)
+      (Default: <pre style="display: inline">True</pre>)
 
       Adds a bash facet to the generated project configuration.
 
 <li><code>--idea-scala-language-level=&lt;str&gt;</code>
 <code>str</code>
-      (Default: <pre style="display: inline">2.9</pre>)
+      (Default: <pre style="display: inline">2.11</pre>)
 
       Set the scala language level used for IDEA linting.
 
@@ -3385,7 +3415,7 @@ and AndroidLibrary targets.</p>
 
       Tell IntelliJ IDEA to run annotation processors.
 
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -5124,7 +5154,7 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 
 <li><code>--[no-]server-open</code>
 <code>bool</code>
-      (Default: <pre style="display: inline">False</pre>)
+      (Default: <pre style="display: inline">True</pre>)
 
       Attempt to open the server web ui in a browser.
 
@@ -5224,7 +5254,7 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 <ul>
 <li><code>--sign-keystore-config-location=&lt;str&gt;</code>
 <code>str</code>
-      (Default: <pre style="display: inline">/Users/zundel/.config/pants/android/keystore/default_config.ini</pre>)
+      (Default: <pre style="display: inline">/home/jsirois/.config/pants/android/keystore/default_config.ini</pre>)
 
       Location of the .ini file containing keystore definitions.
 
@@ -5420,6 +5450,12 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 
 <p>Implemented by <code>pants.backend.python.tasks.pytest_run.PytestRun</code>
 <ul>
+<li><code>--[no-]test-pytest-skip</code>
+<code>bool</code>
+      (Default: <pre style="display: inline">False</pre>)
+
+      Skip running tests.
+
 <li><code>--[no-]test-pytest-fast</code>
 <code>bool</code>
       (Default: <pre style="display: inline">True</pre>)
@@ -5462,7 +5498,7 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 
       Subset of tests to run, in the form M/N, 0 &lt;= M &lt; N. For example, 1/3 means run tests number 2, 5, 8, 11, ...
 
-</li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></ul>
 </p></div>
 <div class="oref_ogroup_section">
 <a id="oref_cli_testjunit" pantsmark="oref_cli_testjunit"> </a>
@@ -5490,7 +5526,7 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 <code>bool</code>
       (Default: <pre style="display: inline">False</pre>)
 
-      Skip running junit.
+      Skip running tests.
 
 <li><code>--[no-]test-junit-fail-fast</code>
 <code>bool</code>
@@ -5811,7 +5847,7 @@ These command-line flags are available with all Pants goals.
 
 <li><code>-V=&lt;str&gt;/--pants-version=&lt;str&gt;/--version=&lt;str&gt;</code>
 <code>str</code>
-      (Default: <pre style="display: inline">BETA</pre>)
+      (Default: <pre style="display: inline">0.0.52</pre>)
 
       Prints pants' version number and exits.
 
@@ -5845,7 +5881,7 @@ These command-line flags are available with all Pants goals.
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/builddict/options_reference.html 2015-10-02T17:51:29.085274
+from dist/builddict/options_reference.html 2015-10-07T13:59:25.519107
 </div>
 
 </div> <!-- end of mainflow -->
