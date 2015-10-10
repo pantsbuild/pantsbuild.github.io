@@ -3267,13 +3267,13 @@ and AndroidLibrary targets.</p>
 
 <li><code>--idea-project-dir=&lt;str&gt;</code>
 <code>str</code>
-      (Default: <pre style="display: inline">&lt;buildroot&gt;/sandbox/users/jsirois/ide-projects/idea</pre>)
+      (Default: <pre style="display: inline">None</pre>)
 
       Specifies the directory to output the generated project files to.
 
 <li><code>--idea-project-cwd=&lt;str&gt;</code>
 <code>str</code>
-      (Default: <pre style="display: inline">&lt;buildroot&gt;</pre>)
+      (Default: <pre style="display: inline">None</pre>)
 
       Specifies the directory the generated project should use as the cwd for processes it launches.  Note that specifying this trumps --idea-project-dir and not all project related files will be stored there.
 
@@ -3285,7 +3285,7 @@ and AndroidLibrary targets.</p>
 
 <li><code>--[no-]idea-python</code>
 <code>bool</code>
-      (Default: <pre style="display: inline">True</pre>)
+      (Default: <pre style="display: inline">False</pre>)
 
       Adds python support to the generated project configuration.
 
@@ -3297,7 +3297,7 @@ and AndroidLibrary targets.</p>
 
 <li><code>--idea-java-language-level=&lt;int&gt;</code>
 <code>int</code>
-      (Default: <pre style="display: inline">6</pre>)
+      (Default: <pre style="display: inline">7</pre>)
 
       Sets the java language and jdk used to compile the project's java sources.
 
@@ -3363,13 +3363,13 @@ and AndroidLibrary targets.</p>
 
 <li><code>--[no-]idea-bash</code>
 <code>bool</code>
-      (Default: <pre style="display: inline">True</pre>)
+      (Default: <pre style="display: inline">False</pre>)
 
       Adds a bash facet to the generated project configuration.
 
 <li><code>--idea-scala-language-level=&lt;str&gt;</code>
 <code>str</code>
-      (Default: <pre style="display: inline">2.11</pre>)
+      (Default: <pre style="display: inline">2.9</pre>)
 
       Set the scala language level used for IDEA linting.
 
@@ -5154,7 +5154,7 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 
 <li><code>--[no-]server-open</code>
 <code>bool</code>
-      (Default: <pre style="display: inline">True</pre>)
+      (Default: <pre style="display: inline">False</pre>)
 
       Attempt to open the server web ui in a browser.
 
@@ -5254,7 +5254,7 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 <ul>
 <li><code>--sign-keystore-config-location=&lt;str&gt;</code>
 <code>str</code>
-      (Default: <pre style="display: inline">/home/jsirois/.config/pants/android/keystore/default_config.ini</pre>)
+      (Default: <pre style="display: inline">/Users/stuhood/.config/pants/android/keystore/default_config.ini</pre>)
 
       Location of the .ini file containing keystore definitions.
 
@@ -5456,6 +5456,18 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 
       Skip running tests.
 
+<li><code>--[no-]test-pytest-timeouts</code>
+<code>bool</code>
+      (Default: <pre style="display: inline">True</pre>)
+
+      Enable test target timeouts. If timeouts are enabled then tests with a timeout= parameter set on their target will time out after the given number of seconds if not completed. If no timeout is set, then either the default timeout is used or no timeout is configured. In the current implementation, all the timeouts for the test targets to be run are summed and all tests are run with the total timeout covering the entire run of tests. If a single target in a test run has no timeout and there is no default, the entire run will have no timeout. This should change in the future to provide more granularity.
+
+<li><code>--test-pytest-timeout-default=&lt;int&gt;</code>
+<code>int</code>
+      (Default: <pre style="display: inline">0</pre>)
+
+      The default timeout (in seconds) for a test if timeout is not set on the target.
+
 <li><code>--[no-]test-pytest-fast</code>
 <code>bool</code>
       (Default: <pre style="display: inline">True</pre>)
@@ -5498,7 +5510,7 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 
       Subset of tests to run, in the form M/N, 0 &lt;= M &lt; N. For example, 1/3 means run tests number 2, 5, 8, 11, ...
 
-</li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></ul>
 </p></div>
 <div class="oref_ogroup_section">
 <a id="oref_cli_testjunit" pantsmark="oref_cli_testjunit"> </a>
@@ -5527,6 +5539,18 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
       (Default: <pre style="display: inline">False</pre>)
 
       Skip running tests.
+
+<li><code>--[no-]test-junit-timeouts</code>
+<code>bool</code>
+      (Default: <pre style="display: inline">True</pre>)
+
+      Enable test target timeouts. If timeouts are enabled then tests with a timeout= parameter set on their target will time out after the given number of seconds if not completed. If no timeout is set, then either the default timeout is used or no timeout is configured. In the current implementation, all the timeouts for the test targets to be run are summed and all tests are run with the total timeout covering the entire run of tests. If a single target in a test run has no timeout and there is no default, the entire run will have no timeout. This should change in the future to provide more granularity.
+
+<li><code>--test-junit-timeout-default=&lt;int&gt;</code>
+<code>int</code>
+      (Default: <pre style="display: inline">0</pre>)
+
+      The default timeout (in seconds) for a test if timeout is not set on the target.
 
 <li><code>--[no-]test-junit-fail-fast</code>
 <code>bool</code>
@@ -5570,7 +5594,7 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 
       Collect code coverage data.
 
-</li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></li></ul>
 </p></div>
 <div class="oref_ogroup_section">
 <a id="oref_cli_testgo" pantsmark="oref_cli_testgo"> </a>
@@ -5847,7 +5871,7 @@ These command-line flags are available with all Pants goals.
 
 <li><code>-V=&lt;str&gt;/--pants-version=&lt;str&gt;/--version=&lt;str&gt;</code>
 <code>str</code>
-      (Default: <pre style="display: inline">0.0.52</pre>)
+      (Default: <pre style="display: inline">0.0.53</pre>)
 
       Prints pants' version number and exits.
 
@@ -5881,7 +5905,7 @@ These command-line flags are available with all Pants goals.
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/builddict/options_reference.html 2015-10-07T13:59:25.519107
+from dist/builddict/options_reference.html 2015-10-09T17:41:34.313643
 </div>
 
 </div> <!-- end of mainflow -->
