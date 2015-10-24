@@ -34,9 +34,7 @@
 <ul>
 <li class="toc-h1"><a href="#configuring-with-pantsini">Configuring with pants.ini</a></li>
 <li class="toc-h1"><a href="#configure-pants-own-runtime-dependencies">Configure Pants' own Runtime Dependencies</a></li>
-<li class="toc-h1"><a href="#configure-code-layout-with-source_root-maven_layout">Configure Code Layout with source_root, maven_layout</a></li>
-<li class="toc-h2"><a href="#organized-by-language">Organized by Language</a></li>
-<li class="toc-h2"><a href="#organized-by-project">Organized by Project</a></li>
+<li class="toc-h1"><a href="#set-up-source-roots">Set up source roots</a></li>
 <li class="toc-h1"><a href="#setting-up-build-files">Setting up BUILD files</a></li>
 <li class="toc-h1"><a href="#build-and-environment-specific-config">BUILD.* and environment-specific config</a></li>
 <li class="toc-h1"><a href="#configure-jvm-artifact-downloads">Configure JVM Artifact Downloads</a></li>
@@ -218,82 +216,21 @@ fail when it tries to call the tool.</p>
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h2 id="configure-code-layout-with-source_root-maven_layout">Configure Code Layout with <code>source_root</code>, <code>maven_layout</code></h2></td>
+<td class="h-plus-pilcrow-holder"><h2 id="set-up-source-roots">Set up source roots</h2></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#configure-code-layout-with-source_root-maven_layout">¶</a>
+<a class="pilcrow-link" href="#set-up-source-roots">¶</a>
 </div></td>
 </tr>
 </tbody>
 </table>
 
-<p>Maybe someday all the world's programmers will agree on the one true
-directory structure for source code. Until then, you'll want some
-<a href="build_dictionary.html#bdict_source_root" pantsref="bdict_source_root"><code>source_root</code></a>
-rules to specify which directories hold your code. A
-typical programming language has a notion of <em>base paths</em> for imports;
-you configure pants to tell it those base paths.</p>
-<p>If your project's source tree is laid out for Maven, there's a shortcut
-function
-<a href="build_dictionary.html#bdict_maven_layout" pantsref="bdict_maven_layout"><code>maven_layout</code></a>
-that configures source roots for Maven's expected
-source code tree structure. See
-<a href="https://github.com/pantsbuild/pants/tree/master/testprojects/maven_layout"><code>testprojects/maven_layout</code></a>
-for examples of using this style source tree.</p>
-
-<table class="h-plus-pilcrow">
-<tbody>
-<tr>
-<td class="h-plus-pilcrow-holder"><h3 id="organized-by-language">Organized by Language</h3></td>
-<td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#organized-by-language">¶</a>
-</div></td>
-</tr>
-</tbody>
-</table>
-
-<p>If your top-level <code>BUILD</code> file is <code>top/BUILD</code> and your main Java code is
-in <code>top/src/java/com/foo/</code> and your Java tests are in
-<code>top/src/javatest/com/foo/</code>, then your top-level <code>BUILD</code> file might look
-like:</p>
-<div class="codehilite"><pre><span class="c"># top/BUILD</span>
-<span class="n">source_root</span><span class="p">(</span><span class="s">'src/java'</span><span class="p">)</span>
-<span class="n">source_root</span><span class="p">(</span><span class="s">'src/javatest'</span><span class="p">)</span>
-<span class="o">...</span>
-</pre></div>
-<p>Pants can optionally enforce that only certain target types are allowed
-under each source root:</p>
-<div class="codehilite"><pre><span class="c"># top/BUILD</span>
-<span class="n">source_root</span><span class="p">(</span><span class="s">'src/java'</span><span class="p">,</span> <span class="n">annotation_processor</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">jvm_binary</span><span class="p">,</span> <span class="n">java_library</span><span class="p">,</span> <span class="n">page</span><span class="p">)</span>
-<span class="n">source_root</span><span class="p">(</span><span class="s">'src/javatest'</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">java_library</span><span class="p">,</span> <span class="n">java_tests</span><span class="p">,</span> <span class="n">page</span><span class="p">)</span>
-<span class="o">...</span>
-</pre></div>
-
-<table class="h-plus-pilcrow">
-<tbody>
-<tr>
-<td class="h-plus-pilcrow-holder"><h3 id="organized-by-project">Organized by Project</h3></td>
-<td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#organized-by-project">¶</a>
-</div></td>
-</tr>
-</tbody>
-</table>
-
-<p>If your top-level <code>BUILD</code> file is <code>top/BUILD</code> and the Java code for your
-Theodore and Hank projects live in <code>top/theodore/src/java/com/foo/</code>,
-then your top-level <code>BUILD</code> file might not contain any <code>source_root</code>
-statements. Instead, <code>theodore/BUILD</code> and <code>hank/BUILD</code> might look like:</p>
-<div class="codehilite"><pre><span class="c"># top/(project)/BUILD</span>
-<span class="n">source_root</span><span class="p">(</span><span class="s">'src/java'</span><span class="p">)</span>
-<span class="n">source_root</span><span class="p">(</span><span class="s">'src/javatest'</span><span class="p">)</span>
-<span class="o">...</span>
-</pre></div>
-<p>Or:</p>
-<div class="codehilite"><pre><span class="c"># top/(project)/BUILD</span>
-<span class="n">source_root</span><span class="p">(</span><span class="s">'src/java'</span><span class="p">,</span> <span class="n">annotation_processor</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">jvm_binary</span><span class="p">,</span> <span class="n">java_library</span><span class="p">,</span> <span class="n">page</span><span class="p">)</span>
-<span class="n">source_root</span><span class="p">(</span><span class="s">'src/javatest'</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">java_library</span><span class="p">,</span> <span class="n">java_tests</span><span class="p">,</span> <span class="n">page</span><span class="p">)</span>
-<span class="o">...</span>
-</pre></div>
+<p>Maybe some day all the world's programmers will agree on the one true directory structure for
+source code. Until then, Pants must deduce where the 'root' of a source tree is, so it can
+correctly set up import paths, correctly bundle code etc.</p>
+<p>In all typical cases, Pants can deduce the source roots automatically based on naming conventions.
+E.g., <code>src/&lt;lang&gt;</code>, <code>src/main/&lt;lang&gt;</code>, <code>test/&lt;lang&gt;</code>, <code>src/test/&lt;lang&gt;</code>, <code>3rdparty/lang</code> and so on.
+However if your source roots don't conform to any of the default patterns, you can add your own
+patterns.  See <code>./pants help-advanced source</code> for details.</p>
 
 <table class="h-plus-pilcrow">
 <tbody>
@@ -879,7 +816,7 @@ indices: [
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/markdown/html/src/docs/setup_repo.html 2015-10-16T19:37:45.072221
+from dist/markdown/html/src/docs/setup_repo.html 2015-10-23T20:34:51.396667
 </div>
 
 </div> <!-- end of mainflow -->
