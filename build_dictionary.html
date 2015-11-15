@@ -369,7 +369,7 @@ span.bdict_param_muffle_p p {
 </tbody>
 </table>
 
-<p class="bdict_argspec">android_binary(name, build_tools_version=u'19.1.0', manifest=None, sources=None, provides=None, excludes=None, resources=None, services=None, platform=None, type_alias=None, tags=None, description=None, no_cache=False)
+<p class="bdict_argspec">android_binary(name, build_tools_version=u'19.1.0', manifest=None, sources=None, provides=None, excludes=None, resources=None, services=None, platform=None, strict_deps=None, fatal_warnings=None, type_alias=None, tags=None, description=None, no_cache=False)
 
 <div>
 <p>Produces an Android binary.</p>
@@ -402,12 +402,24 @@ discoverable by the jvm service provider discovery mechanism described here:
 <a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">platform</b>
-  (<em class="bdict_param_type">str </em>)
+  (<em class="bdict_param_type"> str</em>)
   <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to use
 for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
 the platform will default to the first one of these that exist: (1) the default_platform
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
 by DistributionLocator.cached().version.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">strict_deps</b>
+  (<em class="bdict_param_type"> bool</em>)
+  <span class="bdict_param_muffle_p"><p>When True, only the directly declared deps of the target will be used at
+compilation time. This enforces that all direct deps of the target are declared, and can
+improve compilation speed due to smaller classpaths. Transitive deps are always provided
+at runtime.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">fatal_warnings</b>
+  (<em class="bdict_param_type"> bool</em>)
+  <span class="bdict_param_muffle_p"><p>Whether to turn warnings into errors for this target.  If present,
+takes priority over the language's fatal-warnings option.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -509,7 +521,7 @@ target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">android_library(name, libraries=None, include_patterns=None, exclude_patterns=None, type_alias=None, tags=None, description=None, no_cache=False, build_tools_version=u'19.1.0', manifest=None, sources=None, provides=None, excludes=None, resources=None, services=None, platform=None)
+<p class="bdict_argspec">android_library(name, libraries=None, include_patterns=None, exclude_patterns=None, type_alias=None, tags=None, description=None, no_cache=False, build_tools_version=u'19.1.0', manifest=None, sources=None, provides=None, excludes=None, resources=None, services=None, platform=None, strict_deps=None, fatal_warnings=None)
 
 <div>
 <p>Android library projects that access Android API or Android resources.</p>
@@ -583,12 +595,24 @@ discoverable by the jvm service provider discovery mechanism described here:
 <a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">platform</b>
-  (<em class="bdict_param_type">str </em>)
+  (<em class="bdict_param_type"> str</em>)
   <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to use
 for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
 the platform will default to the first one of these that exist: (1) the default_platform
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
 by DistributionLocator.cached().version.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">strict_deps</b>
+  (<em class="bdict_param_type"> bool</em>)
+  <span class="bdict_param_muffle_p"><p>When True, only the directly declared deps of the target will be used at
+compilation time. This enforces that all direct deps of the target are declared, and can
+improve compilation speed due to smaller classpaths. Transitive deps are always provided
+at runtime.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">fatal_warnings</b>
+  (<em class="bdict_param_type"> bool</em>)
+  <span class="bdict_param_muffle_p"><p>Whether to turn warnings into errors for this target.  If present,
+takes priority over the language's fatal-warnings option.</p></span>
 </div>
 </p></div>
 <p class="bdict_impl">Implemented by <tt>pants.backend.android.targets.android_library.AndroidLibrary</tt>
@@ -607,7 +631,7 @@ by DistributionLocator.cached().version.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">android_resources(name, resource_dir=None, build_tools_version=u'19.1.0', manifest=None, sources=None, provides=None, excludes=None, resources=None, services=None, platform=None, type_alias=None, tags=None, description=None, no_cache=False)
+<p class="bdict_argspec">android_resources(name, resource_dir=None, build_tools_version=u'19.1.0', manifest=None, sources=None, provides=None, excludes=None, resources=None, services=None, platform=None, strict_deps=None, fatal_warnings=None, type_alias=None, tags=None, description=None, no_cache=False)
 
 <div>
 <p>Processes android resources to generate R.java</p>
@@ -645,12 +669,24 @@ discoverable by the jvm service provider discovery mechanism described here:
 <a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">platform</b>
-  (<em class="bdict_param_type">str </em>)
+  (<em class="bdict_param_type"> str</em>)
   <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to use
 for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
 the platform will default to the first one of these that exist: (1) the default_platform
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
 by DistributionLocator.cached().version.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">strict_deps</b>
+  (<em class="bdict_param_type"> bool</em>)
+  <span class="bdict_param_muffle_p"><p>When True, only the directly declared deps of the target will be used at
+compilation time. This enforces that all direct deps of the target are declared, and can
+improve compilation speed due to smaller classpaths. Transitive deps are always provided
+at runtime.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">fatal_warnings</b>
+  (<em class="bdict_param_type"> bool</em>)
+  <span class="bdict_param_muffle_p"><p>Whether to turn warnings into errors for this target.  If present,
+takes priority over the language's fatal-warnings option.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -697,7 +733,7 @@ target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">annotation_processor(name, processors=None, sources=None, provides=None, excludes=None, resources=None, services=None, platform=None, type_alias=None, tags=None, description=None, no_cache=False)
+<p class="bdict_argspec">annotation_processor(name, processors=None, sources=None, provides=None, excludes=None, resources=None, services=None, platform=None, strict_deps=None, fatal_warnings=None, type_alias=None, tags=None, description=None, no_cache=False)
 
 <div>
 <p>Produces a Java library containing one or more annotation processors.</p>
@@ -734,12 +770,24 @@ discoverable by the jvm service provider discovery mechanism described here:
 <a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">platform</b>
-  (<em class="bdict_param_type">str </em>)
+  (<em class="bdict_param_type"> str</em>)
   <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to use
 for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
 the platform will default to the first one of these that exist: (1) the default_platform
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
 by DistributionLocator.cached().version.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">strict_deps</b>
+  (<em class="bdict_param_type"> bool</em>)
+  <span class="bdict_param_muffle_p"><p>When True, only the directly declared deps of the target will be used at
+compilation time. This enforces that all direct deps of the target are declared, and can
+improve compilation speed due to smaller classpaths. Transitive deps are always provided
+at runtime.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">fatal_warnings</b>
+  (<em class="bdict_param_type"> bool</em>)
+  <span class="bdict_param_muffle_p"><p>Whether to turn warnings into errors for this target.  If present,
+takes priority over the language's fatal-warnings option.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -825,7 +873,7 @@ target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">benchmark(name, sources=None, provides=None, excludes=None, resources=None, services=None, platform=None, type_alias=None, tags=None, description=None, no_cache=False)
+<p class="bdict_argspec">benchmark(name, sources=None, provides=None, excludes=None, resources=None, services=None, platform=None, strict_deps=None, fatal_warnings=None, type_alias=None, tags=None, description=None, no_cache=False)
 
 <div>
 <p>A caliper benchmark.</p>
@@ -851,12 +899,24 @@ discoverable by the jvm service provider discovery mechanism described here:
 <a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">platform</b>
-  (<em class="bdict_param_type">str </em>)
+  (<em class="bdict_param_type"> str</em>)
   <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to use
 for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
 the platform will default to the first one of these that exist: (1) the default_platform
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
 by DistributionLocator.cached().version.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">strict_deps</b>
+  (<em class="bdict_param_type"> bool</em>)
+  <span class="bdict_param_muffle_p"><p>When True, only the directly declared deps of the target will be used at
+compilation time. This enforces that all direct deps of the target are declared, and can
+improve compilation speed due to smaller classpaths. Transitive deps are always provided
+at runtime.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">fatal_warnings</b>
+  (<em class="bdict_param_type"> bool</em>)
+  <span class="bdict_param_muffle_p"><p>Whether to turn warnings into errors for this target.  If present,
+takes priority over the language's fatal-warnings option.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -2076,7 +2136,7 @@ no explicit rules apply to the entry.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">java_agent(name, sources=None, excludes=None, resources=None, premain=None, agent_class=None, can_redefine=False, can_retransform=False, can_set_native_method_prefix=False, provides=None, services=None, platform=None, type_alias=None, tags=None, description=None, no_cache=False)
+<p class="bdict_argspec">java_agent(name, sources=None, excludes=None, resources=None, premain=None, agent_class=None, can_redefine=False, can_retransform=False, can_set_native_method_prefix=False, provides=None, services=None, platform=None, strict_deps=None, fatal_warnings=None, type_alias=None, tags=None, description=None, no_cache=False)
 
 <div>
 <p>Defines a java agent entrypoint.</p>
@@ -2136,12 +2196,24 @@ discoverable by the jvm service provider discovery mechanism described here:
 <a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">platform</b>
-  (<em class="bdict_param_type">str </em>)
+  (<em class="bdict_param_type"> str</em>)
   <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to use
 for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
 the platform will default to the first one of these that exist: (1) the default_platform
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
 by DistributionLocator.cached().version.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">strict_deps</b>
+  (<em class="bdict_param_type"> bool</em>)
+  <span class="bdict_param_muffle_p"><p>When True, only the directly declared deps of the target will be used at
+compilation time. This enforces that all direct deps of the target are declared, and can
+improve compilation speed due to smaller classpaths. Transitive deps are always provided
+at runtime.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">fatal_warnings</b>
+  (<em class="bdict_param_type"> bool</em>)
+  <span class="bdict_param_muffle_p"><p>Whether to turn warnings into errors for this target.  If present,
+takes priority over the language's fatal-warnings option.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -2188,7 +2260,7 @@ target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">java_antlr_library(name=None, sources=None, provides=None, excludes=None, compiler=u'antlr3', package=None, resources=None, services=None, platform=None, type_alias=None, tags=None, description=None, no_cache=False)
+<p class="bdict_argspec">java_antlr_library(name=None, sources=None, provides=None, excludes=None, compiler=u'antlr3', package=None, resources=None, services=None, platform=None, strict_deps=None, fatal_warnings=None, type_alias=None, tags=None, description=None, no_cache=False)
 
 <div>
 <p>Generates a stub Java library from Antlr grammar files.</p>
@@ -2227,12 +2299,24 @@ discoverable by the jvm service provider discovery mechanism described here:
 <a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">platform</b>
-  (<em class="bdict_param_type">str </em>)
+  (<em class="bdict_param_type"> str</em>)
   <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to use
 for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
 the platform will default to the first one of these that exist: (1) the default_platform
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
 by DistributionLocator.cached().version.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">strict_deps</b>
+  (<em class="bdict_param_type"> bool</em>)
+  <span class="bdict_param_muffle_p"><p>When True, only the directly declared deps of the target will be used at
+compilation time. This enforces that all direct deps of the target are declared, and can
+improve compilation speed due to smaller classpaths. Transitive deps are always provided
+at runtime.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">fatal_warnings</b>
+  (<em class="bdict_param_type"> bool</em>)
+  <span class="bdict_param_muffle_p"><p>Whether to turn warnings into errors for this target.  If present,
+takes priority over the language's fatal-warnings option.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -2279,7 +2363,7 @@ target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">java_library(name, sources=None, provides=None, excludes=None, resources=None, services=None, platform=None, type_alias=None, tags=None, description=None, no_cache=False)
+<p class="bdict_argspec">java_library(name, sources=None, provides=None, excludes=None, resources=None, services=None, platform=None, strict_deps=None, fatal_warnings=None, type_alias=None, tags=None, description=None, no_cache=False)
 
 <div>
 <p>A collection of Java code.</p>
@@ -2318,12 +2402,24 @@ discoverable by the jvm service provider discovery mechanism described here:
 <a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">platform</b>
-  (<em class="bdict_param_type">str </em>)
+  (<em class="bdict_param_type"> str</em>)
   <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to use
 for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
 the platform will default to the first one of these that exist: (1) the default_platform
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
 by DistributionLocator.cached().version.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">strict_deps</b>
+  (<em class="bdict_param_type"> bool</em>)
+  <span class="bdict_param_muffle_p"><p>When True, only the directly declared deps of the target will be used at
+compilation time. This enforces that all direct deps of the target are declared, and can
+improve compilation speed due to smaller classpaths. Transitive deps are always provided
+at runtime.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">fatal_warnings</b>
+  (<em class="bdict_param_type"> bool</em>)
+  <span class="bdict_param_muffle_p"><p>Whether to turn warnings into errors for this target.  If present,
+takes priority over the language's fatal-warnings option.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -2370,7 +2466,7 @@ target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">java_protobuf_library(name, buildflags=None, imports=None, type_alias=None, tags=None, description=None, no_cache=False, sources=None, provides=None, excludes=None, resources=None, services=None, platform=None)
+<p class="bdict_argspec">java_protobuf_library(name, buildflags=None, imports=None, type_alias=None, tags=None, description=None, no_cache=False, sources=None, provides=None, excludes=None, resources=None, services=None, platform=None, strict_deps=None, fatal_warnings=None)
 
 <div>
 <p>Generates a stub Java library from protobuf IDL files.</p>
@@ -2431,12 +2527,24 @@ discoverable by the jvm service provider discovery mechanism described here:
 <a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">platform</b>
-  (<em class="bdict_param_type">str </em>)
+  (<em class="bdict_param_type"> str</em>)
   <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to use
 for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
 the platform will default to the first one of these that exist: (1) the default_platform
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
 by DistributionLocator.cached().version.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">strict_deps</b>
+  (<em class="bdict_param_type"> bool</em>)
+  <span class="bdict_param_muffle_p"><p>When True, only the directly declared deps of the target will be used at
+compilation time. This enforces that all direct deps of the target are declared, and can
+improve compilation speed due to smaller classpaths. Transitive deps are always provided
+at runtime.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">fatal_warnings</b>
+  (<em class="bdict_param_type"> bool</em>)
+  <span class="bdict_param_muffle_p"><p>Whether to turn warnings into errors for this target.  If present,
+takes priority over the language's fatal-warnings option.</p></span>
 </div>
 </p></div>
 <p class="bdict_impl">Implemented by <tt>pants.backend.codegen.targets.java_protobuf_library.JavaProtobufLibrary</tt>
@@ -2455,7 +2563,7 @@ by DistributionLocator.cached().version.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">java_ragel_library(name, sources=None, provides=None, excludes=None, resources=None, services=None, platform=None, type_alias=None, tags=None, description=None, no_cache=False)
+<p class="bdict_argspec">java_ragel_library(name, sources=None, provides=None, excludes=None, resources=None, services=None, platform=None, strict_deps=None, fatal_warnings=None, type_alias=None, tags=None, description=None, no_cache=False)
 
 <div>
 <p>Generates a stub Java library from a Ragel file.</p>
@@ -2480,12 +2588,24 @@ discoverable by the jvm service provider discovery mechanism described here:
 <a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">platform</b>
-  (<em class="bdict_param_type">str </em>)
+  (<em class="bdict_param_type"> str</em>)
   <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to use
 for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
 the platform will default to the first one of these that exist: (1) the default_platform
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
 by DistributionLocator.cached().version.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">strict_deps</b>
+  (<em class="bdict_param_type"> bool</em>)
+  <span class="bdict_param_muffle_p"><p>When True, only the directly declared deps of the target will be used at
+compilation time. This enforces that all direct deps of the target are declared, and can
+improve compilation speed due to smaller classpaths. Transitive deps are always provided
+at runtime.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">fatal_warnings</b>
+  (<em class="bdict_param_type"> bool</em>)
+  <span class="bdict_param_muffle_p"><p>Whether to turn warnings into errors for this target.  If present,
+takes priority over the language's fatal-warnings option.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -2551,7 +2671,7 @@ Old name for <a href="#junit_tests">junit_tests</a>
 </tbody>
 </table>
 
-<p class="bdict_argspec">java_thrift_library(name, compiler=None, language=None, rpc_style=None, namespace_map=None, thrift_linter_strict=None, sources=None, provides=None, excludes=None, resources=None, services=None, platform=None, type_alias=None, tags=None, description=None, no_cache=False)
+<p class="bdict_argspec">java_thrift_library(name, compiler=None, language=None, rpc_style=None, namespace_map=None, thrift_linter_strict=None, sources=None, provides=None, excludes=None, resources=None, services=None, platform=None, strict_deps=None, fatal_warnings=None, type_alias=None, tags=None, description=None, no_cache=False)
 
 <div>
 <p>Generates a stub Java or Scala library from thrift IDL files.</p>
@@ -2594,12 +2714,24 @@ discoverable by the jvm service provider discovery mechanism described here:
 <a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">platform</b>
-  (<em class="bdict_param_type">str </em>)
+  (<em class="bdict_param_type"> str</em>)
   <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to use
 for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
 the platform will default to the first one of these that exist: (1) the default_platform
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
 by DistributionLocator.cached().version.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">strict_deps</b>
+  (<em class="bdict_param_type"> bool</em>)
+  <span class="bdict_param_muffle_p"><p>When True, only the directly declared deps of the target will be used at
+compilation time. This enforces that all direct deps of the target are declared, and can
+improve compilation speed due to smaller classpaths. Transitive deps are always provided
+at runtime.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">fatal_warnings</b>
+  (<em class="bdict_param_type"> bool</em>)
+  <span class="bdict_param_muffle_p"><p>Whether to turn warnings into errors for this target.  If present,
+takes priority over the language's fatal-warnings option.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -2646,7 +2778,7 @@ target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">java_wire_library(name, service_writer=None, service_writer_options=None, service_factory=None, service_factory_options=None, roots=None, registry_class=None, enum_options=None, no_options=None, sources=None, provides=None, excludes=None, resources=None, services=None, platform=None, type_alias=None, tags=None, description=None, no_cache=False)
+<p class="bdict_argspec">java_wire_library(name, service_writer=None, service_writer_options=None, service_factory=None, service_factory_options=None, roots=None, registry_class=None, enum_options=None, no_options=None, sources=None, provides=None, excludes=None, resources=None, services=None, platform=None, strict_deps=None, fatal_warnings=None, type_alias=None, tags=None, description=None, no_cache=False)
 
 <div>
 <p>Generates a stub Java library from protobuf IDL files.</p>
@@ -2706,12 +2838,24 @@ discoverable by the jvm service provider discovery mechanism described here:
 <a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">platform</b>
-  (<em class="bdict_param_type">str </em>)
+  (<em class="bdict_param_type"> str</em>)
   <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to use
 for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
 the platform will default to the first one of these that exist: (1) the default_platform
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
 by DistributionLocator.cached().version.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">strict_deps</b>
+  (<em class="bdict_param_type"> bool</em>)
+  <span class="bdict_param_muffle_p"><p>When True, only the directly declared deps of the target will be used at
+compilation time. This enforces that all direct deps of the target are declared, and can
+improve compilation speed due to smaller classpaths. Transitive deps are always provided
+at runtime.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">fatal_warnings</b>
+  (<em class="bdict_param_type"> bool</em>)
+  <span class="bdict_param_muffle_p"><p>Whether to turn warnings into errors for this target.  If present,
+takes priority over the language's fatal-warnings option.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -2758,7 +2902,7 @@ target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">jaxb_library(name, package=None, language=u'java', sources=None, provides=None, excludes=None, resources=None, services=None, platform=None, type_alias=None, tags=None, description=None, no_cache=False)
+<p class="bdict_argspec">jaxb_library(name, package=None, language=u'java', sources=None, provides=None, excludes=None, resources=None, services=None, platform=None, strict_deps=None, fatal_warnings=None, type_alias=None, tags=None, description=None, no_cache=False)
 
 <div>
 <p>Generates a stub Java library from jaxb xsd files.</p>
@@ -2794,12 +2938,24 @@ discoverable by the jvm service provider discovery mechanism described here:
 <a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">platform</b>
-  (<em class="bdict_param_type">str </em>)
+  (<em class="bdict_param_type"> str</em>)
   <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to use
 for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
 the platform will default to the first one of these that exist: (1) the default_platform
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
 by DistributionLocator.cached().version.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">strict_deps</b>
+  (<em class="bdict_param_type"> bool</em>)
+  <span class="bdict_param_muffle_p"><p>When True, only the directly declared deps of the target will be used at
+compilation time. This enforces that all direct deps of the target are declared, and can
+improve compilation speed due to smaller classpaths. Transitive deps are always provided
+at runtime.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">fatal_warnings</b>
+  (<em class="bdict_param_type"> bool</em>)
+  <span class="bdict_param_muffle_p"><p>Whether to turn warnings into errors for this target.  If present,
+takes priority over the language's fatal-warnings option.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -2846,7 +3002,7 @@ target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">junit_tests(name, cwd=None, test_platform=None, timeout=None, sources=None, provides=None, excludes=None, resources=None, services=None, platform=None, type_alias=None, tags=None, description=None, no_cache=False)
+<p class="bdict_argspec">junit_tests(name, cwd=None, test_platform=None, timeout=None, sources=None, provides=None, excludes=None, resources=None, services=None, platform=None, strict_deps=None, fatal_warnings=None, type_alias=None, tags=None, description=None, no_cache=False)
 
 <div>
 <p>Tests JVM sources with JUnit.</p>
@@ -2882,12 +3038,24 @@ discoverable by the jvm service provider discovery mechanism described here:
 <a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">platform</b>
-  (<em class="bdict_param_type">str </em>)
+  (<em class="bdict_param_type"> str</em>)
   <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to use
 for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
 the platform will default to the first one of these that exist: (1) the default_platform
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
 by DistributionLocator.cached().version.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">strict_deps</b>
+  (<em class="bdict_param_type"> bool</em>)
+  <span class="bdict_param_muffle_p"><p>When True, only the directly declared deps of the target will be used at
+compilation time. This enforces that all direct deps of the target are declared, and can
+improve compilation speed due to smaller classpaths. Transitive deps are always provided
+at runtime.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">fatal_warnings</b>
+  (<em class="bdict_param_type"> bool</em>)
+  <span class="bdict_param_muffle_p"><p>Whether to turn warnings into errors for this target.  If present,
+takes priority over the language's fatal-warnings option.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -3006,7 +3174,7 @@ target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">jvm_binary(name=None, main=None, basename=None, source=None, deploy_excludes=None, deploy_jar_rules=None, manifest_entries=None, shading_rules=None, sources=None, provides=None, excludes=None, resources=None, services=None, platform=None, type_alias=None, tags=None, description=None, no_cache=False)
+<p class="bdict_argspec">jvm_binary(name=None, main=None, basename=None, source=None, deploy_excludes=None, deploy_jar_rules=None, manifest_entries=None, shading_rules=None, sources=None, provides=None, excludes=None, resources=None, services=None, platform=None, strict_deps=None, fatal_warnings=None, type_alias=None, tags=None, description=None, no_cache=False)
 
 <div>
 <p>Produces a JVM binary optionally identifying a launcher main class.</p>
@@ -3083,12 +3251,24 @@ discoverable by the jvm service provider discovery mechanism described here:
 <a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">platform</b>
-  (<em class="bdict_param_type">str </em>)
+  (<em class="bdict_param_type"> str</em>)
   <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to use
 for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
 the platform will default to the first one of these that exist: (1) the default_platform
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
 by DistributionLocator.cached().version.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">strict_deps</b>
+  (<em class="bdict_param_type"> bool</em>)
+  <span class="bdict_param_muffle_p"><p>When True, only the directly declared deps of the target will be used at
+compilation time. This enforces that all direct deps of the target are declared, and can
+improve compilation speed due to smaller classpaths. Transitive deps are always provided
+at runtime.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">fatal_warnings</b>
+  (<em class="bdict_param_type"> bool</em>)
+  <span class="bdict_param_muffle_p"><p>Whether to turn warnings into errors for this target.  If present,
+takes priority over the language's fatal-warnings option.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -4693,7 +4873,7 @@ the dependency itself should be downloaded and placed on the classpath</p></span
 </tbody>
 </table>
 
-<p class="bdict_argspec">scala_library(name, java_sources=None, sources=None, provides=None, excludes=None, resources=None, services=None, platform=None, type_alias=None, tags=None, description=None, no_cache=False)
+<p class="bdict_argspec">scala_library(name, java_sources=None, sources=None, provides=None, excludes=None, resources=None, services=None, platform=None, strict_deps=None, fatal_warnings=None, type_alias=None, tags=None, description=None, no_cache=False)
 
 <div>
 <p>A collection of Scala code.</p>
@@ -4739,12 +4919,24 @@ discoverable by the jvm service provider discovery mechanism described here:
 <a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">platform</b>
-  (<em class="bdict_param_type">str </em>)
+  (<em class="bdict_param_type"> str</em>)
   <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to use
 for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
 the platform will default to the first one of these that exist: (1) the default_platform
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
 by DistributionLocator.cached().version.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">strict_deps</b>
+  (<em class="bdict_param_type"> bool</em>)
+  <span class="bdict_param_muffle_p"><p>When True, only the directly declared deps of the target will be used at
+compilation time. This enforces that all direct deps of the target are declared, and can
+improve compilation speed due to smaller classpaths. Transitive deps are always provided
+at runtime.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">fatal_warnings</b>
+  (<em class="bdict_param_type"> bool</em>)
+  <span class="bdict_param_muffle_p"><p>Whether to turn warnings into errors for this target.  If present,
+takes priority over the language's fatal-warnings option.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -4791,7 +4983,7 @@ target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">scalac_plugin(name, classname=None, plugin=None, java_sources=None, sources=None, provides=None, excludes=None, resources=None, services=None, platform=None, type_alias=None, tags=None, description=None, no_cache=False)
+<p class="bdict_argspec">scalac_plugin(name, classname=None, plugin=None, java_sources=None, sources=None, provides=None, excludes=None, resources=None, services=None, platform=None, strict_deps=None, fatal_warnings=None, type_alias=None, tags=None, description=None, no_cache=False)
 
 <div>
 <p>Defines a target that produces a scalac_plugin.</p>
@@ -4838,12 +5030,24 @@ discoverable by the jvm service provider discovery mechanism described here:
 <a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">platform</b>
-  (<em class="bdict_param_type">str </em>)
+  (<em class="bdict_param_type"> str</em>)
   <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to use
 for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
 the platform will default to the first one of these that exist: (1) the default_platform
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
 by DistributionLocator.cached().version.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">strict_deps</b>
+  (<em class="bdict_param_type"> bool</em>)
+  <span class="bdict_param_muffle_p"><p>When True, only the directly declared deps of the target will be used at
+compilation time. This enforces that all direct deps of the target are declared, and can
+improve compilation speed due to smaller classpaths. Transitive deps are always provided
+at runtime.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">fatal_warnings</b>
+  (<em class="bdict_param_type"> bool</em>)
+  <span class="bdict_param_muffle_p"><p>Whether to turn warnings into errors for this target.  If present,
+takes priority over the language's fatal-warnings option.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -5204,7 +5408,7 @@ The <tt class="docutils literal">source_root</tt> command specifies that <em>som
 </tbody>
 </table>
 
-<p class="bdict_argspec">spindle_thrift_library(name, sources=None, provides=None, excludes=None, resources=None, services=None, platform=None, type_alias=None, tags=None, description=None, no_cache=False)
+<p class="bdict_argspec">spindle_thrift_library(name, sources=None, provides=None, excludes=None, resources=None, services=None, platform=None, strict_deps=None, fatal_warnings=None, type_alias=None, tags=None, description=None, no_cache=False)
 
 <div>
 <p>Defines a target that builds scala_record stubs from a thrift IDL file.</p>
@@ -5232,12 +5436,24 @@ discoverable by the jvm service provider discovery mechanism described here:
 <a class="reference external" href="https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html</a></p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">platform</b>
-  (<em class="bdict_param_type">str </em>)
+  (<em class="bdict_param_type"> str</em>)
   <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to use
 for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified,
 the platform will default to the first one of these that exist: (1) the default_platform
 specified for jvm-platform, (2) a platform constructed from whatever java version is returned
 by DistributionLocator.cached().version.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">strict_deps</b>
+  (<em class="bdict_param_type"> bool</em>)
+  <span class="bdict_param_muffle_p"><p>When True, only the directly declared deps of the target will be used at
+compilation time. This enforces that all direct deps of the target are declared, and can
+improve compilation speed due to smaller classpaths. Transitive deps are always provided
+at runtime.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">fatal_warnings</b>
+  (<em class="bdict_param_type"> bool</em>)
+  <span class="bdict_param_muffle_p"><p>Whether to turn warnings into errors for this target.  If present,
+takes priority over the language's fatal-warnings option.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">name</b>
   (<em class="bdict_param_type">string </em>)
@@ -5483,7 +5699,7 @@ For example, the following keys are supported for Atlassian's Confluence:</p></s
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/builddict/build_dictionary.html 2015-11-13T14:07:32.440762
+from dist/builddict/build_dictionary.html 2015-11-15T14:05:29.778542
 </div>
 
 </div> <!-- end of mainflow -->
