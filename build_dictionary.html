@@ -77,7 +77,6 @@
 <li class="toc-h1"><a href="#jvm_app">jvm_app</a></li>
 <li class="toc-h1"><a href="#jvm_binary">jvm_binary</a></li>
 <li class="toc-h1"><a href="#license">license</a></li>
-<li class="toc-h1"><a href="#maven_layout">maven_layout</a></li>
 <li class="toc-h1"><a href="#netrc">netrc</a></li>
 <li class="toc-h1"><a href="#node_module">node_module</a></li>
 <li class="toc-h1"><a href="#node_remote_module">node_remote_module</a></li>
@@ -231,7 +230,6 @@ span.bdict_param_muffle_p p {
 <a href="#jvm_app">jvm_app</a>
 <a href="#jvm_binary">jvm_binary</a>
 <a href="#license">license</a>
-<a href="#maven_layout">maven_layout</a>
 <a href="#netrc">netrc</a>
 <a href="#node_module">node_module</a>
 <a href="#node_remote_module">node_remote_module</a>
@@ -2778,10 +2776,14 @@ target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">java_wire_library(name, service_writer=None, service_writer_options=None, service_factory=None, service_factory_options=None, roots=None, registry_class=None, enum_options=None, no_options=None, sources=None, provides=None, excludes=None, resources=None, services=None, platform=None, strict_deps=None, fatal_warnings=None, type_alias=None, tags=None, description=None, no_cache=False)
+<p class="bdict_argspec">java_wire_library(name, service_writer=None, service_writer_options=None, roots=None, registry_class=None, enum_options=None, no_options=None, sources=None, provides=None, excludes=None, resources=None, services=None, platform=None, strict_deps=None, fatal_warnings=None, type_alias=None, tags=None, description=None, no_cache=False)
 
 <div>
 <p>Generates a stub Java library from protobuf IDL files.</p>
+<p>Supports Wire 1.x only.</p>
+<p>For an example Wire 2.x interface that generates service stubs see:
+<a class="reference external" href="https://github.com/ericzundel/mvn2pants/tree/master/src/python/squarepants/plugins/sake_wire_codegen">https://github.com/ericzundel/mvn2pants/tree/master/src/python/squarepants/plugins/sake_wire_codegen</a></p>
+<p>But note this requires you to write a custom wire code generator with a command line interface.</p>
 </div>
 <div class="bdict_params_section">
 <p><b>Params:</b>
@@ -2792,14 +2794,6 @@ target is built.</p></span>
 <div class="bdict_param"><b class="bdict_param_name">service_writer_options</b>
   (<em class="bdict_param_type">list </em>)
   <span class="bdict_param_muffle_p"><p>A list of options to pass to the service writer (For</p></span>
-</div>
-<div class="bdict_param"><b class="bdict_param_name">service_factory</b>
-  (<em class="bdict_param_type">string </em>)
-  <span class="bdict_param_muffle_p"><p>the name of the class to pass as the --service_factory option to</p></span>
-</div>
-<div class="bdict_param"><b class="bdict_param_name">service_factory_options</b>
-  (<em class="bdict_param_type">list </em>)
-  <span class="bdict_param_muffle_p"><p>A list of options to pass to the service factory</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">roots</b>
   (<em class="bdict_param_type">list </em>)
@@ -3002,7 +2996,7 @@ target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">junit_tests(name, cwd=None, test_platform=None, timeout=None, sources=None, provides=None, excludes=None, resources=None, services=None, platform=None, strict_deps=None, fatal_warnings=None, type_alias=None, tags=None, description=None, no_cache=False)
+<p class="bdict_argspec">junit_tests(name, cwd=None, test_platform=None, timeout=None, extra_jvm_options=None, sources=None, provides=None, excludes=None, resources=None, services=None, platform=None, strict_deps=None, fatal_warnings=None, type_alias=None, tags=None, description=None, no_cache=False)
 
 <div>
 <p>Tests JVM sources with JUnit.</p>
@@ -3019,6 +3013,11 @@ target. If unspecified (None), the working directory will be controlled by junit
   <span class="bdict_param_muffle_p"><p>The name of the platform (defined under the jvm-platform subsystem) to
 use for running tests (that is, a key into the --jvm-platform-platforms dictionary). If
 unspecified, the platform will default to the same one used for compilation.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">extra_jvm_options</b>
+  (<em class="bdict_param_type">list </em>)
+  <span class="bdict_param_muffle_p"><p>A list of key value pairs of jvm options to use when running the
+tests. Example: ['-Dexample.property=1'] If unspecified, no extra jvm options will be added.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">excludes</b>
 <span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
@@ -3333,28 +3332,6 @@ target is built.</p></span>
 </div>
 </p></div>
 <p class="bdict_impl">Implemented by <tt>pants.backend.jvm.ossrh_publication_metadata.License</tt>
-</p></p></div>
-<div class="bdict_section">
-<a id="bdict_maven_layout" pantsmark="bdict_maven_layout"> </a>
-
-<table class="h-plus-pilcrow">
-<tbody>
-<tr>
-<td class="h-plus-pilcrow-holder"><h2 class="bdict_heading" id="maven_layout">maven_layout</h2></td>
-<td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#maven_layout">¶</a>
-</div></td>
-</tr>
-</tbody>
-</table>
-
-<p class="bdict_argspec">maven_layout(ctx)
-
-
-
-
-
-<p class="bdict_impl">Implemented by <tt>pants.build_graph.build_file_aliases.curry_context.pants.backend.maven_layout.maven_layout.maven_layout</tt>
 </p></p></div>
 <div class="bdict_section">
 <a id="bdict_netrc" pantsmark="bdict_netrc"> </a>
@@ -5699,7 +5676,7 @@ For example, the following keys are supported for Atlassian's Confluence:</p></s
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/builddict/build_dictionary.html 2015-11-15T14:05:29.778542
+from dist/builddict/build_dictionary.html 2015-11-21T18:20:49.647459
 </div>
 
 </div> <!-- end of mainflow -->
