@@ -34,9 +34,7 @@
 <ul>
 <li class="toc-h1"><a href="#configuring-with-pantsini">Configuring with pants.ini</a></li>
 <li class="toc-h1"><a href="#configure-pants-own-runtime-dependencies">Configure Pants' own Runtime Dependencies</a></li>
-<li class="toc-h1"><a href="#configure-code-layout-with-source_root-maven_layout">Configure Code Layout with source_root, maven_layout</a></li>
-<li class="toc-h2"><a href="#organized-by-language">Organized by Language</a></li>
-<li class="toc-h2"><a href="#organized-by-project">Organized by Project</a></li>
+<li class="toc-h1"><a href="#set-up-source-roots">Set up source roots</a></li>
 <li class="toc-h1"><a href="#setting-up-build-files">Setting up BUILD files</a></li>
 <li class="toc-h1"><a href="#build-and-environment-specific-config">BUILD.* and environment-specific config</a></li>
 <li class="toc-h1"><a href="#configure-jvm-artifact-downloads">Configure JVM Artifact Downloads</a></li>
@@ -136,7 +134,7 @@
 </tbody>
 </table>
 
-<p><strong>As of September 2014, this much more complex than it should be.</strong>
+<p><strong>As of November 2015, this more complex than it should be.</strong>
 <strong>The Pants community is actively working to simplify it.</strong>
 If you're setting up the Pants build tool to work in your source tree, you need to
 configure Pants' behavior. (Once it's set up, most folks should be able
@@ -155,14 +153,14 @@ and not worry about these things.)</p>
 </table>
 
 <p>Pants Build is very configurable. Your source tree's top-level directory
-should contain a <code>pants.ini</code> file that sets various options. You can
-modify a broad range of options here, including specific binaries to
-use in your toolchain, arguments to pass to tools, etc.</p>
-<p>These files are formatted as <a href="http://docs.python.org/install/index.html#inst-config-syntax">Python config
+contains a <code>pants.ini</code> file that can set various options,
+specify binaries to
+use in your toolchain, set arguments to pass to tools, etc.</p>
+<p>This file is a <a href="http://docs.python.org/install/index.html#inst-config-syntax">Python config
 files</a>,
 parsed by
 <a href="http://docs.python.org/library/configparser.html">ConfigParser</a>. Thus,
-they look something like:</p>
+it looks something like:</p>
 <div class="codehilite"><pre><span class="k">[section]</span>
 <span class="err">setting1:</span> <span class="err">value1</span>
 <span class="err">setting2:</span> <span class="err">value2</span>
@@ -218,82 +216,21 @@ fail when it tries to call the tool.</p>
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h2 id="configure-code-layout-with-source_root-maven_layout">Configure Code Layout with <code>source_root</code>, <code>maven_layout</code></h2></td>
+<td class="h-plus-pilcrow-holder"><h2 id="set-up-source-roots">Set up source roots</h2></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#configure-code-layout-with-source_root-maven_layout">¶</a>
+<a class="pilcrow-link" href="#set-up-source-roots">¶</a>
 </div></td>
 </tr>
 </tbody>
 </table>
 
-<p>Maybe someday all the world's programmers will agree on the one true
-directory structure for source code. Until then, you'll want some
-<a href="build_dictionary.html#bdict_source_root" pantsref="bdict_source_root"><code>source_root</code></a>
-rules to specify which directories hold your code. A
-typical programming language has a notion of <em>base paths</em> for imports;
-you configure pants to tell it those base paths.</p>
-<p>If your project's source tree is laid out for Maven, there's a shortcut
-function
-<a href="build_dictionary.html#bdict_maven_layout" pantsref="bdict_maven_layout"><code>maven_layout</code></a>
-that configures source roots for Maven's expected
-source code tree structure. See
-<a href="https://github.com/pantsbuild/pants/tree/master/testprojects/maven_layout"><code>testprojects/maven_layout</code></a>
-for examples of using this style source tree.</p>
-
-<table class="h-plus-pilcrow">
-<tbody>
-<tr>
-<td class="h-plus-pilcrow-holder"><h3 id="organized-by-language">Organized by Language</h3></td>
-<td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#organized-by-language">¶</a>
-</div></td>
-</tr>
-</tbody>
-</table>
-
-<p>If your top-level <code>BUILD</code> file is <code>top/BUILD</code> and your main Java code is
-in <code>top/src/java/com/foo/</code> and your Java tests are in
-<code>top/src/javatest/com/foo/</code>, then your top-level <code>BUILD</code> file might look
-like:</p>
-<div class="codehilite"><pre><span class="c"># top/BUILD</span>
-<span class="n">source_root</span><span class="p">(</span><span class="s">'src/java'</span><span class="p">)</span>
-<span class="n">source_root</span><span class="p">(</span><span class="s">'src/javatest'</span><span class="p">)</span>
-<span class="o">...</span>
-</pre></div>
-<p>Pants can optionally enforce that only certain target types are allowed
-under each source root:</p>
-<div class="codehilite"><pre><span class="c"># top/BUILD</span>
-<span class="n">source_root</span><span class="p">(</span><span class="s">'src/java'</span><span class="p">,</span> <span class="n">annotation_processor</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">jvm_binary</span><span class="p">,</span> <span class="n">java_library</span><span class="p">,</span> <span class="n">page</span><span class="p">)</span>
-<span class="n">source_root</span><span class="p">(</span><span class="s">'src/javatest'</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">java_library</span><span class="p">,</span> <span class="n">java_tests</span><span class="p">,</span> <span class="n">page</span><span class="p">)</span>
-<span class="o">...</span>
-</pre></div>
-
-<table class="h-plus-pilcrow">
-<tbody>
-<tr>
-<td class="h-plus-pilcrow-holder"><h3 id="organized-by-project">Organized by Project</h3></td>
-<td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#organized-by-project">¶</a>
-</div></td>
-</tr>
-</tbody>
-</table>
-
-<p>If your top-level <code>BUILD</code> file is <code>top/BUILD</code> and the Java code for your
-Theodore and Hank projects live in <code>top/theodore/src/java/com/foo/</code>,
-then your top-level <code>BUILD</code> file might not contain any <code>source_root</code>
-statements. Instead, <code>theodore/BUILD</code> and <code>hank/BUILD</code> might look like:</p>
-<div class="codehilite"><pre><span class="c"># top/(project)/BUILD</span>
-<span class="n">source_root</span><span class="p">(</span><span class="s">'src/java'</span><span class="p">)</span>
-<span class="n">source_root</span><span class="p">(</span><span class="s">'src/javatest'</span><span class="p">)</span>
-<span class="o">...</span>
-</pre></div>
-<p>Or:</p>
-<div class="codehilite"><pre><span class="c"># top/(project)/BUILD</span>
-<span class="n">source_root</span><span class="p">(</span><span class="s">'src/java'</span><span class="p">,</span> <span class="n">annotation_processor</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">jvm_binary</span><span class="p">,</span> <span class="n">java_library</span><span class="p">,</span> <span class="n">page</span><span class="p">)</span>
-<span class="n">source_root</span><span class="p">(</span><span class="s">'src/javatest'</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">java_library</span><span class="p">,</span> <span class="n">java_tests</span><span class="p">,</span> <span class="n">page</span><span class="p">)</span>
-<span class="o">...</span>
-</pre></div>
+<p>Maybe some day all the world's programmers will agree on the one true directory structure for
+source code. Until then, Pants must deduce where the 'root' of a source tree is, so it can
+correctly set up import paths, correctly bundle code etc.</p>
+<p>In all typical cases, Pants can deduce the source roots automatically based on naming conventions.
+E.g., <code>src/&lt;lang&gt;</code>, <code>src/main/&lt;lang&gt;</code>, <code>test/&lt;lang&gt;</code>, <code>src/test/&lt;lang&gt;</code>, <code>3rdparty/lang</code> and so on.
+However if your source roots don't conform to any of the default patterns, you can add your own
+patterns.  See <code>./pants help-advanced source</code> for details.</p>
 
 <table class="h-plus-pilcrow">
 <tbody>
@@ -465,7 +402,7 @@ refers to the <code>public</code> repository defined above. (Notice it's a Pytho
 </p>
 <p>If you get an error that the repo name (here, <code>public</code>) isn't defined, your plugin didn't register
 with Pants successfully. Make sure you bootstrap Pants in a way that loads your <code>register.py</code>.</p>
-<p>In your config file (usually <code>pants.ini</code>), set up a <code>[publish.jar]</code> section. In that section,
+<p>In your <code>pants.ini</code> file, set up a <code>[publish.jar]</code> section. In that section,
 create a <code>dict</code> called <code>repos</code>. It should contain a section for each <code>Repository</code> object that you
 defined in your plugin:</p>
 <div class="codehilite"><pre>repos: {
@@ -551,7 +488,7 @@ the custom Ivy settings when publishing:</p>
 <p>Your organization might have a notion of a special "release branch": you want <a href="publish.html">artifact
 publishing</a> to happen on this source control branch, which you maintain
 extra-carefully. You can set this branch using the <code>restrict_push_branches</code> option of the
-<code>[publish.jar]</code> section of your config file (usually <code>pants.ini</code>).</p>
+<code>[publish.jar]</code> section of your <code>pants.ini</code> file.</p>
 
 <table class="h-plus-pilcrow">
 <tbody>
@@ -879,7 +816,7 @@ indices: [
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/markdown/html/src/docs/setup_repo.html 2015-10-02T17:26:38.857055
+from dist/markdown/html/src/docs/setup_repo.html 2015-11-29T13:37:48.367763
 </div>
 
 </div> <!-- end of mainflow -->
@@ -899,6 +836,9 @@ from dist/markdown/html/src/docs/setup_repo.html 2015-10-02T17:26:38.857055
 <ul>
 <li class="toc-h1 ">
 <a href="first_concepts.html">Pants Conceptual Overview</a>
+</li>
+<li class="toc-h1 ">
+<a href="install.html">Installing Pants</a>
 </li>
 <li class="toc-h1 ">
 <a href="first_tutorial.html">First Tutorial</a>
@@ -959,9 +899,6 @@ from dist/markdown/html/src/docs/setup_repo.html 2015-10-02T17:26:38.857055
 </li>
 <li class="toc-h1 ">
 <a href="with_intellij.html">Using Pants with IntelliJ IDEA</a>
-</li>
-<li class="toc-h1 ">
-<a href="install.html">Installing Pants</a>
 </li>
 <li class="toc-h1 toc-here">
 Set up Your Source Tree for Pants
