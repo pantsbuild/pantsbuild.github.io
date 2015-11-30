@@ -223,14 +223,82 @@ commands opens a coverage report in your browser:</p>
 </tbody>
 </table>
 
-<p>Pants can also read command-line options (and other options) from an <code>.ini</code> file. For example, if
-your <code>pants.ini</code> file contains</p>
+<p>Pants can also read command-line options (and other options) from a configuration file named
+<code>pants.ini</code> at the root of the repo. For example, if your <code>pants.ini</code> file contains</p>
 <div class="codehilite"><pre>[test.junit]
 coverage_html_open: True
 </pre></div>
 <p>...then whenever Pants carries out the <code>test.junit</code> task, it will behave as if you passed
 <code>test.junit --coverage-html-open</code>. If an environment variable and an <code>.ini</code> configuration both
 specify a value for some option, the environment variable "wins".</p>
+<p>The format of the config file is similar to Microsoft Windows INI files. See the
+<a href="https://docs.python.org/2/library/configparser.html">ConfigParser</a> Python documentation.</p>
+<p>Some options are intended to only be set in the <code>pants.ini</code> file and are thus normally hidden from
+the online help output.  To see these options, use <code>./pants &lt;goal&gt; --help-advanced</code> or
+view them all with the <code>./pants --help-all --help-advanced</code> command.</p>
+<p>There are a few differences in using options in the config file compared to invoking them from the
+command line:</p>
+<ul>
+<li>Omit the leading double dash ('--')</li>
+<li>Dash characters ('-') are transposed to underscores ('_').</li>
+<li>Flag values are enabled and disabled by setting the value of the option to <code>True</code> or <code>False</code></li>
+<li>The prefix for long form options is not specified. Instead, you must organize the options
+    into their appropriate sections.</li>
+</ul>
+<p>Sections in the .ini file are described in the help output:</p>
+<div class="codehilite"><pre><span class="nv">$ </span>./pants compile.zinc --help
+
+compile.zinc options:
+Compile Scala and Java code using Zinc.
+
+--<span class="o">[</span>no-<span class="o">]</span>compile-zinc-debug-symbols <span class="o">(</span>default: False<span class="o">)</span>
+    Compile with debug symbol enabled.
+--<span class="o">[</span>no-<span class="o">]</span>compile-zinc-use-nailgun <span class="o">(</span>default: True<span class="o">)</span>
+    Use nailgun to make repeated invocations of this task quicker.
+--<span class="o">[</span>no-<span class="o">]</span>compile-zinc-warnings <span class="o">(</span>default: True<span class="o">)</span>
+    Compile with all configured warnings enabled.
+</pre></div>
+<p>The section name is also used to form the long form command-line option prefixes, but you cannot
+arbitrarily strip off the first part of the option name and use it in a section.   Section names
+can have multiple parts.  You must be careful to use the correct section name as specified
+in the help output:</p>
+<div class="codehilite"><pre><span class="c"># Wrong</span>
+<span class="err">[compile]</span>  <span class="c"># The correct section name is compile.zinc for this option</span>
+<span class="err">zinc_warnings:</span> <span class="err">False</span>
+
+<span class="c"># Right</span>
+<span class="k">[compile.zinc]</span>
+<span class="err">warnings:</span> <span class="err">False</span>
+</pre></div>
+<p>Settings that span multiple lines should be indented.  To minimize problems, follow these
+conventions:</p>
+<ul>
+<li>Followon lines should be indented four spaces.</li>
+<li>The ending bracket for lists and dicts should be indented two spaces.</li>
+</ul>
+<p>Here are some examples of correctly and incorrectly formatted values:</p>
+<div class="codehilite"><pre><span class="c"># Right</span>
+<span class="err">jvm_options:</span> <span class="k">[ "foo", "bar" ]</span>
+
+<span class="c"># Right</span>
+<span class="err">jvm_options:</span> <span class="err">[</span>
+    <span class="err">"foo",</span> <span class="err">"bar"</span>
+  <span class="err">]</span>
+
+<span class="c"># Wrong</span>
+<span class="err">jvm_options:</span> <span class="err">[</span> <span class="err">"foo",</span>
+<span class="err">"bar"</span> <span class="err">]</span>  <span class="c"># Followon line must be indented</span>
+
+<span class="c"># Wrong</span>
+<span class="err">jvm_options:</span> <span class="err">[</span>
+    <span class="err">"foo",</span> <span class="err">"bar"</span>
+<span class="err">]</span> <span class="c"># closing bracket must be indented</span>
+</pre></div>
+<p>The <code>pants.ini</code> file allows string interpolation for variables defined in the <code>[DEFAULT]</code> section by
+using the syntax <code>%(&lt;variable name&gt;)s</code> inside of a string.</p>
+<div class="codehilite"><pre><span class="na">local_artifact_cache</span> <span class="o">=</span> <span class="s">%(pants_bootstrapdir)s/artifact_cache</span>
+<span class="na">read_from</span> <span class="o">=</span> <span class="s">["%(local_artifact_cache)s"]</span>
+</pre></div>
 
 <table class="h-plus-pilcrow">
 <tbody>
@@ -268,7 +336,7 @@ debug: False
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/markdown/html/src/docs/invoking.html 2015-11-23T15:14:57.921630
+from dist/markdown/html/src/docs/invoking.html 2015-11-30T17:12:59.015130
 </div>
 
 </div> <!-- end of mainflow -->
@@ -288,6 +356,9 @@ from dist/markdown/html/src/docs/invoking.html 2015-11-23T15:14:57.921630
 <ul>
 <li class="toc-h1 ">
 <a href="first_concepts.html">Pants Conceptual Overview</a>
+</li>
+<li class="toc-h1 ">
+<a href="install.html">Installing Pants</a>
 </li>
 <li class="toc-h1 ">
 <a href="first_tutorial.html">First Tutorial</a>
@@ -348,9 +419,6 @@ Invoking Pants Build
 </li>
 <li class="toc-h1 ">
 <a href="with_intellij.html">Using Pants with IntelliJ IDEA</a>
-</li>
-<li class="toc-h1 ">
-<a href="install.html">Installing Pants</a>
 </li>
 <li class="toc-h1 ">
 <a href="setup_repo.html">Set up Your Source Tree for Pants</a>
