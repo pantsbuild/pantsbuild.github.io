@@ -62,11 +62,8 @@
 <li class="toc-h2"><a href="#group_checkpublisheddeps">check_published_deps</a></li>
 <li class="toc-h1"><a href="#clean-all">clean-all</a></li>
 <li class="toc-h2"><a href="#group_cleanall">clean-all</a></li>
-<li class="toc-h2"><a href="#group_cleanallinvalidate">clean-all.invalidate</a></li>
 <li class="toc-h2"><a href="#group_cleanallngkillall">clean-all.ng-killall</a></li>
 <li class="toc-h1"><a href="#clean-all-async">clean-all-async</a></li>
-<li class="toc-h2"><a href="#group_cleanallasync">clean-all-async</a></li>
-<li class="toc-h2"><a href="#group_cleanallasyncinvalidate">clean-all-async.invalidate</a></li>
 <li class="toc-h2"><a href="#group_cleanallasyncngkillall">clean-all-async.ng-killall</a></li>
 <li class="toc-h1"><a href="#cloc">cloc</a></li>
 <li class="toc-h2"><a href="#group_cloc">cloc</a></li>
@@ -245,21 +242,25 @@ Java code, and is installed in the <code>compile</code> goal.
   This class gathers compiled classes (an Android dex archive) and packages it with the
   target's resource files. The output is an unsigned .apk, an Android application package file.
   
-  <li> <a href="#bash-completion">bash-completion</a> - Dump bash shell script for autocompletion of pants command lines.
+  <li> <a href="#bash-completion">bash-completion</a> - Generate a Bash shell script that teaches Bash how to autocomplete pants command lines.
   <li> <a href="#bench">bench</a> - Run benchmark tests.
   <li> <a href="#binary">binary</a> - Create a runnable binary.
   <li> <a href="#bootstrap">bootstrap</a> - Bootstrap tools needed for building.
   <li> <a href="#builddict">builddict</a> - Generate documentation for the Sphinx site.
   <li> <a href="#buildgen">buildgen</a> - Automatically generate BUILD files.
   <li> <a href="#bundle">bundle</a> - Create an application bundle from binary targets.
-  <li> <a href="#changed">changed</a> - Print the targets changed since some prior commit.
+  <li> <a href="#changed">changed</a> - Emits the targets that have been modified since a given commit.
   <li> <a href="#check_published_deps">check_published_deps</a> - Find references to outdated artifacts.
-  <li> <a href="#clean-all">clean-all</a> - Clean all build output.
-  <li> <a href="#clean-all-async">clean-all-async</a> - [deprecated] Clean all build output in a background process.
+  <li> <a href="#clean-all">clean-all</a> - Delete all build products, creating a clean workspace.
+  <li> <a href="#clean-all-async">clean-all-async</a> - 
   <li> <a href="#cloc">cloc</a> - Print counts of lines of code.
   <li> <a href="#compile">compile</a> - Compile source code.
-  <li> <a href="#compile-changed">compile-changed</a> - Compile changed targets.
-  <li> <a href="#deferred-sources">deferred-sources</a> - Map unpacked sources from archives.
+  <li> <a href="#compile-changed">compile-changed</a> - Find and compile changed targets.
+  <li> <a href="#deferred-sources">deferred-sources</a> - Map DeferredSourcesFields to files that produce the product 'unpacked_archives'.
+
+  If you want a task to be able to map sources like this, make it require the 'deferred_sources'
+  product.
+  
   <li> <a href="#dep-usage">dep-usage</a> - Collect target dependency usage data.
   <li> <a href="#dependees">dependees</a> - Print the target's dependees.
   <li> <a href="#dependencies">dependencies</a> - Print the target's dependencies.
@@ -285,10 +286,10 @@ Java code, and is installed in the <code>compile</code> goal.
   <li> <a href="#gen">gen</a> - Generate code.
   <li> <a href="#go">go</a> - Runs an arbitrary go command against zero or more go targets.
   <li> <a href="#go-env">go-env</a> - Runs an arbitrary command in a go workspace defined by zero or more go targets.
-  <li> <a href="#goals">goals</a> - List all documented goals.
+  <li> <a href="#goals">goals</a> - List available goals.
   <li> <a href="#idea">idea</a> - Create an IntelliJ IDEA project from the given targets.
   <li> <a href="#imports">imports</a> - 
-  <li> <a href="#invalidate">invalidate</a> - Invalidate all targets.
+  <li> <a href="#invalidate">invalidate</a> - Invalidate the entire build.
   <li> <a href="#jar">jar</a> - 
   <li> <a href="#jvm-platform-explain">jvm-platform-explain</a> - Console task which provides helpful analysis about jvm platform dependencies.
 
@@ -318,7 +319,12 @@ Java code, and is installed in the <code>compile</code> goal.
   <li> <a href="#markdown">markdown</a> - Generate html from markdown docs.
   <li> <a href="#minimize">minimize</a> - Print the minimal cover of the given targets.
   <li> <a href="#ng-killall">ng-killall</a> - Kill running nailgun servers.
-  <li> <a href="#options">options</a> - List what options pants has set.
+  <li> <a href="#options">options</a> - Display meta-information about options.
+
+  This "meta-information" includes what values options have, and what values they *used* to have
+  before they were overridden by a higher-rank value (eg, a HARDCODED value overridden by a CONFIG
+  value and then a cli FLAG value).
+  
   <li> <a href="#path">path</a> - Find a dependency path from one target to another.
   <li> <a href="#pathdeps">pathdeps</a> - Print out all paths containing BUILD files the target depends on.
   <li> <a href="#paths">paths</a> - Find all dependency paths from one target to another.
@@ -327,16 +333,16 @@ Java code, and is installed in the <code>compile</code> goal.
   <li> <a href="#repl-dirty">repl-dirty</a> - Run a REPL, skipping compilation.
   <li> <a href="#resolve">resolve</a> - Resolve dependencies and produce dependency reports.
   <li> <a href="#resources">resources</a> - 
-  <li> <a href="#roots">roots</a> - Print the workspace's source roots and associated target types.
+  <li> <a href="#roots">roots</a> - List the repo's registered source roots.
   <li> <a href="#run">run</a> - Run a binary target.
   <li> <a href="#run-dirty">run-dirty</a> - Run a binary target, skipping compilation.
-  <li> <a href="#server">server</a> - Run the pants reporting server.
+  <li> <a href="#server">server</a> - Run the reporting server.
   <li> <a href="#setup-py">setup-py</a> - Build setup.py-based Python projects from python_library targets.
   <li> <a href="#sign">sign</a> - Sign Android packages with keystores using the jarsigner tool.
   <li> <a href="#sort">sort</a> - Topologically sort the targets.
   <li> <a href="#targets">targets</a> - List target types and BUILD file symbols (python_tests, jar, etc).
   <li> <a href="#test">test</a> - Test compiled code.
-  <li> <a href="#test-changed">test-changed</a> - Test changed targets.
+  <li> <a href="#test-changed">test-changed</a> - Find and test changed targets.
   <li> <a href="#thrift-linter">thrift-linter</a> - Check thrift files for non-recommended usage patterns.
   <li> <a href="#unpack-jars">unpack-jars</a> - Unpack artifacts specified by unpacked_jars() targets.
 </li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
@@ -441,7 +447,7 @@ target's resource files. The output is an unsigned .apk, an Android application 
 </tbody>
 </table>
 
-<p>Dump bash shell script for autocompletion of pants command lines.
+<p>Generate a Bash shell script that teaches Bash how to autocomplete pants command lines.
 
 
 <div class="oref_ogroup_section">
@@ -458,7 +464,7 @@ target's resource files. The output is an unsigned .apk, an Android application 
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.core.tasks.bash_completion.BashCompletionTask</code>
+<p>Implemented by <code>pants.core_tasks.bash_completion.BashCompletion</code>
 <div>
 <p>Generate a Bash shell script that teaches Bash how to autocomplete pants command lines.</p>
 </div>
@@ -1101,7 +1107,7 @@ DuplicateClassFileException if it detects a version conflict in any AndroidLibra
 </tbody>
 </table>
 
-<p>Print the targets changed since some prior commit.
+<p>Emits the targets that have been modified since a given commit.
 
 
 <div class="oref_ogroup_section">
@@ -1118,7 +1124,7 @@ DuplicateClassFileException if it detects a version conflict in any AndroidLibra
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.core.tasks.what_changed.WhatChanged</code>
+<p>Implemented by <code>pants.core_tasks.what_changed.WhatChanged</code>
 <div>
 <p>Emits the targets that have been modified since a given commit.</p>
 </div>
@@ -1240,7 +1246,7 @@ DuplicateClassFileException if it detects a version conflict in any AndroidLibra
 </tbody>
 </table>
 
-<p>Clean all build output.
+<p>Delete all build products, creating a clean workspace.
 
 
 <div class="oref_ogroup_section">
@@ -1257,30 +1263,9 @@ DuplicateClassFileException if it detects a version conflict in any AndroidLibra
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.core.tasks.clean.Cleaner</code>
+<p>Implemented by <code>pants.core_tasks.clean.Clean</code>
 <div>
-<p>Clean all current build products.</p>
-</div>
-<ul>
-</ul>
-</p></div>
-<div class="oref_ogroup_section">
-<a id="oref_cli_cleanallinvalidate" pantsmark="oref_cli_cleanallinvalidate"> </a>
-
-<table class="h-plus-pilcrow">
-<tbody>
-<tr>
-<td class="h-plus-pilcrow-holder"><h3 id="group_cleanallinvalidate">clean-all.invalidate</h3></td>
-<td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#group_cleanallinvalidate">¶</a>
-</div></td>
-</tr>
-</tbody>
-</table>
-
-<p>Implemented by <code>pants.backend.core.tasks.clean.Invalidator</code>
-<div>
-<p>Invalidate the entire build.</p>
+<p>Delete all build products, creating a clean workspace.</p>
 </div>
 <ul>
 </ul>
@@ -1329,48 +1314,6 @@ DuplicateClassFileException if it detects a version conflict in any AndroidLibra
 </tbody>
 </table>
 
-<p>[deprecated] Clean all build output in a background process.
-
-
-<div class="oref_ogroup_section">
-<a id="oref_cli_cleanallasync" pantsmark="oref_cli_cleanallasync"> </a>
-
-<table class="h-plus-pilcrow">
-<tbody>
-<tr>
-<td class="h-plus-pilcrow-holder"><h3 id="group_cleanallasync">clean-all-async</h3></td>
-<td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#group_cleanallasync">¶</a>
-</div></td>
-</tr>
-</tbody>
-</table>
-
-<p>Implemented by <code>pants.backend.core.register.AsyncCleaner</code>
-<ul>
-</ul>
-</p></div>
-<div class="oref_ogroup_section">
-<a id="oref_cli_cleanallasyncinvalidate" pantsmark="oref_cli_cleanallasyncinvalidate"> </a>
-
-<table class="h-plus-pilcrow">
-<tbody>
-<tr>
-<td class="h-plus-pilcrow-holder"><h3 id="group_cleanallasyncinvalidate">clean-all-async.invalidate</h3></td>
-<td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#group_cleanallasyncinvalidate">¶</a>
-</div></td>
-</tr>
-</tbody>
-</table>
-
-<p>Implemented by <code>pants.backend.core.tasks.clean.Invalidator</code>
-<div>
-<p>Invalidate the entire build.</p>
-</div>
-<ul>
-</ul>
-</p></div>
 <div class="oref_ogroup_section">
 <a id="oref_cli_cleanallasyncngkillall" pantsmark="oref_cli_cleanallasyncngkillall"> </a>
 
@@ -1400,7 +1343,7 @@ DuplicateClassFileException if it detects a version conflict in any AndroidLibra
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
-</br></p></p></div>
+</br></p></div>
 <div class="oref_goal_section">
 <a id="oref_goal_cloc" pantsmark="oref_goal_cloc"> </a>
 
@@ -1530,7 +1473,7 @@ DuplicateClassFileException if it detects a version conflict in any AndroidLibra
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.core.tasks.noop.NoopCompile</code>
+<p>Implemented by <code>pants.core_tasks.noop.NoopCompile</code>
 <div>
 <p>A no-op that provides a product type that can be used to force scheduling.</p>
 </div>
@@ -1856,7 +1799,7 @@ workspace (see GoWorkspaceTask) with executables and library binaries respective
 </tbody>
 </table>
 
-<p>Compile changed targets.
+<p>Find and compile changed targets.
 
 
 <div class="oref_ogroup_section">
@@ -1873,7 +1816,7 @@ workspace (see GoWorkspaceTask) with executables and library binaries respective
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.core.tasks.changed_target_goals.CompileChanged</code>
+<p>Implemented by <code>pants.core_tasks.changed_target_tasks.CompileChanged</code>
 <div>
 <p>Find and compile changed targets.</p>
 </div>
@@ -1921,7 +1864,11 @@ workspace (see GoWorkspaceTask) with executables and library binaries respective
 </tbody>
 </table>
 
-<p>Map unpacked sources from archives.
+<p>Map DeferredSourcesFields to files that produce the product 'unpacked_archives'.
+
+  If you want a task to be able to map sources like this, make it require the 'deferred_sources'
+  product.
+  
 
 
 <div class="oref_ogroup_section">
@@ -1938,9 +1885,9 @@ workspace (see GoWorkspaceTask) with executables and library binaries respective
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.core.tasks.deferred_sources_mapper.DeferredSourcesMapper</code>
+<p>Implemented by <code>pants.core_tasks.deferred_sources_mapper.DeferredSourcesMapper</code>
 <div>
-<p>Map DeferredSourcesFields to files that produce product 'unpacked_archives', like UnpackJars.</p>
+<p>Map DeferredSourcesFields to files that produce the product 'unpacked_archives'.</p>
 <p>If you want a task to be able to map sources like this, make it require the 'deferred_sources'
 product.</p>
 </div>
@@ -3466,7 +3413,7 @@ and AndroidLibrary targets.</p>
 </tbody>
 </table>
 
-<p>List all documented goals.
+<p>List available goals.
 
 
 <div class="oref_ogroup_section">
@@ -3483,7 +3430,10 @@ and AndroidLibrary targets.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.core.tasks.list_goals.ListGoals</code>
+<p>Implemented by <code>pants.core_tasks.list_goals.ListGoals</code>
+<div>
+<p>List available goals.</p>
+</div>
 <ul>
 <li><code>--[no-]goals-all</code>
 <code>bool</code>
@@ -3779,7 +3729,7 @@ and AndroidLibrary targets.</p>
 </tbody>
 </table>
 
-<p>Invalidate all targets.
+<p>Invalidate the entire build.
 
 
 <div class="oref_ogroup_section">
@@ -3796,7 +3746,7 @@ and AndroidLibrary targets.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.core.tasks.clean.Invalidator</code>
+<p>Implemented by <code>pants.core_tasks.invalidate.Invalidate</code>
 <div>
 <p>Invalidate the entire build.</p>
 </div>
@@ -4095,9 +4045,9 @@ downgraded to a different version.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.core.tasks.reporting_server.KillServer</code>
+<p>Implemented by <code>pants.core_tasks.reporting_server_kill.ReportingServerKill</code>
 <div>
-<p>Kills the reporting server.</p>
+<p>Kill the reporting server.</p>
 </div>
 <ul>
 </ul>
@@ -4416,7 +4366,12 @@ the input targets without gaps.</p>
 </tbody>
 </table>
 
-<p>List what options pants has set.
+<p>Display meta-information about options.
+
+  This "meta-information" includes what values options have, and what values they *used* to have
+  before they were overridden by a higher-rank value (eg, a HARDCODED value overridden by a CONFIG
+  value and then a cli FLAG value).
+  
 
 
 <div class="oref_ogroup_section">
@@ -4433,9 +4388,9 @@ the input targets without gaps.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.core.tasks.explain_options_task.ExplainOptionsTask</code>
+<p>Implemented by <code>pants.core_tasks.explain_options_task.ExplainOptionsTask</code>
 <div>
-<p>Console task to display meta-information about options.</p>
+<p>Display meta-information about options.</p>
 <p>This "meta-information" includes what values options have, and what values they <em>used</em> to have
 before they were overridden by a higher-rank value (eg, a HARDCODED value overridden by a CONFIG
 value and then a cli FLAG value).</p>
@@ -5160,7 +5115,7 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 </tbody>
 </table>
 
-<p>Print the workspace's source roots and associated target types.
+<p>List the repo's registered source roots.
 
 
 <div class="oref_ogroup_section">
@@ -5177,9 +5132,9 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.core.tasks.roots.ListRoots</code>
+<p>Implemented by <code>pants.core_tasks.roots.ListRoots</code>
 <div>
-<p>List the registered source roots of the repo.</p>
+<p>List the repo's registered source roots.</p>
 </div>
 <ul>
 <li><code>--roots-output-file=&lt;path&gt;</code>
@@ -5436,7 +5391,7 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 </tbody>
 </table>
 
-<p>Run the pants reporting server.
+<p>Run the reporting server.
 
 
 <div class="oref_ogroup_section">
@@ -5453,9 +5408,9 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.core.tasks.reporting_server.RunServer</code>
+<p>Implemented by <code>pants.core_tasks.reporting_server_run.ReportingServerRun</code>
 <div>
-<p>Runs the reporting server.</p>
+<p>Run the reporting server.</p>
 </div>
 <ul>
 <li><code>--server-allowed-clients=&lt;str&gt; (--server-allowed-clients=&lt;str&gt;) ...</code>
@@ -5572,7 +5527,7 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 <ul>
 <li><code>--sign-keystore-config-location=&lt;str&gt;</code>
 <code>str</code>
-      (Default: <pre style="display: inline">/Users/zundel/.config/pants/android/keystore/default_config.ini</pre>)
+      (Default: <pre style="display: inline">/Users/stuhood/.config/pants/android/keystore/default_config.ini</pre>)
 
       Location of the .ini file containing keystore definitions.
 
@@ -5948,7 +5903,7 @@ from scratch.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.core.tasks.run_prep_command.RunPrepCommand</code>
+<p>Implemented by <code>pants.core_tasks.run_prep_command.RunPrepCommand</code>
 <ul>
 </ul>
 </p></div>
@@ -5966,7 +5921,7 @@ from scratch.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.core.tasks.noop.NoopTest</code>
+<p>Implemented by <code>pants.core_tasks.noop.NoopTest</code>
 <div>
 <p>A no-op that provides a product type that can be used to force scheduling.</p>
 </div>
@@ -5990,7 +5945,7 @@ from scratch.</p>
 </tbody>
 </table>
 
-<p>Test changed targets.
+<p>Find and test changed targets.
 
 
 <div class="oref_ogroup_section">
@@ -6007,7 +5962,7 @@ from scratch.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.core.tasks.changed_target_goals.TestChanged</code>
+<p>Implemented by <code>pants.core_tasks.changed_target_tasks.TestChanged</code>
 <div>
 <p>Find and test changed targets.</p>
 </div>
@@ -6238,7 +6193,7 @@ These command-line flags are available with all Pants goals.
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/builddict/options_reference.html 2015-11-30T17:12:58.844484
+from dist/builddict/options_reference.html 2015-12-04T10:54:23.180449
 </div>
 
 </div> <!-- end of mainflow -->
