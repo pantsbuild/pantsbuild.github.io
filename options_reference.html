@@ -39,6 +39,7 @@
 <li class="toc-h1"><a href="#bench">bench</a></li>
 <li class="toc-h2"><a href="#group_bench">bench</a></li>
 <li class="toc-h1"><a href="#binary">binary</a></li>
+<li class="toc-h2"><a href="#group_binarybinaryjvmprepcommand">binary.binary-jvm-prep-command</a></li>
 <li class="toc-h2"><a href="#group_binarycpp">binary.cpp</a></li>
 <li class="toc-h2"><a href="#group_binarycpplib">binary.cpplib</a></li>
 <li class="toc-h2"><a href="#group_binarydex">binary.dex</a></li>
@@ -62,15 +63,16 @@
 <li class="toc-h2"><a href="#group_checkpublisheddeps">check_published_deps</a></li>
 <li class="toc-h1"><a href="#clean-all">clean-all</a></li>
 <li class="toc-h2"><a href="#group_cleanall">clean-all</a></li>
+<li class="toc-h2"><a href="#group_cleanallkillpantsd">clean-all.kill-pantsd</a></li>
 <li class="toc-h2"><a href="#group_cleanallngkillall">clean-all.ng-killall</a></li>
 <li class="toc-h1"><a href="#cloc">cloc</a></li>
 <li class="toc-h2"><a href="#group_cloc">cloc</a></li>
 <li class="toc-h1"><a href="#compile">compile</a></li>
 <li class="toc-h2"><a href="#group_compilecheckstyle">compile.checkstyle</a></li>
 <li class="toc-h2"><a href="#group_compile">compile</a></li>
+<li class="toc-h2"><a href="#group_compilecompilejvmprepcommand">compile.compile-jvm-prep-command</a></li>
 <li class="toc-h2"><a href="#group_compilecpp">compile.cpp</a></li>
 <li class="toc-h2"><a href="#group_compilego">compile.go</a></li>
-<li class="toc-h2"><a href="#group_compilejvm">compile.jvm</a></li>
 <li class="toc-h2"><a href="#group_compilejvmdepcheck">compile.jvm-dep-check</a></li>
 <li class="toc-h2"><a href="#group_compilepythoneval">compile.python-eval</a></li>
 <li class="toc-h2"><a href="#group_compilepythonstyle">compile.pythonstyle</a></li>
@@ -137,6 +139,8 @@
 <li class="toc-h2"><a href="#group_jvmplatformexplain">jvm-platform-explain</a></li>
 <li class="toc-h1"><a href="#jvm-platform-validate">jvm-platform-validate</a></li>
 <li class="toc-h2"><a href="#group_jvmplatformvalidate">jvm-platform-validate</a></li>
+<li class="toc-h1"><a href="#kill-pantsd">kill-pantsd</a></li>
+<li class="toc-h2"><a href="#group_killpantsd">kill-pantsd</a></li>
 <li class="toc-h1"><a href="#killserver">killserver</a></li>
 <li class="toc-h2"><a href="#group_killserver">killserver</a></li>
 <li class="toc-h1"><a href="#list">list</a></li>
@@ -168,7 +172,7 @@
 <li class="toc-h1"><a href="#resolve">resolve</a></li>
 <li class="toc-h2"><a href="#group_resolvego">resolve.go</a></li>
 <li class="toc-h2"><a href="#group_resolveivy">resolve.ivy</a></li>
-<li class="toc-h2"><a href="#group_resolvenpm">resolve.npm</a></li>
+<li class="toc-h2"><a href="#group_resolvenode">resolve.node</a></li>
 <li class="toc-h1"><a href="#resources">resources</a></li>
 <li class="toc-h2"><a href="#group_resourcesprepare">resources.prepare</a></li>
 <li class="toc-h2"><a href="#group_resourcesservices">resources.services</a></li>
@@ -178,7 +182,7 @@
 <li class="toc-h2"><a href="#group_runcpp">run.cpp</a></li>
 <li class="toc-h2"><a href="#group_rungo">run.go</a></li>
 <li class="toc-h2"><a href="#group_runjvm">run.jvm</a></li>
-<li class="toc-h2"><a href="#group_runnpm">run.npm</a></li>
+<li class="toc-h2"><a href="#group_runnode">run.node</a></li>
 <li class="toc-h2"><a href="#group_runpy">run.py</a></li>
 <li class="toc-h1"><a href="#run-dirty">run-dirty</a></li>
 <li class="toc-h2"><a href="#group_rundirtyjvmdirty">run-dirty.jvm-dirty</a></li>
@@ -195,10 +199,11 @@
 <li class="toc-h1"><a href="#test">test</a></li>
 <li class="toc-h2"><a href="#group_testgo">test.go</a></li>
 <li class="toc-h2"><a href="#group_testjunit">test.junit</a></li>
-<li class="toc-h2"><a href="#group_testnpm">test.npm</a></li>
+<li class="toc-h2"><a href="#group_testnode">test.node</a></li>
 <li class="toc-h2"><a href="#group_testpytest">test.pytest</a></li>
 <li class="toc-h2"><a href="#group_testrunprepcommand">test.run_prep_command</a></li>
 <li class="toc-h2"><a href="#group_test">test</a></li>
+<li class="toc-h2"><a href="#group_testtestjvmprepcommand">test.test-jvm-prep-command</a></li>
 <li class="toc-h1"><a href="#test-changed">test-changed</a></li>
 <li class="toc-h2"><a href="#group_testchanged">test-changed</a></li>
 <li class="toc-h1"><a href="#thrift-linter">thrift-linter</a></li>
@@ -321,6 +326,7 @@ Java code, and is installed in the <code>compile</code> goal.
 
   Ensures that no jvm targets depend on other targets which use a newer platform.
   
+  <li> <a href="#kill-pantsd">kill-pantsd</a> - Terminate the pants daemon.
   <li> <a href="#killserver">killserver</a> - Kill the reporting server.
   <li> <a href="#list">list</a> - Lists all targets matching the target specs.
 
@@ -360,7 +366,7 @@ Java code, and is installed in the <code>compile</code> goal.
   <li> <a href="#setup-py">setup-py</a> - Generate setup.py-based Python projects.
   <li> <a href="#sign">sign</a> - Sign Android packages with keystores using the jarsigner tool.
   <li> <a href="#sort">sort</a> - Topologically sort the targets.
-  <li> <a href="#targets">targets</a> - List symbols usable in BUILD files.
+  <li> <a href="#targets">targets</a> - List available target types.
   <li> <a href="#test">test</a> - Run tests.
   <li> <a href="#test-changed">test-changed</a> - Find and test changed targets.
   <li> <a href="#thrift-linter">thrift-linter</a> - Print linter warnings for thrift files.
@@ -368,7 +374,7 @@ Java code, and is installed in the <code>compile</code> goal.
 
   Adds an entry to SourceRoot for the contents.
   
-</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
 <style>
 div.oref_goal_section {
   margin-left: 2%;
@@ -420,7 +426,7 @@ div.oref_ogroup_section h3 {
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.android.tasks.aapt_builder.AaptBuilder</code>
+<p>Implemented by <code>pants.backend.android.tasks.aapt_builder.AaptBuilder_apk</code>
 <div>
 <p>Build an android bundle with compiled code and assets.</p>
 <p>This class gathers compiled classes (an Android dex archive) and packages it with the
@@ -487,7 +493,7 @@ target's resource files. The output is an unsigned .apk, an Android application 
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.core_tasks.bash_completion.BashCompletion</code>
+<p>Implemented by <code>pants.core_tasks.bash_completion.BashCompletion_bash_completion</code>
 <div>
 <p>Generate a Bash shell script that teaches Bash how to autocomplete pants command lines.</p>
 </div>
@@ -540,7 +546,7 @@ target's resource files. The output is an unsigned .apk, an Android application 
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.benchmark_run.BenchmarkRun</code>
+<p>Implemented by <code>pants.backend.jvm.tasks.benchmark_run.BenchmarkRun_bench</code>
 <ul>
 <li><code>--bench-confs=&lt;str&gt; (--bench-confs=&lt;str&gt;) ...</code>
 <code>str</code>
@@ -589,6 +595,30 @@ target's resource files. The output is an unsigned .apk, an Android application 
 
 
 <div class="oref_ogroup_section">
+<a id="oref_cli_binarybinaryjvmprepcommand" pantsmark="oref_cli_binarybinaryjvmprepcommand"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_binarybinaryjvmprepcommand">binary.binary-jvm-prep-command</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_binarybinaryjvmprepcommand">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.run_jvm_prep_command.RunBinaryJvmPrepCommand_binary_binary_jvm_prep_command</code>
+<div>
+<p>Run code from a JVM compiled language before other tasks in the binary goal.</p>
+<p>Register this tasks to run code at the beginning of the binary goal in register.py</p>
+<blockquote>
+task(name='binary-jvm-prep-command', action=RunBinaryJvmPrepCommand).install('binary', first=True)</blockquote>
+</div>
+<ul>
+</ul>
+</p></div>
+<div class="oref_ogroup_section">
 <a id="oref_cli_binarycpp" pantsmark="oref_cli_binarycpp"> </a>
 
 <table class="h-plus-pilcrow">
@@ -602,7 +632,7 @@ target's resource files. The output is an unsigned .apk, an Android application 
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.contrib.cpp.tasks.cpp_binary_create.CppBinaryCreate</code>
+<p>Implemented by <code>pants.contrib.cpp.tasks.cpp_binary_create.CppBinaryCreate_binary_cpp</code>
 <div>
 <p>Builds an executable file from C++ sources and libraries.</p>
 </div>
@@ -629,7 +659,7 @@ target's resource files. The output is an unsigned .apk, an Android application 
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.contrib.cpp.tasks.cpp_library_create.CppLibraryCreate</code>
+<p>Implemented by <code>pants.contrib.cpp.tasks.cpp_library_create.CppLibraryCreate_binary_cpplib</code>
 <div>
 <p>Builds a static library from C++ sources.</p>
 </div>
@@ -650,7 +680,7 @@ target's resource files. The output is an unsigned .apk, an Android application 
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.android.tasks.dx_compile.DxCompile</code>
+<p>Implemented by <code>pants.backend.android.tasks.dx_compile.DxCompile_binary_dex</code>
 <div>
 <p>Compile java classes into dex files, Dalvik executables, for AndroidBinary targets.</p>
 <p>Gather the class files of the AndroidBinary and all of its dependencies. This includes the
@@ -702,7 +732,7 @@ DuplicateClassFileException if it detects a version conflict in any AndroidLibra
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.detect_duplicates.DuplicateDetector</code>
+<p>Implemented by <code>pants.backend.jvm.tasks.detect_duplicates.DuplicateDetector_binary_dup</code>
 <div>
 <p>Detect JVM classes and resources with the same qualified name on the classpath.</p>
 </div>
@@ -765,7 +795,7 @@ DuplicateClassFileException if it detects a version conflict in any AndroidLibra
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.contrib.go.tasks.go_binary_create.GoBinaryCreate</code>
+<p>Implemented by <code>pants.contrib.go.tasks.go_binary_create.GoBinaryCreate_binary_go</code>
 <div>
 <p>Creates self contained go executables.</p>
 </div>
@@ -786,7 +816,7 @@ DuplicateClassFileException if it detects a version conflict in any AndroidLibra
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.binary_create.BinaryCreate</code>
+<p>Implemented by <code>pants.backend.jvm.tasks.binary_create.BinaryCreate_binary_jvm</code>
 <div>
 <p>Creates a runnable monolithic binary deploy jar.</p>
 </div>
@@ -813,7 +843,7 @@ DuplicateClassFileException if it detects a version conflict in any AndroidLibra
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.python.tasks.python_binary_create.PythonBinaryCreate</code>
+<p>Implemented by <code>pants.backend.python.tasks.python_binary_create.PythonBinaryCreate_binary_python_binary_create</code>
 <ul>
 </ul>
 </p></div>
@@ -851,7 +881,7 @@ DuplicateClassFileException if it detects a version conflict in any AndroidLibra
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.bootstrap_jvm_tools.BootstrapJvmTools</code>
+<p>Implemented by <code>pants.backend.jvm.tasks.bootstrap_jvm_tools.BootstrapJvmTools_bootstrap_bootstrap_jvm_tools</code>
 <ul>
 <li><code>--bootstrap-bootstrap-jvm-tools-jvm-options=&lt;option&gt;... (--bootstrap-bootstrap-jvm-tools-jvm-options=&lt;option&gt;...) ...</code>
 <code>str</code>
@@ -907,7 +937,7 @@ DuplicateClassFileException if it detects a version conflict in any AndroidLibra
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.core.tasks.builddictionary.BuildBuildDictionary</code>
+<p>Implemented by <code>pants.backend.core.tasks.builddictionary.BuildBuildDictionary_builddict</code>
 <div>
 <p>Generate documentation for the Sphinx site.</p>
 </div>
@@ -954,7 +984,7 @@ DuplicateClassFileException if it detects a version conflict in any AndroidLibra
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.contrib.go.tasks.go_buildgen.GoBuildgen</code>
+<p>Implemented by <code>pants.contrib.go.tasks.go_buildgen.GoBuildgen_buildgen_go</code>
 <div>
 <p>Automatically generates Go BUILD files.</p>
 </div>
@@ -995,7 +1025,7 @@ DuplicateClassFileException if it detects a version conflict in any AndroidLibra
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.detect_duplicates.DuplicateDetector</code>
+<p>Implemented by <code>pants.backend.jvm.tasks.detect_duplicates.DuplicateDetector_bundle_dup</code>
 <div>
 <p>Detect JVM classes and resources with the same qualified name on the classpath.</p>
 </div>
@@ -1058,10 +1088,11 @@ DuplicateClassFileException if it detects a version conflict in any AndroidLibra
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.bundle_create.BundleCreate</code>
+<p>Implemented by <code>pants.backend.jvm.tasks.bundle_create.BundleCreate_bundle_jvm</code>
 <ul>
 <li><code>--bundle-jvm-archive=&lt;str&gt;</code>
 <code>str</code>
+      One of: <pre style="display: inline">[tgz, zip, tbz2, tar]</pre>
       (Default: <pre style="display: inline">None</pre>)
 
       Create an archive of this type from the bundle.
@@ -1100,7 +1131,7 @@ DuplicateClassFileException if it detects a version conflict in any AndroidLibra
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.android.tasks.zipalign.Zipalign</code>
+<p>Implemented by <code>pants.backend.android.tasks.zipalign.Zipalign_bundle_zipalign</code>
 <div>
 <p>Task to run zipalign, an archive alignment tool.</p>
 </div>
@@ -1147,7 +1178,7 @@ DuplicateClassFileException if it detects a version conflict in any AndroidLibra
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.core_tasks.what_changed.WhatChanged</code>
+<p>Implemented by <code>pants.core_tasks.what_changed.WhatChanged_changed</code>
 <div>
 <p>Emits the targets that have been modified since a given commit.</p>
 </div>
@@ -1178,6 +1209,7 @@ DuplicateClassFileException if it detects a version conflict in any AndroidLibra
 
 <li><code>--changed-include-dependees=&lt;str&gt;</code>
 <code>str</code>
+      One of: <pre style="display: inline">[none, direct, transitive]</pre>
       (Default: <pre style="display: inline">none</pre>)
 
       Include direct or transitive dependees of changed targets.
@@ -1230,7 +1262,7 @@ DuplicateClassFileException if it detects a version conflict in any AndroidLibra
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.check_published_deps.CheckPublishedDeps</code>
+<p>Implemented by <code>pants.backend.jvm.tasks.check_published_deps.CheckPublishedDeps_check_published_deps</code>
 <div>
 <p>Find references to outdated JVM artifacts.</p>
 </div>
@@ -1289,9 +1321,30 @@ DuplicateClassFileException if it detects a version conflict in any AndroidLibra
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.core_tasks.clean.Clean</code>
+<p>Implemented by <code>pants.core_tasks.clean.Clean_clean_all</code>
 <div>
 <p>Delete all build products, creating a clean workspace.</p>
+</div>
+<ul>
+</ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_cleanallkillpantsd" pantsmark="oref_cli_cleanallkillpantsd"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_cleanallkillpantsd">clean-all.kill-pantsd</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_cleanallkillpantsd">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.core_tasks.pantsd_kill.PantsDaemonKill_clean_all_kill_pantsd</code>
+<div>
+<p>Terminate the pants daemon.</p>
 </div>
 <ul>
 </ul>
@@ -1310,7 +1363,7 @@ DuplicateClassFileException if it detects a version conflict in any AndroidLibra
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.nailgun_task.NailgunKillall</code>
+<p>Implemented by <code>pants.backend.jvm.tasks.nailgun_task.NailgunKillall_clean_all_ng_killall</code>
 <div>
 <p>Kill running nailgun servers.</p>
 </div>
@@ -1357,7 +1410,7 @@ DuplicateClassFileException if it detects a version conflict in any AndroidLibra
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.core.tasks.cloc.CountLinesOfCode</code>
+<p>Implemented by <code>pants.backend.core.tasks.cloc.CountLinesOfCode_cloc</code>
 <div>
 <p>Print counts of lines of code.</p>
 </div>
@@ -1422,7 +1475,7 @@ DuplicateClassFileException if it detects a version conflict in any AndroidLibra
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.checkstyle.Checkstyle</code>
+<p>Implemented by <code>pants.backend.jvm.tasks.checkstyle.Checkstyle_compile_checkstyle</code>
 <div>
 <p>Check Java code for style violations.</p>
 </div>
@@ -1455,9 +1508,33 @@ DuplicateClassFileException if it detects a version conflict in any AndroidLibra
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.core_tasks.noop.NoopCompile</code>
+<p>Implemented by <code>pants.core_tasks.noop.NoopCompile_compile</code>
 <div>
 <p>A no-op that provides a product type that can be used to force scheduling.</p>
+</div>
+<ul>
+</ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_compilecompilejvmprepcommand" pantsmark="oref_cli_compilecompilejvmprepcommand"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_compilecompilejvmprepcommand">compile.compile-jvm-prep-command</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_compilecompilejvmprepcommand">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.run_jvm_prep_command.RunCompileJvmPrepCommand_compile_compile_jvm_prep_command</code>
+<div>
+<p>Run code from a JVM compiled language before other tasks in the compile goal.</p>
+<p>Register this tasks to run code at the beginning of the compile goal in register.py</p>
+<blockquote>
+task(name='compile-jvm-prep-command', action=RunCompileJvmPrepCommand).install('compile', first=True)</blockquote>
 </div>
 <ul>
 </ul>
@@ -1476,7 +1553,7 @@ DuplicateClassFileException if it detects a version conflict in any AndroidLibra
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.contrib.cpp.tasks.cpp_compile.CppCompile</code>
+<p>Implemented by <code>pants.contrib.cpp.tasks.cpp_compile.CppCompile_compile_cpp</code>
 <div>
 <p>Compile C++ sources into object files.</p>
 </div>
@@ -1497,7 +1574,7 @@ DuplicateClassFileException if it detects a version conflict in any AndroidLibra
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.contrib.go.tasks.go_compile.GoCompile</code>
+<p>Implemented by <code>pants.contrib.go.tasks.go_compile.GoCompile_compile_go</code>
 <div>
 <p>Compiles a Go package into either a library binary or executable binary.</p>
 <p>GoCompile will populate the "bin/" and "pkg/" directories of each target's Go
@@ -1510,24 +1587,6 @@ workspace (see GoWorkspaceTask) with executables and library binaries respective
       Build flags to pass to Go compiler.
 
 </li></ul>
-</p></div>
-<div class="oref_ogroup_section">
-<a id="oref_cli_compilejvm" pantsmark="oref_cli_compilejvm"> </a>
-
-<table class="h-plus-pilcrow">
-<tbody>
-<tr>
-<td class="h-plus-pilcrow-holder"><h3 id="group_compilejvm">compile.jvm</h3></td>
-<td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#group_compilejvm">¶</a>
-</div></td>
-</tr>
-</tbody>
-</table>
-
-<p>Implemented by <code>pants.backend.core.tasks.group_task.SingletonGroupTask</code>
-<ul>
-</ul>
 </p></div>
 <div class="oref_ogroup_section">
 <a id="oref_cli_compilejvmdepcheck" pantsmark="oref_cli_compilejvmdepcheck"> </a>
@@ -1543,13 +1602,14 @@ workspace (see GoWorkspaceTask) with executables and library binaries respective
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.jvm_dependency_check.JvmDependencyCheck</code>
+<p>Implemented by <code>pants.backend.jvm.tasks.jvm_dependency_check.JvmDependencyCheck_compile_jvm_dep_check</code>
 <div>
 <p>Checks true dependencies of a JVM target and ensures that they are consistent with BUILD files.</p>
 </div>
 <ul>
 <li><code>--compile-jvm-dep-check-missing-deps=&lt;str&gt;</code>
 <code>str</code>
+      One of: <pre style="display: inline">[off, warn, fatal]</pre>
       (Default: <pre style="display: inline">off</pre>)
 
       Check for missing dependencies in compiled code. Reports actual dependencies A -&gt; B where there is no transitive BUILD file dependency path from A to B. If fatal, missing deps are treated as a build error.
@@ -1562,12 +1622,14 @@ workspace (see GoWorkspaceTask) with executables and library binaries respective
 
 <li><code>--compile-jvm-dep-check-missing-direct-deps=&lt;str&gt;</code>
 <code>str</code>
+      One of: <pre style="display: inline">[off, warn, fatal]</pre>
       (Default: <pre style="display: inline">off</pre>)
 
       Check for missing direct dependencies in compiled code. Reports actual dependencies A -&gt; B where there is no direct BUILD file dependency path from A to B. This is a very strict check; In practice it is common to rely on transitive, indirect dependencies, e.g., due to type inference or when the main target in a BUILD file is modified to depend on other targets in the same BUILD file, as an implementation detail. However it may still be useful to use this on occasion.
 
 <li><code>--compile-jvm-dep-check-unnecessary-deps=&lt;str&gt;</code>
 <code>str</code>
+      One of: <pre style="display: inline">[off, warn, fatal]</pre>
       (Default: <pre style="display: inline">off</pre>)
 
       Check for declared dependencies in compiled code that are not needed. This is a very strict check. For example, generated code will often legitimately have BUILD dependencies that are unused in practice.
@@ -1588,7 +1650,7 @@ workspace (see GoWorkspaceTask) with executables and library binaries respective
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.contrib.python.checks.tasks.python_eval.PythonEval</code>
+<p>Implemented by <code>pants.contrib.python.checks.tasks.python_eval.PythonEval_compile_python_eval</code>
 <ul>
 <li><code>--[no-]compile-python-eval-closure</code>
 <code>bool</code>
@@ -1624,7 +1686,7 @@ workspace (see GoWorkspaceTask) with executables and library binaries respective
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.contrib.python.checks.tasks.checkstyle.checker.PythonCheckStyleTask</code>
+<p>Implemented by <code>pants.contrib.python.checks.tasks.checkstyle.checker.PythonCheckStyleTask_compile_pythonstyle</code>
 <ul>
 <li><code>--[no-]compile-pythonstyle-fail</code>
 <code>bool</code>
@@ -1672,7 +1734,7 @@ workspace (see GoWorkspaceTask) with executables and library binaries respective
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.scalastyle.Scalastyle</code>
+<p>Implemented by <code>pants.backend.jvm.tasks.scalastyle.Scalastyle_compile_scalastyle</code>
 <div>
 <p>Checks scala source files to ensure they're stylish.</p>
 <p>Scalastyle only checks scala sources in non-synthetic targets.</p>
@@ -1712,7 +1774,7 @@ workspace (see GoWorkspaceTask) with executables and library binaries respective
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.contrib.haskell.tasks.stack_build.StackBuild</code>
+<p>Implemented by <code>pants.contrib.haskell.tasks.stack_build.StackBuild_compile_stack_build</code>
 <div>
 <p>Build the given Haskell targets.</p>
 </div>
@@ -1739,7 +1801,7 @@ workspace (see GoWorkspaceTask) with executables and library binaries respective
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.jvm_compile.zinc.zinc_compile.ZincCompile</code>
+<p>Implemented by <code>pants.backend.jvm.tasks.jvm_compile.zinc.zinc_compile.ZincCompile_compile_zinc</code>
 <div>
 <p>Compile Scala and Java code using Zinc.</p>
 </div>
@@ -1798,7 +1860,7 @@ workspace (see GoWorkspaceTask) with executables and library binaries respective
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.core_tasks.changed_target_tasks.CompileChanged</code>
+<p>Implemented by <code>pants.core_tasks.changed_target_tasks.CompileChanged_compile_changed</code>
 <div>
 <p>Find and compile changed targets.</p>
 </div>
@@ -1823,6 +1885,7 @@ workspace (see GoWorkspaceTask) with executables and library binaries respective
 
 <li><code>--compile-changed-include-dependees=&lt;str&gt;</code>
 <code>str</code>
+      One of: <pre style="display: inline">[none, direct, transitive]</pre>
       (Default: <pre style="display: inline">none</pre>)
 
       Include direct or transitive dependees of changed targets.
@@ -1867,7 +1930,7 @@ workspace (see GoWorkspaceTask) with executables and library binaries respective
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.core_tasks.deferred_sources_mapper.DeferredSourcesMapper</code>
+<p>Implemented by <code>pants.core_tasks.deferred_sources_mapper.DeferredSourcesMapper_deferred_sources</code>
 <div>
 <p>Map DeferredSourcesFields to files that produce the product 'unpacked_archives'.</p>
 <p>If you want a task to be able to map sources like this, make it require the 'deferred_sources'
@@ -1910,7 +1973,7 @@ product.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.jvm_dependency_usage.JvmDependencyUsage</code>
+<p>Implemented by <code>pants.backend.jvm.tasks.jvm_dependency_usage.JvmDependencyUsage_dep_usage_jvm</code>
 <div>
 <p>Determines the dependency usage ratios of targets.</p>
 <p>Analyzes the relationship between the products a target T produces vs. the products
@@ -1940,6 +2003,7 @@ aggregation and analysis on a larger scale.</p>
 
 <li><code>--dep-usage-jvm-size-estimator=&lt;str&gt;</code>
 <code>str</code>
+      One of: <pre style="display: inline">[linecount, nosize, filesize, filecount]</pre>
       (Default: <pre style="display: inline">filesize</pre>)
 
       The method of target size estimation.
@@ -1992,7 +2056,7 @@ aggregation and analysis on a larger scale.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.core.tasks.dependees.ReverseDepmap</code>
+<p>Implemented by <code>pants.backend.core.tasks.dependees.ReverseDepmap_dependees</code>
 <div>
 <p>List all targets that depend on any of the input targets.</p>
 </div>
@@ -2057,7 +2121,7 @@ aggregation and analysis on a larger scale.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.project_info.tasks.dependencies.Dependencies</code>
+<p>Implemented by <code>pants.backend.project_info.tasks.dependencies.Dependencies_dependencies</code>
 <div>
 <p>Print the target's dependencies.</p>
 </div>
@@ -2132,7 +2196,7 @@ aggregation and analysis on a larger scale.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.project_info.tasks.depmap.Depmap</code>
+<p>Implemented by <code>pants.backend.project_info.tasks.depmap.Depmap_depmap</code>
 <div>
 <p>Depict the target's dependencies.</p>
 <p>Generates either a textual dependency tree or a graphviz digraph dot file for the dependency
@@ -2229,7 +2293,7 @@ set of a target.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.detect_duplicates.DuplicateDetector</code>
+<p>Implemented by <code>pants.backend.jvm.tasks.detect_duplicates.DuplicateDetector_detect_duplicates</code>
 <div>
 <p>Detect JVM classes and resources with the same qualified name on the classpath.</p>
 </div>
@@ -2312,7 +2376,7 @@ set of a target.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.javadoc_gen.JavadocGen</code>
+<p>Implemented by <code>pants.backend.jvm.tasks.javadoc_gen.JavadocGen_doc_javadoc</code>
 <div>
 <p>Generate javadoc html for Java source targets.</p>
 </div>
@@ -2375,7 +2439,7 @@ set of a target.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.scaladoc_gen.ScaladocGen</code>
+<p>Implemented by <code>pants.backend.jvm.tasks.scaladoc_gen.ScaladocGen_doc_scaladoc</code>
 <div>
 <p>Generate scaladoc html for Scala source targets.</p>
 </div>
@@ -2458,7 +2522,7 @@ set of a target.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.project_info.tasks.eclipse_gen.EclipseGen</code>
+<p>Implemented by <code>pants.backend.project_info.tasks.eclipse_gen.EclipseGen_eclipse</code>
 <div>
 <p>Create an Eclipse project from the given targets.</p>
 </div>
@@ -2555,6 +2619,7 @@ set of a target.</p>
 
 <li><code>--eclipse-version=&lt;str&gt;</code>
 <code>str</code>
+      One of: <pre style="display: inline">[3.5, 3.6, 3.7]</pre>
       (Default: <pre style="display: inline">3.6</pre>)
 
       The Eclipse version the project configuration should be generated for.
@@ -2595,7 +2660,7 @@ set of a target.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.project_info.tasks.ensime_gen.EnsimeGen</code>
+<p>Implemented by <code>pants.backend.project_info.tasks.ensime_gen.EnsimeGen_ensime</code>
 <div>
 <p>Create an Ensime project from the given targets.</p>
 </div>
@@ -2674,6 +2739,7 @@ set of a target.</p>
 
 <li><code>--ensime-scala-language-level=&lt;str&gt;</code>
 <code>str</code>
+      One of: <pre style="display: inline">[2.10-virt, 2.9, 2.8, 2.10]</pre>
       (Default: <pre style="display: inline">2.10</pre>)
 
       Set the scala language level used for Ensime linting.
@@ -2735,7 +2801,7 @@ set of a target.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.project_info.tasks.export.Export</code>
+<p>Implemented by <code>pants.backend.project_info.tasks.export.Export_export</code>
 <div>
 <p>Export project information in JSON format.</p>
 <p>Intended for exporting project information for IDE, such as the IntelliJ Pants plugin.</p>
@@ -2825,7 +2891,7 @@ set of a target.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.jvm_compile.jvm_classpath_publisher.RuntimeClasspathPublisher</code>
+<p>Implemented by <code>pants.backend.jvm.tasks.jvm_compile.jvm_classpath_publisher.RuntimeClasspathPublisher_export_classpath</code>
 <div>
 <p>Create stable symlinks for runtime classpath entries for JVM targets.</p>
 </div>
@@ -2870,7 +2936,7 @@ set of a target.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.project_info.tasks.filedeps.FileDeps</code>
+<p>Implemented by <code>pants.backend.project_info.tasks.filedeps.FileDeps_filedeps</code>
 <div>
 <p>List all source and BUILD files a target transitively depends on.</p>
 <p>Files are listed with absolute paths and any BUILD files implied in the transitive closure of
@@ -2931,7 +2997,7 @@ targets are also included.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.core.tasks.filemap.Filemap</code>
+<p>Implemented by <code>pants.backend.core.tasks.filemap.Filemap_filemap</code>
 <div>
 <p>Print a mapping from source file to the target that owns the source file.</p>
 </div>
@@ -2993,7 +3059,7 @@ targets are also included.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.core.tasks.filter.Filter</code>
+<p>Implemented by <code>pants.backend.core.tasks.filter.Filter_filter</code>
 <div>
 <p>Filter the input targets based on various criteria.</p>
 <p>Each of the filtering options below is a comma-separated list of filtering criteria, with an
@@ -3082,7 +3148,7 @@ between them.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.android.tasks.aapt_gen.AaptGen</code>
+<p>Implemented by <code>pants.backend.android.tasks.aapt_gen.AaptGen_gen_aapt</code>
 <div>
 <p>Handle the processing of resources for Android targets with the Android Asset Packaging Tool
 (aapt). The aapt tool supports 6 major commands: [dump, list, add, remove, crunch, package]
@@ -3139,7 +3205,7 @@ and AndroidLibrary targets.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.codegen.tasks.antlr_gen.AntlrGen</code>
+<p>Implemented by <code>pants.backend.codegen.tasks.antlr_gen.AntlrGen_gen_antlr</code>
 <ul>
 <li><code>--[no-]gen-antlr-use-nailgun</code>
 <code>bool</code>
@@ -3163,7 +3229,7 @@ and AndroidLibrary targets.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.codegen.tasks.jaxb_gen.JaxbGen</code>
+<p>Implemented by <code>pants.backend.codegen.tasks.jaxb_gen.JaxbGen_gen_jaxb</code>
 <div>
 <p>Generates java source files from jaxb schema (.xsd).</p>
 </div>
@@ -3190,7 +3256,7 @@ and AndroidLibrary targets.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.codegen.tasks.protobuf_gen.ProtobufGen</code>
+<p>Implemented by <code>pants.backend.codegen.tasks.protobuf_gen.ProtobufGen_gen_protoc</code>
 <ul>
 </ul>
 </p></div>
@@ -3208,7 +3274,7 @@ and AndroidLibrary targets.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.codegen.tasks.ragel_gen.RagelGen</code>
+<p>Implemented by <code>pants.backend.codegen.tasks.ragel_gen.RagelGen_gen_ragel</code>
 <ul>
 </ul>
 </p></div>
@@ -3226,7 +3292,7 @@ and AndroidLibrary targets.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.contrib.scrooge.tasks.scrooge_gen.ScroogeGen</code>
+<p>Implemented by <code>pants.contrib.scrooge.tasks.scrooge_gen.ScroogeGen_gen_scrooge</code>
 <ul>
 <li><code>--[no-]gen-scrooge-strict</code>
 <code>bool</code>
@@ -3262,7 +3328,7 @@ and AndroidLibrary targets.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.contrib.spindle.tasks.spindle_gen.SpindleGen</code>
+<p>Implemented by <code>pants.contrib.spindle.tasks.spindle_gen.SpindleGen_gen_spindle</code>
 <ul>
 <li><code>--[no-]gen-spindle-use-nailgun</code>
 <code>bool</code>
@@ -3286,7 +3352,7 @@ and AndroidLibrary targets.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.codegen.tasks.apache_thrift_gen.ApacheThriftGen</code>
+<p>Implemented by <code>pants.backend.codegen.tasks.apache_thrift_gen.ApacheThriftGen_gen_thrift</code>
 <ul>
 <li><code>--[no-]gen-thrift-strict</code>
 <code>bool</code>
@@ -3310,7 +3376,7 @@ and AndroidLibrary targets.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.codegen.tasks.wire_gen.WireGen</code>
+<p>Implemented by <code>pants.backend.codegen.tasks.wire_gen.WireGen_gen_wire</code>
 <ul>
 </ul>
 </p></div>
@@ -3348,7 +3414,7 @@ and AndroidLibrary targets.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.contrib.go.tasks.go_go.GoGo</code>
+<p>Implemented by <code>pants.contrib.go.tasks.go_go.GoGo_go</code>
 <div>
 <p>Runs an arbitrary go command against zero or more go targets.</p>
 </div>
@@ -3389,7 +3455,7 @@ and AndroidLibrary targets.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.contrib.go.tasks.go_go.GoEnv</code>
+<p>Implemented by <code>pants.contrib.go.tasks.go_go.GoEnv_go_env</code>
 <div>
 <p>Runs an arbitrary command in a go workspace defined by zero or more go targets.</p>
 </div>
@@ -3430,7 +3496,7 @@ and AndroidLibrary targets.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.core_tasks.list_goals.ListGoals</code>
+<p>Implemented by <code>pants.core_tasks.list_goals.ListGoals_goals</code>
 <div>
 <p>List available goals.</p>
 </div>
@@ -3495,7 +3561,7 @@ and AndroidLibrary targets.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.project_info.tasks.idea_gen.IdeaGen</code>
+<p>Implemented by <code>pants.backend.project_info.tasks.idea_gen.IdeaGen_idea</code>
 <div>
 <p>Create an IntelliJ IDEA project from the given targets.</p>
 </div>
@@ -3508,7 +3574,7 @@ and AndroidLibrary targets.</p>
 
 <li><code>--[no-]idea-bash</code>
 <code>bool</code>
-      (Default: <pre style="display: inline">False</pre>)
+      (Default: <pre style="display: inline">True</pre>)
 
       Adds a bash facet to the generated project configuration.
 
@@ -3562,7 +3628,7 @@ and AndroidLibrary targets.</p>
 
 <li><code>--idea-java-language-level=&lt;int&gt;</code>
 <code>int</code>
-      (Default: <pre style="display: inline">7</pre>)
+      (Default: <pre style="display: inline">6</pre>)
 
       Sets the java language and jdk used to compile the project's java sources.
 
@@ -3598,13 +3664,13 @@ and AndroidLibrary targets.</p>
 
 <li><code>--idea-project-cwd=&lt;str&gt;</code>
 <code>str</code>
-      (Default: <pre style="display: inline">None</pre>)
+      (Default: <pre style="display: inline">&lt;buildroot&gt;</pre>)
 
       Specifies the directory the generated project should use as the cwd for processes it launches.  Note that specifying this trumps --idea-project-dir and not all project related files will be stored there.
 
 <li><code>--idea-project-dir=&lt;str&gt;</code>
 <code>str</code>
-      (Default: <pre style="display: inline">None</pre>)
+      (Default: <pre style="display: inline">&lt;buildroot&gt;/sandbox/users/jsirois/ide-projects/idea</pre>)
 
       Specifies the directory to output the generated project files to.
 
@@ -3616,7 +3682,7 @@ and AndroidLibrary targets.</p>
 
 <li><code>--[no-]idea-python</code>
 <code>bool</code>
-      (Default: <pre style="display: inline">False</pre>)
+      (Default: <pre style="display: inline">True</pre>)
 
       Adds python support to the generated project configuration.
 
@@ -3628,7 +3694,8 @@ and AndroidLibrary targets.</p>
 
 <li><code>--idea-scala-language-level=&lt;str&gt;</code>
 <code>str</code>
-      (Default: <pre style="display: inline">2.9</pre>)
+      One of: <pre style="display: inline">[2.10-virt, 2.9, 2.8, 2.10]</pre>
+      (Default: <pre style="display: inline">2.10</pre>)
 
       Set the scala language level used for IDEA linting.
 
@@ -3658,6 +3725,7 @@ and AndroidLibrary targets.</p>
 
 <li><code>--idea-version=&lt;str&gt;</code>
 <code>str</code>
+      One of: <pre style="display: inline">[10, 11, 12, 9]</pre>
       (Default: <pre style="display: inline">11</pre>)
 
       The IntelliJ IDEA version the project config should be generated for.
@@ -3698,7 +3766,7 @@ and AndroidLibrary targets.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.ivy_imports.IvyImports</code>
+<p>Implemented by <code>pants.backend.jvm.tasks.ivy_imports.IvyImports_imports_ivy_imports</code>
 <div>
 <p>Resolves all jar files for the import_jar_libraries property on all <cite>ImportJarsMixin</cite> targets.</p>
 <p>One use case is for JavaProtobufLibrary, which includes imports for jars containing .proto files.</p>
@@ -3752,7 +3820,7 @@ and AndroidLibrary targets.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.core_tasks.invalidate.Invalidate</code>
+<p>Implemented by <code>pants.core_tasks.invalidate.Invalidate_invalidate</code>
 <div>
 <p>Invalidate the entire build.</p>
 </div>
@@ -3773,7 +3841,7 @@ and AndroidLibrary targets.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.nailgun_task.NailgunKillall</code>
+<p>Implemented by <code>pants.backend.jvm.tasks.nailgun_task.NailgunKillall_invalidate_ng_killall</code>
 <div>
 <p>Kill running nailgun servers.</p>
 </div>
@@ -3820,7 +3888,7 @@ and AndroidLibrary targets.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.jar_create.JarCreate</code>
+<p>Implemented by <code>pants.backend.jvm.tasks.jar_create.JarCreate_jar_create</code>
 <div>
 <p>Jars jvm libraries and optionally their sources and their docs.</p>
 </div>
@@ -3890,7 +3958,7 @@ and AndroidLibrary targets.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.jvm_platform_analysis.JvmPlatformExplain</code>
+<p>Implemented by <code>pants.backend.jvm.tasks.jvm_platform_analysis.JvmPlatformExplain_jvm_platform_explain</code>
 <div>
 <p>Console task which provides helpful analysis about jvm platform dependencies.</p>
 <p>This can be very useful when debugging inter-dependencies in large sets of targets with a variety
@@ -4000,7 +4068,7 @@ downgraded to a different version.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.jvm_platform_analysis.JvmPlatformValidate</code>
+<p>Implemented by <code>pants.backend.jvm.tasks.jvm_platform_analysis.JvmPlatformValidate_jvm_platform_validate</code>
 <div>
 <p>Validation step that runs well in advance of jvm compile.</p>
 <p>Ensures that no jvm targets depend on other targets which use a newer platform.</p>
@@ -4008,6 +4076,7 @@ downgraded to a different version.</p>
 <ul>
 <li><code>--jvm-platform-validate-check=&lt;str&gt;</code>
 <code>str</code>
+      One of: <pre style="display: inline">[off, warn, fatal]</pre>
       (Default: <pre style="display: inline">fatal</pre>)
 
       Check to make sure no jvm targets target an earlier jdk than their dependencies
@@ -4019,6 +4088,47 @@ downgraded to a different version.</p>
       Organize output in the form target -&gt; dependencies, rather than target -&gt; dependees.
 
 </li></li></ul>
+</p></div>
+<p><b>Other command-line options:</b><br>
+<a href="#Common">Common</a>
+</br></p></p></div>
+<div class="oref_goal_section">
+<a id="oref_goal_kill-pantsd" pantsmark="oref_goal_kill-pantsd"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="kill-pantsd">kill-pantsd</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#kill-pantsd">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Terminate the pants daemon.
+
+
+<div class="oref_ogroup_section">
+<a id="oref_cli_killpantsd" pantsmark="oref_cli_killpantsd"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_killpantsd">kill-pantsd</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_killpantsd">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.core_tasks.pantsd_kill.PantsDaemonKill_kill_pantsd</code>
+<div>
+<p>Terminate the pants daemon.</p>
+</div>
+<ul>
+</ul>
 </p></div>
 <p><b>Other command-line options:</b><br>
 <a href="#Common">Common</a>
@@ -4054,7 +4164,7 @@ downgraded to a different version.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.core_tasks.reporting_server_kill.ReportingServerKill</code>
+<p>Implemented by <code>pants.core_tasks.reporting_server_kill.ReportingServerKill_killserver</code>
 <div>
 <p>Kill the reporting server.</p>
 </div>
@@ -4098,7 +4208,7 @@ downgraded to a different version.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.core.tasks.listtargets.ListTargets</code>
+<p>Implemented by <code>pants.backend.core.tasks.listtargets.ListTargets_list</code>
 <div>
 <p>Lists all targets matching the target specs.</p>
 <p>If no targets are specified, lists all targets in the workspace.</p>
@@ -4175,7 +4285,7 @@ downgraded to a different version.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.core.tasks.list_owners.ListOwners</code>
+<p>Implemented by <code>pants.backend.core.tasks.list_owners.ListOwners_list_owners</code>
 <div>
 <p>Print targets that own a source file.</p>
 <p>$ pants targets -- path/to/my/source.java
@@ -4231,13 +4341,14 @@ another/path:target2</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.core.tasks.markdown_to_html.MarkdownToHtml</code>
+<p>Implemented by <code>pants.backend.docgen.tasks.markdown_to_html.MarkdownToHtml_markdown</code>
 <div>
 <p>Generate HTML from Markdown docs.</p>
 </div>
 <ul>
 <li><code>--markdown-code-style=&lt;str&gt;</code>
 <code>str</code>
+      One of: <pre style="display: inline">[monokai, manni, perldoc, borland, colorful, default, murphy, vs, trac, tango, fruity, autumn, bw, emacs, vim, pastie, friendly, native]</pre>
       (Default: <pre style="display: inline">friendly</pre>)
 
       Use this stylesheet for code highlights.
@@ -4300,7 +4411,7 @@ another/path:target2</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.core.tasks.minimal_cover.MinimalCover</code>
+<p>Implemented by <code>pants.backend.core.tasks.minimal_cover.MinimalCover_minimize</code>
 <div>
 <p>Print a minimal covering set of targets.</p>
 <p>For a given set of input targets, the output targets transitive dependency set will include all
@@ -4355,7 +4466,7 @@ the input targets without gaps.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.nailgun_task.NailgunKillall</code>
+<p>Implemented by <code>pants.backend.jvm.tasks.nailgun_task.NailgunKillall_ng_killall</code>
 <div>
 <p>Kill running nailgun servers.</p>
 </div>
@@ -4407,7 +4518,7 @@ the input targets without gaps.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.core_tasks.explain_options_task.ExplainOptionsTask</code>
+<p>Implemented by <code>pants.core_tasks.explain_options_task.ExplainOptionsTask_options</code>
 <div>
 <p>Display meta-information about options.</p>
 <p>This "meta-information" includes what values options have, and what values they <em>used</em> to have
@@ -4435,6 +4546,7 @@ value and then a cli FLAG value).</p>
 
 <li><code>--options-rank=&lt;str&gt;</code>
 <code>str</code>
+      One of: <pre style="display: inline">[NONE, HARDCODED, CONFIG, ENVIRONMENT, FLAG]</pre>
       (Default: <pre style="display: inline">None</pre>)
 
       Only show options with at least this importance.
@@ -4493,7 +4605,7 @@ value and then a cli FLAG value).</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.core.tasks.paths.Path</code>
+<p>Implemented by <code>pants.backend.core.tasks.paths.Path_path</code>
 <div>
 <p>Find a dependency path from one target to another.</p>
 </div>
@@ -4546,7 +4658,7 @@ value and then a cli FLAG value).</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.core.tasks.pathdeps.PathDeps</code>
+<p>Implemented by <code>pants.backend.core.tasks.pathdeps.PathDeps_pathdeps</code>
 <div>
 <p>List all paths containing BUILD files the target depends on.</p>
 </div>
@@ -4599,7 +4711,7 @@ value and then a cli FLAG value).</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.core.tasks.paths.Paths</code>
+<p>Implemented by <code>pants.backend.core.tasks.paths.Paths_paths</code>
 <div>
 <p>List all dependency paths from one target to another.</p>
 </div>
@@ -4652,7 +4764,7 @@ value and then a cli FLAG value).</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.jar_publish.JarPublish</code>
+<p>Implemented by <code>pants.backend.jvm.tasks.jar_publish.JarPublish_publish_jar</code>
 <div>
 <p>Publish jars to a maven repository.</p>
 <p>At a high-level, pants uses <a class="reference external" href="http://ant.apache.org/ivy/">Apache Ivy</a> to
@@ -4811,7 +4923,7 @@ repos = {
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.contrib.node.tasks.node_repl.NodeRepl</code>
+<p>Implemented by <code>pants.contrib.node.tasks.node_repl.NodeRepl_repl_node</code>
 <div>
 <p>Launches a Node.js REPL session.</p>
 </div>
@@ -4832,7 +4944,7 @@ repos = {
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.python.tasks.python_repl.PythonRepl</code>
+<p>Implemented by <code>pants.backend.python.tasks.python_repl.PythonRepl_repl_py</code>
 <ul>
 <li><code>--[no-]repl-py-ipython</code>
 <code>bool</code>
@@ -4856,7 +4968,7 @@ repos = {
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.scala_repl.ScalaRepl</code>
+<p>Implemented by <code>pants.backend.jvm.tasks.scala_repl.ScalaRepl_repl_scala</code>
 <ul>
 <li><code>--repl-scala-confs=&lt;str&gt; (--repl-scala-confs=&lt;str&gt;) ...</code>
 <code>str</code>
@@ -4906,7 +5018,7 @@ repos = {
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.scala_repl.ScalaRepl</code>
+<p>Implemented by <code>pants.backend.jvm.tasks.scala_repl.ScalaRepl_repl_dirty_scala_dirty</code>
 <ul>
 <li><code>--repl-dirty-scala-dirty-confs=&lt;str&gt; (--repl-dirty-scala-dirty-confs=&lt;str&gt;) ...</code>
 <code>str</code>
@@ -4956,7 +5068,7 @@ repos = {
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.contrib.go.tasks.go_fetch.GoFetch</code>
+<p>Implemented by <code>pants.contrib.go.tasks.go_fetch.GoFetch_resolve_go</code>
 <div>
 <p>Fetches third-party Go libraries.</p>
 </div>
@@ -4977,7 +5089,7 @@ repos = {
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.ivy_resolve.IvyResolve</code>
+<p>Implemented by <code>pants.backend.jvm.tasks.ivy_resolve.IvyResolve_resolve_ivy</code>
 <ul>
 <li><code>--resolve-ivy-args=&lt;str&gt; (--resolve-ivy-args=&lt;str&gt;) ...</code>
 <code>str</code>
@@ -5036,23 +5148,22 @@ repos = {
 </li></li></li></li></li></li></li></li></li></ul>
 </p></div>
 <div class="oref_ogroup_section">
-<a id="oref_cli_resolvenpm" pantsmark="oref_cli_resolvenpm"> </a>
+<a id="oref_cli_resolvenode" pantsmark="oref_cli_resolvenode"> </a>
 
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h3 id="group_resolvenpm">resolve.npm</h3></td>
+<td class="h-plus-pilcrow-holder"><h3 id="group_resolvenode">resolve.node</h3></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#group_resolvenpm">¶</a>
+<a class="pilcrow-link" href="#group_resolvenode">¶</a>
 </div></td>
 </tr>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.contrib.node.tasks.npm_resolve.NpmResolve</code>
+<p>Implemented by <code>pants.contrib.node.tasks.node_resolve.NodeResolve_resolve_node</code>
 <div>
-<p>Resolves node modules to isolated chroots.</p>
-<p>See: see <a class="reference external" href="https://docs.npmjs.com/cli/install">npm install</a></p>
+<p>Resolves node_package targets to isolated chroots using different registered resolvers.</p>
 </div>
 <ul>
 </ul>
@@ -5091,7 +5202,7 @@ repos = {
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.prepare_resources.PrepareResources</code>
+<p>Implemented by <code>pants.backend.jvm.tasks.prepare_resources.PrepareResources_resources_prepare</code>
 <div>
 <p>Prepares loose resource files associated with a target.</p>
 <p>Currently this task does no form of resource filtering, it just copies resource files to
@@ -5114,7 +5225,7 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.prepare_services.PrepareServices</code>
+<p>Implemented by <code>pants.backend.jvm.tasks.prepare_services.PrepareServices_resources_services</code>
 <div>
 <p>Generates service provider configuration for targets that host service implementations.</p>
 <p>This automates maintenance of jvm service provider configuration files as described here:
@@ -5157,7 +5268,7 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.core_tasks.roots.ListRoots</code>
+<p>Implemented by <code>pants.core_tasks.roots.ListRoots_roots</code>
 <div>
 <p>List the repo's registered source roots.</p>
 </div>
@@ -5210,7 +5321,7 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.contrib.cpp.tasks.cpp_run.CppRun</code>
+<p>Implemented by <code>pants.contrib.cpp.tasks.cpp_run.CppRun_run_cpp</code>
 <div>
 <p>Runs a cpp binary</p>
 </div>
@@ -5237,7 +5348,7 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.contrib.go.tasks.go_run.GoRun</code>
+<p>Implemented by <code>pants.contrib.go.tasks.go_run.GoRun_run_go</code>
 <div>
 <p>Runs an executable Go binary.</p>
 </div>
@@ -5258,7 +5369,7 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.jvm_run.JvmRun</code>
+<p>Implemented by <code>pants.backend.jvm.tasks.jvm_run.JvmRun_run_jvm</code>
 <ul>
 <li><code>--run-jvm-confs=&lt;str&gt; (--run-jvm-confs=&lt;str&gt;) ...</code>
 <code>str</code>
@@ -5287,25 +5398,25 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 </li></li></li></li></ul>
 </p></div>
 <div class="oref_ogroup_section">
-<a id="oref_cli_runnpm" pantsmark="oref_cli_runnpm"> </a>
+<a id="oref_cli_runnode" pantsmark="oref_cli_runnode"> </a>
 
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h3 id="group_runnpm">run.npm</h3></td>
+<td class="h-plus-pilcrow-holder"><h3 id="group_runnode">run.node</h3></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#group_runnpm">¶</a>
+<a class="pilcrow-link" href="#group_runnode">¶</a>
 </div></td>
 </tr>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.contrib.node.tasks.npm_run.NpmRun</code>
+<p>Implemented by <code>pants.contrib.node.tasks.node_run.NodeRun_run_node</code>
 <div>
-<p>Runs a script from package.json like "npm run [script name]".</p>
+<p>Runs a script specified in a package.json file, currently through "npm run [script name]".</p>
 </div>
 <ul>
-<li><code>--run-npm-script-name=&lt;str&gt;</code>
+<li><code>--run-node-script-name=&lt;str&gt;</code>
 <code>str</code>
       (Default: <pre style="display: inline">start</pre>)
 
@@ -5327,7 +5438,7 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.python.tasks.python_run.PythonRun</code>
+<p>Implemented by <code>pants.backend.python.tasks.python_run.PythonRun_run_py</code>
 <ul>
 <li><code>--run-py-args=&lt;str&gt; (--run-py-args=&lt;str&gt;) ...</code>
 <code>str</code>
@@ -5371,7 +5482,7 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.jvm_run.JvmRun</code>
+<p>Implemented by <code>pants.backend.jvm.tasks.jvm_run.JvmRun_run_dirty_jvm_dirty</code>
 <ul>
 <li><code>--run-dirty-jvm-dirty-confs=&lt;str&gt; (--run-dirty-jvm-dirty-confs=&lt;str&gt;) ...</code>
 <code>str</code>
@@ -5433,7 +5544,7 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.core_tasks.reporting_server_run.ReportingServerRun</code>
+<p>Implemented by <code>pants.core_tasks.reporting_server_run.ReportingServerRun_server</code>
 <div>
 <p>Run the reporting server.</p>
 </div>
@@ -5446,7 +5557,7 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 
 <li><code>--[no-]server-open</code>
 <code>bool</code>
-      (Default: <pre style="display: inline">False</pre>)
+      (Default: <pre style="display: inline">True</pre>)
 
       Attempt to open the server web ui in a browser.
 
@@ -5492,7 +5603,7 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.python.tasks.setup_py.SetupPy</code>
+<p>Implemented by <code>pants.backend.python.tasks.setup_py.SetupPy_setup_py</code>
 <div>
 <p>Generate setup.py-based Python projects.</p>
 </div>
@@ -5545,14 +5656,14 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.android.tasks.sign_apk.SignApkTask</code>
+<p>Implemented by <code>pants.backend.android.tasks.sign_apk.SignApkTask_sign</code>
 <div>
 <p>Sign Android packages with keystores using the jarsigner tool.</p>
 </div>
 <ul>
 <li><code>--sign-keystore-config-location=&lt;str&gt;</code>
 <code>str</code>
-      (Default: <pre style="display: inline">/Users/stuhood/.config/pants/android/keystore/default_config.ini</pre>)
+      (Default: <pre style="display: inline">/home/jsirois/.config/pants/android/keystore/default_config.ini</pre>)
 
       Location of the .ini file containing keystore definitions.
 
@@ -5592,7 +5703,7 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.core.tasks.sorttargets.SortTargets</code>
+<p>Implemented by <code>pants.backend.core.tasks.sorttargets.SortTargets_sort</code>
 <div>
 <p>Topologically sort the targets.</p>
 </div>
@@ -5634,7 +5745,7 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 </tbody>
 </table>
 
-<p>List symbols usable in BUILD files.
+<p>List available target types.
 
 
 <div class="oref_ogroup_section">
@@ -5651,16 +5762,16 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.core.tasks.targets_help.TargetsHelp</code>
+<p>Implemented by <code>pants.core_tasks.targets_help.TargetsHelp_targets</code>
 <div>
-<p>List symbols usable in BUILD files.</p>
+<p>List available target types.</p>
 </div>
 <ul>
 <li><code>--targets-details=&lt;str&gt;</code>
 <code>str</code>
       (Default: <pre style="display: inline">None</pre>)
 
-      Display details about the specific target type or BUILD symbol.
+      Show details about this target type.
 
 <li><code>--targets-output-file=&lt;path&gt;</code>
 <code>str</code>
@@ -5710,7 +5821,7 @@ dedicated, isolated resource chroots for use in the classpath as well as for pac
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.contrib.go.tasks.go_test.GoTest</code>
+<p>Implemented by <code>pants.contrib.go.tasks.go_test.GoTest_test_go</code>
 <div>
 <p>Runs <cite>go test</cite> on Go packages.</p>
 <p>To run a library's tests, GoTest only requires a Go workspace to be initialized
@@ -5748,7 +5859,7 @@ from scratch.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.junit_run.JUnitRun</code>
+<p>Implemented by <code>pants.backend.jvm.tasks.junit_run.JUnitRun_test_junit</code>
 <ul>
 <li><code>--test-junit-confs=&lt;str&gt; (--test-junit-confs=&lt;str&gt;) ...</code>
 <code>str</code>
@@ -5776,6 +5887,7 @@ from scratch.</p>
 
 <li><code>--test-junit-output-mode=&lt;str&gt;</code>
 <code>str</code>
+      One of: <pre style="display: inline">[ALL, FAILURE_ONLY, NONE]</pre>
       (Default: <pre style="display: inline">NONE</pre>)
 
       Specify what part of output should be passed to stdout. In case of FAILURE_ONLY and parallel tests execution output can be partial or even wrong. All tests output also redirected to files in .pants.d/test/junit.
@@ -5792,23 +5904,11 @@ from scratch.</p>
 
       Skip running tests.
 
-<li><code>--[no-]test-junit-suppress-output</code>
-<code>bool</code>
-      (Default: <pre style="display: inline">True</pre>)
-
-      Redirect test output to files in .pants.d/test/junit.
-
 <li><code>--test-junit-test=&lt;str&gt; (--test-junit-test=&lt;str&gt;) ...</code>
 <code>str</code>
       (Default: <pre style="display: inline">[]</pre>)
 
       Force running of just these tests.  Tests can be specified using any of: [classname], [classname]#[methodname], [filename] or [filename]#[methodname]
-
-<li><code>--test-junit-timeout-default=&lt;int&gt;</code>
-<code>int</code>
-      (Default: <pre style="display: inline">0</pre>)
-
-      The default timeout (in seconds) for a test if timeout is not set on the target.
 
 <li><code>--[no-]test-junit-timeouts</code>
 <code>bool</code>
@@ -5816,25 +5916,25 @@ from scratch.</p>
 
       Enable test target timeouts. If timeouts are enabled then tests with a timeout= parameter set on their target will time out after the given number of seconds if not completed. If no timeout is set, then either the default timeout is used or no timeout is configured. In the current implementation, all the timeouts for the test targets to be run are summed and all tests are run with the total timeout covering the entire run of tests. If a single target in a test run has no timeout and there is no default, the entire run will have no timeout. This should change in the future to provide more granularity.
 
-</li></li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></ul>
 </p></div>
 <div class="oref_ogroup_section">
-<a id="oref_cli_testnpm" pantsmark="oref_cli_testnpm"> </a>
+<a id="oref_cli_testnode" pantsmark="oref_cli_testnode"> </a>
 
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h3 id="group_testnpm">test.npm</h3></td>
+<td class="h-plus-pilcrow-holder"><h3 id="group_testnode">test.node</h3></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#group_testnpm">¶</a>
+<a class="pilcrow-link" href="#group_testnode">¶</a>
 </div></td>
 </tr>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.contrib.node.tasks.npm_test.NpmTest</code>
+<p>Implemented by <code>pants.contrib.node.tasks.node_test.NodeTest_test_node</code>
 <div>
-<p>Runs a test script from package.json, via "npm run [script name]".</p>
+<p>Runs a test script from package.json in a NodeModule, currently via "npm run [script name]".</p>
 </div>
 <ul>
 </ul>
@@ -5853,7 +5953,7 @@ from scratch.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.python.tasks.pytest_run.PytestRun</code>
+<p>Implemented by <code>pants.backend.python.tasks.pytest_run.PytestRun_test_pytest</code>
 <ul>
 <li><code>--test-pytest-coverage=&lt;str&gt;</code>
 <code>str</code>
@@ -5903,19 +6003,13 @@ from scratch.</p>
 
       Skip running tests.
 
-<li><code>--test-pytest-timeout-default=&lt;int&gt;</code>
-<code>int</code>
-      (Default: <pre style="display: inline">0</pre>)
-
-      The default timeout (in seconds) for a test if timeout is not set on the target.
-
 <li><code>--[no-]test-pytest-timeouts</code>
 <code>bool</code>
       (Default: <pre style="display: inline">True</pre>)
 
       Enable test target timeouts. If timeouts are enabled then tests with a timeout= parameter set on their target will time out after the given number of seconds if not completed. If no timeout is set, then either the default timeout is used or no timeout is configured. In the current implementation, all the timeouts for the test targets to be run are summed and all tests are run with the total timeout covering the entire run of tests. If a single target in a test run has no timeout and there is no default, the entire run will have no timeout. This should change in the future to provide more granularity.
 
-</li></li></li></li></li></li></li></li></li></li></ul>
+</li></li></li></li></li></li></li></li></li></ul>
 </p></div>
 <div class="oref_ogroup_section">
 <a id="oref_cli_testrunprepcommand" pantsmark="oref_cli_testrunprepcommand"> </a>
@@ -5931,7 +6025,7 @@ from scratch.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.core_tasks.run_prep_command.RunPrepCommand</code>
+<p>Implemented by <code>pants.core_tasks.run_prep_command.RunPrepCommand_test_run_prep_command</code>
 <ul>
 </ul>
 </p></div>
@@ -5949,9 +6043,32 @@ from scratch.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.core_tasks.noop.NoopTest</code>
+<p>Implemented by <code>pants.core_tasks.noop.NoopTest_test</code>
 <div>
 <p>A no-op that provides a product type that can be used to force scheduling.</p>
+</div>
+<ul>
+</ul>
+</p></div>
+<div class="oref_ogroup_section">
+<a id="oref_cli_testtestjvmprepcommand" pantsmark="oref_cli_testtestjvmprepcommand"> </a>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="group_testtestjvmprepcommand">test.test-jvm-prep-command</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#group_testtestjvmprepcommand">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Implemented by <code>pants.backend.jvm.tasks.run_jvm_prep_command.RunTestJvmPrepCommand_test_test_jvm_prep_command</code>
+<div>
+<p>Run code from a JVM compiled language before other tasks in the test goal.</p>
+<p>Register this task to run code at the beginning of the test goal in register.py</p>
+<p>task(name='pre-test-jvm-prep-command', action=RunTestJvmPrepCommand).install('test', first=True)</p>
 </div>
 <ul>
 </ul>
@@ -5990,7 +6107,7 @@ from scratch.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.core_tasks.changed_target_tasks.TestChanged</code>
+<p>Implemented by <code>pants.core_tasks.changed_target_tasks.TestChanged_test_changed</code>
 <div>
 <p>Find and test changed targets.</p>
 </div>
@@ -6015,6 +6132,7 @@ from scratch.</p>
 
 <li><code>--test-changed-include-dependees=&lt;str&gt;</code>
 <code>str</code>
+      One of: <pre style="display: inline">[none, direct, transitive]</pre>
       (Default: <pre style="display: inline">none</pre>)
 
       Include direct or transitive dependees of changed targets.
@@ -6055,7 +6173,7 @@ from scratch.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.contrib.scrooge.tasks.thrift_linter.ThriftLinter</code>
+<p>Implemented by <code>pants.contrib.scrooge.tasks.thrift_linter.ThriftLinter_thrift_linter</code>
 <div>
 <p>Print linter warnings for thrift files.</p>
 </div>
@@ -6117,7 +6235,7 @@ from scratch.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.jvm.tasks.unpack_jars.UnpackJars</code>
+<p>Implemented by <code>pants.backend.jvm.tasks.unpack_jars.UnpackJars_unpack_jars</code>
 <div>
 <p>Unpack artifacts specified by unpacked_jars() targets.</p>
 <p>Adds an entry to SourceRoot for the contents.</p>
@@ -6139,7 +6257,7 @@ from scratch.</p>
 </tbody>
 </table>
 
-<p>Implemented by <code>pants.backend.android.tasks.unpack_libraries.UnpackLibraries</code>
+<p>Implemented by <code>pants.backend.android.tasks.unpack_libraries.UnpackLibraries_unpack_jars_unpack_libs</code>
 <div>
 <p>Unpack AndroidDependency artifacts, including .jar and .aar libraries.</p>
 <p>The UnpackLibraries task unpacks artifacts imported by AndroidLibraries, as .aar or .jar files,
@@ -6224,7 +6342,7 @@ These command-line flags are available with all Pants goals.
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/builddict/options_reference.html 2015-12-04T18:29:28.152002
+from dist/builddict/options_reference.html 2015-12-13T16:18:11.204265
 </div>
 
 </div> <!-- end of mainflow -->
