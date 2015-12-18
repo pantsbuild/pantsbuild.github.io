@@ -290,16 +290,13 @@ span.bdict_param_muffle_p p {
 <a href="#annotation_processor">annotation_processor</a>
 <a href="#artifact">artifact</a>
 <a href="#benchmark">benchmark</a>
-<a href="#buildfile_path">buildfile_path</a>
 <a href="#bundle">bundle</a>
 <a href="#credentials">credentials</a>
 <a href="#developer">developer</a>
 <a href="#DirectoryReMapper">DirectoryReMapper</a>
 <a href="#Duplicate">Duplicate</a>
 <a href="#exclude">exclude</a>
-<a href="#from_target">from_target</a>
 <a href="#github">github</a>
-<a href="#globs">globs</a>
 <a href="#jar">jar</a>
 <a href="#jar_library">jar_library</a>
 <a href="#jar_rules">jar_rules</a>
@@ -317,7 +314,6 @@ span.bdict_param_muffle_p p {
 <a href="#license">license</a>
 <a href="#ossrh">ossrh</a>
 <a href="#repository">repository</a>
-<a href="#rglobs">rglobs</a>
 <a href="#scala_artifact">scala_artifact</a>
 <a href="#scala_jar">scala_jar</a>
 <a href="#scala_library">scala_library</a>
@@ -329,22 +325,16 @@ span.bdict_param_muffle_p p {
 <a href="#shading_relocate_package">shading_relocate_package</a>
 <a href="#Skip">Skip</a>
 <a href="#unpacked_jars">unpacked_jars</a>
-<a href="#zglobs">zglobs</a>
 <p>
 <b>Python</b> |
-    <a href="#buildfile_path">buildfile_path</a>
-<a href="#from_target">from_target</a>
-<a href="#globs">globs</a>
-<a href="#pants_requirement">pants_requirement</a>
+    <a href="#pants_requirement">pants_requirement</a>
 <a href="#python_binary">python_binary</a>
 <a href="#python_library">python_library</a>
 <a href="#python_requirement">python_requirement</a>
 <a href="#python_requirement_library">python_requirement_library</a>
 <a href="#python_requirements">python_requirements</a>
 <a href="#python_tests">python_tests</a>
-<a href="#rglobs">rglobs</a>
 <a href="#setup_py">setup_py</a>
-<a href="#zglobs">zglobs</a>
 <p> 
 
 
@@ -958,10 +948,11 @@ target is built.</p></span>
 
 <p class="bdict_argspec">buildfile_path(parse_context)
 
-<div>
-<p>Returns path containing this <tt class="docutils literal">BUILD</tt> file.</p>
-</div>
-<p class="bdict_impl">Implemented by <tt>pants.backend.core.register.BuildFilePath</tt>
+
+
+
+
+<p class="bdict_impl">Implemented by <tt>pants.build_graph.register.BuildFilePath</tt>
 </p></p></div>
 <div class="bdict_section">
 <a id="bdict_bundle" pantsmark="bdict_bundle"> </a>
@@ -1574,14 +1565,7 @@ everything if unspecified.</p></span>
 <div>
 <p>Used in a BUILD file to redirect the value of the sources= attribute to another target.</p>
 </div>
-<div class="bdict_params_section">
-<p><b>Params:</b>
-<div class="bdict_param"><b class="bdict_param_name">parse_context</b>
-  (<em class="bdict_param_type">ParseContext </em>)
-  <span class="bdict_param_muffle_p"><p>build file context</p></span>
-</div>
-</p></div>
-<p class="bdict_impl">Implemented by <tt>pants.backend.core.from_target.FromTarget</tt>
+<p class="bdict_impl">Implemented by <tt>pants.build_graph.from_target.FromTarget</tt>
 </p></p></div>
 <div class="bdict_section">
 <a id="bdict_get_buildroot" pantsmark="bdict_get_buildroot"> </a>
@@ -1688,7 +1672,7 @@ and the new grammar will not support arithmetic.</p>
   <span class="bdict_param_muffle_p"><p>The path this file set will be relative to.</p></span>
 </div>
 </p></div>
-<p class="bdict_impl">Implemented by <tt>pants.backend.core.wrapped_globs.Globs</tt>
+<p class="bdict_impl">Implemented by <tt>pants.source.wrapped_globs.Globs</tt>
 </p></p></div>
 <div class="bdict_section">
 <a id="bdict_go_binary" pantsmark="bdict_go_binary"> </a>
@@ -3209,7 +3193,7 @@ target is built.</p></span>
 </tbody>
 </table>
 
-<p class="bdict_argspec">junit_tests(name, cwd=None, test_platform=None, timeout=None, extra_jvm_options=None, sources=None, provides=None, excludes=None, resources=None, services=None, platform=None, strict_deps=None, fatal_warnings=None, type_alias=None, tags=None, description=None, no_cache=False)
+<p class="bdict_argspec">junit_tests(name, cwd=None, test_platform=None, timeout=None, extra_jvm_options=None, extra_env_vars=None, sources=None, provides=None, excludes=None, resources=None, services=None, platform=None, strict_deps=None, fatal_warnings=None, type_alias=None, tags=None, description=None, no_cache=False)
 
 <div>
 <p>JUnit tests.</p>
@@ -3231,6 +3215,11 @@ unspecified, the platform will default to the same one used for compilation.</p>
   (<em class="bdict_param_type">list </em>)
   <span class="bdict_param_muffle_p"><p>A list of key value pairs of jvm options to use when running the
 tests. Example: ['-Dexample.property=1'] If unspecified, no extra jvm options will be added.</p></span>
+</div>
+<div class="bdict_param"><b class="bdict_param_name">extra_env_vars</b>
+  (<em class="bdict_param_type">dict </em>)
+  <span class="bdict_param_muffle_p"><p>A map of environment variables to set when running the tests, e.g.
+{ 'FOOBAR': 12 }. Using <cite>None</cite> as the value will cause the variable to be unset.</p></span>
 </div>
 <div class="bdict_param"><b class="bdict_param_name">excludes</b>
 <span class="bdict_param_muffle_p"><p>List of <a class="reference external" href="#exclude">exclude</a>s to filter this target's
@@ -5118,7 +5107,7 @@ make BUILD files easier to parse, and the new grammar will not support arithmeti
   <span class="bdict_param_muffle_p"><p>The path this file set will be relative to.</p></span>
 </div>
 </p></div>
-<p class="bdict_impl">Implemented by <tt>pants.backend.core.wrapped_globs.RGlobs</tt>
+<p class="bdict_impl">Implemented by <tt>pants.source.wrapped_globs.RGlobs</tt>
 </p></p></div>
 <div class="bdict_section">
 <a id="bdict_scala_artifact" pantsmark="bdict_scala_artifact"> </a>
@@ -6069,14 +6058,14 @@ For example, the following keys are supported for Atlassian's Confluence:</p></s
   <span class="bdict_param_muffle_p"><p>The path this file set will be relative to.</p></span>
 </div>
 </p></div>
-<p class="bdict_impl">Implemented by <tt>pants.backend.core.wrapped_globs.ZGlobs</tt>
+<p class="bdict_impl">Implemented by <tt>pants.source.wrapped_globs.ZGlobs</tt>
 </p></p></div>
 </p></p></p></p></p></body>
 <!-- main content end -->
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/builddict/build_dictionary.html 2015-12-13T16:18:11.054925
+from dist/builddict/build_dictionary.html 2015-12-18T15:04:48.090505
 </div>
 
 </div> <!-- end of mainflow -->
