@@ -196,22 +196,46 @@ that combines DEFAULT values with others is in Pants'
 </table>
 
 <p>Pants calls out to other tools. E.g., it optionally uses <code>scalastyle</code> to check scala source code.
-Most tools come pre-configured by Pants. A few do require more setup though and these rely on
-special targets in your workspace to specify versions of the tools to fetch. These targets all live
-in the <code>BUILD.tools</code> file by convention. For example, when Pants fetches <code>scalastyle</code>, it looks in
-<code>BUILD.tools</code> for that target:</p>
-<p>
-<div class="md-included-snippet"><div class="codehilite"><pre><span class="n">jar_library</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">'scalastyle'</span><span class="p">,</span>
-            <span class="n">jars</span> <span class="o">=</span> <span class="p">[</span>
-              <span class="n">scala_jar</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s">'org.scalastyle'</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">'scalastyle'</span><span class="p">,</span> <span class="n">rev</span><span class="o">=</span><span class="s">'0.3.2'</span><span class="p">)</span>
-            <span class="p">])</span>
+Most tools come pre-configured by Pants. If you use scala a few tools are configured based on the
+major scala version provided with the --version flag.  You can specify custom tool versions by
+passing "custom" to --scala-platform-version. If a custom version of scala is desired some of these
+tools require more setup though and these rely on special targets in your workspace to specify
+versions of the tools to fetch .These targets all live in the <code>BUILD.tools</code> file by convention.</p>
+<p>For example, the following targets are used to provide custom scala tools:</p>
+<p><code>//:scalastyle</code>: Scala style checking.
+<code>//:scalac</code>: Scala compiler.
+<code>//:scala-repl</code>: Scala REPL environment.
+<code>//:scala-library</code>: Scala runtime environment.</p>
+<p>Pants looks in <code>BUILD.tools</code> for that target.  Below is an example of BUILD.tools that overrides
+the default minor version for 2.10.  For these changes to take effect you would need to set
+--scala-platform-version to 'custom'.</p>
+<div class="codehilite"><pre>jar_library(name = 'scalac',
+            jars = [
+              jar(org = 'org.scala-lang', name = 'scala-compiler', rev = 2.10.3),
+            ])
 
-<span class="n">target</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">'scala-js-cli'</span><span class="p">,</span> <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s">'contrib/scalajs/3rdparty/jvm/org/scala-js:cli'</span><span class="p">])</span>
-<span class="n">target</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">'scala-js-compiler'</span><span class="p">,</span> <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
-  <span class="s">'contrib/scalajs/3rdparty/jvm/org/scala-js:compiler'</span><span class="p">,</span>
-  <span class="s">'contrib/scalajs/3rdparty/jvm/org/scala-js:library'</span><span class="p">,</span>
-<span class="p">])</span>
-<span class="n">target</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">'scala-js-library'</span><span class="p">,</span> <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s">'contrib/scalajs/3rdparty/jvm/org/scala-js:library'</span><span class="p">])</span>
+jar_library(name = 'scala-library',
+            jars = [
+              jar(org = 'org.scala-lang', name = 'scala-library', rev = 2.10.3),
+            ])
+
+jar_library(name = 'scala-repl',
+            jars = [
+              jar(org = 'org.scala-lang', name = 'jline', rev = 2.10.3, intransitive = True),
+            ],
+            dependencies = [
+              ':scala-compiler',
+              ':scala-library',
+            ])
+
+jar_library(name = 'scalastyle',
+            jars = [
+              scala_jar(org='org.scalastyle', name='scalastyle', rev='0.3.2')
+            ])
+</pre></div>
+<p>Additional tools can be defined as follows in BUILD.tools:</p>
+<p>
+<div class="md-included-snippet"><div class="codehilite"><pre><span class="n">target</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">'scala-js-library'</span><span class="p">,</span> <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s">'contrib/scalajs/3rdparty/jvm/org/scala-js:library'</span><span class="p">])</span>
 </pre></div></div>
 </p>
 <p>When setting up your Pants repo, you may want to copy this file over from a working Pants repo and
@@ -412,9 +436,10 @@ with Pants successfully. Make sure you bootstrap Pants in a way that loads your 
 <p>In your <code>pants.ini</code> file, set up a <code>[publish.jar]</code> section. In that section,
 create a <code>dict</code> called <code>repos</code>. It should contain a section for each <code>Repository</code> object that you
 defined in your plugin:</p>
-<div class="codehilite"><pre>repos: {
+<div class="codehilite"><pre>[publish.jar]
+repos: {
   'public': {  # must match the name of the `Repository` object that you defined in your plugin.
-    'resolver': 'maven.example.com', # must match hostname in ~/.netrc and the &lt;url&gt; parameter
+    'resolver': 'maven.example.com', # must match hostname in ~/.netrc and the <span class="nt">&lt;url&gt;</span> parameter
                                      # in your custom ivysettings.xml.
     'auth': 'build-support:netrc',   # Pants spec to a 'credentials()' object.
     'help': 'Configure your ~/.netrc for maven.example.com access.'
@@ -447,37 +472,47 @@ credentials(
 </pre></div>
 <p>Next, tell Ivy how to publish to your repository. Add a new <code>ivysettings.xml</code> file to your repo
 with the additional information needed to publish artifacts. Here is an example to get you started:</p>
-<p>:::xml
-    &lt;?xml version="1.0"?&gt;</p>
-<div class="codehilite"><pre>&lt;ivysettings&gt;
-  &lt;settings defaultResolver="chain-repos"/&gt;
+<div class="codehilite"><pre><span class="cp">&lt;?xml version="1.0"?&gt;</span>
 
-  &lt;credentials host="artifactory.example.com"
-               realm="Artifactory Realm"
-               &lt;!-- These values come from a credentials() object, which is fed by '~/.netrc'.
-                    There must be a '~/.netrc' machine entry which matches a resolver in the
-                    "repos" object in 'pants.ini', which also matches the 'host' in this XML
-                    block. --&gt;
-               username="${login}"
-               passwd="${password}"/&gt;
+<span class="nt">&lt;ivysettings&gt;</span>
+  <span class="nt">&lt;settings</span> <span class="na">defaultResolver=</span><span class="s">"chain-repos"</span><span class="nt">/&gt;</span>
+  <span class="c">&lt;!-- The ${login} and ${password} values come from a credentials() object in a BUILD file,</span>
+<span class="c">       which is fed by '~/.netrc'.  There must be a '~/.netrc' machine entry which matches</span>
+<span class="c">       a resolver in the "repos" object in 'pants.ini', which also matches the 'host' in</span>
+<span class="c">       this XML block.</span>
 
-  &lt;resolvers&gt;
-    &lt;chain name="chain-repos" returnFirst="true"&gt;
-       &lt;ibiblio name="corp-maven"
-                     m2compatible="true"
-                     usepoms="true"
-                     root="https://artifactory.example.com/content/groups/public/"/&gt;
-    &lt;/chain&gt;
+<span class="c">       machine &lt;hostname&gt;</span>
+<span class="c">         login &lt;login&gt;</span>
+<span class="c">         password &lt;password&gt;</span>
 
-    &lt;url name="artifactory.example.com" m2compatible="true"&gt;
-      &lt;artifact pattern="https://artifactory.example.com/libs-releases-local/[organization]/[module]/[revision]/[module]-[revision](-[classifier]).[ext]"/&gt;
-    &lt;/url&gt;
-  &lt;/resolvers&gt;
-&lt;/ivysettings&gt;
+<span class="c">       The realm must match the kind of repository you are publishing to. For Sonotype Nexus, use:</span>
+
+<span class="c">       realm="Sonatype Nexus Repository Manager"</span>
+
+<span class="c">    --&gt;</span>
+  <span class="nt">&lt;credentials</span> <span class="na">host=</span><span class="s">"artifactory.example.com"</span>
+               <span class="na">realm=</span><span class="s">"Artifactory Realm"</span>  
+               <span class="na">username=</span><span class="s">"${login}"</span>
+               <span class="na">passwd=</span><span class="s">"${password}"</span><span class="nt">/&gt;</span>
+
+  <span class="nt">&lt;resolvers&gt;</span>
+    <span class="nt">&lt;chain</span> <span class="na">name=</span><span class="s">"chain-repos"</span> <span class="na">returnFirst=</span><span class="s">"true"</span><span class="nt">&gt;</span>
+       <span class="nt">&lt;ibiblio</span> <span class="na">name=</span><span class="s">"artifactory.example.com"</span>
+                     <span class="na">m2compatible=</span><span class="s">"true"</span>
+                     <span class="na">usepoms=</span><span class="s">"true"</span>
+                     <span class="na">root=</span><span class="s">"https://artifactory.example.com/content/groups/public/"</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/chain&gt;</span>
+
+    <span class="nt">&lt;url</span> <span class="na">name=</span><span class="s">"artifactory.example.com"</span> <span class="na">m2compatible=</span><span class="s">"true"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;artifact</span> <span class="na">pattern=</span><span class="s">"https://artifactory.example.com/libs-releases-local/[organization]/[module]/[revision]/[module]-[revision](-[classifier]).[ext]"</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/url&gt;</span>
+  <span class="nt">&lt;/resolvers&gt;</span>
+<span class="nt">&lt;/ivysettings&gt;</span>
 </pre></div>
-<p>With this file in place, add a <code>[publish]</code> section to <code>pants.ini</code>, and tell pants to use
+<p>With this file in place, add a <code>[publish.jar]</code> section to <code>pants.ini</code>, and tell pants to use
 the custom Ivy settings when publishing:</p>
-<div class="codehilite"><pre>ivy_settings: %(pants_supportdir)s/ivy/ivysettings_for_publishing.xml
+<div class="codehilite"><pre>[publish.jar]
+ivy_settings: %(pants_supportdir)s/ivy/ivysettings_for_publishing.xml
 </pre></div>
 <p><a id="setup_publish_restrict_branch" pantsmark="setup_publish_restrict_branch"> </a></p>
 
@@ -823,7 +858,7 @@ indices: [
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/markdown/html/src/docs/setup_repo.html 2016-01-22T08:33:50.847063
+from dist/markdown/html/src/docs/setup_repo.html 2016-01-28T10:38:04.737500
 </div>
 
 </div> <!-- end of mainflow -->
