@@ -271,7 +271,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">sources = ...,</span></td>
-<td>Source code files to build. Paths are relative to the BUILD<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Source code files to build. Paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">provides = ...,</span></td>
@@ -279,7 +279,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">excludes = ...,</span></td>
-<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's transitive dependencies against.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resources = ...,</span></td>
@@ -287,27 +287,27 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">services = ...,</span></td>
-<td>A dict mapping service interface names to the classes owned by this target<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>A dict mapping service interface names to the classes owned by this target that implement them.  Keys are fully qualified service class names, values are lists of strings, each string the fully qualified class name of a class owned by this target that implements the service interface and should be discoverable by the jvm service provider discovery mechanism described here: https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">platform = ...,</span></td>
-<td>The name of the platform (defined under the jvm-platform subsystem) to use<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The name of the platform (defined under the jvm-platform subsystem) to use for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified, the platform will default to the first one of these that exist: (1) the default_platform specified for jvm-platform, (2) a platform constructed from whatever java version is returned by DistributionLocator.cached().version.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">strict_deps = ...,</span></td>
-<td>When True, only the directly declared deps of the target will be used at<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>When True, only the directly declared deps of the target will be used at compilation time. This enforces that all direct deps of the target are declared, and can improve compilation speed due to smaller classpaths. Transitive deps are always provided at runtime.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">fatal_warnings = ...,</span></td>
-<td>Whether to turn warnings into errors for this target.  If present,<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Whether to turn warnings into errors for this target.  If present, takes priority over the language's fatal-warnings option.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">build_tools_version = ...,</span></td>
-<td>API for the Build Tools (separate from SDK version).<span class="build-symbol-arg-default"> (default: 19.1.0)</span></td>
+<td>API for the Build Tools (separate from SDK version). Defaults to the latest full release.<span class="build-symbol-arg-default"> (default: 19.1.0)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">manifest = ...,</span></td>
-<td>path/to/file of 'AndroidManifest.xml' (required name). Paths are relative<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>path/to/file of 'AndroidManifest.xml' (required name). Paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">*args = ...,</span></td>
@@ -349,7 +349,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">managed_dependencies = ...,</span></td>
-<td>Address of a managed_jar_dependencies() target to use. If omitted, uses<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Address of a managed_jar_dependencies() target to use. If omitted, uses the default managed_jar_dependencies() target set by --jar-dependency-management-default-target.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -383,7 +383,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">sources = ...,</span></td>
-<td>Source code files to build. Paths are relative to the BUILD<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Source code files to build. Paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">provides = ...,</span></td>
@@ -391,7 +391,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">excludes = ...,</span></td>
-<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's transitive dependencies against.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resources = ...,</span></td>
@@ -399,31 +399,31 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">services = ...,</span></td>
-<td>A dict mapping service interface names to the classes owned by this target<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>A dict mapping service interface names to the classes owned by this target that implement them.  Keys are fully qualified service class names, values are lists of strings, each string the fully qualified class name of a class owned by this target that implements the service interface and should be discoverable by the jvm service provider discovery mechanism described here: https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">platform = ...,</span></td>
-<td>The name of the platform (defined under the jvm-platform subsystem) to use<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The name of the platform (defined under the jvm-platform subsystem) to use for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified, the platform will default to the first one of these that exist: (1) the default_platform specified for jvm-platform, (2) a platform constructed from whatever java version is returned by DistributionLocator.cached().version.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">strict_deps = ...,</span></td>
-<td>When True, only the directly declared deps of the target will be used at<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>When True, only the directly declared deps of the target will be used at compilation time. This enforces that all direct deps of the target are declared, and can improve compilation speed due to smaller classpaths. Transitive deps are always provided at runtime.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">fatal_warnings = ...,</span></td>
-<td>Whether to turn warnings into errors for this target.  If present,<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Whether to turn warnings into errors for this target.  If present, takes priority over the language's fatal-warnings option.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">build_tools_version = ...,</span></td>
-<td>API for the Build Tools (separate from SDK version).<span class="build-symbol-arg-default"> (default: 19.1.0)</span></td>
+<td>API for the Build Tools (separate from SDK version). Defaults to the latest full release.<span class="build-symbol-arg-default"> (default: 19.1.0)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">manifest = ...,</span></td>
-<td>path/to/file of 'AndroidManifest.xml' (required name). Paths are relative<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>path/to/file of 'AndroidManifest.xml' (required name). Paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">libraries = ...,</span></td>
-<td>List of addresses of `android_dependency &lt;#android_dependency&gt;`_<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>List of addresses of `android_dependency &lt;#android_dependency&gt;`_ targets.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">include_patterns = ...,</span></td>
@@ -465,7 +465,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">sources = ...,</span></td>
-<td>Source code files to build. Paths are relative to the BUILD<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Source code files to build. Paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">provides = ...,</span></td>
@@ -473,7 +473,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">excludes = ...,</span></td>
-<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's transitive dependencies against.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resources = ...,</span></td>
@@ -481,31 +481,31 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">services = ...,</span></td>
-<td>A dict mapping service interface names to the classes owned by this target<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>A dict mapping service interface names to the classes owned by this target that implement them.  Keys are fully qualified service class names, values are lists of strings, each string the fully qualified class name of a class owned by this target that implements the service interface and should be discoverable by the jvm service provider discovery mechanism described here: https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">platform = ...,</span></td>
-<td>The name of the platform (defined under the jvm-platform subsystem) to use<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The name of the platform (defined under the jvm-platform subsystem) to use for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified, the platform will default to the first one of these that exist: (1) the default_platform specified for jvm-platform, (2) a platform constructed from whatever java version is returned by DistributionLocator.cached().version.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">strict_deps = ...,</span></td>
-<td>When True, only the directly declared deps of the target will be used at<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>When True, only the directly declared deps of the target will be used at compilation time. This enforces that all direct deps of the target are declared, and can improve compilation speed due to smaller classpaths. Transitive deps are always provided at runtime.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">fatal_warnings = ...,</span></td>
-<td>Whether to turn warnings into errors for this target.  If present,<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Whether to turn warnings into errors for this target.  If present, takes priority over the language's fatal-warnings option.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">build_tools_version = ...,</span></td>
-<td>API for the Build Tools (separate from SDK version).<span class="build-symbol-arg-default"> (default: 19.1.0)</span></td>
+<td>API for the Build Tools (separate from SDK version). Defaults to the latest full release.<span class="build-symbol-arg-default"> (default: 19.1.0)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">manifest = ...,</span></td>
-<td>path/to/file of 'AndroidManifest.xml' (required name). Paths are relative<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>path/to/file of 'AndroidManifest.xml' (required name). Paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resource_dir = ...,</span></td>
-<td>path/to/directory containing Android resource files,<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>path/to/directory containing Android resource files, often named 'res'.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -539,7 +539,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">sources = ...,</span></td>
-<td>Source code files to build. Paths are relative to the BUILD<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Source code files to build. Paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">provides = ...,</span></td>
@@ -547,7 +547,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">excludes = ...,</span></td>
-<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's transitive dependencies against.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resources = ...,</span></td>
@@ -555,27 +555,31 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">services = ...,</span></td>
-<td>A dict mapping service interface names to the classes owned by this target<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>A dict mapping service interface names to the classes owned by this target that implement them.  Keys are fully qualified service class names, values are lists of strings, each string the fully qualified class name of a class owned by this target that implements the service interface and should be discoverable by the jvm service provider discovery mechanism described here: https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">platform = ...,</span></td>
-<td>The name of the platform (defined under the jvm-platform subsystem) to use<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The name of the platform (defined under the jvm-platform subsystem) to use for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified, the platform will default to the first one of these that exist: (1) the default_platform specified for jvm-platform, (2) a platform constructed from whatever java version is returned by DistributionLocator.cached().version.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">strict_deps = ...,</span></td>
-<td>When True, only the directly declared deps of the target will be used at<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>When True, only the directly declared deps of the target will be used at compilation time. This enforces that all direct deps of the target are declared, and can improve compilation speed due to smaller classpaths. Transitive deps are always provided at runtime.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">fatal_warnings = ...,</span></td>
-<td>Whether to turn warnings into errors for this target.  If present,<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Whether to turn warnings into errors for this target.  If present, takes priority over the language's fatal-warnings option.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">*args = ...,</span></td>
 <td>None</td>
 </tr>
 <tr>
+<td><span class="build-symbol-arg-name">provides = ...,</span></td>
+<td>An optional Dependency object indicating the The ivy artifact to export.<span class="build-symbol-arg-default"> (default: None)</span></td>
+</tr>
+<tr>
 <td><span class="build-symbol-arg-name">processors = ...,</span></td>
-<td>A list of the fully qualified class names of the<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>A list of the fully qualified class names of the annotation processors this library exports.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">*args = ...,</span></td>
@@ -583,7 +587,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resources = ...,</span></td>
-<td>An optional list of file paths (DEPRECATED) or<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>An optional list of file paths (DEPRECATED) or ``resources`` targets (which in turn point to file paths). The paths indicate text file resources to place in this module's jar.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -617,7 +621,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">sources = ...,</span></td>
-<td>Source code files to build. Paths are relative to the BUILD<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Source code files to build. Paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">provides = ...,</span></td>
@@ -625,7 +629,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">excludes = ...,</span></td>
-<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's transitive dependencies against.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resources = ...,</span></td>
@@ -633,19 +637,19 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">services = ...,</span></td>
-<td>A dict mapping service interface names to the classes owned by this target<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>A dict mapping service interface names to the classes owned by this target that implement them.  Keys are fully qualified service class names, values are lists of strings, each string the fully qualified class name of a class owned by this target that implements the service interface and should be discoverable by the jvm service provider discovery mechanism described here: https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">platform = ...,</span></td>
-<td>The name of the platform (defined under the jvm-platform subsystem) to use<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The name of the platform (defined under the jvm-platform subsystem) to use for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified, the platform will default to the first one of these that exist: (1) the default_platform specified for jvm-platform, (2) a platform constructed from whatever java version is returned by DistributionLocator.cached().version.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">strict_deps = ...,</span></td>
-<td>When True, only the directly declared deps of the target will be used at<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>When True, only the directly declared deps of the target will be used at compilation time. This enforces that all direct deps of the target are declared, and can improve compilation speed due to smaller classpaths. Transitive deps are always provided at runtime.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">fatal_warnings = ...,</span></td>
-<td>Whether to turn warnings into errors for this target.  If present,<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Whether to turn warnings into errors for this target.  If present, takes priority over the language's fatal-warnings option.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -679,11 +683,11 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">sources = ...,</span></td>
-<td>Files to "include". Paths are relative to the<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Files to "include". Paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resources = ...,</span></td>
-<td>non-Python resources, e.g. templates, keys, other data<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>non-Python resources, e.g. templates, keys, other data (it is recommended that your application uses the pkgutil package to access these resources in a .zip-module friendly way.)<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resource_targets = ...,</span></td>
@@ -691,19 +695,19 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">provides = ...,</span></td>
-<td><span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The `setup_py &lt;#setup_py&gt;`_ to publish that represents this target outside the repo.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">compatibility = ...,</span></td>
-<td>either a string or list of strings that represents<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>either a string or list of strings that represents interpreter compatibility for this target, using the Requirement-style format, e.g. ``'CPython&gt;=3', or just ['&gt;=2.7','&lt;3']`` for requirements agnostic to interpreter class.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">dependencies = ...,</span></td>
-<td>Other targets that this target depends on.<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Other targets that this target depends on. These dependencies may be ``python_library``-like targets (``python_library``, ``python_thrift_library``, ``python_antlr_library`` and so forth) or ``python_requirement_library`` targets.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">distribution_name = ...,</span></td>
-<td>The name of the plugin package; must start with<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The name of the plugin package; must start with 'pantsbuild.pants.'.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">description = ...,</span></td>
@@ -711,19 +715,19 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">additional_classifiers = ...,</span></td>
-<td>Any additional trove classifiers that apply to the plugin,<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Any additional trove classifiers that apply to the plugin, see: https://pypi.python.org/pypi?%3Aaction=list_classifiers<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">build_file_aliases = ...,</span></td>
-<td>If `True`, register.py:build_file_aliases must be defined and<span class="build-symbol-arg-default"> (default: False)</span></td>
+<td>If `True`, register.py:build_file_aliases must be defined and registers the 'build_file_aliases' 'pantsbuild.plugin' entrypoint.<span class="build-symbol-arg-default"> (default: False)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">global_subsystems = ...,</span></td>
-<td>If `True`, register.py:global_subsystems must be defined and<span class="build-symbol-arg-default"> (default: False)</span></td>
+<td>If `True`, register.py:global_subsystems must be defined and registers the 'global_subsystems' 'pantsbuild.plugin' entrypoint.<span class="build-symbol-arg-default"> (default: False)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">register_goals = ...,</span></td>
-<td>If `True`, register.py:register_goals must be defined and<span class="build-symbol-arg-default"> (default: False)</span></td>
+<td>If `True`, register.py:register_goals must be defined and registers the 'register_goals' 'pantsbuild.plugin' entrypoint.<span class="build-symbol-arg-default"> (default: False)</span></td>
 </tr>
 </table>
 </li>
@@ -757,11 +761,11 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">sources = ...,</span></td>
-<td>Source code files to build. Paths are relative to the BUILD<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Source code files to build. Paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">libraries = ...,</span></td>
-<td>Libraries that this target depends on that are not pants targets.<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Libraries that this target depends on that are not pants targets. For example, 'm' or 'rt' that are expected to be installed on the local system.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">*args = ...,</span></td>
@@ -799,7 +803,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">sources = ...,</span></td>
-<td>Source code files to build. Paths are relative to the BUILD<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Source code files to build. Paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">*args = ...,</span></td>
@@ -939,11 +943,11 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">pkg = ...,</span></td>
-<td>The package import path within the remote library; by default the root package<span class="build-symbol-arg-default"> (default: )</span></td>
+<td>The package import path within the remote library; by default the root package path (equivalent to passing `pkg='.'` or `pkg=''`).<span class="build-symbol-arg-default"> (default: )</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">rev = ...,</span></td>
-<td>Identifies which version of the remote library to download. This could be a<span class="build-symbol-arg-default"> (default: )</span></td>
+<td>Identifies which version of the remote library to download. This could be a commit SHA (git), node id (hg), etc.  If left unspecified the version will default to the latest available.  It's highly recommended to not accept the default and instead pin the rev explicitly for repeatable builds.<span class="build-symbol-arg-default"> (default: )</span></td>
 </tr>
 </table>
 </li>
@@ -977,11 +981,11 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">pkg = ...,</span></td>
-<td>The package import path within the remote library; by default the root package<span class="build-symbol-arg-default"> (default: )</span></td>
+<td>The package import path within the remote library; by default the root package path (equivalent to passing `pkg='.'` or `pkg=''`).<span class="build-symbol-arg-default"> (default: )</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">rev = ...,</span></td>
-<td>Identifies which version of the remote library to download. This could be a<span class="build-symbol-arg-default"> (default: )</span></td>
+<td>Identifies which version of the remote library to download. This could be a commit SHA (git), node id (hg), etc.  If left unspecified the version will default to the latest available.  It's highly recommended to not accept the default and instead pin the rev explicitly for repeatable builds.<span class="build-symbol-arg-default"> (default: )</span></td>
 </tr>
 </table>
 </li>
@@ -1201,7 +1205,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">managed_dependencies = ...,</span></td>
-<td>Address of a managed_jar_dependencies() target to use. If omitted, uses<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Address of a managed_jar_dependencies() target to use. If omitted, uses the default managed_jar_dependencies() target set by --jar-dependency-management-default-target.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -1235,7 +1239,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">sources = ...,</span></td>
-<td>Source code files to build. Paths are relative to the BUILD<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Source code files to build. Paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">provides = ...,</span></td>
@@ -1243,7 +1247,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">excludes = ...,</span></td>
-<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's transitive dependencies against.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resources = ...,</span></td>
@@ -1251,23 +1255,19 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">services = ...,</span></td>
-<td>A dict mapping service interface names to the classes owned by this target<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>A dict mapping service interface names to the classes owned by this target that implement them.  Keys are fully qualified service class names, values are lists of strings, each string the fully qualified class name of a class owned by this target that implements the service interface and should be discoverable by the jvm service provider discovery mechanism described here: https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">platform = ...,</span></td>
-<td>The name of the platform (defined under the jvm-platform subsystem) to use<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The name of the platform (defined under the jvm-platform subsystem) to use for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified, the platform will default to the first one of these that exist: (1) the default_platform specified for jvm-platform, (2) a platform constructed from whatever java version is returned by DistributionLocator.cached().version.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">strict_deps = ...,</span></td>
-<td>When True, only the directly declared deps of the target will be used at<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>When True, only the directly declared deps of the target will be used at compilation time. This enforces that all direct deps of the target are declared, and can improve compilation speed due to smaller classpaths. Transitive deps are always provided at runtime.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">fatal_warnings = ...,</span></td>
-<td>Whether to turn warnings into errors for this target.  If present,<span class="build-symbol-arg-default"> (default: None)</span></td>
-</tr>
-<tr>
-<td><span class="build-symbol-arg-name">*args = ...,</span></td>
-<td>None</td>
+<td>Whether to turn warnings into errors for this target.  If present, takes priority over the language's fatal-warnings option.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">*args = ...,</span></td>
@@ -1275,11 +1275,19 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">provides = ...,</span></td>
-<td>The ``artifact``<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>An optional Dependency object indicating the The ivy artifact to export.<span class="build-symbol-arg-default"> (default: None)</span></td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">*args = ...,</span></td>
+<td>None</td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">provides = ...,</span></td>
+<td>The ``artifact`` to publish that represents this target outside the repo.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resources = ...,</span></td>
-<td>An optional list of file paths (DEPRECATED) or<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>An optional list of file paths (DEPRECATED) or ``resources`` targets (which in turn point to file paths). The paths indicate text file resources to place in this module's jar.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">name = ...,</span></td>
@@ -1299,23 +1307,23 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">premain = ...,</span></td>
-<td>When an agent is specified at JVM launch time this attribute specifies<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>When an agent is specified at JVM launch time this attribute specifies the agent class. Exactly one of ``premain`` or ``agent_class`` must be specified.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">agent_class = ...,</span></td>
-<td>If an implementation supports a mechanism to start agents sometime<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>If an implementation supports a mechanism to start agents sometime after the VM has started then this attribute specifies the agent class. Exactly one of ``premain`` or ``agent_class`` must be specified.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">can_redefine = ...,</span></td>
-<td>`True` if the ability to redefine classes is needed by this agent;<span class="build-symbol-arg-default"> (default: False)</span></td>
+<td>`True` if the ability to redefine classes is needed by this agent; `False` by default.<span class="build-symbol-arg-default"> (default: False)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">can_retransform = ...,</span></td>
-<td>`True` if the ability to retransform classes is needed by this<span class="build-symbol-arg-default"> (default: False)</span></td>
+<td>`True` if the ability to retransform classes is needed by this agent; `False` by default.<span class="build-symbol-arg-default"> (default: False)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">can_set_native_method_prefix = ...,</span></td>
-<td>`True` if the ability to set he native method prefix<span class="build-symbol-arg-default"> (default: False)</span></td>
+<td>`True` if the ability to set he native method prefix is needed by this agent; `False` by default.<span class="build-symbol-arg-default"> (default: False)</span></td>
 </tr>
 </table>
 </li>
@@ -1349,7 +1357,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">sources = ...,</span></td>
-<td>Source code files to build. Paths are relative to the BUILD<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Source code files to build. Paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">provides = ...,</span></td>
@@ -1357,7 +1365,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">excludes = ...,</span></td>
-<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's transitive dependencies against.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resources = ...,</span></td>
@@ -1365,19 +1373,19 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">services = ...,</span></td>
-<td>A dict mapping service interface names to the classes owned by this target<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>A dict mapping service interface names to the classes owned by this target that implement them.  Keys are fully qualified service class names, values are lists of strings, each string the fully qualified class name of a class owned by this target that implements the service interface and should be discoverable by the jvm service provider discovery mechanism described here: https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">platform = ...,</span></td>
-<td>The name of the platform (defined under the jvm-platform subsystem) to use<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The name of the platform (defined under the jvm-platform subsystem) to use for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified, the platform will default to the first one of these that exist: (1) the default_platform specified for jvm-platform, (2) a platform constructed from whatever java version is returned by DistributionLocator.cached().version.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">strict_deps = ...,</span></td>
-<td>When True, only the directly declared deps of the target will be used at<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>When True, only the directly declared deps of the target will be used at compilation time. This enforces that all direct deps of the target are declared, and can improve compilation speed due to smaller classpaths. Transitive deps are always provided at runtime.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">fatal_warnings = ...,</span></td>
-<td>Whether to turn warnings into errors for this target.  If present,<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Whether to turn warnings into errors for this target.  If present, takes priority over the language's fatal-warnings option.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">name = ...,</span></td>
@@ -1389,7 +1397,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">provides = ...,</span></td>
-<td>The ``artifact``<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The ``artifact`` to publish that represents this target outside the repo.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">excludes = ...,</span></td>
@@ -1397,11 +1405,11 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">compiler = ...,</span></td>
-<td>The name of the compiler used to compile the ANTLR files.<span class="build-symbol-arg-default"> (default: antlr3)</span></td>
+<td>The name of the compiler used to compile the ANTLR files. Currently only supports 'antlr3' and 'antlr4'<span class="build-symbol-arg-default"> (default: antlr3)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">package = ...,</span></td>
-<td>(antlr4 only) A string which specifies the package to be used on the dependent<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>(antlr4 only) A string which specifies the package to be used on the dependent sources.  If unset, the package will be based on the path to the sources. Note that if the sources are spread among different files, this must be set as the package cannot be inferred.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -1435,7 +1443,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">sources = ...,</span></td>
-<td>Source code files to build. Paths are relative to the BUILD<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Source code files to build. Paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">provides = ...,</span></td>
@@ -1443,7 +1451,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">excludes = ...,</span></td>
-<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's transitive dependencies against.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resources = ...,</span></td>
@@ -1451,23 +1459,19 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">services = ...,</span></td>
-<td>A dict mapping service interface names to the classes owned by this target<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>A dict mapping service interface names to the classes owned by this target that implement them.  Keys are fully qualified service class names, values are lists of strings, each string the fully qualified class name of a class owned by this target that implements the service interface and should be discoverable by the jvm service provider discovery mechanism described here: https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">platform = ...,</span></td>
-<td>The name of the platform (defined under the jvm-platform subsystem) to use<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The name of the platform (defined under the jvm-platform subsystem) to use for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified, the platform will default to the first one of these that exist: (1) the default_platform specified for jvm-platform, (2) a platform constructed from whatever java version is returned by DistributionLocator.cached().version.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">strict_deps = ...,</span></td>
-<td>When True, only the directly declared deps of the target will be used at<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>When True, only the directly declared deps of the target will be used at compilation time. This enforces that all direct deps of the target are declared, and can improve compilation speed due to smaller classpaths. Transitive deps are always provided at runtime.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">fatal_warnings = ...,</span></td>
-<td>Whether to turn warnings into errors for this target.  If present,<span class="build-symbol-arg-default"> (default: None)</span></td>
-</tr>
-<tr>
-<td><span class="build-symbol-arg-name">*args = ...,</span></td>
-<td>None</td>
+<td>Whether to turn warnings into errors for this target.  If present, takes priority over the language's fatal-warnings option.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">*args = ...,</span></td>
@@ -1475,11 +1479,19 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">provides = ...,</span></td>
-<td>The ``artifact``<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>An optional Dependency object indicating the The ivy artifact to export.<span class="build-symbol-arg-default"> (default: None)</span></td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">*args = ...,</span></td>
+<td>None</td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">provides = ...,</span></td>
+<td>The ``artifact`` to publish that represents this target outside the repo.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resources = ...,</span></td>
-<td>An optional list of file paths (DEPRECATED) or<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>An optional list of file paths (DEPRECATED) or ``resources`` targets (which in turn point to file paths). The paths indicate text file resources to place in this module's jar.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -1513,7 +1525,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">sources = ...,</span></td>
-<td>Source code files to build. Paths are relative to the BUILD<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Source code files to build. Paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">provides = ...,</span></td>
@@ -1521,7 +1533,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">excludes = ...,</span></td>
-<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's transitive dependencies against.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resources = ...,</span></td>
@@ -1529,19 +1541,19 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">services = ...,</span></td>
-<td>A dict mapping service interface names to the classes owned by this target<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>A dict mapping service interface names to the classes owned by this target that implement them.  Keys are fully qualified service class names, values are lists of strings, each string the fully qualified class name of a class owned by this target that implements the service interface and should be discoverable by the jvm service provider discovery mechanism described here: https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">platform = ...,</span></td>
-<td>The name of the platform (defined under the jvm-platform subsystem) to use<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The name of the platform (defined under the jvm-platform subsystem) to use for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified, the platform will default to the first one of these that exist: (1) the default_platform specified for jvm-platform, (2) a platform constructed from whatever java version is returned by DistributionLocator.cached().version.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">strict_deps = ...,</span></td>
-<td>When True, only the directly declared deps of the target will be used at<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>When True, only the directly declared deps of the target will be used at compilation time. This enforces that all direct deps of the target are declared, and can improve compilation speed due to smaller classpaths. Transitive deps are always provided at runtime.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">fatal_warnings = ...,</span></td>
-<td>Whether to turn warnings into errors for this target.  If present,<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Whether to turn warnings into errors for this target.  If present, takes priority over the language's fatal-warnings option.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">buildflags = ...,</span></td>
@@ -1549,7 +1561,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">imports = ...,</span></td>
-<td>List of addresses of `jar_library &lt;#jar_library&gt;`_<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>List of addresses of `jar_library &lt;#jar_library&gt;`_ targets which contain .proto definitions.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -1583,7 +1595,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">sources = ...,</span></td>
-<td>Source code files to build. Paths are relative to the BUILD<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Source code files to build. Paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">provides = ...,</span></td>
@@ -1591,7 +1603,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">excludes = ...,</span></td>
-<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's transitive dependencies against.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resources = ...,</span></td>
@@ -1599,19 +1611,19 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">services = ...,</span></td>
-<td>A dict mapping service interface names to the classes owned by this target<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>A dict mapping service interface names to the classes owned by this target that implement them.  Keys are fully qualified service class names, values are lists of strings, each string the fully qualified class name of a class owned by this target that implements the service interface and should be discoverable by the jvm service provider discovery mechanism described here: https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">platform = ...,</span></td>
-<td>The name of the platform (defined under the jvm-platform subsystem) to use<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The name of the platform (defined under the jvm-platform subsystem) to use for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified, the platform will default to the first one of these that exist: (1) the default_platform specified for jvm-platform, (2) a platform constructed from whatever java version is returned by DistributionLocator.cached().version.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">strict_deps = ...,</span></td>
-<td>When True, only the directly declared deps of the target will be used at<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>When True, only the directly declared deps of the target will be used at compilation time. This enforces that all direct deps of the target are declared, and can improve compilation speed due to smaller classpaths. Transitive deps are always provided at runtime.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">fatal_warnings = ...,</span></td>
-<td>Whether to turn warnings into errors for this target.  If present,<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Whether to turn warnings into errors for this target.  If present, takes priority over the language's fatal-warnings option.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -1645,7 +1657,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">sources = ...,</span></td>
-<td>Source code files to build. Paths are relative to the BUILD<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Source code files to build. Paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">provides = ...,</span></td>
@@ -1653,7 +1665,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">excludes = ...,</span></td>
-<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's transitive dependencies against.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resources = ...,</span></td>
@@ -1661,27 +1673,27 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">services = ...,</span></td>
-<td>A dict mapping service interface names to the classes owned by this target<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>A dict mapping service interface names to the classes owned by this target that implement them.  Keys are fully qualified service class names, values are lists of strings, each string the fully qualified class name of a class owned by this target that implements the service interface and should be discoverable by the jvm service provider discovery mechanism described here: https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">platform = ...,</span></td>
-<td>The name of the platform (defined under the jvm-platform subsystem) to use<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The name of the platform (defined under the jvm-platform subsystem) to use for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified, the platform will default to the first one of these that exist: (1) the default_platform specified for jvm-platform, (2) a platform constructed from whatever java version is returned by DistributionLocator.cached().version.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">strict_deps = ...,</span></td>
-<td>When True, only the directly declared deps of the target will be used at<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>When True, only the directly declared deps of the target will be used at compilation time. This enforces that all direct deps of the target are declared, and can improve compilation speed due to smaller classpaths. Transitive deps are always provided at runtime.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">fatal_warnings = ...,</span></td>
-<td>Whether to turn warnings into errors for this target.  If present,<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Whether to turn warnings into errors for this target.  If present, takes priority over the language's fatal-warnings option.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">cwd = ...,</span></td>
-<td>working directory (relative to the build root) for the tests under this<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>working directory (relative to the build root) for the tests under this target. If unspecified (None), the working directory will be controlled by junit_run's --cwd.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">test_platform = ...,</span></td>
-<td>The name of the platform (defined under the jvm-platform subsystem) to<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The name of the platform (defined under the jvm-platform subsystem) to use for running tests (that is, a key into the --jvm-platform-platforms dictionary). If unspecified, the platform will default to the same one used for compilation.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">timeout = ...,</span></td>
@@ -1689,11 +1701,11 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">extra_jvm_options = ...,</span></td>
-<td>A list of key value pairs of jvm options to use when running the<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>A list of key value pairs of jvm options to use when running the tests. Example: ['-Dexample.property=1'] If unspecified, no extra jvm options will be added.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">extra_env_vars = ...,</span></td>
-<td>A map of environment variables to set when running the tests, e.g.<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>A map of environment variables to set when running the tests, e.g. { 'FOOBAR': 12 }. Using `None` as the value will cause the variable to be unset.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -1727,7 +1739,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">sources = ...,</span></td>
-<td>Source code files to build. Paths are relative to the BUILD<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Source code files to build. Paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">provides = ...,</span></td>
@@ -1735,7 +1747,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">excludes = ...,</span></td>
-<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's transitive dependencies against.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resources = ...,</span></td>
@@ -1743,31 +1755,31 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">services = ...,</span></td>
-<td>A dict mapping service interface names to the classes owned by this target<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>A dict mapping service interface names to the classes owned by this target that implement them.  Keys are fully qualified service class names, values are lists of strings, each string the fully qualified class name of a class owned by this target that implements the service interface and should be discoverable by the jvm service provider discovery mechanism described here: https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">platform = ...,</span></td>
-<td>The name of the platform (defined under the jvm-platform subsystem) to use<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The name of the platform (defined under the jvm-platform subsystem) to use for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified, the platform will default to the first one of these that exist: (1) the default_platform specified for jvm-platform, (2) a platform constructed from whatever java version is returned by DistributionLocator.cached().version.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">strict_deps = ...,</span></td>
-<td>When True, only the directly declared deps of the target will be used at<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>When True, only the directly declared deps of the target will be used at compilation time. This enforces that all direct deps of the target are declared, and can improve compilation speed due to smaller classpaths. Transitive deps are always provided at runtime.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">fatal_warnings = ...,</span></td>
-<td>Whether to turn warnings into errors for this target.  If present,<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Whether to turn warnings into errors for this target.  If present, takes priority over the language's fatal-warnings option.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">compiler = ...,</span></td>
-<td>The compiler used to compile the thrift files. The default is defined in<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The compiler used to compile the thrift files. The default is defined in the global options under ``--thrift-default-compiler``.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">language = ...,</span></td>
-<td>The language used to generate the output files. The default is defined in<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The language used to generate the output files. The default is defined in the global options under ``--thrift-default-language``.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">rpc_style = ...,</span></td>
-<td>An optional rpc style to generate service stubs with. The default is defined<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>An optional rpc style to generate service stubs with. The default is defined in the global options under ``--thrift-default-rpc-style``.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">namespace_map = ...,</span></td>
@@ -1809,7 +1821,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">sources = ...,</span></td>
-<td>Source code files to build. Paths are relative to the BUILD<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Source code files to build. Paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">provides = ...,</span></td>
@@ -1817,7 +1829,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">excludes = ...,</span></td>
-<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's transitive dependencies against.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resources = ...,</span></td>
@@ -1825,31 +1837,35 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">services = ...,</span></td>
-<td>A dict mapping service interface names to the classes owned by this target<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>A dict mapping service interface names to the classes owned by this target that implement them.  Keys are fully qualified service class names, values are lists of strings, each string the fully qualified class name of a class owned by this target that implements the service interface and should be discoverable by the jvm service provider discovery mechanism described here: https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">platform = ...,</span></td>
-<td>The name of the platform (defined under the jvm-platform subsystem) to use<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The name of the platform (defined under the jvm-platform subsystem) to use for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified, the platform will default to the first one of these that exist: (1) the default_platform specified for jvm-platform, (2) a platform constructed from whatever java version is returned by DistributionLocator.cached().version.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">strict_deps = ...,</span></td>
-<td>When True, only the directly declared deps of the target will be used at<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>When True, only the directly declared deps of the target will be used at compilation time. This enforces that all direct deps of the target are declared, and can improve compilation speed due to smaller classpaths. Transitive deps are always provided at runtime.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">fatal_warnings = ...,</span></td>
-<td>Whether to turn warnings into errors for this target.  If present,<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Whether to turn warnings into errors for this target.  If present, takes priority over the language's fatal-warnings option.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">*args = ...,</span></td>
 <td>None</td>
 </tr>
 <tr>
+<td><span class="build-symbol-arg-name">provides = ...,</span></td>
+<td>An optional Dependency object indicating the The ivy artifact to export.<span class="build-symbol-arg-default"> (default: None)</span></td>
+</tr>
+<tr>
 <td><span class="build-symbol-arg-name">service_writer = ...,</span></td>
-<td>the name of the class to pass as the --service_writer option to<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>the name of the class to pass as the --service_writer option to the Wire compiler (For wire 1.0 only)<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">service_writer_options = ...,</span></td>
-<td>A list of options to pass to the service writer (For<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>A list of options to pass to the service writer (For wire 1.x only)<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">roots = ...,</span></td>
@@ -1857,7 +1873,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">registry_class = ...,</span></td>
-<td>fully qualified class name of RegistryClass to create. If in<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>fully qualified class name of RegistryClass to create. If in doubt, specify com.squareup.wire.SimpleServiceWriter<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">enum_options = ...,</span></td>
@@ -1899,7 +1915,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">sources = ...,</span></td>
-<td>Source code files to build. Paths are relative to the BUILD<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Source code files to build. Paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">provides = ...,</span></td>
@@ -1907,7 +1923,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">excludes = ...,</span></td>
-<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's transitive dependencies against.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resources = ...,</span></td>
@@ -1915,23 +1931,23 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">services = ...,</span></td>
-<td>A dict mapping service interface names to the classes owned by this target<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>A dict mapping service interface names to the classes owned by this target that implement them.  Keys are fully qualified service class names, values are lists of strings, each string the fully qualified class name of a class owned by this target that implements the service interface and should be discoverable by the jvm service provider discovery mechanism described here: https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">platform = ...,</span></td>
-<td>The name of the platform (defined under the jvm-platform subsystem) to use<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The name of the platform (defined under the jvm-platform subsystem) to use for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified, the platform will default to the first one of these that exist: (1) the default_platform specified for jvm-platform, (2) a platform constructed from whatever java version is returned by DistributionLocator.cached().version.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">strict_deps = ...,</span></td>
-<td>When True, only the directly declared deps of the target will be used at<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>When True, only the directly declared deps of the target will be used at compilation time. This enforces that all direct deps of the target are declared, and can improve compilation speed due to smaller classpaths. Transitive deps are always provided at runtime.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">fatal_warnings = ...,</span></td>
-<td>Whether to turn warnings into errors for this target.  If present,<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Whether to turn warnings into errors for this target.  If present, takes priority over the language's fatal-warnings option.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">package = ...,</span></td>
-<td>java package (com.company.package) in which to generate the output java files.<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>java package (com.company.package) in which to generate the output java files. If unspecified, Pants guesses it from the file path leading to the schema (xsd) file. This guess is accurate only if the .xsd file is in a path like ``.../com/company/package/schema.xsd``. Pants looks for packages that start with 'com', 'org', or 'net'.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">language = ...,</span></td>
@@ -1969,7 +1985,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">sources = ...,</span></td>
-<td>Source code files to build. Paths are relative to the BUILD<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Source code files to build. Paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">provides = ...,</span></td>
@@ -1977,7 +1993,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">excludes = ...,</span></td>
-<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's transitive dependencies against.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resources = ...,</span></td>
@@ -1985,27 +2001,27 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">services = ...,</span></td>
-<td>A dict mapping service interface names to the classes owned by this target<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>A dict mapping service interface names to the classes owned by this target that implement them.  Keys are fully qualified service class names, values are lists of strings, each string the fully qualified class name of a class owned by this target that implements the service interface and should be discoverable by the jvm service provider discovery mechanism described here: https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">platform = ...,</span></td>
-<td>The name of the platform (defined under the jvm-platform subsystem) to use<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The name of the platform (defined under the jvm-platform subsystem) to use for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified, the platform will default to the first one of these that exist: (1) the default_platform specified for jvm-platform, (2) a platform constructed from whatever java version is returned by DistributionLocator.cached().version.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">strict_deps = ...,</span></td>
-<td>When True, only the directly declared deps of the target will be used at<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>When True, only the directly declared deps of the target will be used at compilation time. This enforces that all direct deps of the target are declared, and can improve compilation speed due to smaller classpaths. Transitive deps are always provided at runtime.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">fatal_warnings = ...,</span></td>
-<td>Whether to turn warnings into errors for this target.  If present,<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Whether to turn warnings into errors for this target.  If present, takes priority over the language's fatal-warnings option.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">cwd = ...,</span></td>
-<td>working directory (relative to the build root) for the tests under this<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>working directory (relative to the build root) for the tests under this target. If unspecified (None), the working directory will be controlled by junit_run's --cwd.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">test_platform = ...,</span></td>
-<td>The name of the platform (defined under the jvm-platform subsystem) to<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The name of the platform (defined under the jvm-platform subsystem) to use for running tests (that is, a key into the --jvm-platform-platforms dictionary). If unspecified, the platform will default to the same one used for compilation.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">timeout = ...,</span></td>
@@ -2013,11 +2029,11 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">extra_jvm_options = ...,</span></td>
-<td>A list of key value pairs of jvm options to use when running the<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>A list of key value pairs of jvm options to use when running the tests. Example: ['-Dexample.property=1'] If unspecified, no extra jvm options will be added.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">extra_env_vars = ...,</span></td>
-<td>A map of environment variables to set when running the tests, e.g.<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>A map of environment variables to set when running the tests, e.g. { 'FOOBAR': 12 }. Using `None` as the value will cause the variable to be unset.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -2055,15 +2071,15 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">binary = ...,</span></td>
-<td>Target spec of the ``jvm_binary`` that contains the<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Target spec of the ``jvm_binary`` that contains the app main.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">bundles = ...,</span></td>
-<td>One or more ``bundle``\s<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>One or more ``bundle``\s describing "extra files" that should be included with this app (e.g.: config files, startup scripts).<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">basename = ...,</span></td>
-<td>Name of this application, if different from the<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Name of this application, if different from the ``name``. Optionally pants uses this in the ``bundle`` goal to name the distribution artifact.  Note this is unsafe because of the possible conflict when multiple bundles are built.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -2097,7 +2113,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">sources = ...,</span></td>
-<td>Source code files to build. Paths are relative to the BUILD<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Source code files to build. Paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">provides = ...,</span></td>
@@ -2105,7 +2121,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">excludes = ...,</span></td>
-<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's transitive dependencies against.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resources = ...,</span></td>
@@ -2113,19 +2129,19 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">services = ...,</span></td>
-<td>A dict mapping service interface names to the classes owned by this target<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>A dict mapping service interface names to the classes owned by this target that implement them.  Keys are fully qualified service class names, values are lists of strings, each string the fully qualified class name of a class owned by this target that implements the service interface and should be discoverable by the jvm service provider discovery mechanism described here: https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">platform = ...,</span></td>
-<td>The name of the platform (defined under the jvm-platform subsystem) to use<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The name of the platform (defined under the jvm-platform subsystem) to use for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified, the platform will default to the first one of these that exist: (1) the default_platform specified for jvm-platform, (2) a platform constructed from whatever java version is returned by DistributionLocator.cached().version.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">strict_deps = ...,</span></td>
-<td>When True, only the directly declared deps of the target will be used at<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>When True, only the directly declared deps of the target will be used at compilation time. This enforces that all direct deps of the target are declared, and can improve compilation speed due to smaller classpaths. Transitive deps are always provided at runtime.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">fatal_warnings = ...,</span></td>
-<td>Whether to turn warnings into errors for this target.  If present,<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Whether to turn warnings into errors for this target.  If present, takes priority over the language's fatal-warnings option.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">name = ...,</span></td>
@@ -2133,35 +2149,35 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">main = ...,</span></td>
-<td>The name of the ``main`` class, e.g.,<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The name of the ``main`` class, e.g., ``'org.pantsbuild.example.hello.main.HelloMain'``. This class may be present as the source of this target or depended-upon library.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">basename = ...,</span></td>
-<td>Base name for the generated ``.jar`` file, e.g.,<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Base name for the generated ``.jar`` file, e.g., ``'hello'``. (By default, uses ``name`` param)  Note this is unsafe because of the possible conflict when multiple binaries are built.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">source = ...,</span></td>
-<td>Name of one ``.java`` or ``.scala`` file (a good<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Name of one ``.java`` or ``.scala`` file (a good place for a ``main``).<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">deploy_excludes = ...,</span></td>
-<td>List of `exclude &lt;#exclude&gt;`_\s to apply<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>List of `exclude &lt;#exclude&gt;`_\s to apply at deploy time. If you, for example, deploy a java servlet that has one version of ``servlet.jar`` onto a Tomcat environment that provides another version, they might conflict. ``deploy_excludes`` gives you a way to build your code but exclude the conflicting ``jar`` when deploying.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">deploy_jar_rules = ...,</span></td>
-<td>`Jar rules &lt;#jar_rules&gt;`_ for packaging this binary in a<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>`Jar rules &lt;#jar_rules&gt;`_ for packaging this binary in a deploy jar.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">manifest_entries = ...,</span></td>
-<td>dict that specifies entries for `ManifestEntries &lt;#manifest_entries&gt;`_<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>dict that specifies entries for `ManifestEntries &lt;#manifest_entries&gt;`_ for adding to MANIFEST.MF when packaging this binary.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">shading_rules = ...,</span></td>
-<td>Optional list of shading rules to apply when building a shaded<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Optional list of shading rules to apply when building a shaded (aka monolithic aka fat) binary jar. The order of the rules matters: the first rule which matches a fully-qualified class name is used to shade it. See shading_relocate(), shading_exclude(), shading_relocate_package(), and shading_exclude_package().<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">dependencies = ...,</span></td>
-<td>Targets (probably ``java_library`` and<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Targets (probably ``java_library`` and ``scala_library`` targets) to "link" in.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -2195,7 +2211,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">sources = ...,</span></td>
-<td>Source code files to build. Paths are relative to the BUILD<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Source code files to build. Paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">provides = ...,</span></td>
@@ -2203,7 +2219,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">excludes = ...,</span></td>
-<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's transitive dependencies against.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resources = ...,</span></td>
@@ -2211,19 +2227,19 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">services = ...,</span></td>
-<td>A dict mapping service interface names to the classes owned by this target<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>A dict mapping service interface names to the classes owned by this target that implement them.  Keys are fully qualified service class names, values are lists of strings, each string the fully qualified class name of a class owned by this target that implements the service interface and should be discoverable by the jvm service provider discovery mechanism described here: https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">platform = ...,</span></td>
-<td>The name of the platform (defined under the jvm-platform subsystem) to use<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The name of the platform (defined under the jvm-platform subsystem) to use for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified, the platform will default to the first one of these that exist: (1) the default_platform specified for jvm-platform, (2) a platform constructed from whatever java version is returned by DistributionLocator.cached().version.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">strict_deps = ...,</span></td>
-<td>When True, only the directly declared deps of the target will be used at<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>When True, only the directly declared deps of the target will be used at compilation time. This enforces that all direct deps of the target are declared, and can improve compilation speed due to smaller classpaths. Transitive deps are always provided at runtime.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">fatal_warnings = ...,</span></td>
-<td>Whether to turn warnings into errors for this target.  If present,<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Whether to turn warnings into errors for this target.  If present, takes priority over the language's fatal-warnings option.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">mainclass = ...,</span></td>
@@ -2239,7 +2255,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">goal = ...,</span></td>
-<td>Pants goal to run this command in [test, binary or compile]. If not specified,<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Pants goal to run this command in [test, binary or compile]. If not specified, runs in 'test'<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -2273,7 +2289,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">artifacts = ...,</span></td>
-<td>List of `jar &lt;#jar&gt;`_\s or specs to jar_library targets with pinned versions.<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>List of `jar &lt;#jar&gt;`_\s or specs to jar_library targets with pinned versions. Versions are pinned per (org, name, classifier, ext) artifact coordinate (excludes, etc are ignored for the purposes of pinning).<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -2307,11 +2323,11 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">package_name = ...,</span></td>
-<td>The remote module package name, if not supplied the target name is<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The remote module package name, if not supplied the target name is used.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">sources = ...,</span></td>
-<td>Javascript and other source code files that make up this module; paths are<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Javascript and other source code files that make up this module; paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -2345,11 +2361,11 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">package_name = ...,</span></td>
-<td>The remote module package name, if not supplied the target name is<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The remote module package name, if not supplied the target name is used.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">sources = ...,</span></td>
-<td>Javascript and other source code files that make up this module; paths are<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Javascript and other source code files that make up this module; paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">dependencies_archive_url = ...,</span></td>
@@ -2395,11 +2411,11 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">package_name = ...,</span></td>
-<td>The remote module package name, if not supplied the target name is<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The remote module package name, if not supplied the target name is used.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">version = ...,</span></td>
-<td>The version constraint for the remote node module.  Any of the forms<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The version constraint for the remote node module.  Any of the forms accepted by npm including '' or '*' for unconstrained (the default) are acceptable.  See: https://docs.npmjs.com/files/package.json#dependencies<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -2471,7 +2487,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">format = ...,</span></td>
-<td>Page's format, ``md`` or ``rst``. By default, Pants infers from ``source`` file<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Page's format, ``md`` or ``rst``. By default, Pants infers from ``source`` file extension: ``.rst`` is ReStructured Text; anything else is Markdown.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">links = ...,</span></td>
@@ -2483,7 +2499,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">provides = ...,</span></td>
-<td>Optional "Addresses" at which this page is published.<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Optional "Addresses" at which this page is published. E.g., a wiki location.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -2517,11 +2533,11 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">sources = ...,</span></td>
-<td>Files to "include". Paths are relative to the<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Files to "include". Paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resources = ...,</span></td>
-<td>non-Python resources, e.g. templates, keys, other data<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>non-Python resources, e.g. templates, keys, other data (it is recommended that your application uses the pkgutil package to access these resources in a .zip-module friendly way.)<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resource_targets = ...,</span></td>
@@ -2529,19 +2545,19 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">provides = ...,</span></td>
-<td><span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The `setup_py &lt;#setup_py&gt;`_ to publish that represents this target outside the repo.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">compatibility = ...,</span></td>
-<td>either a string or list of strings that represents<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>either a string or list of strings that represents interpreter compatibility for this target, using the Requirement-style format, e.g. ``'CPython&gt;=3', or just ['&gt;=2.7','&lt;3']`` for requirements agnostic to interpreter class.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">dependencies = ...,</span></td>
-<td>Other targets that this target depends on.<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Other targets that this target depends on. These dependencies may be ``python_library``-like targets (``python_library``, ``python_thrift_library``, ``python_antlr_library`` and so forth) or ``python_requirement_library`` targets.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">distribution_name = ...,</span></td>
-<td>The name of the plugin package; must start with<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The name of the plugin package; must start with 'pantsbuild.pants.'.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">description = ...,</span></td>
@@ -2549,19 +2565,19 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">additional_classifiers = ...,</span></td>
-<td>Any additional trove classifiers that apply to the plugin,<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Any additional trove classifiers that apply to the plugin, see: https://pypi.python.org/pypi?%3Aaction=list_classifiers<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">build_file_aliases = ...,</span></td>
-<td>If `True`, register.py:build_file_aliases must be defined and<span class="build-symbol-arg-default"> (default: False)</span></td>
+<td>If `True`, register.py:build_file_aliases must be defined and registers the 'build_file_aliases' 'pantsbuild.plugin' entrypoint.<span class="build-symbol-arg-default"> (default: False)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">global_subsystems = ...,</span></td>
-<td>If `True`, register.py:global_subsystems must be defined and<span class="build-symbol-arg-default"> (default: False)</span></td>
+<td>If `True`, register.py:global_subsystems must be defined and registers the 'global_subsystems' 'pantsbuild.plugin' entrypoint.<span class="build-symbol-arg-default"> (default: False)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">register_goals = ...,</span></td>
-<td>If `True`, register.py:register_goals must be defined and<span class="build-symbol-arg-default"> (default: False)</span></td>
+<td>If `True`, register.py:register_goals must be defined and registers the 'register_goals' 'pantsbuild.plugin' entrypoint.<span class="build-symbol-arg-default"> (default: False)</span></td>
 </tr>
 </table>
 </li>
@@ -2603,7 +2619,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">prep_environ = ...,</span></td>
-<td>If True, the output of the command will be treated as<span class="build-symbol-arg-default"> (default: False)</span></td>
+<td>If True, the output of the command will be treated as a \\0-separated list of key=value pairs to insert into the environment. Note that this will pollute the environment for all future tests, so avoid it if at all possible.<span class="build-symbol-arg-default"> (default: False)</span></td>
 </tr>
 </table>
 </li>
@@ -2637,11 +2653,11 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">sources = ...,</span></td>
-<td>Files to "include". Paths are relative to the<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Files to "include". Paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resources = ...,</span></td>
-<td>non-Python resources, e.g. templates, keys, other data<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>non-Python resources, e.g. templates, keys, other data (it is recommended that your application uses the pkgutil package to access these resources in a .zip-module friendly way.)<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resource_targets = ...,</span></td>
@@ -2649,15 +2665,15 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">provides = ...,</span></td>
-<td><span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The `setup_py &lt;#setup_py&gt;`_ to publish that represents this target outside the repo.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">compatibility = ...,</span></td>
-<td>either a string or list of strings that represents<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>either a string or list of strings that represents interpreter compatibility for this target, using the Requirement-style format, e.g. ``'CPython&gt;=3', or just ['&gt;=2.7','&lt;3']`` for requirements agnostic to interpreter class.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">dependencies = ...,</span></td>
-<td>Other targets that this target depends on.<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Other targets that this target depends on. These dependencies may be ``python_library``-like targets (``python_library``, ``python_thrift_library``, ``python_antlr_library`` and so forth) or ``python_requirement_library`` targets.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">module = ...,</span></td>
@@ -2703,11 +2719,11 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">sources = ...,</span></td>
-<td>Files to "include". Paths are relative to the<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Files to "include". Paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resources = ...,</span></td>
-<td>non-Python resources, e.g. templates, keys, other data<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>non-Python resources, e.g. templates, keys, other data (it is recommended that your application uses the pkgutil package to access these resources in a .zip-module friendly way.)<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resource_targets = ...,</span></td>
@@ -2715,23 +2731,23 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">provides = ...,</span></td>
-<td><span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The `setup_py &lt;#setup_py&gt;`_ to publish that represents this target outside the repo.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">compatibility = ...,</span></td>
-<td>either a string or list of strings that represents<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>either a string or list of strings that represents interpreter compatibility for this target, using the Requirement-style format, e.g. ``'CPython&gt;=3', or just ['&gt;=2.7','&lt;3']`` for requirements agnostic to interpreter class.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">dependencies = ...,</span></td>
-<td>Other targets that this target depends on.<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Other targets that this target depends on. These dependencies may be ``python_library``-like targets (``python_library``, ``python_thrift_library``, ``python_antlr_library`` and so forth) or ``python_requirement_library`` targets.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">source = ...,</span></td>
-<td>relative path to one python source file that becomes this<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>relative path to one python source file that becomes this binary's __main__. If None specified, drops into an interpreter by default.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">entry_point = ...,</span></td>
-<td>the default entry point for this binary.  if None, drops into the entry<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>the default entry point for this binary.  if None, drops into the entry point that is defined by source. Something like "pants.bin.pants_exe:main", where "pants.bin.pants_exe" is the package name and "main" is the function name (if ommitted, the module is executed directly, presuming it has a ``__main.py__``).<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">inherit_path = ...,</span></td>
@@ -2743,7 +2759,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">always_write_cache = ...,</span></td>
-<td>whether or not the .deps cache of this PEX file should always<span class="build-symbol-arg-default"> (default: False)</span></td>
+<td>whether or not the .deps cache of this PEX file should always be written to disk.<span class="build-symbol-arg-default"> (default: False)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">repositories = ...,</span></td>
@@ -2759,15 +2775,15 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">platforms = ...,</span></td>
-<td>extra platforms to target when building this binary. If this is, e.g.,<span class="build-symbol-arg-default"> (default: ())</span></td>
+<td>extra platforms to target when building this binary. If this is, e.g., ``['current', 'linux-x86_64', 'macosx-10.4-x86_64']``, then when building the pex, then for any platform-dependent modules, Pants will include ``egg``\s for Linux (64-bit Intel), Mac OS X (version 10.4 or newer), and the current platform (whatever is being used when making the PEX).<span class="build-symbol-arg-default"> (default: ())</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">sources = ...,</span></td>
-<td>Overridden by source. To specify more than one source file,<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Overridden by source. To specify more than one source file, use a python_library and have the python_binary depend on that library.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">compatibility = ...,</span></td>
-<td>either a string or list of strings that represents<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>either a string or list of strings that represents interpreter compatibility for this target, using the Requirement-style format, e.g. ``'CPython&gt;=3', or just ['&gt;=2.7','&lt;3']`` for requirements agnostic to interpreter class.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -2801,11 +2817,11 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">sources = ...,</span></td>
-<td>Files to "include". Paths are relative to the<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Files to "include". Paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resources = ...,</span></td>
-<td>non-Python resources, e.g. templates, keys, other data<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>non-Python resources, e.g. templates, keys, other data (it is recommended that your application uses the pkgutil package to access these resources in a .zip-module friendly way.)<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resource_targets = ...,</span></td>
@@ -2813,15 +2829,15 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">provides = ...,</span></td>
-<td><span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The `setup_py &lt;#setup_py&gt;`_ to publish that represents this target outside the repo.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">compatibility = ...,</span></td>
-<td>either a string or list of strings that represents<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>either a string or list of strings that represents interpreter compatibility for this target, using the Requirement-style format, e.g. ``'CPython&gt;=3', or just ['&gt;=2.7','&lt;3']`` for requirements agnostic to interpreter class.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">dependencies = ...,</span></td>
-<td>Other targets that this target depends on.<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Other targets that this target depends on. These dependencies may be ``python_library``-like targets (``python_library``, ``python_thrift_library``, ``python_antlr_library`` and so forth) or ``python_requirement_library`` targets.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -2889,11 +2905,11 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">sources = ...,</span></td>
-<td>Files to "include". Paths are relative to the<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Files to "include". Paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resources = ...,</span></td>
-<td>non-Python resources, e.g. templates, keys, other data<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>non-Python resources, e.g. templates, keys, other data (it is recommended that your application uses the pkgutil package to access these resources in a .zip-module friendly way.)<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resource_targets = ...,</span></td>
@@ -2901,19 +2917,19 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">provides = ...,</span></td>
-<td><span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The `setup_py &lt;#setup_py&gt;`_ to publish that represents this target outside the repo.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">compatibility = ...,</span></td>
-<td>either a string or list of strings that represents<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>either a string or list of strings that represents interpreter compatibility for this target, using the Requirement-style format, e.g. ``'CPython&gt;=3', or just ['&gt;=2.7','&lt;3']`` for requirements agnostic to interpreter class.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">dependencies = ...,</span></td>
-<td>Other targets that this target depends on.<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Other targets that this target depends on. These dependencies may be ``python_library``-like targets (``python_library``, ``python_thrift_library``, ``python_antlr_library`` and so forth) or ``python_requirement_library`` targets.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">coverage = ...,</span></td>
-<td>the module(s) whose coverage should be generated, e.g.<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>the module(s) whose coverage should be generated, e.g. 'twitter.common.log' or ['twitter.common.log', 'twitter.common.http']<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">timeout = ...,</span></td>
@@ -2951,11 +2967,11 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">sources = ...,</span></td>
-<td>Files to "include". Paths are relative to the<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Files to "include". Paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resources = ...,</span></td>
-<td>non-Python resources, e.g. templates, keys, other data<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>non-Python resources, e.g. templates, keys, other data (it is recommended that your application uses the pkgutil package to access these resources in a .zip-module friendly way.)<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resource_targets = ...,</span></td>
@@ -2963,23 +2979,23 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">provides = ...,</span></td>
-<td><span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The `setup_py &lt;#setup_py&gt;`_ to publish that represents this target outside the repo.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">compatibility = ...,</span></td>
-<td>either a string or list of strings that represents<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>either a string or list of strings that represents interpreter compatibility for this target, using the Requirement-style format, e.g. ``'CPython&gt;=3', or just ['&gt;=2.7','&lt;3']`` for requirements agnostic to interpreter class.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">dependencies = ...,</span></td>
-<td>Other targets that this target depends on.<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Other targets that this target depends on. These dependencies may be ``python_library``-like targets (``python_library``, ``python_thrift_library``, ``python_antlr_library`` and so forth) or ``python_requirement_library`` targets.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">sources = ...,</span></td>
-<td>thrift source files (If more than one tries to use the same<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>thrift source files (If more than one tries to use the same namespace, beware https://issues.apache.org/jira/browse/THRIFT-515)<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resources = ...,</span></td>
-<td>non-Python resources, e.g. templates, keys, other data (it is<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>non-Python resources, e.g. templates, keys, other data (it is recommended that your application uses the pkgutil package to access these resources in a .zip-module friendly way.)<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -3013,7 +3029,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">sources = ...,</span></td>
-<td>Files to "include". Paths are relative to the<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Files to "include". Paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -3047,11 +3063,11 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">package_name = ...,</span></td>
-<td>The remote module package name, if not supplied the target name is<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The remote module package name, if not supplied the target name is used.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">sources = ...,</span></td>
-<td>Javascript and other source code files that make up this module; paths are<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Javascript and other source code files that make up this module; paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -3085,7 +3101,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">sources = ...,</span></td>
-<td>Scala source that makes up this module; paths are relative to the BUILD<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Scala source that makes up this module; paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -3119,7 +3135,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">sources = ...,</span></td>
-<td>Source code files to build. Paths are relative to the BUILD<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Source code files to build. Paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">provides = ...,</span></td>
@@ -3127,7 +3143,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">excludes = ...,</span></td>
-<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's transitive dependencies against.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resources = ...,</span></td>
@@ -3135,31 +3151,35 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">services = ...,</span></td>
-<td>A dict mapping service interface names to the classes owned by this target<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>A dict mapping service interface names to the classes owned by this target that implement them.  Keys are fully qualified service class names, values are lists of strings, each string the fully qualified class name of a class owned by this target that implements the service interface and should be discoverable by the jvm service provider discovery mechanism described here: https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">platform = ...,</span></td>
-<td>The name of the platform (defined under the jvm-platform subsystem) to use<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The name of the platform (defined under the jvm-platform subsystem) to use for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified, the platform will default to the first one of these that exist: (1) the default_platform specified for jvm-platform, (2) a platform constructed from whatever java version is returned by DistributionLocator.cached().version.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">strict_deps = ...,</span></td>
-<td>When True, only the directly declared deps of the target will be used at<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>When True, only the directly declared deps of the target will be used at compilation time. This enforces that all direct deps of the target are declared, and can improve compilation speed due to smaller classpaths. Transitive deps are always provided at runtime.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">fatal_warnings = ...,</span></td>
-<td>Whether to turn warnings into errors for this target.  If present,<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Whether to turn warnings into errors for this target.  If present, takes priority over the language's fatal-warnings option.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">*args = ...,</span></td>
 <td>None</td>
 </tr>
 <tr>
+<td><span class="build-symbol-arg-name">provides = ...,</span></td>
+<td>An optional Dependency object indicating the The ivy artifact to export.<span class="build-symbol-arg-default"> (default: None)</span></td>
+</tr>
+<tr>
 <td><span class="build-symbol-arg-name">java_sources = ...,</span></td>
-<td>Java libraries this library has a *circular*<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Java libraries this library has a *circular* dependency on. If you don't have the particular problem of circular dependencies forced by splitting interdependent java and scala into multiple targets, don't use this at all. Prefer using ``dependencies`` to express non-circular dependencies.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resources = ...,</span></td>
-<td>An optional list of paths (DEPRECATED) or ``resources``<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>An optional list of paths (DEPRECATED) or ``resources`` targets containing resources that belong on this library's classpath.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -3193,7 +3213,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">sources = ...,</span></td>
-<td>Source code files to build. Paths are relative to the BUILD<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Source code files to build. Paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">provides = ...,</span></td>
@@ -3201,7 +3221,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">excludes = ...,</span></td>
-<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's transitive dependencies against.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resources = ...,</span></td>
@@ -3209,31 +3229,35 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">services = ...,</span></td>
-<td>A dict mapping service interface names to the classes owned by this target<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>A dict mapping service interface names to the classes owned by this target that implement them.  Keys are fully qualified service class names, values are lists of strings, each string the fully qualified class name of a class owned by this target that implements the service interface and should be discoverable by the jvm service provider discovery mechanism described here: https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">platform = ...,</span></td>
-<td>The name of the platform (defined under the jvm-platform subsystem) to use<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The name of the platform (defined under the jvm-platform subsystem) to use for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified, the platform will default to the first one of these that exist: (1) the default_platform specified for jvm-platform, (2) a platform constructed from whatever java version is returned by DistributionLocator.cached().version.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">strict_deps = ...,</span></td>
-<td>When True, only the directly declared deps of the target will be used at<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>When True, only the directly declared deps of the target will be used at compilation time. This enforces that all direct deps of the target are declared, and can improve compilation speed due to smaller classpaths. Transitive deps are always provided at runtime.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">fatal_warnings = ...,</span></td>
-<td>Whether to turn warnings into errors for this target.  If present,<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Whether to turn warnings into errors for this target.  If present, takes priority over the language's fatal-warnings option.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">*args = ...,</span></td>
 <td>None</td>
 </tr>
 <tr>
+<td><span class="build-symbol-arg-name">provides = ...,</span></td>
+<td>An optional Dependency object indicating the The ivy artifact to export.<span class="build-symbol-arg-default"> (default: None)</span></td>
+</tr>
+<tr>
 <td><span class="build-symbol-arg-name">java_sources = ...,</span></td>
-<td>Java libraries this library has a *circular*<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Java libraries this library has a *circular* dependency on. If you don't have the particular problem of circular dependencies forced by splitting interdependent java and scala into multiple targets, don't use this at all. Prefer using ``dependencies`` to express non-circular dependencies.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resources = ...,</span></td>
-<td>An optional list of paths (DEPRECATED) or ``resources``<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>An optional list of paths (DEPRECATED) or ``resources`` targets containing resources that belong on this library's classpath.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">classname = ...,</span></td>
@@ -3279,7 +3303,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">sources = ...,</span></td>
-<td>Source code files to build. Paths are relative to the BUILD<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Source code files to build. Paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">provides = ...,</span></td>
@@ -3287,7 +3311,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">excludes = ...,</span></td>
-<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's transitive dependencies against.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">resources = ...,</span></td>
@@ -3295,23 +3319,27 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">services = ...,</span></td>
-<td>A dict mapping service interface names to the classes owned by this target<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>A dict mapping service interface names to the classes owned by this target that implement them.  Keys are fully qualified service class names, values are lists of strings, each string the fully qualified class name of a class owned by this target that implements the service interface and should be discoverable by the jvm service provider discovery mechanism described here: https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">platform = ...,</span></td>
-<td>The name of the platform (defined under the jvm-platform subsystem) to use<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The name of the platform (defined under the jvm-platform subsystem) to use for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified, the platform will default to the first one of these that exist: (1) the default_platform specified for jvm-platform, (2) a platform constructed from whatever java version is returned by DistributionLocator.cached().version.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">strict_deps = ...,</span></td>
-<td>When True, only the directly declared deps of the target will be used at<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>When True, only the directly declared deps of the target will be used at compilation time. This enforces that all direct deps of the target are declared, and can improve compilation speed due to smaller classpaths. Transitive deps are always provided at runtime.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">fatal_warnings = ...,</span></td>
-<td>Whether to turn warnings into errors for this target.  If present,<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Whether to turn warnings into errors for this target.  If present, takes priority over the language's fatal-warnings option.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">*args = ...,</span></td>
 <td>None</td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">provides = ...,</span></td>
+<td>An optional Dependency object indicating the The ivy artifact to export.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">*args = ...,</span></td>
@@ -3387,7 +3415,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">exclude_patterns = ...,</span></td>
-<td>fileset patterns to exclude from the archive. Exclude patterns<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>fileset patterns to exclude from the archive. Exclude patterns are processed before include_patterns.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -3450,11 +3478,11 @@
 <table class="build-symbol-args">
 <tr>
 <td><span class="build-symbol-arg-name">apply_pattern = ...,</span></td>
-<td>A regular expression that matches duplicate jar entries this rule</td>
+<td>A regular expression that matches duplicate jar entries this rule applies to.</td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">action = ...,</span></td>
-<td>An action to take to handle one or more duplicate entries.  Must be one of:</td>
+<td>An action to take to handle one or more duplicate entries.  Must be one of: ``Duplicate.SKIP``, ``Duplicate.REPLACE``, ``Duplicate.CONCAT``, ``Duplicate.CONCAT_TEXT``, or ``Duplicate.FAIL``.</td>
 </tr>
 </table>
 </li>
@@ -3540,11 +3568,11 @@
 <table class="build-symbol-args">
 <tr>
 <td><span class="build-symbol-arg-name">rel_path = ...,</span></td>
-<td>Base path of the "source" file paths. By default, path of the<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Base path of the "source" file paths. By default, path of the BUILD file. Useful for assets that don't live in the source code repo.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">mapper = ...,</span></td>
-<td>Function that takes a path string and returns a path string. Takes a path in<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Function that takes a path string and returns a path string. Takes a path in the source tree, returns a path to use in the resulting bundle. By default, an identity mapper.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">relative_to = ...,</span></td>
@@ -3552,7 +3580,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">fileset = ...,</span></td>
-<td>The set of files to include in the bundle.  A string filename, or list of<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The set of files to include in the bundle.  A string filename, or list of filenames, or a Fileset object (e.g. globs()). E.g., ``relative_to='common'`` removes that prefix from all files in the application bundle.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -3574,11 +3602,11 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">additional_classifiers = ...,</span></td>
-<td>Any additional trove classifiers that apply to the plugin,<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Any additional trove classifiers that apply to the plugin, see: https://pypi.python.org/pypi?%3Aaction=list_classifiers<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">kwargs = ...,</span></td>
-<td>Any additional keyword arguments to be passed to `setuptools.setup<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Any additional keyword arguments to be passed to `setuptools.setup &lt;https://pythonhosted.org/setuptools/setuptools.html&gt;`_.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -3608,11 +3636,11 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">organization = ...,</span></td>
-<td>An optional name for the organization the developer works on the<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>An optional name for the organization the developer works on the library for.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">organization_url = ...,</span></td>
-<td>An optional url pointing to more information about the<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>An optional url pointing to more information about the developer's organization.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">roles = ...,</span></td>
@@ -3630,11 +3658,11 @@
 <table class="build-symbol-args">
 <tr>
 <td><span class="build-symbol-arg-name">org = ...,</span></td>
-<td>Organization of the artifact to filter,</td>
+<td>Organization of the artifact to filter, known as groupId in Maven parlance.</td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">name = ...,</span></td>
-<td>Name of the artifact to filter in the org, or filter<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Name of the artifact to filter in the org, or filter everything if unspecified.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -3716,23 +3744,23 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">rev = ...,</span></td>
-<td>The Maven ``version`` of this dependency.<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The Maven ``version`` of this dependency. If unspecified the latest available version is used.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">force = ...,</span></td>
-<td>Force this specific artifact revision even if other transitive<span class="build-symbol-arg-default"> (default: False)</span></td>
+<td>Force this specific artifact revision even if other transitive dependencies specify a different revision. This requires specifying the ``rev`` parameter.<span class="build-symbol-arg-default"> (default: False)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">ext = ...,</span></td>
-<td>Extension of the artifact if different from the artifact type.<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Extension of the artifact if different from the artifact type. This is sometimes needed for artifacts packaged with Maven bundle type but stored as jars.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">url = ...,</span></td>
-<td>URL of this artifact, if different from the Maven repo standard location<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>URL of this artifact, if different from the Maven repo standard location (specifying this parameter is unusual).<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">apidocs = ...,</span></td>
-<td>URL of existing javadocs, which if specified, pants-generated javadocs<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>URL of existing javadocs, which if specified, pants-generated javadocs will properly hyperlink {\ @link}s.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">classifier = ...,</span></td>
@@ -3740,11 +3768,11 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">mutable = ...,</span></td>
-<td>Inhibit caching of this mutable artifact. A common use is for<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Inhibit caching of this mutable artifact. A common use is for Maven -SNAPSHOT style artifacts in an active development/integration cycle.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">intransitive = ...,</span></td>
-<td>Declares this Dependency intransitive, indicating only the jar for<span class="build-symbol-arg-default"> (default: False)</span></td>
+<td>Declares this Dependency intransitive, indicating only the jar for the dependency itself should be downloaded and placed on the classpath<span class="build-symbol-arg-default"> (default: False)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">excludes = ...,</span></td>
@@ -3762,11 +3790,11 @@
 <table class="build-symbol-args">
 <tr>
 <td><span class="build-symbol-arg-name">rules = ...,</span></td>
-<td>One or more rules that will be applied in order to jar entries being packaged in<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>One or more rules that will be applied in order to jar entries being packaged in a deploy jar. `Skip &lt;#Skip&gt;`_ rules can go here.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">default_dup_action = ...,</span></td>
-<td>The default action to take when a duplicate entry is encountered and<span class="build-symbol-arg-default"> (default: SKIP)</span></td>
+<td>The default action to take when a duplicate entry is encountered and no explicit rules apply to the entry.<span class="build-symbol-arg-default"> (default: SKIP)</span></td>
 </tr>
 </table>
 </li>
@@ -3806,7 +3834,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">artifacts = ...,</span></td>
-<td>List of `jar &lt;#jar&gt;`_\s or specs to jar_library targets with pinned versions.<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>List of `jar &lt;#jar&gt;`_\s or specs to jar_library targets with pinned versions. Versions are pinned per (org, name, classifier, ext) artifact coordinate (excludes, etc are ignored for the purposes of pinning).<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -3850,7 +3878,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">name = ...,</span></td>
-<td>The optional full name of the library.  If not supplied an appropriate name<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The optional full name of the library.  If not supplied an appropriate name will be synthesized.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -3900,11 +3928,11 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">additional_classifiers = ...,</span></td>
-<td>Any additional trove classifiers that apply to the package,<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Any additional trove classifiers that apply to the package, see: https://pypi.python.org/pypi?%3Aaction=list_classifiers<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">kwargs = ...,</span></td>
-<td>Any additional keyword arguments to be passed to `setuptools.setup<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Any additional keyword arguments to be passed to `setuptools.setup &lt;https://pythonhosted.org/setuptools/setuptools.html&gt;`_.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -3938,7 +3966,7 @@
 <table class="build-symbol-args">
 <tr>
 <td><span class="build-symbol-arg-name">kwargs = ...,</span></td>
-<td>Passed to `setuptools.setup<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Passed to `setuptools.setup &lt;https://pythonhosted.org/setuptools/setuptools.html&gt;`_.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -3986,7 +4014,7 @@
 <table class="build-symbol-args">
 <tr>
 <td><span class="build-symbol-arg-name">requirements_relpath = ...,</span></td>
-<td>The relpath from this BUILD file to the requirements file.<span class="build-symbol-arg-default"> (default: requirements.txt)</span></td>
+<td>The relpath from this BUILD file to the requirements file. Defaults to a `requirements.txt` file sibling to the BUILD file.<span class="build-symbol-arg-default"> (default: requirements.txt)</span></td>
 </tr>
 </table>
 </li>
@@ -4074,23 +4102,23 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">rev = ...,</span></td>
-<td>The Maven ``version`` of this dependency.<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The Maven ``version`` of this dependency. If unspecified the latest available version is used.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">force = ...,</span></td>
-<td>Force this specific artifact revision even if other transitive<span class="build-symbol-arg-default"> (default: False)</span></td>
+<td>Force this specific artifact revision even if other transitive dependencies specify a different revision. This requires specifying the ``rev`` parameter.<span class="build-symbol-arg-default"> (default: False)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">ext = ...,</span></td>
-<td>Extension of the artifact if different from the artifact type.<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Extension of the artifact if different from the artifact type. This is sometimes needed for artifacts packaged with Maven bundle type but stored as jars.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">url = ...,</span></td>
-<td>URL of this artifact, if different from the Maven repo standard location<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>URL of this artifact, if different from the Maven repo standard location (specifying this parameter is unusual).<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">apidocs = ...,</span></td>
-<td>URL of existing javadocs, which if specified, pants-generated javadocs<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>URL of existing javadocs, which if specified, pants-generated javadocs will properly hyperlink {\ @link}s.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">classifier = ...,</span></td>
@@ -4098,11 +4126,11 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">mutable = ...,</span></td>
-<td>Inhibit caching of this mutable artifact. A common use is for<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Inhibit caching of this mutable artifact. A common use is for Maven -SNAPSHOT style artifacts in an active development/integration cycle.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">intransitive = ...,</span></td>
-<td>Declares this Dependency intransitive, indicating only the jar for<span class="build-symbol-arg-default"> (default: False)</span></td>
+<td>Declares this Dependency intransitive, indicating only the jar for the dependency itself should be downloaded and placed on the classpath<span class="build-symbol-arg-default"> (default: False)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">excludes = ...,</span></td>
@@ -4132,7 +4160,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">tag = ...,</span></td>
-<td>An optional tag corresponding to the published release.  This will be<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>An optional tag corresponding to the published release.  This will be populated by pants during publish runs.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -4146,7 +4174,7 @@
 <table class="build-symbol-args">
 <tr>
 <td><span class="build-symbol-arg-name">kwargs = ...,</span></td>
-<td>Passed to `setuptools.setup<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Passed to `setuptools.setup &lt;https://pythonhosted.org/setuptools/setuptools.html&gt;`_.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -4160,7 +4188,7 @@
 <table class="build-symbol-args">
 <tr>
 <td><span class="build-symbol-arg-name">pattern = ...,</span></td>
-<td>Any fully-qualified classname which matches this pattern will NOT be</td>
+<td>Any fully-qualified classname which matches this pattern will NOT be shaded. '*' is a wildcard that matches any individual package component, and '**' is a wildcard that matches any trailing pattern (ie the rest of the string).</td>
 </tr>
 </table>
 </li>
@@ -4178,7 +4206,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">recursive = ...,</span></td>
-<td>Whether to exclude everything under any subpackage of ``package_name``,<span class="build-symbol-arg-default"> (default: True)</span></td>
+<td>Whether to exclude everything under any subpackage of ``package_name``, or just direct children of the package. (Defaults to True).<span class="build-symbol-arg-default"> (default: True)</span></td>
 </tr>
 </table>
 </li>
@@ -4192,15 +4220,15 @@
 <table class="build-symbol-args">
 <tr>
 <td><span class="build-symbol-arg-name">from_pattern = ...,</span></td>
-<td>Any fully-qualified classname which matches this pattern will be</td>
+<td>Any fully-qualified classname which matches this pattern will be shaded. '*' is a wildcard that matches any individual package component, and '**' is a wildcard that matches any trailing pattern (ie the rest of the string).</td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">shade_pattern = ...,</span></td>
-<td>The shaded pattern to use, where ``@1``, ``@2``, ``@3``, etc are<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The shaded pattern to use, where ``@1``, ``@2``, ``@3``, etc are references to the groups matched by wildcards (groups are numbered from left to right). If omitted, this pattern is inferred from the input pattern, prefixed by the ``shade_prefix`` (if provided). (Eg, a ``from_pattern`` of ``com.*.foo.bar.**`` implies a default ``shade_pattern`` of ``__shaded_by_pants__.com.@1.foo.@2``)<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">shade_prefix = ...,</span></td>
-<td>Prefix to prepend when generating a ``shade_pattern`` (if a<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Prefix to prepend when generating a ``shade_pattern`` (if a ``shade_pattern`` is not provided by the user). Defaults to '``__shaded_by_pants__.``'.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -4218,11 +4246,11 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">shade_prefix = ...,</span></td>
-<td>Optional prefix to apply to the package. Defaults to<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>Optional prefix to apply to the package. Defaults to ``__shaded_by_pants__.``.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">recursive = ...,</span></td>
-<td>Whether to rename everything under any subpackage of ``package_name``,<span class="build-symbol-arg-default"> (default: True)</span></td>
+<td>Whether to rename everything under any subpackage of ``package_name``, or just direct children of the package. (Defaults to True).<span class="build-symbol-arg-default"> (default: True)</span></td>
 </tr>
 </table>
 </li>
@@ -4250,7 +4278,7 @@
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">kwargs = ...,</span></td>
-<td>a dictionary that may contain configuration directives for your particular wiki.<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>a dictionary that may contain configuration directives for your particular wiki. For example, the following keys are supported for Atlassian's Confluence: * ``space`` -- A wiki space in which to place the page (used in Confluence) * ``title`` -- A title for the wiki page * ``parent`` -- The title of a wiki page that will denote this page as a child.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -4282,7 +4310,7 @@
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/reference/build_dictionary_body.html 2016-01-29T15:08:57.526308
+from dist/reference/build_dictionary_body.html 2016-02-01T09:27:00.704198
 </div>
 
 </div> <!-- end of mainflow -->
