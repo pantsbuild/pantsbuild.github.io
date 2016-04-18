@@ -37,6 +37,7 @@
 <li class="toc-h1"><a href="#task-installation-associate-task-with-goals">Task Installation: Associate Task with Goal[s]</a></li>
 <li class="toc-h1"><a href="#products-how-one-task-consumes-the-output-of-another">Products: How one Task consumes the output of another</a></li>
 <li class="toc-h1"><a href="#product_types-and-require_data-why-test-comes-after-compile">product_types and require_data: Why &quot;test&quot; comes after &quot;compile&quot;</a></li>
+<li class="toc-h1"><a href="#task-implementation-versioning">Task Implementation Versioning</a></li>
 <li class="toc-h1"><a href="#task-configuration">Task Configuration</a></li>
 <li class="toc-h2"><a href="#scopes">Scopes</a></li>
 <li class="toc-h2"><a href="#fine-tuning-options">Fine-tuning Options</a></li>
@@ -147,7 +148,7 @@ some concepts especially useful when defining a Task.</p>
 </table>
 
 <p>To implement a Task, you define a subclass of
-<a href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/backend/core/tasks/task.py">pants.backend.core.tasks.task.Task</a>
+<a href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/task/task.py">pants.task.task.Task</a>
 and define an <code>execute</code> method for that class. The <code>execute</code> method does
 the work.</p>
 <p>The Task can see (and affect) the state of the build via its <code>.context</code>
@@ -184,8 +185,7 @@ backend</a>:</p>
   <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'pytest'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">PytestRun</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s">'test'</span><span class="p">)</span>
   <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'py'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">PythonRun</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s">'run'</span><span class="p">)</span>
   <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'py'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">PythonRepl</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s">'repl'</span><span class="p">)</span>
-  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'setup-py'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">SetupPy</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">()</span><span class="o">.</span><span class="n">with_description</span><span class="p">(</span>
-    <span class="s">'Build setup.py-based Python projects from python_library targets.'</span><span class="p">)</span>
+  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'setup-py'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">SetupPy</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">()</span>
 </pre></div></div>
 </p>
 <p>That <code>task(...)</code> is a name for
@@ -266,6 +266,29 @@ required a product type:</p>
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
+<td class="h-plus-pilcrow-holder"><h2 id="task-implementation-versioning">Task Implementation Versioning</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#task-implementation-versioning">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Tasks may optionally specify an implementation version.  This is useful to be sure that cached
+objects from previous runs of pants using an older version are not used.  If you change a task
+class in a way that will impact its outputs you should update the version.  Implementation
+versions are set with the class method implementation_version.</p>
+<div class="codehilite"><pre><span class="n">Class</span> <span class="n">FooTask</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span> <span class="nf">implementation_version</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">FooTask</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">implementation_version</span><span class="p">()</span> <span class="o">+</span> <span class="p">[(</span><span class="s">'FooTask'</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+</pre></div>
+<p>We store both a version number and the name of the class in order to disambiguate changes in
+different classes that have the same implementation version set.</p>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
 <td class="h-plus-pilcrow-holder"><h2 id="task-configuration">Task Configuration</h2></td>
 <td><div class="pilcrow-div">
 <a class="pilcrow-link" href="#task-configuration">¶</a>
@@ -280,11 +303,11 @@ class method and call the passed-in <code>register</code> function:</p>
 <p>
 <div class="md-included-snippet"><div class="codehilite"><pre>  <span class="k">def</span> <span class="nf">register_options</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">register</span><span class="p">):</span>
     <span class="nb">super</span><span class="p">(</span><span class="n">Checkstyle</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">register_options</span><span class="p">(</span><span class="n">register</span><span class="p">)</span>
-    <span class="n">register</span><span class="p">(</span><span class="s">'--skip'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">'store_true'</span><span class="p">,</span> <span class="n">fingerprint</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="n">register</span><span class="p">(</span><span class="s">'--skip'</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">fingerprint</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
              <span class="n">help</span><span class="o">=</span><span class="s">'Skip checkstyle.'</span><span class="p">)</span>
     <span class="n">register</span><span class="p">(</span><span class="s">'--configuration'</span><span class="p">,</span> <span class="n">advanced</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">file_option</span><span class="p">,</span> <span class="n">fingerprint</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
              <span class="n">help</span><span class="o">=</span><span class="s">'Path to the checkstyle configuration file.'</span><span class="p">)</span>
-    <span class="n">register</span><span class="p">(</span><span class="s">'--properties'</span><span class="p">,</span> <span class="n">advanced</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">dict_option</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">{},</span> <span class="n">fingerprint</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="n">register</span><span class="p">(</span><span class="s">'--properties'</span><span class="p">,</span> <span class="n">advanced</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">{},</span> <span class="n">fingerprint</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
              <span class="n">help</span><span class="o">=</span><span class="s">'Dictionary of property mappings to use for checkstyle.properties.'</span><span class="p">)</span>
 </pre></div></div>
 </p>
@@ -332,19 +355,12 @@ scope from the cmd-line flag name. For example, instead of
 <p>When calling the <code>register</code> function, passing a few additional arguments
 will affect the behaviour of the registered option. The most common parameters are:</p>
 <ul>
-<li><code>type</code>: Constrains the type of the option. Takes a python type constructor (like <code>int</code>), or a
-  constructor like <code>list_option</code> from <a href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/option/custom_types.py">pants.option.custom_types</a>. If not specified, the option will be a string.</li>
+<li><code>type</code>: Constrains the type of the option. Takes a python type constructor (one of <code>bool</code>, <code>str</code>, <code>int</code>, <code>float</code>, <code>list</code>, <code>dict</code>), or a
+  special option type constructor like <code>target_option</code> from <a href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/option/custom_types.py">pants.option.custom_types</a>. 
+  If not specified, the option will be a string.</li>
 <li><code>default</code>: Sets a default value that will be used if the option is not specified by the user.</li>
-<li><code>action</code>: A string action that specifies that passing the registered option should do something other than
-  set a literal value (which is the default when no <code>action</code> is specified.) The two most common actions are:<ul>
-<li><em>store_true</em>: Causes the presence of the option to set the option value to <code>True</code>. Also automatically
-creates an inverse option prefixed with "--no-".</li>
-<li><em>append</em>: If an option is specified multiple times, the <code>append</code> action will append them to a list
-representing the option's value.</li>
-</ul>
-</li>
 <li><code>advanced</code>: Indicates that an option is intended either for use by power users, or for use in
-  pants.ini. By default, advanced options are not displayed in <code>./pants help</code>.</li>
+  only in pants.ini, rather than from the command-line. By default, advanced options are not displayed in <code>./pants help</code>.</li>
 <li><code>fingerprint</code>: Indicates that the value of the registered option affects the products
   of the task, such that changing the option would result in different products. When <code>True</code>,
   changing the option will cause targets built by the task to be invalidated and rebuilt.</li>
@@ -482,7 +498,7 @@ independently.</p>
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/markdown/html/src/python/pants/docs/dev_tasks.html 2015-11-13T12:41:05.269575
+from dist/markdown/html/src/python/pants/docs/dev_tasks.html 2016-04-18T11:24:32.052313
 </div>
 
 </div> <!-- end of mainflow -->
@@ -502,6 +518,9 @@ from dist/markdown/html/src/python/pants/docs/dev_tasks.html 2015-11-13T12:41:05
 <ul>
 <li class="toc-h1 ">
 <a href="first_concepts.html">Pants Conceptual Overview</a>
+</li>
+<li class="toc-h1 ">
+<a href="install.html">Installing Pants</a>
 </li>
 <li class="toc-h1 ">
 <a href="first_tutorial.html">First Tutorial</a>
@@ -564,16 +583,13 @@ from dist/markdown/html/src/python/pants/docs/dev_tasks.html 2015-11-13T12:41:05
 <a href="with_intellij.html">Using Pants with IntelliJ IDEA</a>
 </li>
 <li class="toc-h1 ">
-<a href="install.html">Installing Pants</a>
-</li>
-<li class="toc-h1 ">
 <a href="setup_repo.html">Set up Your Source Tree for Pants</a>
 </li>
 <li class="toc-h1 ">
 <a href="build_dictionary.html">Pants BUILD Dictionary</a>
 </li>
 <li class="toc-h1 ">
-<a href="options_reference.html">Pants Options Reference</a>
+<a href="options_reference.html">Pants Reference</a>
 </li>
 <li class="toc-h1 ">
 <a href="changelog.html">RELEASE HISTORY</a>
@@ -600,6 +616,9 @@ Task Developer's Guide
 <a href="dev_tasks_publish_extras.html">Develop a Task to Publish &quot;Extra&quot; Artifacts</a>
 </li>
 <li class="toc-h2 ">
+<a href="styleguide.html">Pants Style Guide</a>
+</li>
+<li class="toc-h2 ">
 <a href="howto_plugin.html">Developing a Pants Plugin</a>
 </li>
 <li class="toc-h2 ">
@@ -609,10 +628,19 @@ Task Developer's Guide
 <a href="internals.html">Pants Internals</a>
 </li>
 <li class="toc-h2 ">
+<a href="deprecation_policy.html">Pants Deprecation Policy</a>
+</li>
+<li class="toc-h2 ">
 <a href="release.html">Release Process</a>
 </li>
 <li class="toc-h3 ">
 <a href="release_jvm.html">JVM Artifact Release Process</a>
+</li>
+<li class="toc-h3 ">
+<a href="branching_strategy.html">Branching Strategy</a>
+</li>
+<li class="toc-h3 ">
+<a href="deprecation_policy.html">Pants Deprecation Policy</a>
 </li>
 <li class="toc-h2 ">
 <a href="docs.html">About the documentation</a>

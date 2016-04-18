@@ -8,13 +8,13 @@
 
 <head>
   <meta charset="utf-8" />
-  <title>Python 3rdparty Pattern</title>
+  <title>Pants Deprecation Policy</title>
   <link rel="stylesheet" href="s.css">
   <script src="s.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" href="logo.ico">
   <!-- In case this is a "test publish", tell search engines where real version lives: -->
-  <link rel="canonical" href="https://pantsbuild.github.io/3rdparty_py.html">
+  <link rel="canonical" href="https://pantsbuild.github.io/deprecation_policy.html">
 </head>
 
 <body>
@@ -26,15 +26,16 @@
 <nav class="breadcrumbs">
 <ul>
 <li><a href="index.html">Pants Build</a>
-<li><a href="python-readme.html">Python Projects with Pants</a>
-<li><a href="3rdparty_py.html">Python 3rdparty Pattern</a>
+<li><a href="dev.html">Pants Developer Center</a>
+<li><a href="deprecation_policy.html">Pants Deprecation Policy</a>
 </ul>
 </nav>
 
 <nav class="pagetoc">
 <ul>
-<li class="toc-h1"><a href="#3rdpartypython">3rdparty/python</a></li>
-<li class="toc-h1"><a href="#your-codes-build-file">Your Code's BUILD File</a></li>
+<li class="toc-h1"><a href="#api-definition">API Definition</a></li>
+<li class="toc-h1"><a href="#allowed-api-changes">Allowed API Changes</a></li>
+<li class="toc-h1"><a href="#disallowed-api-changes">Disallowed API Changes</a></li>
 </ul>
 </nav>
 
@@ -108,112 +109,110 @@
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h1 id="python-3rdparty-pattern">Python 3rdparty Pattern</h1></td>
+<td class="h-plus-pilcrow-holder"><h1 id="pants-deprecation-policy">Pants Deprecation Policy</h1></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#python-3rdparty-pattern">¶</a>
+<a class="pilcrow-link" href="#pants-deprecation-policy">¶</a>
 </div></td>
 </tr>
 </tbody>
 </table>
 
-<p>In general, we use the
-<a href="3rdparty.html">3rdparty idiom</a> to organize
-dependencies on code from outside the source tree. This document
-describes how to make this work for Python code.</p>
-<p>Your Python code can pull in code written elsewhere. Pants fetches code
-via a library that uses pip-style specifications (name and
-version-range).</p>
+<p>For releases after 1.0.0, deprecations are in effect for release branches until the next 2 minor releases (e.g. if the feature is available in 1.0.x it should continue to be available in 1.1.x and 1.2.x and can be removed in 1.3.x).</p>
+<p>This assumes a rough timeline of 3 months lifetime per minor release.</p>
 
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h2 id="3rdpartypython">3rdparty/python</h2></td>
+<td class="h-plus-pilcrow-holder"><h2 id="api-definition">API Definition</h2></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#3rdpartypython">¶</a>
+<a class="pilcrow-link" href="#api-definition">¶</a>
 </div></td>
 </tr>
 </tbody>
 </table>
 
-<p>To keep all of your code depending on the same versions of third-party
-Python artifacts, you might use the idiom of keeping them in a directory
-tree under <code>3rdparty/python</code>. If your organization has many such
-dependencies, you might arrange them in several directories: this can
-ease later "git detective work" when finding out who changed a version.
-(Pants itself doesn't have many Python dependencies; thus, we haven't split its <code>3rdparty</code> tree
-into many directories.)</p>
-<p><strong>pip-style requirements.txt:</strong></p>
-<p>To define some third-party dependencies, use a
-<a href="build_dictionary.html#bdict_python_requirements" pantsref="bdict_python_requirements">python_requirements</a> in your <code>BUILD</code>
-file and make a pip <code>requirements.txt</code> file in the same directory.</p>
-<p>E.g, your <code>3rdparty/python/BUILD</code> file might look like:</p>
-<p>
-<div class="md-included-snippet"><div class="codehilite"><pre><span class="n">python_requirements</span><span class="p">()</span>
-</pre></div></div>
-</p>
-<p>...with <code>3rdparty/python/requirements.txt</code> like:</p>
-<p>
-<div class="md-included-snippet"><div class="codehilite"><pre>ansicolors==1.0.2
-beautifulsoup4&gt;=4.3.2,&lt;4.4
-coverage&gt;=3.7,&lt;3.8
-docutils&gt;=0.12,&lt;0.13
-fasteners==0.14.1
-futures==3.0.5
-lmdb==0.89
-Markdown==2.1.1
-mock==1.3.0
-</pre></div></div>
-</p>
-<p><code>python_requirements</code> defines a named target for each line in the
-<code>requirements.txt</code> line. For example, a line like <code>ansicolors==1.0.2</code> in
-<code>requirements.txt</code> defines a target named <code>ansicolors</code> that pulls in
-ansicolors version 1.0.2.</p>
-<p><strong>python_requirement_library and python_requirement:</strong></p>
-<p>A <code>BUILD</code> file can also define requirements without a <code>requirements.txt</code>
-file. Set up a
-<a href="build_dictionary.html#bdict_python_requirement_library" pantsref="bdict_python_requirement_library"><code>python_requirement_library</code></a>
-with one or more
-<a href="build_dictionary.html#bdict_python_requirement" pantsref="bdict_python_requirement"><code>python_requirement</code></a>s
-like:</p>
-<div class="codehilite"><pre><span class="n">python_requirement_library</span><span class="p">(</span>
-  <span class="n">name</span><span class="o">=</span><span class="s">'beautifulsoup'</span><span class="p">,</span>
-  <span class="n">requirements</span><span class="o">=</span><span class="p">[</span>
-    <span class="n">python_requirement</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'beautifulsoup'</span><span class="p">,</span>
-                       <span class="n">requirement</span><span class="o">=</span><span class="s">'BeautifulSoup==3.2.0'</span><span class="p">),</span>
-  <span class="p">])</span>
+<p>A module, variable, method, function or class is part of the public API if its definition's docstring is marked <code>:API: public</code>, and if its enclosing definition, if any, is part of the public API.</p>
+<p>For example, a method <code>baz</code> of class <code>Bar</code> defined at the top level of module <code>foo</code> is part of the public API if and only if the docstrings of <code>foo</code>, <code>Bar</code> and <code>baz</code> are all marked <code>:API: public</code>. e.g.</p>
+<div class="codehilite"><pre>$ cat foo.py
+
+"""
+An example public API module.
+
+:API: public
+"""
+
+class Bar(object):
+  """An example public API class.
+
+  :API: public
+  """
+
+  def baz(self):
+    """An example public API method.
+
+    :API: public
+    """
+
+def qux(self):
+  """An example public API function.
+
+  :API: public
+  """
 </pre></div>
+<p>The following rules apply to definitions in the public API. No rules apply to definitions outside the public API. Those may be changed in any way at any time.</p>
 
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h2 id="your-codes-build-file">Your Code's BUILD File</h2></td>
+<td class="h-plus-pilcrow-holder"><h2 id="allowed-api-changes">Allowed API Changes</h2></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#your-codes-build-file">¶</a>
+<a class="pilcrow-link" href="#allowed-api-changes">¶</a>
 </div></td>
 </tr>
 </tbody>
 </table>
 
-<p>In your code's <code>BUILD</code> file, introduce a dependency on the <code>3rdparty</code>
-target:</p>
-<p>
-<div class="md-included-snippet"><div class="codehilite"><pre><span class="n">python_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'greet'</span><span class="p">,</span>
-  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
-    <span class="s">'3rdparty/python:ansicolors'</span><span class="p">,</span>
-  <span class="p">],</span>
-  <span class="n">sources</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s">'*.py'</span><span class="p">),</span>
-<span class="p">)</span>
-</pre></div></div>
-</p>
-<p>Then in your Python code, you can <code>import</code> from that package:</p>
-<div class="codehilite"><pre><span class="kn">from</span> <span class="nn">colors</span> <span class="kn">import</span> <span class="n">green</span>
-</pre></div>
+<ul>
+<li>Adding a new module.</li>
+<li>Adding new command line options.</li>
+<li>Adding new features to existing modules.</li>
+<li>Deprecate and warn about an API that has been refactored.</li>
+<li>Deprecate and warn about an option that has been refactored.</li>
+<li>Adding new named/defaulted parameters to a public API method.</li>
+<li>Adding/removing/renaming any module or method in a directory named 'exp'.</li>
+<li>Adding/removing/renaming any module or method not marked <code>:API: public</code> in the docstring.</li>
+<li>Fixing bugs.</li>
+<li>Exceptions for severe or special case bugs may be considered on a case-by-case basis.</li>
+</ul>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="disallowed-api-changes">Disallowed API Changes</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#disallowed-api-changes">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<ul>
+<li>Deprecated options must continue to work as before.</li>
+<li>Existing API modules cannot be moved.</li>
+<li>Options cannot be removed.</li>
+<li>Parameters cannot be removed from API methods (any public method in an API module).</li>
+<li>Changing the behavior of a method that breaks existing assumptions.</li>
+<li>e.g. changing a method that used to do transitive resolution to intransitive resolution would be disallowed, but adding a new named parameter to change the behavior would be allowed.</li>
+<li>Changes that introduce significant performance regressions by default.</li>
+<li>A significant regression would be a slowdown of &gt;= 10%.</li>
+<li>If a new feature is needed that would slow down performance more than 10%, it should be put behind an option.</li>
+</ul>
 
 <!-- main content end -->
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/markdown/html/examples/src/python/example/3rdparty_py.html 2016-04-18T11:24:31.928236
+from dist/markdown/html/src/python/pants/docs/deprecation_policy.html 2016-04-18T11:24:31.736376
 </div>
 
 </div> <!-- end of mainflow -->
@@ -258,8 +257,8 @@ from dist/markdown/html/examples/src/python/example/3rdparty_py.html 2016-04-18T
 <li class="toc-h1 ">
 <a href="python-readme.html">Python Projects with Pants</a>
 </li>
-<li class="toc-h2 toc-here">
-Python 3rdparty Pattern
+<li class="toc-h2 ">
+<a href="3rdparty_py.html">Python 3rdparty Pattern</a>
 </li>
 <li class="toc-h2 ">
 <a href="pex_design.html">PEX Design</a>
@@ -282,8 +281,8 @@ Python 3rdparty Pattern
 <li class="toc-h2 ">
 <a href="3rdparty_jvm.html">JVM 3rdparty Pattern</a>
 </li>
-<li class="toc-h2 toc-here">
-Python 3rdparty Pattern
+<li class="toc-h2 ">
+<a href="3rdparty_py.html">Python 3rdparty Pattern</a>
 </li>
 <li class="toc-h1 ">
 <a href="ThriftDeps.html">Using Pants with Thrift Dependencies</a>
@@ -342,8 +341,8 @@ Python 3rdparty Pattern
 <li class="toc-h2 ">
 <a href="internals.html">Pants Internals</a>
 </li>
-<li class="toc-h2 ">
-<a href="deprecation_policy.html">Pants Deprecation Policy</a>
+<li class="toc-h2 toc-here">
+Pants Deprecation Policy
 </li>
 <li class="toc-h2 ">
 <a href="release.html">Release Process</a>
@@ -354,8 +353,8 @@ Python 3rdparty Pattern
 <li class="toc-h3 ">
 <a href="branching_strategy.html">Branching Strategy</a>
 </li>
-<li class="toc-h3 ">
-<a href="deprecation_policy.html">Pants Deprecation Policy</a>
+<li class="toc-h3 toc-here">
+Pants Deprecation Policy
 </li>
 <li class="toc-h2 ">
 <a href="docs.html">About the documentation</a>

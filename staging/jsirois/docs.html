@@ -34,8 +34,8 @@
 <nav class="pagetoc">
 <ul>
 <li class="toc-h1"><a href="#docs-in-the-code">Docs in the Code</a></li>
-<li class="toc-h2"><a href="#goals-tasks-and-options">Goals, Tasks, and Options</a></li>
-<li class="toc-h2"><a href="#targets-and-other-build-file-things">Targets and other BUILD File Things</a></li>
+<li class="toc-h2"><a href="#goals-tasks-and-options">Goals, tasks, and options</a></li>
+<li class="toc-h2"><a href="#target-types-and-other-build-file-symbols">Target types and other BUILD file symbols</a></li>
 <li class="toc-h1"><a href="#generating-the-site">Generating the site</a></li>
 <li class="toc-h1"><a href="#publishing-the-site">Publishing the site</a></li>
 <li class="toc-h1"><a href="#cross-references">Cross References</a></li>
@@ -142,7 +142,7 @@ lives in docstrings and comments; but some information for Pants <em>users</em> 
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h3 id="goals-tasks-and-options">Goals, Tasks, and Options</h3></td>
+<td class="h-plus-pilcrow-holder"><h3 id="goals-tasks-and-options">Goals, tasks, and options</h3></td>
 <td><div class="pilcrow-div">
 <a class="pilcrow-link" href="#goals-tasks-and-options">¶</a>
 </div></td>
@@ -153,19 +153,17 @@ lives in docstrings and comments; but some information for Pants <em>users</em> 
 <p>When a user views a goal's options by entering <code>./pants compile -h</code> or browsing the
 <a href="options_reference.html#oref_goal_compile" pantsref="oref_goal_compile">Pants Options Reference</a>, they see text that "lives" in the
 Pants source code. If you <a href="dev_tasks.html">develop a <code>Task</code></a>, document it:</p>
-<p><strong>Goal description:</strong> When registering a <code>Task</code> with a goal, call
-<code>with_description('yadda yadda')</code> to set the goal's description to "yadda yadda". More than one
-Task can register with a goal; thus another description might "clobber" the one you provide (and
-if you provide one, it might clobber another).</p>
-<p>
-<div class="md-included-snippet"><div class="codehilite"><pre>  <span class="c"># with_description() removed, as their docstring will be used instead.</span>
-</pre></div></div>
-</p>
+<p><strong>Goal description:</strong> You can explicitly register a goal's description
+using <code>Goal.register(name, description)</code>.</p>
+<p>This description will default to the description of a task in that goal with the same name
+as the goal, if any.</p>
+<p><strong>Task description:</strong> Task descriptions are derived from the first sentence of the docstring
+of the task class.</p>
 <p><strong>Option help</strong> When registering a <code>Task</code> option, pass a <code>help</code> parameter to describe that option.</p>
 <p>
 <div class="md-included-snippet"><div class="codehilite"><pre>  <span class="k">def</span> <span class="nf">register_options</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">register</span><span class="p">):</span>
     <span class="nb">super</span><span class="p">(</span><span class="n">ListGoals</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">register_options</span><span class="p">(</span><span class="n">register</span><span class="p">)</span>
-    <span class="n">register</span><span class="p">(</span><span class="s">'--graph'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">'store_true'</span><span class="p">,</span>
+    <span class="n">register</span><span class="p">(</span><span class="s">'--graph'</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
              <span class="n">help</span><span class="o">=</span><span class="s">'Generate a graphviz graph of installed goals.'</span><span class="p">)</span>
 </pre></div></div>
 </p>
@@ -173,25 +171,17 @@ if you provide one, it might clobber another).</p>
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h3 id="targets-and-other-build-file-things">Targets and other <code>BUILD</code> File Things</h3></td>
+<td class="h-plus-pilcrow-holder"><h3 id="target-types-and-other-build-file-symbols">Target types and other <code>BUILD</code> file symbols</h3></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#targets-and-other-build-file-things">¶</a>
+<a class="pilcrow-link" href="#target-types-and-other-build-file-symbols">¶</a>
 </div></td>
 </tr>
 </tbody>
 </table>
 
 <p>When a user views a target's parameters by entering <code>./pants targets --details=java_library</code> or
-by browsing the <a href="build_dictionary.html#bdict_java_library" pantsref="bdict_java_library">Pants BUILD Dictionary</a>, they're mostly
-seeing information from a docstring. Pants extracts the useful information with some reflection
-code.</p>
-<p>In a few cases, the reflection code doesn't do the right thing without some "steering". E.g.,
-a Target is implemented by a Python class. <em>Most</em> of those class' methods aren't useful in
-<code>BUILD</code> files, but a few are. To reveal only the useful methods in the docs, Pants omits them
-by default, except those that have been tagged for inclusion.</p>
-<p>To "steer" the reflection, use a <code>@manual.builddict</code> annotation. See its
-<a href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/base/build_manual.py">docstring</a>
-for details about what it can show/hide.</p>
+by browsing the <a href="build_dictionary.html#bdict_java_library" pantsref="bdict_java_library">Pants BUILD Dictionary</a>, that information
+is derived from the docstrings of the classes implementing those symbols.</p>
 
 <table class="h-plus-pilcrow">
 <tbody>
@@ -298,7 +288,7 @@ page to the <code>sources</code> dict and to the <code>tree</code> hierarchy.</p
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/markdown/html/src/python/pants/docs/docs.html 2015-11-13T12:41:05.229652
+from dist/markdown/html/src/python/pants/docs/docs.html 2016-04-18T11:24:31.970397
 </div>
 
 </div> <!-- end of mainflow -->
@@ -318,6 +308,9 @@ from dist/markdown/html/src/python/pants/docs/docs.html 2015-11-13T12:41:05.2296
 <ul>
 <li class="toc-h1 ">
 <a href="first_concepts.html">Pants Conceptual Overview</a>
+</li>
+<li class="toc-h1 ">
+<a href="install.html">Installing Pants</a>
 </li>
 <li class="toc-h1 ">
 <a href="first_tutorial.html">First Tutorial</a>
@@ -380,16 +373,13 @@ from dist/markdown/html/src/python/pants/docs/docs.html 2015-11-13T12:41:05.2296
 <a href="with_intellij.html">Using Pants with IntelliJ IDEA</a>
 </li>
 <li class="toc-h1 ">
-<a href="install.html">Installing Pants</a>
-</li>
-<li class="toc-h1 ">
 <a href="setup_repo.html">Set up Your Source Tree for Pants</a>
 </li>
 <li class="toc-h1 ">
 <a href="build_dictionary.html">Pants BUILD Dictionary</a>
 </li>
 <li class="toc-h1 ">
-<a href="options_reference.html">Pants Options Reference</a>
+<a href="options_reference.html">Pants Reference</a>
 </li>
 <li class="toc-h1 ">
 <a href="changelog.html">RELEASE HISTORY</a>
@@ -416,6 +406,9 @@ from dist/markdown/html/src/python/pants/docs/docs.html 2015-11-13T12:41:05.2296
 <a href="dev_tasks_publish_extras.html">Develop a Task to Publish &quot;Extra&quot; Artifacts</a>
 </li>
 <li class="toc-h2 ">
+<a href="styleguide.html">Pants Style Guide</a>
+</li>
+<li class="toc-h2 ">
 <a href="howto_plugin.html">Developing a Pants Plugin</a>
 </li>
 <li class="toc-h2 ">
@@ -425,10 +418,19 @@ from dist/markdown/html/src/python/pants/docs/docs.html 2015-11-13T12:41:05.2296
 <a href="internals.html">Pants Internals</a>
 </li>
 <li class="toc-h2 ">
+<a href="deprecation_policy.html">Pants Deprecation Policy</a>
+</li>
+<li class="toc-h2 ">
 <a href="release.html">Release Process</a>
 </li>
 <li class="toc-h3 ">
 <a href="release_jvm.html">JVM Artifact Release Process</a>
+</li>
+<li class="toc-h3 ">
+<a href="branching_strategy.html">Branching Strategy</a>
+</li>
+<li class="toc-h3 ">
+<a href="deprecation_policy.html">Pants Deprecation Policy</a>
 </li>
 <li class="toc-h2 toc-here">
 About the documentation

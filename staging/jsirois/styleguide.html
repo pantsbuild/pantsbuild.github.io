@@ -8,13 +8,13 @@
 
 <head>
   <meta charset="utf-8" />
-  <title>Python 3rdparty Pattern</title>
+  <title>Pants Style Guide</title>
   <link rel="stylesheet" href="s.css">
   <script src="s.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" href="logo.ico">
   <!-- In case this is a "test publish", tell search engines where real version lives: -->
-  <link rel="canonical" href="https://pantsbuild.github.io/3rdparty_py.html">
+  <link rel="canonical" href="https://pantsbuild.github.io/styleguide.html">
 </head>
 
 <body>
@@ -26,15 +26,16 @@
 <nav class="breadcrumbs">
 <ul>
 <li><a href="index.html">Pants Build</a>
-<li><a href="python-readme.html">Python Projects with Pants</a>
-<li><a href="3rdparty_py.html">Python 3rdparty Pattern</a>
+<li><a href="dev.html">Pants Developer Center</a>
+<li><a href="styleguide.html">Pants Style Guide</a>
 </ul>
 </nav>
 
 <nav class="pagetoc">
 <ul>
-<li class="toc-h1"><a href="#3rdpartypython">3rdparty/python</a></li>
-<li class="toc-h1"><a href="#your-codes-build-file">Your Code's BUILD File</a></li>
+<li class="toc-h1"><a href="#comments">Comments</a></li>
+<li class="toc-h1"><a href="#indentation-line-lengths">Indentation, Line lengths</a></li>
+<li class="toc-h1"><a href="#string-interpolation-and-formatting">String Interpolation and formatting</a></li>
 </ul>
 </nav>
 
@@ -108,112 +109,78 @@
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h1 id="python-3rdparty-pattern">Python 3rdparty Pattern</h1></td>
+<td class="h-plus-pilcrow-holder"><h1 id="pants-style-guide">Pants Style Guide</h1></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#python-3rdparty-pattern">¶</a>
+<a class="pilcrow-link" href="#pants-style-guide">¶</a>
 </div></td>
 </tr>
 </tbody>
 </table>
 
-<p>In general, we use the
-<a href="3rdparty.html">3rdparty idiom</a> to organize
-dependencies on code from outside the source tree. This document
-describes how to make this work for Python code.</p>
-<p>Your Python code can pull in code written elsewhere. Pants fetches code
-via a library that uses pip-style specifications (name and
-version-range).</p>
+<p>The Pants project has accumulated a number of conventions around organizing code within the project.
+This document tries to cover some of the common style issues that new contributors run into in their
+first contributions to the project.</p>
+<p>A number of style checks are already automated. Some of these are covered by the pre-commit script
+(<a href="howto_contribute.html#getting-pants-source-code">setup instructions</a>).
+Others are run as when tests are run.</p>
+<p>Beyond that, we've got a number of guidelines that haven't been automated.</p>
 
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h2 id="3rdpartypython">3rdparty/python</h2></td>
+<td class="h-plus-pilcrow-holder"><h2 id="comments">Comments</h2></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#3rdpartypython">¶</a>
+<a class="pilcrow-link" href="#comments">¶</a>
 </div></td>
 </tr>
 </tbody>
 </table>
 
-<p>To keep all of your code depending on the same versions of third-party
-Python artifacts, you might use the idiom of keeping them in a directory
-tree under <code>3rdparty/python</code>. If your organization has many such
-dependencies, you might arrange them in several directories: this can
-ease later "git detective work" when finding out who changed a version.
-(Pants itself doesn't have many Python dependencies; thus, we haven't split its <code>3rdparty</code> tree
-into many directories.)</p>
-<p><strong>pip-style requirements.txt:</strong></p>
-<p>To define some third-party dependencies, use a
-<a href="build_dictionary.html#bdict_python_requirements" pantsref="bdict_python_requirements">python_requirements</a> in your <code>BUILD</code>
-file and make a pip <code>requirements.txt</code> file in the same directory.</p>
-<p>E.g, your <code>3rdparty/python/BUILD</code> file might look like:</p>
-<p>
-<div class="md-included-snippet"><div class="codehilite"><pre><span class="n">python_requirements</span><span class="p">()</span>
-</pre></div></div>
-</p>
-<p>...with <code>3rdparty/python/requirements.txt</code> like:</p>
-<p>
-<div class="md-included-snippet"><div class="codehilite"><pre>ansicolors==1.0.2
-beautifulsoup4&gt;=4.3.2,&lt;4.4
-coverage&gt;=3.7,&lt;3.8
-docutils&gt;=0.12,&lt;0.13
-fasteners==0.14.1
-futures==3.0.5
-lmdb==0.89
-Markdown==2.1.1
-mock==1.3.0
-</pre></div></div>
-</p>
-<p><code>python_requirements</code> defines a named target for each line in the
-<code>requirements.txt</code> line. For example, a line like <code>ansicolors==1.0.2</code> in
-<code>requirements.txt</code> defines a target named <code>ansicolors</code> that pulls in
-ansicolors version 1.0.2.</p>
-<p><strong>python_requirement_library and python_requirement:</strong></p>
-<p>A <code>BUILD</code> file can also define requirements without a <code>requirements.txt</code>
-file. Set up a
-<a href="build_dictionary.html#bdict_python_requirement_library" pantsref="bdict_python_requirement_library"><code>python_requirement_library</code></a>
-with one or more
-<a href="build_dictionary.html#bdict_python_requirement" pantsref="bdict_python_requirement"><code>python_requirement</code></a>s
-like:</p>
-<div class="codehilite"><pre><span class="n">python_requirement_library</span><span class="p">(</span>
-  <span class="n">name</span><span class="o">=</span><span class="s">'beautifulsoup'</span><span class="p">,</span>
-  <span class="n">requirements</span><span class="o">=</span><span class="p">[</span>
-    <span class="n">python_requirement</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'beautifulsoup'</span><span class="p">,</span>
-                       <span class="n">requirement</span><span class="o">=</span><span class="s">'BeautifulSoup==3.2.0'</span><span class="p">),</span>
-  <span class="p">])</span>
+<p>Comments must have a space after the starting <code>#</code>. All comments must be formed with complete
+sentences including a period.</p>
+<p>Good</p>
+<div class="codehilite"><pre># This is a good comment.
+</pre></div>
+<p>Bad</p>
+<div class="codehilite"><pre>#Not This
 </pre></div>
 
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h2 id="your-codes-build-file">Your Code's BUILD File</h2></td>
+<td class="h-plus-pilcrow-holder"><h2 id="indentation-line-lengths">Indentation, Line lengths</h2></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#your-codes-build-file">¶</a>
+<a class="pilcrow-link" href="#indentation-line-lengths">¶</a>
 </div></td>
 </tr>
 </tbody>
 </table>
 
-<p>In your code's <code>BUILD</code> file, introduce a dependency on the <code>3rdparty</code>
-target:</p>
-<p>
-<div class="md-included-snippet"><div class="codehilite"><pre><span class="n">python_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'greet'</span><span class="p">,</span>
-  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
-    <span class="s">'3rdparty/python:ansicolors'</span><span class="p">,</span>
-  <span class="p">],</span>
-  <span class="n">sources</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s">'*.py'</span><span class="p">),</span>
-<span class="p">)</span>
-</pre></div></div>
-</p>
-<p>Then in your Python code, you can <code>import</code> from that package:</p>
-<div class="codehilite"><pre><span class="kn">from</span> <span class="nn">colors</span> <span class="kn">import</span> <span class="n">green</span>
-</pre></div>
+<ul>
+<li>Pants uses a code line width of 100 characters.</li>
+<li>Pants code uses 2 spaces for indentation.</li>
+</ul>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="string-interpolation-and-formatting">String Interpolation and formatting</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#string-interpolation-and-formatting">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<ul>
+<li>Prefer <code>.format</code> for formatting strings over using <code>%</code>.</li>
+</ul>
 
 <!-- main content end -->
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/markdown/html/examples/src/python/example/3rdparty_py.html 2016-04-18T11:24:31.928236
+from dist/markdown/html/src/python/pants/docs/styleguide.html 2016-04-18T11:24:32.400157
 </div>
 
 </div> <!-- end of mainflow -->
@@ -258,8 +225,8 @@ from dist/markdown/html/examples/src/python/example/3rdparty_py.html 2016-04-18T
 <li class="toc-h1 ">
 <a href="python-readme.html">Python Projects with Pants</a>
 </li>
-<li class="toc-h2 toc-here">
-Python 3rdparty Pattern
+<li class="toc-h2 ">
+<a href="3rdparty_py.html">Python 3rdparty Pattern</a>
 </li>
 <li class="toc-h2 ">
 <a href="pex_design.html">PEX Design</a>
@@ -282,8 +249,8 @@ Python 3rdparty Pattern
 <li class="toc-h2 ">
 <a href="3rdparty_jvm.html">JVM 3rdparty Pattern</a>
 </li>
-<li class="toc-h2 toc-here">
-Python 3rdparty Pattern
+<li class="toc-h2 ">
+<a href="3rdparty_py.html">Python 3rdparty Pattern</a>
 </li>
 <li class="toc-h1 ">
 <a href="ThriftDeps.html">Using Pants with Thrift Dependencies</a>
@@ -330,8 +297,8 @@ Python 3rdparty Pattern
 <li class="toc-h3 ">
 <a href="dev_tasks_publish_extras.html">Develop a Task to Publish &quot;Extra&quot; Artifacts</a>
 </li>
-<li class="toc-h2 ">
-<a href="styleguide.html">Pants Style Guide</a>
+<li class="toc-h2 toc-here">
+Pants Style Guide
 </li>
 <li class="toc-h2 ">
 <a href="howto_plugin.html">Developing a Pants Plugin</a>

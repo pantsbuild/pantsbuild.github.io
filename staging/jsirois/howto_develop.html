@@ -34,7 +34,7 @@
 <nav class="pagetoc">
 <ul>
 <li class="toc-h1"><a href="#running-from-sources">Running from sources</a></li>
-<li class="toc-h1"><a href="#building-a-pants-pex-for-production">Building a Pants PEX for Production</a></li>
+<li class="toc-h1"><a href="#building-pants-pex-for-production">Building Pants PEX for Production</a></li>
 <li class="toc-h1"><a href="#testing">Testing</a></li>
 <li class="toc-h2"><a href="#running-tests">Running Tests</a></li>
 <li class="toc-h1"><a href="#debugging">Debugging</a></li>
@@ -142,13 +142,30 @@ instructions for using Pants to develop other programs, please see
 <div class="codehilite"><pre><span class="nv">$ </span>./pants goals
 &lt;remainder of output omitted <span class="k">for </span>brevity&gt;
 </pre></div>
+<p>If you want to run pants from sources, but in another repo to test changes before a release, you
+can run it like so:</p>
+<div class="codehilite"><pre><span class="o">(</span>other repo<span class="o">)</span> <span class="nv">$ PANTS_PLUGINS</span><span class="o">=</span><span class="s2">"[]"</span> <span class="se">\</span>
+  <span class="nv">PANTS_PYTHONPATH</span><span class="o">=</span><span class="s2">"['/path/to/pants/repo/contrib/python/src/python']"</span> <span class="se">\</span>
+  <span class="nv">PANTS_BACKEND_PACKAGES</span><span class="o">=</span><span class="s2">"['pants.contrib.python.checks']"</span> <span class="se">\</span>
+  /path/to/pants/repo/pants compile ::
+</pre></div>
+<p>Here the environment variables are used to make sure any pants plugins your other repo uses will
+also be run from pants sources. Explaining each environment variable:</p>
+<ul>
+<li><code>PANTS_PLUGINS</code>: This should always be as-shown, ie: an empty list.</li>
+<li><code>PANTS_PYTHONPATH</code>: This is a comma-separated list of PYTHONPATH elements.  The values can be
+  taken from the pants repo pants.ini.  You'll need one path per plugin you other repo uses.</li>
+<li><code>PANTS_BACKEND_PACKAGES</code>: This is a comma-separated list of plugin package names.  These values
+  can also be taken from the pants repo pants.ini.  You'll need one package name per plugin your
+  other repo uses.</li>
+</ul>
 
 <table class="h-plus-pilcrow">
 <tbody>
 <tr>
-<td class="h-plus-pilcrow-holder"><h2 id="building-a-pants-pex-for-production">Building a Pants PEX for Production</h2></td>
+<td class="h-plus-pilcrow-holder"><h2 id="building-pants-pex-for-production">Building Pants PEX for Production</h2></td>
 <td><div class="pilcrow-div">
-<a class="pilcrow-link" href="#building-a-pants-pex-for-production">¶</a>
+<a class="pilcrow-link" href="#building-pants-pex-for-production">¶</a>
 </div></td>
 </tr>
 </tbody>
@@ -263,10 +280,11 @@ that our Travis CI does. This can take a while, but it's a good idea to run it b
 contribute a change or merge it to master:</p>
 <div class="codehilite"><pre><span class="nv">$ </span>./build-support/bin/ci.sh
 </pre></div>
-<p>To run just Pants' <em>unit</em> tests (skipping the can-be-slow integration tests), use the
-<code>tests/python/pants_test:all</code> target:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants <span class="nb">test </span>tests/python/pants_test:all
+<p>To run just Pants' <em>unit</em> tests (skipping the can-be-slow integration tests), filter out
+the python tests tagged with 'integration':</p>
+<div class="codehilite"><pre><span class="nv">$ </span>./pants <span class="nb">test </span>tests/python/pants_test:: --tag<span class="o">=</span>-integration
 </pre></div>
+<p>For convenience, this is wrapped up in a script <code>build-support/bin/unit-test.sh</code>.</p>
 <p>If you only want to run tests for changed targets, then you can use the
 <code>test-changed</code> goal:</p>
 <div class="codehilite"><pre><span class="nv">$ </span>./pants <span class="nb">test</span>-changed
@@ -321,15 +339,15 @@ tests/python/pants_test/tasks/test_targets_help.py:24: AttributeError
 <p>Debug quickly; that test target will time out in a couple of minutes,
 quitting you out.</p>
 <p>To start an interactive Python shell that can <code>import</code> Pants modules,
-use the usual <code>./pants py</code> on a <code>python_library</code> target that builds (or
+use the usual <code>./pants repl</code> on a <code>python_library</code> target that builds (or
 depends on) the modules you want:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants py src/python/pants/backend/core/targets:common
-/Users/lhosken/workspace/pants src/python/pants/backend/core/targets:common
+<div class="codehilite"><pre><span class="nv">$ </span>./pants repl src/python/pants/build_graph
+/Users/lhosken/workspace/pants src/python/pants/build_graph
 Python 2.6.8 <span class="o">(</span>unknown, Mar  9 2014, 22:16:00<span class="o">)</span>
 <span class="o">[</span>GCC 4.2.1 Compatible Apple LLVM 5.0 <span class="o">(</span>clang-500.0.68<span class="o">)]</span> on darwin
 Type <span class="s2">"help"</span>, <span class="s2">"copyright"</span>, <span class="s2">"credits"</span> or <span class="s2">"license"</span> <span class="k">for </span>more information.
 <span class="o">(</span>InteractiveConsole<span class="o">)</span>
-&gt;&gt;&gt; from pants.backend.core.targets import repository
+&gt;&gt;&gt; from pants.build_graph.target import Target
 &gt;&gt;&gt;
 </pre></div>
 
@@ -351,25 +369,25 @@ resolved through external jar dependencies.  This means that to use a developmen
 version of a tool you will need to adjust the external dependency information
 in <code>BUILD.tools</code> to point Pants at a development version of your jar file.</p>
 <p>First, create a jar file for the tool with the <code>binary</code> goal.</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants binary src/scala/org/pantsbuild/zinc::
+<div class="codehilite"><pre><span class="nv">$ </span>./pants binary src/java/org/pantsbuild/tools/jar:main
 </pre></div>
-<p>The above command will create <code>dist/main.jar</code> according to the <em>jvm_binary</em>
-target defined in <code>src/scala/org/pantsbuild/zinc/BUILD</code></p>
+<p>The above command will create <code>dist/jar-tool.jar</code> according to the <em>jvm_binary</em>
+target defined in <code>src/java/org/pantsbuild/tools/jar/BUILD</code></p>
 <p>You'll need to update the jar dependency that this tool uses for Pants to see the
 development version.  See
 <a href="3rdparty_jvm.html#test_3rdparty_jvm_snapshot" pantsref="test_3rdparty_jvm_snapshot">Using a SNAPSHOT JVM Dependency</a>
 which describes how to specify the <code>url</code> and <code>mutable</code> attributes of a <code>jar</code>
 dependency found on the local filesystem:</p>
-<div class="codehilite"><pre><span class="n">jar_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'zinc'</span><span class="p">,</span>
+<div class="codehilite"><pre><span class="n">jar_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'jar-tool'</span><span class="p">,</span>
     <span class="n">jars</span><span class="o">=</span><span class="p">[</span>
-      <span class="n">jar</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s">'org.pantsbuild'</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">'zinc'</span><span class="p">,</span> <span class="n">rev</span><span class="o">=</span><span class="s">'1.2.3-SNAPSHOT'</span><span class="p">,</span>
-          <span class="n">url</span><span class="o">=</span><span class="s">'file:///Users/squarepants/Src/pants/dist/main.jar'</span><span class="p">,</span> <span class="n">mutable</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+      <span class="n">jar</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s">'org.pantsbuild'</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">'jar-tool'</span><span class="p">,</span> <span class="n">rev</span><span class="o">=</span><span class="s">'1.2.3-SNAPSHOT'</span><span class="p">,</span>
+          <span class="n">url</span><span class="o">=</span><span class="s">'file:///Users/squarepants/Src/pants/dist/jar-tool.jar'</span><span class="p">,</span> <span class="n">mutable</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
   <span class="p">],</span>
 <span class="p">)</span>
 </pre></div>
 <p>For debugging, append JVM args to turn on the debugger for the appropriate tool in
 <code>pants.ini</code>:</p>
-<div class="codehilite"><pre><span class="k">[compile.zinc-java]</span>
+<div class="codehilite"><pre><span class="k">[jar-tool]</span>
 <span class="na">jvm_options: ['-Xdebug', '-Xrunjdwp:transport</span><span class="o">=</span><span class="s">dt_socket,server=y,suspend=y,address=5005']</span>
 </pre></div>
 <p>Note that most tools run under nailgun by default. The easiest way to
@@ -398,7 +416,7 @@ of Pants.</p>
 <p>Also, you may need to clean up some additional state when testing a tool. Some tools
 cache a shaded version under <code>~/.cache/pants/artifact_cache/</code>.  Clear out the cache
 before testing a new version of the tool as follows:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>rm -rf ~/.cache.pants/artifact_cache
+<div class="codehilite"><pre><span class="nv">$ </span>rm -rf ~/.cache/pants/artifact_cache
 </pre></div>
 <p>If you have trouble resolving the file with Ivy after making the
 above changes to <code>BUILD.tools</code>:</p>
@@ -423,7 +441,7 @@ present as follows:</p>
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/markdown/html/src/python/pants/docs/howto_develop.html 2015-11-13T12:41:05.042340
+from dist/markdown/html/src/python/pants/docs/howto_develop.html 2016-04-18T11:24:31.630194
 </div>
 
 </div> <!-- end of mainflow -->
@@ -443,6 +461,9 @@ from dist/markdown/html/src/python/pants/docs/howto_develop.html 2015-11-13T12:4
 <ul>
 <li class="toc-h1 ">
 <a href="first_concepts.html">Pants Conceptual Overview</a>
+</li>
+<li class="toc-h1 ">
+<a href="install.html">Installing Pants</a>
 </li>
 <li class="toc-h1 ">
 <a href="first_tutorial.html">First Tutorial</a>
@@ -505,16 +526,13 @@ from dist/markdown/html/src/python/pants/docs/howto_develop.html 2015-11-13T12:4
 <a href="with_intellij.html">Using Pants with IntelliJ IDEA</a>
 </li>
 <li class="toc-h1 ">
-<a href="install.html">Installing Pants</a>
-</li>
-<li class="toc-h1 ">
 <a href="setup_repo.html">Set up Your Source Tree for Pants</a>
 </li>
 <li class="toc-h1 ">
 <a href="build_dictionary.html">Pants BUILD Dictionary</a>
 </li>
 <li class="toc-h1 ">
-<a href="options_reference.html">Pants Options Reference</a>
+<a href="options_reference.html">Pants Reference</a>
 </li>
 <li class="toc-h1 ">
 <a href="changelog.html">RELEASE HISTORY</a>
@@ -541,6 +559,9 @@ Pants Developers Guide
 <a href="dev_tasks_publish_extras.html">Develop a Task to Publish &quot;Extra&quot; Artifacts</a>
 </li>
 <li class="toc-h2 ">
+<a href="styleguide.html">Pants Style Guide</a>
+</li>
+<li class="toc-h2 ">
 <a href="howto_plugin.html">Developing a Pants Plugin</a>
 </li>
 <li class="toc-h2 ">
@@ -550,10 +571,19 @@ Pants Developers Guide
 <a href="internals.html">Pants Internals</a>
 </li>
 <li class="toc-h2 ">
+<a href="deprecation_policy.html">Pants Deprecation Policy</a>
+</li>
+<li class="toc-h2 ">
 <a href="release.html">Release Process</a>
 </li>
 <li class="toc-h3 ">
 <a href="release_jvm.html">JVM Artifact Release Process</a>
+</li>
+<li class="toc-h3 ">
+<a href="branching_strategy.html">Branching Strategy</a>
+</li>
+<li class="toc-h3 ">
+<a href="deprecation_policy.html">Pants Deprecation Policy</a>
 </li>
 <li class="toc-h2 ">
 <a href="docs.html">About the documentation</a>
