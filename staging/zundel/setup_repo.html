@@ -152,14 +152,14 @@ and not worry about these things.)</p>
 </tbody>
 </table>
 
-<p>Pants Build is very configurable. Your source tree's top-level directory
-contains a <code>pants.ini</code> file that can set various options,
-specify binaries to
-use in your toolchain, set arguments to pass to tools, etc.</p>
-<p>This file is a <a href="http://docs.python.org/install/index.html#inst-config-syntax">Python config
-files</a>,
-parsed by
-<a href="http://docs.python.org/library/configparser.html">ConfigParser</a>. Thus,
+<p>Pants is very configurable and has literally hundreds of options.  Most of these are 
+automatically set to useful defaults. However it is inevitable that sooner or later you'll 
+need to tweak some of them.  For example, you may want to use <code>pants.ini</code>
+<a href="install.html">to pin your Pants version</a></p>
+<p>To do so, create a <code>pants.ini</code> file in your source tree's top-level directory.  If you installed
+pants <a href="install.html">as recommended</a> this file should already exist.</p>
+<p>The <code>pants.ini</code> file is a <a href="http://docs.python.org/install/index.html#inst-config-syntax">Python config files</a>,
+parsed by <a href="http://docs.python.org/library/configparser.html">ConfigParser</a>. Thus,
 it looks something like:</p>
 <div class="codehilite"><pre><span class="k">[section]</span>
 <span class="err">setting1:</span> <span class="err">value1</span>
@@ -183,9 +183,7 @@ several contexts, as in these excerpts that define/use <code>thrift_workdir</cod
 <span class="err">]</span>
 </pre></div>
 <p>It's also handy for defining values that are used in several contexts,
-since these values will be available in all those contexts. The code
-that combines DEFAULT values with others is in Pants'
-<a href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/option/config.py">option/config.py</a>.</p>
+since these values will be available in all those contexts. </p>
 
 <table class="h-plus-pilcrow">
 <tbody>
@@ -212,30 +210,31 @@ versions of the tools to fetch .These targets all live in the <code>BUILD.tools<
 <p>Pants looks in <code>BUILD.tools</code> for that target.  Below is an example of BUILD.tools that overrides
 the default minor version for 2.10.  For these changes to take effect you would need to set
 --scala-platform-version to 'custom'.</p>
-<div class="codehilite"><pre>jar_library(name = 'scalac',
+<p>
+<div class="md-included-snippet"><div class="codehilite"><pre># BUILD file used for integ tests to verify custom scala 2.11 setup works.
+
+jar_library(name = 'scalac',
             jars = [
-              jar(org = 'org.scala-lang', name = 'scala-compiler', rev = 2.10.3),
+              jar(org = 'org.scala-lang', name = 'scala-compiler', rev = '2.11.7'),
             ])
 
 jar_library(name = 'scala-library',
             jars = [
-              jar(org = 'org.scala-lang', name = 'scala-library', rev = 2.10.3),
+              jar(org = 'org.scala-lang', name = 'scala-library', rev = '2.11.7'),
             ])
 
 jar_library(name = 'scala-repl',
             jars = [
-              jar(org = 'org.scala-lang', name = 'jline', rev = 2.10.3, intransitive = True),
-            ],
-            dependencies = [
-              ':scala-compiler',
-              ':scala-library',
+              jar(org = 'org.scala-lang', name = 'scala-compiler', rev = '2.11.7'),
+              jar(org = 'org.scala-lang', name = 'scala-library', rev = '2.11.7'),
             ])
 
 jar_library(name = 'scalastyle',
             jars = [
-              scala_jar(org='org.scalastyle', name='scalastyle', rev='0.3.2')
+              scala_jar(org='org.scalastyle', name='scalastyle', rev='0.8.0')
             ])
-</pre></div>
+</pre></div></div>
+</p>
 <p>Additional tools can be defined as follows in BUILD.tools:</p>
 <p>
 <div class="md-included-snippet"><div class="codehilite"><pre><span class="n">target</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">'scala-js-library'</span><span class="p">,</span> <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s">'contrib/scalajs/3rdparty/jvm/org/scala-js:library'</span><span class="p">])</span>
@@ -444,7 +443,8 @@ defined in your plugin:</p>
   <span class="err">'public':</span> <span class="err">{</span>  <span class="c"># must match the name of the `Repository` object that you defined in your plugin.</span>
     <span class="err">'resolver':</span> <span class="err">'maven.example.com',</span> <span class="c"># must match hostname in ~/.netrc and the &lt;url&gt; parameter</span>
                                      <span class="c"># in your custom ivysettings.xml.</span>
-    <span class="err">'auth':</span> <span class="err">'build-support:netrc',</span>   <span class="c"># Pants spec to a 'credentials()' object.</span>
+    <span class="err">'auth':</span> <span class="err">'build-support:netrc',</span>   <span class="c"># Pants spec to a 'credentials()' or</span>
+                                     <span class="c"># 'netrc_credentials()' object.</span>
     <span class="err">'help':</span> <span class="err">'Configure</span> <span class="err">your</span> <span class="err">~/.netrc</span> <span class="err">for</span> <span class="err">maven.example.com</span> <span class="err">access.'</span>
   <span class="err">},</span>
   <span class="err">'testing':</span> <span class="err">{</span>
@@ -466,12 +466,7 @@ machine artifactory.example.com
 </pre></div>
 <p>And place the following in a <code>BUILD</code> file somewhere in your repository (<code>build-support/BUILD</code> is a
 good place, and is used in the example above):</p>
-<div class="codehilite"><pre>netrc = netrc()
-
-credentials(
-  name = 'netrc',
-  username=netrc.getusername,
-  password=netrc.getpassword)
+<div class="codehilite"><pre>netrc_credentials(name = 'netrc')
 </pre></div>
 <p>Next, tell Ivy how to publish to your repository. Add a new <code>ivysettings.xml</code> file to your repo
 with the additional information needed to publish artifacts. Here is an example to get you started:</p>
@@ -479,9 +474,9 @@ with the additional information needed to publish artifacts. Here is an example 
 
 <span class="nt">&lt;ivysettings&gt;</span>
   <span class="nt">&lt;settings</span> <span class="na">defaultResolver=</span><span class="s">"chain-repos"</span><span class="nt">/&gt;</span>
-  <span class="c">&lt;!-- The ${login} and ${password} values come from a credentials() object in a BUILD file,</span>
-<span class="c">       which is fed by '~/.netrc'.  There must be a '~/.netrc' machine entry which matches</span>
-<span class="c">       a resolver in the "repos" object in 'pants.ini', which also matches the 'host' in</span>
+  <span class="c">&lt;!-- The ${login} and ${password} values come from a netrc_credentials() object in a BUILD</span>
+<span class="c">       file, which is fed by '~/.netrc'.  There must be a '~/.netrc' machine entry which</span>
+<span class="c">       matches a resolver in the "repos" object in 'pants.ini', which also matches the 'host' in</span>
 <span class="c">       this XML block.</span>
 
 <span class="c">       machine &lt;hostname&gt;</span>
@@ -578,7 +573,7 @@ write_to: ['https://myserver.co/pantscache']
 <p>When building, Pants first tries to read built things from places in <code>read_from</code>.
 If it builds something, it caches those built things in places in  <code>write_to</code>.
 (It's handy that these are separate settings; if members of your organization can install wacky
-tools on their laptops, you might not want their builds to write to a particular cache, but would 
+tools on their laptops, you might not want their builds to write to a particular cache, but would
 want them to be able to read from it.)</p>
 <p>Valid option values include</p>
 <ul>
@@ -620,7 +615,7 @@ time various build operations take, cache hits, and more.
 If you you work with a large engineering organization, you might want to
 gather this information in one place, so it can inform decisions about how
 to improve everybody's build times.</p>
-<p>In everyone's <code>pants.ini</code> files, in the <code>[DEFAULT]</code> section, add a
+<p>In everyone's <code>pants.ini</code> files, in the <code>[run-tracker]</code> section, add a
 <code>stats_upload_url</code> line:</p>
 <div class="codehilite"><pre>stats_upload_url: "http://myorg.org/pantsstats"
 </pre></div>
@@ -861,7 +856,7 @@ indices: [
 
 <div class="generated">
 Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-from dist/markdown/html/src/docs/setup_repo.html 2016-03-18T17:23:15.557972
+from dist/markdown/html/src/docs/setup_repo.html 2016-04-20T09:45:34.967856
 </div>
 
 </div> <!-- end of mainflow -->
@@ -998,6 +993,12 @@ Set up Your Source Tree for Pants
 </li>
 <li class="toc-h3 ">
 <a href="release_jvm.html">JVM Artifact Release Process</a>
+</li>
+<li class="toc-h3 ">
+<a href="branching_strategy.html">Branching Strategy</a>
+</li>
+<li class="toc-h3 ">
+<a href="deprecation_policy.html">Pants Deprecation Policy</a>
 </li>
 <li class="toc-h2 ">
 <a href="docs.html">About the documentation</a>
