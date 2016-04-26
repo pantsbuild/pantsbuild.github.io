@@ -8,11 +8,11 @@
 
 <head>
   <meta charset="utf-8"/>
-  <title>Develop a Task to Publish &quot;Extra&quot; Artifacts</title>
+  <title>Why Use Pants?</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" href="pants-logo.ico">
   <!-- In case this is a "test publish", tell search engines where real version lives: -->
-  <link rel="canonical" href="https://pantsbuild.github.io/dev_tasks_publish_extras.html">
+  <link rel="canonical" href="https://pantsbuild.github.io/why_use_pants.html">
 
   <link rel="stylesheet" href="bootstrap-custom.min.css">
   <link rel="stylesheet" href="bootstrap-custom-theme.min.css">
@@ -83,8 +83,8 @@
                 <li class="toc-h1 toc-heading">
                   Pants Basics
                 </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="why_use_pants.html">Why Use Pants?</a>
+                <li class="toc-h1 toc-link toc-here">
+                  Why Use Pants?
                 </li>
                 <li class="toc-h1 toc-link ">
                   <a href="first_concepts.html">Pants Concepts</a>
@@ -254,87 +254,41 @@
 .codehilite .vi { color: #bb60d5 } /* Name.Variable.Instance */
 .codehilite .il { color: #40a070 } /* Literal.Number.Integer.Long */
 </style>
-<h1 id="develop-a-task-to-publish-extra-artifacts">Develop a Task to Publish "Extra" Artifacts</h1>
-<p>Pants supports "publish plugins", which allow end-users to add
-additional, arbitrary files to be published along with the primary
-artifact. For example, let's say that along with publishing your jar
-full of class files, you would also like to publish a companion file
-that contains some metadata -- code coverage info, source git
-repository, java version that created the jar, etc. To accomplish this,
-you'll first need to write a custom task, which creates any additional
-files (jar or otherwise) that you would like to publish. Next, you'll
-create a <code>publish_extras</code> section under <code>[publish.jar]</code> in pants.ini,
-and add a key for the new product type. Your custom task will create the
-extra file(s) that you want to publish, and write the path to the
-products map under the key that you have defined in pants.ini. The
-publishing code will loop over all keys found in pants.ini, and consult
-the product map. If pants finds a file for the current key, it will
-gather it up, and bundle it in with the rest of the files being
-published.</p>
-<p>An example of a custom task is supplied in the
-<code>examples/src/python/example/pants_publish_plugin</code> directory. To use it,
-add the following to your pants.ini:</p>
-<div class="codehilite"><pre>[publish.jar]
-publish_extras: {
-    'extra_test_jar_example': {
-      'override_name': '{target_provides_name}-extra_example',
-      'classifier': 'classy',
-      'extension': 'jar',
-    },
-  }
-
-[GLOBAL]
-backend_packages: [
-    'example.pants_publish_plugin',
-  ]
-</pre></div>
-<p>In the above configuration example, the string
-<code>'extra_test_jar_example'</code> is a key into the product map. In this case,
-the example task will add additional files for publishing to the product
-map under this key. And <code>jar_publish.py</code> will examine the product map,
-looking for all keys defined here, and publishing any additional files
-found.</p>
-<h2 id="constructing-a-name-for-your-extra-artifact">Constructing a name for your extra artifact:</h2>
-<p>By default, pants uses the following scheme when publishing artifacts:</p>
-<div class="codehilite"><pre>[artifactId]-[version](-[classifier]).[ext]
-</pre></div>
-<p>The pants plugin publishing system allows a customization of the
-artifact identifier, classifier, and file extension. To customize the
-name of your extra object, you can supply some extra parameters in the
-<code>pants.ini</code> file:</p>
+<h1 id="why-use-pants">Why Use Pants?</h1>
+<p>One of the most complex tasks in large codebases is dependency management. 
+If you have a large number of small, independently-versioned code repositories, 
+the dependency problem can become intractable. </p>
+<p>In many cases a single, large repo is a preferable architecture for your codebase. 
+It increases code reuse, collaboration and cohesion, especially in large engineering
+organizations.</p>
+<p>A codebase with at least some of these properties is sometimes referred to as a <em>monorepo</em>.  Monorepos
+have various advantages when it comes to scaling a codebase in a growing engineering organization.</p>
+<p>However, building code in a monorepo requires a build system design for that purpose. In particular,
+it requires a build system that can perform fine-grained dependency management among many thousands
+of code modules in a single source tree.</p>
+<p>Pants was designed for this type of usage in a way that other popular build tools, such as 
+Ant, Maven, and SBT, were not. Some noteworthy features include:</p>
 <ul>
-<li><code>override_name</code> -- allows customization of the name (<code>artifactId</code>)
-    of the additional file published. Specifying a string will
-    completely override the name, or include
-    '<code>{target_provides_name}</code>' to tack an addition on to the
-    pre-existing artifact name. Defaults to the pre-existing artifact
-    name.</li>
-<li><code>classifier</code> -- the maven classifier. Can be any arbitrary string,
-    or leave this unspecified for nothing.</li>
-<li><code>extension</code> -- the filename extension. Defaults to "jar".</li>
+<li>Fine-grained invalidation.</li>
+<li>Shared build caches.</li>
+<li>Concurrent task execution.</li>
+<li>Incremental compilation.</li>
+<li>Extensibility, via a plugin API.</li>
 </ul>
-<p><strong>Note:</strong> You must supply a non-default value for at least one of the
-above parameters, otherwise your extra publish artifact won't have a
-unique name. With the above config in your pants.ini, invoke pants like
-this, to do a test publish:</p>
-<div class="codehilite"><pre><span class="nv">WRAPPER_SRCPATH</span><span class="o">=</span>examples/src/python ./pants publish.jar --no-dryrun --local<span class="o">=</span>~/tmp <span class="se">\</span>
-  examples/src/java/org/pantsbuild/example/hello/greet
-</pre></div>
-<p>Now if you examine the <code>/tmp</code> directory, you'll notice that an extra jar
-has been published for the <code>greet</code> target:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>ls -1 /tmp/org/pantsbuild/example/hello-greet/0.0.1-SNAPSHOT/|grep example
-hello-greet-extra_example-0.0.1-SNAPSHOT-classy.jar
-hello-greet-extra_example-0.0.1-SNAPSHOT-classy.jar.md5
-hello-greet-extra_example-0.0.1-SNAPSHOT-classy.jar.sha1
-</pre></div>
-<p>This example task should provide a rough starting guide, and can be
-tailored to suit a more specific situation.</p>
+<p>Pants supports all stages of a typical build: tool bootstrapping, code generation, third-party dependency
+resolution, compilation, test running, linting, bundling and more.</p>
+<p>Pants supports Java, Scala, Python, C/C++, Go, Thrift, Protobuf and Android code. 
+Adding support for other languages, frameworks and code generators is straightforward.</p>
+<p>Pants is modeled after Blaze, Google's internal build system, now open-sourced as <a href="http://bazel.io/">Bazel</a>.<br/>
+Another project with similar design goals to Pants is Facebook's <a href="https://buckbuild.com/">Buck</a>.
+Pants' development and featureset were informed by the needs and processes of many prominent software engineering
+organizations, including those at Twitter, Foursquare, Square, Medium and more.</p>
 
             <!-- main content end -->
 
             <div class="generated">
               Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-              from dist/markdown/html/src/python/pants/docs/dev_tasks_publish_extras.html 2016-04-26T15:05:14.421067
+              from dist/markdown/html/src/docs/why_use_pants.html 2016-04-26T15:05:14.056268
             </div>
 
           </div> <!-- mainflow -->
