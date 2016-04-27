@@ -174,7 +174,7 @@
                   <a href="dev.html">Pants Developer Center</a>
                 </li>
                 <li class="toc-h1 toc-link ">
-                  <a href="changelog.html">RELEASE HISTORY</a>
+                  <a href="changelog.html">Release History</a>
                 </li>
                 <li class="toc-h1 toc-link ">
                   <a href="export.html">Export Format</a>
@@ -282,14 +282,13 @@ However if your source roots don't conform to any of the default patterns, you c
 patterns.  See <code>./pants help-advanced source</code> for details.</p>
 <h2 id="gitignore"><code>.gitignore</code></h2>
 <p>If you use Git as your SCM you'll want to add the following entries to your <code>.gitignore</code> file:</p>
-<p><code>.pants.d</code>
-<code>dist</code></p>
+<p><code>.pants.d</code><br>
+<code>dist</code><br>
+<code>.pids</code><br>
+<code>.pants.workdir.file_lock</code></br></br></br></p>
 <h2 id="build-files"><code>BUILD</code> files</h2>
-<p>BUILD files describe the dependency graph of your codebase.  You'll need to create some BUILD
-files in order to use Pants.</p>
-<ul>
-<li>How to write <a href="build_files.html">BUILD files</a>.</li>
-</ul>
+<p>BUILD files describe the dependency graph of your codebase.  You'll need to 
+<a href="build_files.html">create some</a> in order to use Pants.</p>
 <p><a id="setup_mvn2pants" pantsmark="setup_mvn2pants"></a>
 If you're converting a <code>mvn</code>-built workspace to Pants, you can get a head start by using
 information from your <code>pom.xml</code> files. The <a href="https://github.com/ericzundel/mvn2pants"><code>mvn2pants</code></a>
@@ -339,9 +338,10 @@ your CI machines, not individual developer builds, to populate the shared cache.
 <li><code>[ '/tmp/pantscache', 'https://myserver.co/pcache' ]</code> try local fs first, then remote server.</li>
 </ul>
 <p>For details see the <code>_do_create_artifact_cache</code> docstring in
-<a href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/cache/cache_setup.py"><code>cache_setup.py</code></a></p>
+<a href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/cache/cache_setup.py"><code>cache_setup.py</code></a>.</p>
 <p>The remote server should be a RESTful server that can handle <code>GET</code>, <code>HEAD</code>, <code>PUT</code>, and <code>DELETE</code> requests
-on large binary blobs. E.g., you can implement this using Varnish in front of nginx (with the <code>dav_methods PUT DELETE;</code> enabled).</p>
+on large binary blobs. E.g., you can implement this using <a href="https://www.varnish-cache.org/">Varnish</a> 
+in front of <a href="https://www.nginx.com/resources/wiki/">nginx</a> (with <code>dav_methods PUT DELETE;</code> enabled).</p>
 <p>When reading from a cache server, Pants tries to <code>GET</code> an URL at some path under the server URL;
 your server should respond with 404 if there's nothing there, 200 if there is.</p>
 <p>When writing to a cache server, Pants first tries a <code>HEAD</code> request to see if the file's already
@@ -357,10 +357,8 @@ If you you work with a large engineering organization, you might want to
 gather this information in one place, so it can inform decisions about how
 to improve everybody's build times.</p>
 <p>To upload these stats to a server for future analysis set the following option in <code>pants.ini</code>:</p>
-<div class="codehilite"><pre>```py 
-[run-tracker]
-stats_upload_url: "http://myorg.org/pantsstats"
-```
+<div class="codehilite"><pre><span class="k">[run-tracker]</span>
+<span class="err">stats_upload_url:</span> <span class="err">"http://myorg.org/pantsstats"</span>
 </pre></div>
 <p>Pants will <code>POST</code> JSON data to that URL.  The JSON format should be self-explanatory.</p>
 <h2 id="using-pants-behind-a-firewall">Using Pants behind a firewall</h2>
@@ -407,8 +405,8 @@ This variable should point to a file containing trusted certificates:</p>
 <p>Pants fetches the Ivy tool with an initial manual bootstrapping step using the Python requests library.<br/>
 If you do not want to use <code>HTTP_PROXY</code> or <code>HTTPS_PROXY</code> as described above, you can re-redirect 
 this initial download to another URL with a setting in <code>pants.ini</code>:</p>
-<div class="codehilite"><pre>[ivy]
-bootstrap_jar_url: https://proxy.corp.example.com/content/groups/public/org/apache/ivy/ivy/2.3.0/ivy-2.3.0.jar
+<div class="codehilite"><pre><span class="k">[ivy]</span>
+<span class="err">bootstrap_jar_url:</span> <span class="err">https://proxy.corp.example.com/content/groups/public/org/apache/ivy/ivy/2.3.0/ivy-2.3.0.jar</span>
 </pre></div>
 <p>You may also encounter issues downloading this .jar file if you are using self-signed SSL certificates. 
 See the section on Configuring the Python requests library above.</p>
@@ -436,28 +434,28 @@ are <code>https://repo1.maven.org/maven2/</code> and <code>https://dl.bintray.co
 <p>For the binary support tools like protoc, you will need to setup a
 proxy for the <code>dl.bintray.com</code> repo, or create your own repo of build
 tools:</p>
-<div class="codehilite"><pre>pants_support_baseurls = [
-    "https://nexus.example.com/content/repositories/dl.bintray.com/pantsbuild/bin/build-support"
-    ]
+<div class="codehilite"><pre><span class="na">pants_support_baseurls</span> <span class="o">=</span> <span class="s">[</span>
+<span class="s">    "https://nexus.example.com/content/repositories/dl.bintray.com/pantsbuild/bin/build-support"</span>
+<span class="s">  ]</span>
 </pre></div>
 <h3 id="redirecting-python-requirements-to-other-servers">Redirecting python requirements to other servers</h3>
 <p>For python repos, you need to override the following settings in pants.ini:</p>
-<div class="codehilite"><pre>[python-repos]
-repos: [
-    "https://pantsbuild.github.io/cheeseshop/third_party/python/dist/index.html",
-    "https://pantsbuild.github.io/cheeseshop/third_party/python/index.html"
-  ]
+<div class="codehilite"><pre><span class="k">[python-repos]</span>
+<span class="err">repos:</span> <span class="err">[</span>
+    <span class="err">"https://pantsbuild.github.io/cheeseshop/third_party/python/dist/index.html",</span>
+    <span class="err">"https://pantsbuild.github.io/cheeseshop/third_party/python/index.html"</span>
+  <span class="err">]</span>
 
-indices: [
-    "https://pypi.python.org/simple/"
-  ]
+<span class="err">indices:</span> <span class="err">[</span>
+    <span class="err">"https://pypi.python.org/simple/"</span>
+  <span class="err">]</span>
 </pre></div>
 
             <!-- main content end -->
 
             <div class="generated">
               Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/setup_repo.html 2016-04-26T15:05:11.781680
+              from dist/markdown/html/src/docs/setup_repo.html 2016-04-27T09:06:48.954237
             </div>
 
           </div> <!-- mainflow -->
