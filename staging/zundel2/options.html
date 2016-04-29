@@ -8,11 +8,11 @@
 
 <head>
   <meta charset="utf-8"/>
-  <title>JVM Artifact Release Process</title>
+  <title>Pants Options</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" href="pants-logo.ico">
   <!-- In case this is a "test publish", tell search engines where real version lives: -->
-  <link rel="canonical" href="https://pantsbuild.github.io/release_jvm.html">
+  <link rel="canonical" href="https://pantsbuild.github.io/options.html">
 
   <link rel="stylesheet" href="bootstrap-custom.min.css">
   <link rel="stylesheet" href="bootstrap-custom-theme.min.css">
@@ -98,8 +98,8 @@
                 <li class="toc-h1 toc-link ">
                   <a href="3rdparty.html">Third-Party Dependencies</a>
                 </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="options.html">Pants Options</a>
+                <li class="toc-h1 toc-link toc-here">
+                  Pants Options
                 </li>
                 <li class="toc-h1 toc-link ">
                   <a href="invoking.html">Invoking Pants</a>
@@ -189,12 +189,20 @@
           <div class="mainflow">
               <nav class="pagetoc">
                 <ul>
-                    <li class="toc-h1"><a href="#prerequisites">Prerequisites</a></li>
-                    <li class="toc-h1"><a href="#dry-run">Dry Run</a></li>
-                    <li class="toc-h1"><a href="#staging-to-ossrh">Staging to OSSRH</a></li>
-                    <li class="toc-h1"><a href="#promoting-to-maven-central">Promoting to Maven Central</a></li>
-                    <li class="toc-h1"><a href="#dogfood">Dogfood</a></li>
-                    <li class="toc-h1"><a href="#releasers">Releasers</a></li>
+                    <li class="toc-h1"><a href="#option-scopes">Option Scopes</a></li>
+                    <li class="toc-h1"><a href="#basic-vs-advanced-options">Basic vs. Advanced Options</a></li>
+                    <li class="toc-h1"><a href="#recursive-options">Recursive Options</a></li>
+                    <li class="toc-h1"><a href="#setting-option-values">Setting Option Values</a></li>
+                    <li class="toc-h2"><a href="#config-file">Config File</a></li>
+                    <li class="toc-h2"><a href="#environment-variables">Environment Variables</a></li>
+                    <li class="toc-h2"><a href="#command-line-flags">Command Line Flags</a></li>
+                    <li class="toc-h1"><a href="#option-types">Option Types</a></li>
+                    <li class="toc-h2"><a href="#boolean-options">Boolean Options</a></li>
+                    <li class="toc-h2"><a href="#int-and-float-options">Int and Float Options</a></li>
+                    <li class="toc-h1"><a href="#string-options">String Options</a></li>
+                    <li class="toc-h2"><a href="#list-options">List Options</a></li>
+                    <li class="toc-h2"><a href="#dict-options">Dict Options</a></li>
+                    <li class="toc-h2"><a href="#available-options">Available Options</a></li>
                 </ul>
               </nav>
 
@@ -264,221 +272,135 @@
 .codehilite .vi { color: #bb60d5 } /* Name.Variable.Instance */
 .codehilite .il { color: #40a070 } /* Literal.Number.Integer.Long */
 </style>
-<h1 id="jvm-artifact-release-process">JVM Artifact Release Process</h1>
-<p>This page describes how to make a versioned release of the Pants jvm
-tools to Maven Central.</p>
-<p>Releasing jvm tools largely follows the
-<a href="publish.html">standard jar publishing process</a>, but has
-some non-standard initial one-time setup.</p>
-<p>At a high level, releasing pants jvm artifacts involves:</p>
+<h1 id="pants-options">Pants Options</h1>
+<p>Pants is very configurable and has literally hundreds of tuneable parameters, known in Pants
+parlance as <em>options</em>.</p>
+<p>Most options are automatically set to useful defaults. However it is inevitable that sooner or
+later you'll need to tweak some of them.  For example, you may want <a href="install.html">to pin your Pants version</a>.</p>
+<p>The Pants options system is fairly complex. Codebase administrators will need to understand its details
+and nuances. End users, however, can usually get by with just a superficial view.</p>
+<h2 id="option-scopes">Option Scopes</h2>
+<p>Pants has many moving parts, and more can be added via custom plugins. To avoid option naming collisions,
+each configurable component is qualified by a <em>scope</em>.</p>
 <ul>
-<li>Deciding when to release.
-    At present this is ad-hoc, typically when
-    a change has been made to a tool and the author wants to use a
-    version incorporating that change.</li>
-<li>(optional) Perform a release <a href="#dry-run">dry run</a>.</li>
-<li><a href="#staging-to-ossrh">Staging</a> the release to OSSRH.</li>
-<li><a href="#promoting-to-maven-central">Promoting</a> the release to Maven Central.</li>
-<li><a href="#dogfood">Dogfood</a> the release.</li>
+<li>Global options belong to the global scope.</li>
+<li>Options for task <code>task</code> in goal <code>goal</code> belong to the <code>goal.task</code> scope. E.g., <code>gen.thrift</code> or <code>compile.zinc</code>.
+  However if the task has the same name as the goal, then the scope is just that name. E.g., <code>./pants list</code>,
+  not <code>./pants list.list</code>.</li>
+<li>Options for the global instance of subsystem <code>subsystem</code> belong to the <code>subsystem</code> scope. E.g., <code>jvm</code> or <code>cache</code>.</li>
+<li>Options for the instance of subsystem <code>subsystem</code> belonging to some other task or subsystem with scope <code>scope</code>
+  belong to the <code>subsystem.scope</code> scope. E.g., <code>cache.compile.zinc</code>.</li>
 </ul>
-<h2 id="prerequisites">Prerequisites</h2>
-<p>You must be at least a
-<a href="https://github.com/orgs/pantsbuild/teams/committers">committer</a> in
-the pantsbuild GitHub organisation to publish pants artifacts.  If you
-aren't yet, you need only ping the
-<a href="https://groups.google.com/forum/#!forum/pants-devel">pants-devel</a>
-group to inquire about getting a release performed.</p>
-<p>If you are a committer, there are four additional requirements to
-satisfy in order to be able publish to Maven Central:</p>
+<p>The scope names are used to qualify the option names when setting their values, as explained in
+the remainder of this document.</p>
+<h2 id="basic-vs-advanced-options">Basic vs. Advanced Options</h2>
+<p>Some options, such as <code>-l</code> to control the logging verbosity level, are expected to be set directly by users, as needed.
+But most options are expected to be configured once by a codebase administrator and not directly modified by users.
+These latter options are called <em>advanced</em> options, and are not enumerated in help messages by default.</p>
+<h2 id="recursive-options">Recursive Options</h2>
+<p>A handful of global options, such as <code>-l</code>, are <em>recursive</em>. That is, they have a global value which
+can be overridden in each scope.  This allows you, for example, to set different logging verbosity
+levels in different tasks.</p>
+<h2 id="setting-option-values">Setting Option Values</h2>
+<p>Every Pants option can be set in one three ways, in ascending order of precendence:</p>
 <ul>
-<li>
-<p>Create and publish a pgp key if you don't already have a published
-    pgp key. There is nothing Maven Central specific about this, but
-    Sonatype does provide
-    <a href="http://central.sonatype.org/pages/working-with-pgp-signatures.html">some instructions</a>
-    you might follow.</p>
-</li>
-<li>
-<p><a href="https://issues.sonatype.org/secure/Signup!default.jspa">Create a sonatype.org JIRA account</a>
-    if you don't already have one.</p>
-</li>
-<li>
-<p>Ask an existing Pants Maven Central <a href="#releasers">releaser</a> to
-    create a sonatype.org JIRA ticket to get you added to the
-    org.pantsbuild maintainers.  You'll need to give them your
-    sonatype.org JIRA account id. Here's an
-    <a href="https://issues.sonatype.org/browse/OSSRH-12754">example ticket</a>
-    they can use as a template.  Once this is done and you've performed
-    your 1st release, add yourself to the <a href="#releasers">Releasers</a>
-    section below.</p>
-</li>
-<li>
-<p>Create a <code>~/.config/pants/release/jvm/pgp.properties</code> file to store the
-    credentials Pants needs to sign artifacts uploaded to sonatype.org.
-    This process is <a href="#pgp-credentials">described below</a>.</p>
-</li>
-<li>
-<p>Create an entry in your <code>~/.netrc</code> file to enable authentication to Sonatype.</p>
-<div class="codehilite"><pre>machine oss.sonatype.org
-  login jsirois
-  password XYX
-</pre></div>
-</li>
+<li>In a config file.</li>
+<li>Using an environment variable.</li>
+<li>Using a command-line flag.</li>
 </ul>
-<h3 id="pgp-credentials">PGP Credentials</h3>
-<p>Artifacts released to Maven Central must be pgp-signed.  In order to
-sign artifacts, the pants jar publishing process currently needs access
-to your pgp key passphrase via file (There is an issue
-<a href="https://github.com/pantsbuild/pants/issues/1407">here</a> tracking a better
-solution).</p>
-<p>First you'll need to create a secure
-<a href="https://docs.oracle.com/javase/6/docs/api/java/util/Properties.html#load(java.io.Reader)">java properties file</a>
-to hold your pgp credentials:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>mkdir -p ~/.config/pants/release/jvm <span class="o">&amp;&amp;</span> <span class="se">\</span>
-  touch ~/.config/pants/release/jvm/pgp.properties <span class="o">&amp;&amp;</span> <span class="se">\</span>
-  chmod 600 ~/.config/pants/release/jvm/pgp.properties
+<p>Config files are typically used to set codebase-wide defaults for all users.  Individual
+users can then override various values using environment variables or command-line flags.</p>
+<p>Options that aren't set by one of these three methods will fall back to a sensible default, so
+that Pants will work "out of the box" in common scenarios.</p>
+<h3 id="config-file">Config File</h3>
+<p>The main Pants config file location is <code>pants.ini</code> in your source tree's top-level directory.
+If you installed pants <a href="install.html">as recommended</a> this file should already exist.</p>
+<p>The <code>pants.ini</code> file is an INI file parsed by <a href="http://docs.python.org/library/configparser.html">ConfigParser</a>.
+Thus, it looks something like:</p>
+<div class="codehilite"><pre><span class="k">[scope]</span>
+<span class="err">option1:</span> <span class="err">value1</span>
+<span class="err">option2:</span> <span class="err">value2</span>
 </pre></div>
-<p>The properties file supports the following keys with noted defaults if omitted:</p>
+<p>The <code>[DEFAULT]</code> section is special: its values are available in all other sections. E.g.,</p>
+<div class="codehilite"><pre><span class="k">[DEFAULT]</span>
+<span class="err">thrift_workdir:</span> <span class="err">%(pants_workdir)s/thrift</span>
+
+<span class="k">[GLOBAL]</span>
+<span class="err">print_exception_stacktrace:</span> <span class="err">True</span>
+
+<span class="k">[gen.thrift]</span>
+<span class="err">workdir:</span> <span class="err">%(thrift_workdir)s</span>
+
+<span class="k">[compile.zinc]</span>
+<span class="err">args:</span> <span class="err">[</span>
+    <span class="err">'-C-Tnowarnprefixes',</span> <span class="err">'-C%(thrift_workdir)s',</span>
+  <span class="err">]</span>
+</pre></div>
+<p>Note that continuation lines of multiple-line values must be indented. For example, the closing
+bracket in the multi-line list above.</p>
+<h3 id="environment-variables">Environment Variables</h3>
+<p>Option <code>option</code> in scope <code>foo.bar</code> can be set via the environment variable <code>PANTS_FOO_BAR_OPTION</code>.
+E.g., <code>PANTS_COMPILE_ZINC_INCREMENTAL=false</code>.</p>
+<p>Global options can be set using <code>PANTS_GLOBAL_OPTION</code> as expected, but you can also omit the GLOBAL
+and use <code>PANTS_OPTION</code>. E.g., <code>PANTS_LEVEL=debug</code>.</p>
+<p>If a global option name itself starts with the word 'pants' then you can omit the repetition. E.g.,
+<code>PANTS_WORKDIR</code> instead of <code>PANTS_PANTS_WORKDIR</code>.</p>
+<h3 id="command-line-flags">Command Line Flags</h3>
+<p>Option <code>option</code> in scope <code>foo.bar</code> can be set using the flag <code>--foo-bar-option=&lt;value&gt;</code>.</p>
+<p>Global options are set with no scope qualifier, e.g., <code>--pants-workdir=/path/to/workdir</code>.</p>
+<p>Values for single-letter flags (those that start with a single dash) can be set without the equals
+sign: <code>-ldebug</code> is the same as <code>--level=debug</code> (<code>-l</code> is a synonym for <code>--level</code>).  All other flags
+must use an equals sign to set a value.</p>
+<p>There's a useful shorthand that can save some typing when setting multiple options for a single task:
+If you invoke a task explicitly on the command line then you can follow that task with unqualified
+options in its scope. E.g., <code>./pants compile.zinc --no-incremental --name-hashing</code>
+instead of <code>./pants compile --no-compile-zinc-incremental --compile-zinc-name-hashing</code>.</p>
+<p>Note that this shorthand requires you to mention a specific task, not just a goal: <code>./pants compile.zinc</code>
+instead of just <code>./pants compile</code> as you would usually enter. All tasks in the <code>compile</code> goal will
+still be executed, not just <code>compile.zinc</code>, but the <code>.zinc</code> addition is a convenience to support shorthand options.</p>
+<p>Of course this works when specifying multiple goals, e.g.,</p>
+<p><code>./pants compile.zinc --no-incremental --name-hashing test.junit --parallel-threads=4</code></p>
+<h2 id="option-types">Option Types</h2>
+<p>Option value literal formats are the same on the command-line, environment variables and in <code>pants.ini</code>,
+with a couple of extra command-line conveniences.</p>
+<h3 id="boolean-options">Boolean Options</h3>
+<p>The boolean option values are: <code>false</code>, <code>False</code>, <code>true</code>, <code>True</code>.</p>
+<p>On the command line, you can omit the value thus: <code>--foo-bar</code> is the same as <code>--foo-bar=false</code>,
+  and <code>--no-foo-bar</code> is the same as <code>--foo-bar=false</code>.</p>
+<h3 id="int-and-float-options">Int and Float Options</h3>
+<p>Specify values in decimal notation: <code>--foo=5</code>, <code>--bar=4.5</code>.</p>
+<h2 id="string-options">String Options</h2>
+<p>Surround strings with single or double quotes if they contain embedded spaces: <code>--foo="hello, world"</code>.</p>
+<h3 id="list-options">List Options</h3>
+<p>List options can be appended to, as well as overridden. For example, for an option <code>--foo</code>
+whose default value is <code>[1, 2]</code>, then in <code>pants.ini</code>:</p>
 <ul>
-<li>
-<p><code>pgp.secring</code></p>
-<p>Assumes your pgp implementation is gpg and defaults to <code>~/.gnupg/secring.gpg</code></p>
-</li>
-<li>
-<p><code>pgp.keyid</code></p>
-<p>Defaults to <code>auto</code>.  If you're unsure which pgp key <code>auto</code> will
-select and you use gpg, you can determine the key id and verify the
-passphrase in one fell swoop with the following command:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>killall gpg-agent; <span class="nb">echo</span> | gpg --sign -vv &gt;/dev/null
-gpg: using PGP trust model
-gpg: key 67B5C626: accepted as trusted key
-gpg: no running gpg-agent - starting <span class="s1">'/usr/bin/gpg-agent'</span>
-gpg: waiting <span class="k">for </span>the agent to come up ... <span class="o">(</span>5s<span class="o">)</span>
-gpg: connection to agent established
-<span class="o">[</span>pinentry prompts <span class="k">for </span>passphrase<span class="o">]</span>
-gpg: writing to stdout
-gpg: RSA/SHA256 signature from: <span class="s2">"67B5C626 John Sirois &lt;john.sirois@gmail.com&gt;"</span>
-</pre></div>
-<p>In this case the default key id is <code>67B5C626</code>.  You can add an entry
-to the properties file instead of relying on the default <code>auto</code>
-setting if you prefer to be explicit like so:</p>
-<div class="codehilite"><pre><span class="nv">$ </span><span class="nb">echo </span>pgp.keyid<span class="o">=</span>67B5C626 &gt;&gt; ~/.config/pants/release/jvm/pgp.properties
-</pre></div>
-</li>
-<li>
-<p><code>pgp.password</code></p>
-<p><strong>This key is required</strong>, you must use the passphrase of the pgp
-key identified by <code>pgp.keyid</code> as the value.  If you did not specify
-a <code>pgp.keyid</code> then this should be the passphrase for your default
-pgp key.</p>
-</li>
+<li><code>foo: 3</code> will yield <code>[1, 2, 3]</code>.</li>
+<li><code>foo: +[3, 4]</code> will yield <code>[1, 2, 3, 4]</code>.</li>
+<li><code>foo: [3, 4]</code> will yield <code>[3, 4]</code>.</li>
 </ul>
-<h2 id="dry-run">Dry Run</h2>
-<p>Releases should only be published from master, so get on master and
-ensure the changes you want to publish are present. After confirming
-this, you can test out the publish in 2 ways:</p>
-<ol>
-<li>
-<p>A dry run to get a preview of what will be published and why:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants clean-all publish.jar src/<span class="o">{</span>java,scala<span class="o">}</span>::
-</pre></div>
-</li>
-<li>
-<p>A local publish to get a preview of both what will be published
-     and why as well as the changelogs:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants clean-all publish.jar --no-dryrun --local<span class="o">=</span>/tmp/m2 src/<span class="o">{</span>java,scala<span class="o">}</span>::
-</pre></div>
-<p>Note that this "dry-run" technique somewhat confusingly passes
- <code>--no-dryrun</code> but only because the publish is local and to a
- temporary dir (the argument to <code>--local</code>).  You can also poke
- around in the <code>/tmp/m2</code> local maven repo if you're curious or want
- to double-check fine details of exactly what will be pushed.</p>
-</li>
-</ol>
-<h2 id="staging-to-ossrh">Staging to OSSRH</h2>
-<p>When you're ready to publish to Maven Central, the 1st step is to
-publish the jvm tool jars to Sonatype's OSSRH staging repository.  Note
-that nothing will actually go live until the staging repository is
-<a href="#promoting-to-maven-central">released by you later</a>, so this step has
-no consequences of global importance.  Pants will create and push git
-tags for the staging releases you do here, but in the worst case the
-tags will point to releases never promoted to Maven Central, which is
-fine.</p>
-<p>To do the staging release, it's a normal pants publish and it's easiest
-to use the following command, which will publish everything that's
-changed and only those things that have changed since the last publish:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants publish.jar --no-dryrun src/<span class="o">{</span>java,scala<span class="o">}</span>::
-</pre></div>
-<h2 id="promoting-to-maven-central">Promoting to Maven Central</h2>
-<p>With the jvm tools published to the Sonatype OSSRH staging repository,
-you'll need to complete the release using Sonatype's OSSRH Nexus
-repository manager web UI.  Sonatype describes the process
-<a href="http://central.sonatype.org/pages/releasing-the-deployment.html">here</a>
-but the process is also described below:</p>
-<ol>
-<li>
-<p>Log into Sonatype's OSSRH Nexus repository manager web UI.</p>
-<p>You do this <a href="https://oss.sonatype.org/#stagingRepositories">here</a>.
- You should use the the same user id and password you use to login
- to the Sonatype JIRA server.</p>
-</li>
-<li>
-<p>Find the staging repository auto-created when you
-     <a href="#staging-to-ossrh">staged the release</a> above.</p>
-<p>As shown below, in the 'Staging Repositories' tab enter
- <code>pantsbuild</code> in the search box in the upper-right corner to filter
- the display to your staging repository.</p>
-<p><img alt="image" src="images/ossrh-publish-find-staging-repo.png"/></p>
-<p>There should be exactly one repository listed and you should
- select its checkbox.</p>
-</li>
-<li>
-<p>Close the selected staging repository.</p>
-<p>As shown below, with the staging repository selected, there will
- be a 'Close' button available.  Look for in in the menu bar across
- the top of the repository list.  Click it.</p>
-<p><img alt="image" src="images/ossrh-publish-close-staging-repo.png"/></p>
-<p>This will trigger a validation process that checks the staged
-artifacts for signatures, a valid POM and more.  When validation is
-complete, you'll receive an email from nexus@oss.sonatype.org with
-the subject 'Nexus: Staging Completed'.  You may need to click the
-'Refresh' button in the UI to see the 'Close' button transition to
-a disabled state and the 'Release' button to its right transition
-to an enabled state.</p>
-</li>
-<li>
-<p>Release the selected staging repository.</p>
-<p>As shown below, with the staging repository selected and closed,
-there will be a 'Release' button available.  Click it.</p>
-<p><img alt="image" src="images/ossrh-publish-release-staging-repo.png"/></p>
-<p>This will trigger another round of artifact validation and another
-email, this time with subject 'Nexus: Promotion Completed'.  At
-this point you're all done and just need to wait ~10 minutes for
-the artifacts to be available in Maven Central and ~2 hours to show
-up in the
-<a href="http://search.maven.org/#search%7Cga%7C1%7Corg.pantsbuild">search index</a>.</p>
-</li>
-</ol>
-<h2 id="dogfood">Dogfood</h2>
-<p>Check Maven Central to ensure everything looks good. You can browse the
-<a href="https://repo1.maven.org/maven2/org/pantsbuild">org.pantsbuild subtree</a>
-to find the artifact(s) you just released.  Once available you can send
-out an RB bumping the versions of the released tools in <code>BUILD.tools</code>.</p>
-<h2 id="releasers">Releasers</h2>
-<p>The following folks are set up to publish to Maven Central for
-org.pantsbuild:</p>
+<p>On the command line you can append multiple times:</p>
 <ul>
-<li>David Turner <a href="mailto:dturner@twopensource.com">dturner@twopensource.com</a></li>
-<li>Eric Ayers <a href="mailto:ericzundel@gmail.com">ericzundel@gmail.com</a></li>
-<li>John Sirois <a href="mailto:john.sirois@gmail.com">john.sirois@gmail.com</a></li>
-<li>Stu Hood <a href="mailto:stuhood@gmail.com">stuhood@gmail.com</a></li>
+<li><code>--foo=3 --foo=4</code> will yield the value <code>[1, 2, 3, 4]</code>.</li>
+</ul>
+<p>Note that the command line values will be appended to the value determined from the defaults
+plus the values in <code>pants.ini</code>. To override the value, use <code>--foo=[3, 4]</code>.</p>
+<h3 id="dict-options">Dict Options</h3>
+<p>Dict option values are Python-style dict literals: <code>--foo={"a":1,"b":2}</code>.</p>
+<h3 id="available-options">Available Options</h3>
+<p>The options available in a given Pants-enabled codebase depend on which backends and plugins are activated.</p>
+<ul>
+<li>View <a href="" title="options_reference.html">all options</a> available in a "vanilla" Pants install.</li>
+<li>To see a complete list of all basic options available in a given Pants-enabled codebase, enter <code>./pants help-all</code>.</li>
+<li>To see global (or goal-specific) basic options, enter <code>./pants help (goal)</code>.</li>
+<li>To see global (or goal-specific) basic and advanced options, enter <code>./pants help-advanced (goal)</code>.</li>
 </ul>
 
             <!-- main content end -->
 
             <div class="generated">
               Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-              from dist/markdown/html/src/python/pants/docs/release_jvm.html 2016-04-29T13:33:41.731755
+              from dist/markdown/html/src/docs/options.html 2016-04-29T13:33:42.511080
             </div>
 
           </div> <!-- mainflow -->
