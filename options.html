@@ -8,11 +8,11 @@
 
 <head>
   <meta charset="utf-8"/>
-  <title>Export Format</title>
+  <title>Pants Options</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" href="pants-logo.ico">
   <!-- In case this is a "test publish", tell search engines where real version lives: -->
-  <link rel="canonical" href="https://pantsbuild.github.io/export.html">
+  <link rel="canonical" href="https://pantsbuild.github.io/options.html">
 
   <link rel="stylesheet" href="bootstrap-custom.min.css">
   <link rel="stylesheet" href="bootstrap-custom-theme.min.css">
@@ -98,8 +98,8 @@
                 <li class="toc-h1 toc-link ">
                   <a href="3rdparty.html">Third-Party Dependencies</a>
                 </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="options.html">Pants Options</a>
+                <li class="toc-h1 toc-link toc-here">
+                  Pants Options
                 </li>
                 <li class="toc-h1 toc-link ">
                   <a href="invoking.html">Invoking Pants</a>
@@ -176,8 +176,8 @@
                 <li class="toc-h1 toc-link ">
                   <a href="changelog.html">Release History</a>
                 </li>
-                <li class="toc-h1 toc-link toc-here">
-                  Export Format
+                <li class="toc-h1 toc-link ">
+                  <a href="export.html">Export Format</a>
                 </li>
           </ul>
         </div> <!-- site-toc -->
@@ -189,17 +189,20 @@
           <div class="mainflow">
               <nav class="pagetoc">
                 <ul>
-                    <li class="toc-h1"><a href="#export-format">Export Format</a></li>
-                    <li class="toc-h1"><a href="#top-level-fields">Top Level fields</a></li>
-                    <li class="toc-h2"><a href="#version">Version</a></li>
-                    <li class="toc-h2"><a href="#libraries">Libraries</a></li>
-                    <li class="toc-h2"><a href="#targets">Targets</a></li>
-                    <li class="toc-h1"><a href="#example-export-output">Example export output</a></li>
-                    <li class="toc-h1"><a href="#export-format-changes">Export Format Changes</a></li>
-                    <li class="toc-h2"><a href="#103">1.0.3</a></li>
-                    <li class="toc-h2"><a href="#102">1.0.2</a></li>
-                    <li class="toc-h2"><a href="#101">1.0.1</a></li>
-                    <li class="toc-h2"><a href="#100">1.0.0</a></li>
+                    <li class="toc-h1"><a href="#option-scopes">Option Scopes</a></li>
+                    <li class="toc-h1"><a href="#basic-vs-advanced-options">Basic vs. Advanced Options</a></li>
+                    <li class="toc-h1"><a href="#recursive-options">Recursive Options</a></li>
+                    <li class="toc-h1"><a href="#setting-option-values">Setting Option Values</a></li>
+                    <li class="toc-h2"><a href="#config-file">Config File</a></li>
+                    <li class="toc-h2"><a href="#environment-variables">Environment Variables</a></li>
+                    <li class="toc-h2"><a href="#command-line-flags">Command Line Flags</a></li>
+                    <li class="toc-h1"><a href="#option-types">Option Types</a></li>
+                    <li class="toc-h2"><a href="#boolean-options">Boolean Options</a></li>
+                    <li class="toc-h2"><a href="#int-and-float-options">Int and Float Options</a></li>
+                    <li class="toc-h1"><a href="#string-options">String Options</a></li>
+                    <li class="toc-h2"><a href="#list-options">List Options</a></li>
+                    <li class="toc-h2"><a href="#dict-options">Dict Options</a></li>
+                    <li class="toc-h2"><a href="#available-options">Available Options</a></li>
                 </ul>
               </nav>
 
@@ -269,171 +272,135 @@
 .codehilite .vi { color: #bb60d5 } /* Name.Variable.Instance */
 .codehilite .il { color: #40a070 } /* Literal.Number.Integer.Long */
 </style>
-<h1 id="export-format">Export Format</h1>
-<p>The configuration for a set of targets can be exported out of pants into JSON format using
-the <code>pants export</code> goal.  This could useful for integrating Pants with another build tool.
-The <a href="https://github.com/pantsbuild/intellij-pants-plugin">Pants Support IntelliJ plugin</a> uses
-the export goal to get information out of Pants to configure IntelliJ.</p>
-<p>This page captures the specification of the data provided by the export goal.
-See the Changelog section below for differences between versions of the export format.</p>
-<h1 id="top-level-fields">Top Level fields</h1>
+<h1 id="pants-options">Pants Options</h1>
+<p>Pants is very configurable and has literally hundreds of tuneable parameters, known in Pants
+parlance as <em>options</em>.</p>
+<p>Most options are automatically set to useful defaults. However it is inevitable that sooner or
+later you'll need to tweak some of them.  For example, you may want <a href="install.html">to pin your Pants version</a>.</p>
+<p>The Pants options system is fairly complex. Codebase administrators will need to understand its details
+and nuances. End users, however, can usually get by with just a superficial view.</p>
+<h2 id="option-scopes">Option Scopes</h2>
+<p>Pants has many moving parts, and more can be added via custom plugins. To avoid option naming collisions,
+each configurable component is qualified by a <em>scope</em>.</p>
 <ul>
-<li>"version" :  A string representing the version number of the export format.</li>
-<li>"libraries" : Dictionary of paths to .jar files resolved by pants required to compile the
-  project.</li>
-<li>"targets" : Dictionary of targets defined in BUILD files.</li>
-<li>"distributions" : Information about JVM distributions.</li>
-<li>"jvm_platforms" : Information about JVM platforms(language level and additionals arguments).</li>
-<li>"python_setup" : Information about Python setup(interpreters and chroots for them).</li>
+<li>Global options belong to the global scope.</li>
+<li>Options for task <code>task</code> in goal <code>goal</code> belong to the <code>goal.task</code> scope. E.g., <code>gen.thrift</code> or <code>compile.zinc</code>.
+  However if the task has the same name as the goal, then the scope is just that name. E.g., <code>./pants list</code>,
+  not <code>./pants list.list</code>.</li>
+<li>Options for the global instance of subsystem <code>subsystem</code> belong to the <code>subsystem</code> scope. E.g., <code>jvm</code> or <code>cache</code>.</li>
+<li>Options for the instance of subsystem <code>subsystem</code> belonging to some other task or subsystem with scope <code>scope</code>
+  belong to the <code>subsystem.scope</code> scope. E.g., <code>cache.compile.zinc</code>.</li>
 </ul>
-<h2 id="version">Version</h2>
-<p>Version number for identifying the export file format output. This version number will
-change when there is a change to the output format.  The version number specification is as follows:</p>
-<p><code>&lt;major_version&gt;.&lt;minor_version&gt;.&lt;patch_version&gt;</code></p>
+<p>The scope names are used to qualify the option names when setting their values, as explained in
+the remainder of this document.</p>
+<h2 id="basic-vs-advanced-options">Basic vs. Advanced Options</h2>
+<p>Some options, such as <code>-l</code> to control the logging verbosity level, are expected to be set directly by users, as needed.
+But most options are expected to be configured once by a codebase administrator and not directly modified by users.
+These latter options are called <em>advanced</em> options, and are not enumerated in help messages by default.</p>
+<h2 id="recursive-options">Recursive Options</h2>
+<p>A handful of global options, such as <code>-l</code>, are <em>recursive</em>. That is, they have a global value which
+can be overridden in each scope.  This allows you, for example, to set different logging verbosity
+levels in different tasks.</p>
+<h2 id="setting-option-values">Setting Option Values</h2>
+<p>Every Pants option can be set in one three ways, in ascending order of precendence:</p>
 <ul>
-<li><code>&lt;major_version&gt;</code> : Increment this field when there is a major format change</li>
-<li><code>&lt;minor_version&gt;</code> : Increment this field when there is a minor change that breaks backward
-     compatibility for an existing field or a field is removed.</li>
-<li><code>&lt;patch_version&gt;</code> : Increment this field when a minor format change that just adds information
-     that an application can safely ignore.</li>
+<li>In a config file.</li>
+<li>Using an environment variable.</li>
+<li>Using a command-line flag.</li>
 </ul>
-<h2 id="libraries">Libraries</h2>
-<p>Represents all of the external jars that have been resolved by pants.  The value for libraries
-is represented by a dictionary as follows:</p>
-<p><code>{ &lt;jar_coordinate&gt; : { &lt;conf_name&gt; : &lt;jar_file&gt; } }</code></p>
-<ul>
-<li><code>&lt;jar_coordinate&gt;</code> : key representing this jar.  Usually <code>&lt;org&gt;:&lt;name&gt;:&lt;rev&gt;</code></li>
-<li><code>&lt;conf_name&gt;</code> : Ivy conf this jar was resolved for.  Usually one of <code>default</code>, <code>sources</code>,
-    or <code>javadoc</code></li>
-<li><code>&lt;jar_file&gt;</code> : Path to the resolved jar file.</li>
-</ul>
-<h2 id="targets">Targets</h2>
-<p>The targets field contains all of the targets exported from pants BUILD file definitions.  The
-value for targets is represented by a dctionary of target specs mapped to a dictionary of the
-fields defined in the target:</p>
-<p><code>{ &lt;target_spec&gt; : &lt;target_field_mapping&gt; }</code></p>
-<ul>
-<li><code>&lt;target_spec&gt;</code> :  <code>"&lt;path_to_build_file&gt;:&lt;target_name&gt;"</code></li>
-<li><code>&lt;target_field_mapping&gt;</code> : Dictionary of target fields  (TBD)</li>
-</ul>
-<h1 id="example-export-output">Example export output</h1>
-<p>The following is an abbreviated export file from a command in the pants repo:</p>
-<div class="codehilite"><pre>{
-    "version": "1.0.4",
-    "libraries": {
-        "commons-logging:commons-logging:1.1.1": {
-            "default": "/Users/user/.ivy2/pants/commons-logging/commons-logging/jars/commons-logging-1.1.1.jar"
-        },
-        "commons-codec:commons-codec:1.6": {
-            "default": "/Users/user/.ivy2/pants/commons-codec/commons-codec/jars/commons-codec-1.6.jar"
-        },
-        "org.apache.httpcomponents:httpclient:4.2.5": {
-            "default": "/Users/user/.ivy2/pants/org.apache.httpcomponents/httpclient/jars/httpclient-4.2.5.jar"
-        },
-        ...
-    },
-    # distributions settings provided as an example from another repo
-    "distributions": {
-        "darwin": [
-            "/Library/Java/JavaVirtualMachines/jdk1.8.0_45.jdk/Contents/Home",
-            "/Library/Java/JavaVirtualMachines/jdk1.7.0_80.jdk/Contents/Home"
-        ],
-        "linux": [
-            "/usr/java/jdk1.8.0_45",
-            "/usr/java/jdk1.7.0_80"
-        ]
-    },
-   "jvm_platforms": {
-        "platforms": {
-            "java6": {
-                "source_level": "1.6",
-                "args": [],
-                "target_level": "1.6"
-            }
-        },
-        "default_platform": "java6"
-    },
-    "python_setup": {
-        "interpreters": {
-            "CPython-2.7.10": {
-                "binary": "/Users/user/pants/build-support/pants_dev_deps.venv/bin/python2.7",
-                "chroot": "/Users/user/pants/.pants.d/python-setup/chroots/e8da2c200f36ca0a1b8a60c12590a59209250b1a"
-            }
-        },
-        "default_interpreter": "CPython-2.7.10"
-    },
-    "targets": {
-        "examples/tests/java/org/pantsbuild/example/usethrift:usethrift": {
-            "is_code_gen": false,
-            "excludes": [],
-            "target_type": "TEST",
-            "libraries": [
-                "junit:junit:4.12",
-                "org.hamcrest:hamcrest-core:1.3",
-                "junit:junit:latest.integration"
-            ],
-            "platform": "java6",
-            "pants_target_type": "java_tests",
-            "globs": {
-                "globs": [
-                    "examples/tests/java/org/pantsbuild/example/usethrift/UseThriftTest.java"
-                ]
-            },
-            "targets": [
-                "3rdparty:junit",
-                "examples/src/thrift/org/pantsbuild/example/distance:distance-java",
-                "examples/src/thrift/org/pantsbuild/example/precipitation:precipitation-java",
-                ".pants.d/gen/thrift/isolated/examples.src.thrift.org.pantsbuild.example.distance.distance-java:examples.src.thrift.org.pantsbuild.example.distance.distance-java",
-                ".pants.d/gen/thrift/isolated/examples.src.thrift.org.pantsbuild.example.precipitation.precipitation-java:examples.src.thrift.org.pantsbuild.example.precipitation.precipitation-java"
-            ],
-            "roots": [
-                {
-                    "source_root": "/Users/user/pants/examples/tests/java/org/pantsbuild/example/usethrift",
-                    "package_prefix": "org.pantsbuild.example.usethrift"
-                }
-            ]
-        },
-        "examples/src/python/example/hello/greet:greet": {
-            "is_code_gen": false,
-            "python_interpreter": "CPython-2.7.10",
-            "target_type": "SOURCE",
-            "libraries": [],
-            "pants_target_type": "python_library",
-            "globs": {
-                "globs": [
-                    "examples/src/python/example/hello/greet/*.py"
-                ]
-            },
-            "targets": [
-                "3rdparty/python:ansicolors"
-            ],
-            "roots": [
-                {
-                    "source_root": "/Users/user/pants/examples/src/python/example/hello/greet",
-                    "package_prefix": "example.hello.greet"
-                }
-            ]
-        },
-
-        ...
-   }
-}
+<p>Config files are typically used to set codebase-wide defaults for all users.  Individual
+users can then override various values using environment variables or command-line flags.</p>
+<p>Options that aren't set by one of these three methods will fall back to a sensible default, so
+that Pants will work "out of the box" in common scenarios.</p>
+<h3 id="config-file">Config File</h3>
+<p>The main Pants config file location is <code>pants.ini</code> in your source tree's top-level directory.
+If you installed pants <a href="install.html">as recommended</a> this file should already exist.</p>
+<p>The <code>pants.ini</code> file is an INI file parsed by <a href="http://docs.python.org/library/configparser.html">ConfigParser</a>.
+Thus, it looks something like:</p>
+<div class="codehilite"><pre><span class="k">[scope]</span>
+<span class="err">option1:</span> <span class="err">value1</span>
+<span class="err">option2:</span> <span class="err">value2</span>
 </pre></div>
-<h1 id="export-format-changes">Export Format Changes</h1>
-<h2 id="103">1.0.3</h2>
-<p>Added information about jdk settings</p>
-<h2 id="102">1.0.2</h2>
-<p>Handle jars with classifiers</p>
-<h2 id="101">1.0.1</h2>
-<p>Information about excludes</p>
-<h2 id="100">1.0.0</h2>
-<p>Initial Version</p>
+<p>The <code>[DEFAULT]</code> section is special: its values are available in all other sections. E.g.,</p>
+<div class="codehilite"><pre><span class="k">[DEFAULT]</span>
+<span class="err">thrift_workdir:</span> <span class="err">%(pants_workdir)s/thrift</span>
+
+<span class="k">[GLOBAL]</span>
+<span class="err">print_exception_stacktrace:</span> <span class="err">True</span>
+
+<span class="k">[gen.thrift]</span>
+<span class="err">workdir:</span> <span class="err">%(thrift_workdir)s</span>
+
+<span class="k">[compile.zinc]</span>
+<span class="err">args:</span> <span class="err">[</span>
+    <span class="err">'-C-Tnowarnprefixes',</span> <span class="err">'-C%(thrift_workdir)s',</span>
+  <span class="err">]</span>
+</pre></div>
+<p>Note that continuation lines of multiple-line values must be indented. For example, the closing
+bracket in the multi-line list above.</p>
+<h3 id="environment-variables">Environment Variables</h3>
+<p>Option <code>option</code> in scope <code>foo.bar</code> can be set via the environment variable <code>PANTS_FOO_BAR_OPTION</code>.
+E.g., <code>PANTS_COMPILE_ZINC_INCREMENTAL=false</code>.</p>
+<p>Global options can be set using <code>PANTS_GLOBAL_OPTION</code> as expected, but you can also omit the GLOBAL
+and use <code>PANTS_OPTION</code>. E.g., <code>PANTS_LEVEL=debug</code>.</p>
+<p>If a global option name itself starts with the word 'pants' then you can omit the repetition. E.g.,
+<code>PANTS_WORKDIR</code> instead of <code>PANTS_PANTS_WORKDIR</code>.</p>
+<h3 id="command-line-flags">Command Line Flags</h3>
+<p>Option <code>option</code> in scope <code>foo.bar</code> can be set using the flag <code>--foo-bar-option=&lt;value&gt;</code>.</p>
+<p>Global options are set with no scope qualifier, e.g., <code>--pants-workdir=/path/to/workdir</code>.</p>
+<p>Values for single-letter flags (those that start with a single dash) can be set without the equals
+sign: <code>-ldebug</code> is the same as <code>--level=debug</code> (<code>-l</code> is a synonym for <code>--level</code>).  All other flags
+must use an equals sign to set a value.</p>
+<p>There's a useful shorthand that can save some typing when setting multiple options for a single task:
+If you invoke a task explicitly on the command line then you can follow that task with unqualified
+options in its scope. E.g., <code>./pants compile.zinc --no-incremental --name-hashing</code>
+instead of <code>./pants compile --no-compile-zinc-incremental --compile-zinc-name-hashing</code>.</p>
+<p>Note that this shorthand requires you to mention a specific task, not just a goal: <code>./pants compile.zinc</code>
+instead of just <code>./pants compile</code> as you would usually enter. All tasks in the <code>compile</code> goal will
+still be executed, not just <code>compile.zinc</code>, but the <code>.zinc</code> addition is a convenience to support shorthand options.</p>
+<p>Of course this works when specifying multiple goals, e.g.,</p>
+<p><code>./pants compile.zinc --no-incremental --name-hashing test.junit --parallel-threads=4</code></p>
+<h2 id="option-types">Option Types</h2>
+<p>Option value literal formats are the same on the command-line, environment variables and in <code>pants.ini</code>,
+with a couple of extra command-line conveniences.</p>
+<h3 id="boolean-options">Boolean Options</h3>
+<p>The boolean option values are: <code>false</code>, <code>False</code>, <code>true</code>, <code>True</code>.</p>
+<p>On the command line, you can omit the value thus: <code>--foo-bar</code> is the same as <code>--foo-bar=false</code>,
+  and <code>--no-foo-bar</code> is the same as <code>--foo-bar=false</code>.</p>
+<h3 id="int-and-float-options">Int and Float Options</h3>
+<p>Specify values in decimal notation: <code>--foo=5</code>, <code>--bar=4.5</code>.</p>
+<h2 id="string-options">String Options</h2>
+<p>Surround strings with single or double quotes if they contain embedded spaces: <code>--foo="hello, world"</code>.</p>
+<h3 id="list-options">List Options</h3>
+<p>List options can be appended to, as well as overridden. For example, for an option <code>--foo</code>
+whose default value is <code>[1, 2]</code>, then in <code>pants.ini</code>:</p>
+<ul>
+<li><code>foo: 3</code> will yield <code>[1, 2, 3]</code>.</li>
+<li><code>foo: +[3, 4]</code> will yield <code>[1, 2, 3, 4]</code>.</li>
+<li><code>foo: [3, 4]</code> will yield <code>[3, 4]</code>.</li>
+</ul>
+<p>On the command line you can append multiple times:</p>
+<ul>
+<li><code>--foo=3 --foo=4</code> will yield the value <code>[1, 2, 3, 4]</code>.</li>
+</ul>
+<p>Note that the command line values will be appended to the value determined from the defaults
+plus the values in <code>pants.ini</code>. To override the value, use <code>--foo=[3, 4]</code>.</p>
+<h3 id="dict-options">Dict Options</h3>
+<p>Dict option values are Python-style dict literals: <code>--foo={"a":1,"b":2}</code>.</p>
+<h3 id="available-options">Available Options</h3>
+<p>The options available in a given Pants-enabled codebase depend on which backends and plugins are activated.</p>
+<ul>
+<li>View <a href="" title="options_reference.html">all options</a> available in a "vanilla" Pants install.</li>
+<li>To see a complete list of all basic options available in a given Pants-enabled codebase, enter <code>./pants help-all</code>.</li>
+<li>To see global (or goal-specific) basic options, enter <code>./pants help (goal)</code>.</li>
+<li>To see global (or goal-specific) basic and advanced options, enter <code>./pants help-advanced (goal)</code>.</li>
+</ul>
 
             <!-- main content end -->
 
             <div class="generated">
               Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/export.html 2016-04-29T13:50:58.932633
+              from dist/markdown/html/src/docs/options.html 2016-04-29T13:51:01.104140
             </div>
 
           </div> <!-- mainflow -->
