@@ -193,6 +193,10 @@
                     <li class="toc-h1"><a href="#your-codes-build-file">Your Code's BUILD File</a></li>
                     <li class="toc-h1"><a href="#round-trip-dependencies">&quot;Round Trip&quot; Dependencies</a></li>
                     <li class="toc-h1"><a href="#controlling-jar-dependency-versions">Controlling JAR Dependency Versions</a></li>
+                    <li class="toc-h1"><a href="#managing-transitive-dependencies">Managing Transitive Dependencies</a></li>
+                    <li class="toc-h2"><a href="#the-problem">The Problem</a></li>
+                    <li class="toc-h2"><a href="#possible-solutions">Possible Solutions</a></li>
+                    <li class="toc-h2"><a href="#managed-jar-dependencies">Managed Jar Dependencies</a></li>
                     <li class="toc-h1"><a href="#using-a-snapshot-jvm-dependency">Using a SNAPSHOT JVM Dependency</a></li>
                 </ul>
               </nav>
@@ -367,6 +371,136 @@ transitive dependencies from JVM targets:</p>
   <span class="p">]</span>
 <span class="p">)</span>
 </pre></div>
+<h2 id="managing-transitive-dependencies">Managing Transitive Dependencies</h2>
+<h3 id="the-problem">The Problem</h3>
+<p>If you have jars that pull in many transitive dependencies, you probably
+want to constrain which versions of those transitive dependencies you
+pull in. This is valuable for:</p>
+<ul>
+<li>Security concerns (you may want to avoid artifacts with known
+    vulnerabilities, or you may only want to use particular jars which you
+    trust).</li>
+<li>Predictable and consistent behavior across all projects in your
+    repository (described below).</li>
+<li>Caching concerns/build times (described below).</li>
+</ul>
+<p>Otherwise, you may have some targets that end up being built with
+version <code>1.2.3</code> of a transitive dependency, and others that get built with
+<code>4.5.6</code> of that dependency. Worse, the <em>same target</em> might be built with
+different versions of a transitive dependency depending on what other
+targets happen to be part of the same pants invocation. To illustrate
+this, consider the diagram below:</p>
+<div>
+<img alt="image" src="images/transitive-dependencies.png" style="display: block; max-height: 25ex; margin-left: auto; margin-right: auto;">
+</img></div>
+<p>Assume <code>foo</code> and <code>bar</code> are binary targets. If you build a binary of <code>foo</code>
+with <code>./pants binary foo</code>, <code>foo</code> will be packaged with the <code>example</code> jar
+in addition to its transitive dependencies, which will be resolved as the
+<code>common</code> jar, version <code>1.2.3</code>.</p>
+<p>Likewise, if you run <code>./pants binary bar</code>, it will be packaged with <code>demo</code>,
+and the transitive dependencies of <code>demo</code>, which here is simply the <code>common</code>
+jar version <code>4.5.6</code>.</p>
+<p>However, if you run <code>./pants binary foo bar</code>, ivy will only resolve one
+version of <code>common-1.2.3</code>, which most likely means that both <code>foo</code> and <code>bar</code>
+will get <code>common</code> version <code>4.5.6</code> (because it is the more recent version).
+This is a problem, because it may be that <code>common-4.5.6</code> is not compatible
+with <code>3rdparty:example</code>, which will <em>break the <code>foo</code> binary at runtime</em>.</p>
+<p>More subtly, if you have many intermediate <code>java_library</code> targets between
+your <code>jvm_binaries</code> and your <code>jar_library</code> targets (which is normaly the
+case), simply changing which combination of <code>java_library</code> targets are in
+the same <code>./pants</code> invocation may invalidate the cache and force Pants to
+recompile them, even if their sources are unchanged. This is because they
+may resolve different versions of their transitive jar dependencies than
+the previous time they were compiled, which means their classpaths will be
+different. Getting a different classpath causes a cache-miss, forcing a
+recompile. In general recompiling when the classpath changes is the
+correct thing to do, however this means that unstable transitive
+dependencies will cause a lot of cache-thrashing. If you have a large
+repository with a large amount of code, recompiles get expensive.</p>
+<h3 id="possible-solutions">Possible Solutions</h3>
+<p>There are a few ways to avoid or work around these problems. A simple method
+is to use the <a href="http://ant.apache.org/ivy/history/2.4.0/settings/conflict-managers.html">strict ivy conflict manager</a>,
+which will cause the jar resolution to fail with an error if it detects two
+artifacts with conflicting versions. This has the advantage of forcing a dev
+to be aware of (and make a decision about) confliction versions.</p>
+<p>You could also disable transitive jar resolution altogether, and explicitly
+declare every dependency you need. This ensures that you have total control
+over your external dependencies, but can be difficult to maintain.</p>
+<p>The third option is using <code>managed_jar_dependencies</code>, to pin the versions of
+the subset of your transitive dependencies that you care about.</p>
+<h3 id="managed-jar-dependencies">Managed Jar Dependencies</h3>
+<p>Maven handles this problem with the <code>&lt;dependencyManagement&gt;</code>
+<a href="https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html#Dependency_Management">stanza</a>,
+and Pants has similar functionality via the <code>managed_jar_dependencies</code> target.</p>
+<p>You can set up your <code>3rdparty/BUILD</code> file like so:</p>
+<div class="codehilite"><pre><span class="n">managed_jar_dependencies</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'management'</span><span class="p">,</span>
+  <span class="n">artifacts</span><span class="o">=</span><span class="p">[</span>
+    <span class="s">':commons-io'</span><span class="p">,</span>
+    <span class="s">':jersey-core'</span><span class="p">,</span>
+  <span class="p">],</span>
+<span class="p">)</span>
+
+<span class="n">jar_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'commons-io'</span><span class="p">,</span>
+  <span class="n">jars</span><span class="o">=</span><span class="p">[</span>
+    <span class="n">jar</span><span class="p">(</span><span class="s">'commons-io'</span><span class="p">,</span> <span class="s">'commons-io'</span><span class="p">,</span> <span class="s">'2.5'</span><span class="p">),</span>
+  <span class="p">],</span>
+<span class="p">)</span>
+
+<span class="n">jar_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'jersey-core'</span><span class="p">,</span>
+  <span class="n">jars</span><span class="o">=</span><span class="p">[</span>
+    <span class="n">jar</span><span class="p">(</span><span class="s">'com.sun.jersey'</span><span class="p">,</span> <span class="s">'jersey-core'</span><span class="p">,</span> <span class="s">'1.19.1'</span><span class="p">),</span>
+  <span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+<p>And in <code>pants.ini</code>, add:</p>
+<div class="codehilite"><pre><span class="k">[jar-dependency-management]</span>
+<span class="err">default_target:</span> <span class="err">3rdparty:management</span>
+</pre></div>
+<p>This will force all <code>jar_library</code> targets in your repository to use the
+versions of <code>commons-io</code> and <code>jersey-core</code> referenced by the <code>management</code>
+target. When resolving transitive dependencies, Pants will always choose
+the versions "pinned" by the managed dependencies target.</p>
+<p>If a <code>jar_library</code> omits the version for one of its <code>jar()</code>s, it will use
+the version defined in <code>managed_jar_dependencies</code>. If a <code>jar()</code> defines a
+version that <em>conflicts</em> with the version set in <code>managed_jar_dependencies</code>,
+an error will be raised and the build will fail (though this behavior can
+be modified via the <code>conflict_strategy</code> option).</p>
+<p>This is a bit verbose, and entails a bit of duplicate code (you have to
+mention <code>jersey-core</code> 3 times in the above example). You can use the
+<code>managed_jar_libraries</code> target factory instead to make your <code>3rdparty/BUILD</code>
+definitions more concise.</p>
+<p>This example is equivalent to the one earlier, but using <code>managed_jar_libraries</code>
+instead:</p>
+<div class="codehilite"><pre><span class="n">managed_jar_libraries</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'management'</span><span class="p">,</span>
+  <span class="n">artifacts</span><span class="o">=</span><span class="p">[</span>
+    <span class="n">jar</span><span class="p">(</span><span class="s">'commons-io'</span><span class="p">,</span> <span class="s">'commons-io'</span><span class="p">,</span> <span class="s">'2.5'</span><span class="p">),</span>
+    <span class="n">jar</span><span class="p">(</span><span class="s">'com.sun.jersey'</span><span class="p">,</span> <span class="s">'jersey-core'</span><span class="p">,</span> <span class="s">'1.19.1'</span><span class="p">),</span>
+  <span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+<p>This automatically generates <code>jar_library</code> targets for you, and makes a
+<code>managed_jar_dependencies</code> target to reference them. (Note that you still
+need to make the same change to pants.ini).</p>
+<p>The generated library targets follow the naming convention
+<code>org.name.classifier.ext</code>, where <code>classifier</code> and <code>ext</code> are omitted if they
+are the default values.</p>
+<p>So in the above example will generate two <code>jar_library</code> targets, called
+<code>3rdparty:commons-io.commons-io</code> and <code>3rdparty:com.sun.jersey.jersey-core</code>.</p>
+<p>The artifacts list of <code>managed_jar_libraries</code> can also accept target
+addresses to already-existing <code>jar_libraries</code>, just like a normal
+<code>managed_jar_dependences</code> target. In this case, <code>managed_jar_libraries</code>
+will just use the referenced target, rather than generating a new one.</p>
+<p>With Pants you can create <em>multiple</em> <code>managed_jar_dependencies</code>.
+If you have more than one, for any particular <code>jar_library</code>, you can define
+which <code>managed_jar_dependencies</code> it uses explicitly (rather than using the
+default defined in <code>pants.ini</code>):</p>
+<div class="codehilite"><pre><span class="n">jar_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'org.apache.hadoop-alternate'</span><span class="p">,</span>
+  <span class="n">jars</span><span class="o">=</span><span class="p">[</span>
+    <span class="n">jar</span><span class="p">(</span><span class="s">'org.apache.hadoop'</span><span class="p">,</span> <span class="s">'hadoop-common'</span><span class="p">,</span> <span class="s">'2.7.0'</span><span class="p">),</span>
+  <span class="p">],</span>
+  <span class="n">managed_dependencies</span><span class="o">=</span><span class="s">'3rdparty:management-alternate'</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
 <p><a id="test_3rdparty_jvm_snapshot" pantsmark="test_3rdparty_jvm_snapshot"> </a></p>
 <h2 id="using-a-snapshot-jvm-dependency">Using a SNAPSHOT JVM Dependency</h2>
 <p>Sometimes your code depends on a buggy external JVM dependency. You
@@ -389,7 +523,7 @@ time pants is run (otherwise, pants will cache it):</p>
 
             <div class="generated">
               Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-              from dist/markdown/html/examples/src/java/org/pantsbuild/example/3rdparty_jvm.html 2016-04-29T16:50:09.639271
+              from dist/markdown/html/examples/src/java/org/pantsbuild/example/3rdparty_jvm.html 2016-04-29T17:24:31.421376
             </div>
 
           </div> <!-- mainflow -->
