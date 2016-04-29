@@ -274,9 +274,8 @@
 </style>
 <h1 id="pants-options">Pants Options</h1>
 <p>Pants is very configurable and has literally hundreds of tuneable parameters, known in Pants
-parlance as <em>options</em>.<br/>
-</p>
-<p>Most options are automatically set to useful defaults. However it is inevitable that sooner or 
+parlance as <em>options</em>.</p>
+<p>Most options are automatically set to useful defaults. However it is inevitable that sooner or
 later you'll need to tweak some of them.  For example, you may want <a href="install.html">to pin your Pants version</a>.</p>
 <p>The Pants options system is fairly complex. Codebase administrators will need to understand its details
 and nuances. End users, however, can usually get by with just a superficial view.</p>
@@ -292,12 +291,12 @@ each configurable component is qualified by a <em>scope</em>.</p>
 <li>Options for the instance of subsystem <code>subsystem</code> belonging to some other task or subsystem with scope <code>scope</code>
   belong to the <code>subsystem.scope</code> scope. E.g., <code>cache.compile.zinc</code>.</li>
 </ul>
-<p>The scope names are used to qualify the option names when setting their values, as explained in 
+<p>The scope names are used to qualify the option names when setting their values, as explained in
 the remainder of this document.</p>
 <h2 id="basic-vs-advanced-options">Basic vs. Advanced Options</h2>
-<p>Some options, such as <code>-l</code> to control the logging verbosity level, are expected to be set directly by users, as needed. 
-But most options are expected to be configured once by a codebase administrator and not directly modified by users. 
-These latter options are called <em>advanced</em> options, and are not enumerated in help messages by default. </p>
+<p>Some options, such as <code>-l</code> to control the logging verbosity level, are expected to be set directly by users, as needed.
+But most options are expected to be configured once by a codebase administrator and not directly modified by users.
+These latter options are called <em>advanced</em> options, and are not enumerated in help messages by default.</p>
 <h2 id="recursive-options">Recursive Options</h2>
 <p>A handful of global options, such as <code>-l</code>, are <em>recursive</em>. That is, they have a global value which
 can be overridden in each scope.  This allows you, for example, to set different logging verbosity
@@ -309,20 +308,20 @@ levels in different tasks.</p>
 <li>Using an environment variable.</li>
 <li>Using a command-line flag.</li>
 </ul>
-<p>Config files are typically used to set codebase-wide defaults for all users.  Individual 
+<p>Config files are typically used to set codebase-wide defaults for all users.  Individual
 users can then override various values using environment variables or command-line flags.</p>
-<p>Options that aren't set by one of these three methods will fall back to a sensible default, so 
+<p>Options that aren't set by one of these three methods will fall back to a sensible default, so
 that Pants will work "out of the box" in common scenarios.</p>
 <h3 id="config-file">Config File</h3>
-<p>The main Pants config file location is <code>pants.ini</code> in your source tree's top-level directory.<br/>
+<p>The main Pants config file location is <code>pants.ini</code> in your source tree's top-level directory.
 If you installed pants <a href="install.html">as recommended</a> this file should already exist.</p>
-<p>The <code>pants.ini</code> file is an INI file parsed by <a href="http://docs.python.org/library/configparser.html">ConfigParser</a>. 
+<p>The <code>pants.ini</code> file is an INI file parsed by <a href="http://docs.python.org/library/configparser.html">ConfigParser</a>.
 Thus, it looks something like:</p>
 <div class="codehilite"><pre><span class="k">[scope]</span>
 <span class="err">option1:</span> <span class="err">value1</span>
 <span class="err">option2:</span> <span class="err">value2</span>
 </pre></div>
-<p>The <code>[DEFAULT]</code> section is special: its values are available in all other sections. E.g., </p>
+<p>The <code>[DEFAULT]</code> section is special: its values are available in all other sections. E.g.,</p>
 <div class="codehilite"><pre><span class="k">[DEFAULT]</span>
 <span class="err">thrift_workdir:</span> <span class="err">%(pants_workdir)s/thrift</span>
 
@@ -340,11 +339,11 @@ Thus, it looks something like:</p>
 <p>Note that continuation lines of multiple-line values must be indented. For example, the closing
 bracket in the multi-line list above.</p>
 <h3 id="environment-variables">Environment Variables</h3>
-<p>Option <code>option</code> in scope <code>foo.bar</code> can be set via the environment variable <code>PANTS_FOO_BAR_OPTION</code>. 
+<p>Option <code>option</code> in scope <code>foo.bar</code> can be set via the environment variable <code>PANTS_FOO_BAR_OPTION</code>.
 E.g., <code>PANTS_COMPILE_ZINC_INCREMENTAL=false</code>.</p>
 <p>Global options can be set using <code>PANTS_GLOBAL_OPTION</code> as expected, but you can also omit the GLOBAL
 and use <code>PANTS_OPTION</code>. E.g., <code>PANTS_LEVEL=debug</code>.</p>
-<p>If a global option name itself starts with the word 'pants' then you can omit the repetition. E.g., 
+<p>If a global option name itself starts with the word 'pants' then you can omit the repetition. E.g.,
 <code>PANTS_WORKDIR</code> instead of <code>PANTS_PANTS_WORKDIR</code>.</p>
 <h3 id="command-line-flags">Command Line Flags</h3>
 <p>Option <code>option</code> in scope <code>foo.bar</code> can be set using the flag <code>--foo-bar-option=&lt;value&gt;</code>.</p>
@@ -352,17 +351,17 @@ and use <code>PANTS_OPTION</code>. E.g., <code>PANTS_LEVEL=debug</code>.</p>
 <p>Values for single-letter flags (those that start with a single dash) can be set without the equals
 sign: <code>-ldebug</code> is the same as <code>--level=debug</code> (<code>-l</code> is a synonym for <code>--level</code>).  All other flags
 must use an equals sign to set a value.</p>
-<p>There's a useful shorthand that can save some typing when setting multiple options for a single task: 
-If you invoke a task explicitly on the command line then you can follow that task with unqualified 
-options in its scope. E.g., <code>./pants compile.zinc --no-incremental --name-hashing</code> 
+<p>There's a useful shorthand that can save some typing when setting multiple options for a single task:
+If you invoke a task explicitly on the command line then you can follow that task with unqualified
+options in its scope. E.g., <code>./pants compile.zinc --no-incremental --name-hashing</code>
 instead of <code>./pants compile --no-compile-zinc-incremental --compile-zinc-name-hashing</code>.</p>
-<p>Note that this shorthand requires you to mention a specific task, not just a goal: <code>./pants compile.zinc</code> 
+<p>Note that this shorthand requires you to mention a specific task, not just a goal: <code>./pants compile.zinc</code>
 instead of just <code>./pants compile</code> as you would usually enter. All tasks in the <code>compile</code> goal will
 still be executed, not just <code>compile.zinc</code>, but the <code>.zinc</code> addition is a convenience to support shorthand options.</p>
 <p>Of course this works when specifying multiple goals, e.g.,</p>
 <p><code>./pants compile.zinc --no-incremental --name-hashing test.junit --parallel-threads=4</code></p>
 <h2 id="option-types">Option Types</h2>
-<p>Option value literal formats are the same on the command-line, environment variables and in <code>pants.ini</code>, 
+<p>Option value literal formats are the same on the command-line, environment variables and in <code>pants.ini</code>,
 with a couple of extra command-line conveniences.</p>
 <h3 id="boolean-options">Boolean Options</h3>
 <p>The boolean option values are: <code>false</code>, <code>False</code>, <code>true</code>, <code>True</code>.</p>
@@ -401,7 +400,7 @@ plus the values in <code>pants.ini</code>. To override the value, use <code>--fo
 
             <div class="generated">
               Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/options.html 2016-04-28T19:23:44.211886
+              from dist/markdown/html/src/docs/options.html 2016-04-29T08:45:37.352826
             </div>
 
           </div> <!-- mainflow -->
