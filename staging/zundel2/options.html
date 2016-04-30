@@ -200,10 +200,10 @@
                     <li class="toc-h2"><a href="#dict-options">Dict Options</a></li>
                     <li class="toc-h2"><a href="#available-options">Available Options</a></li>
                     <li class="toc-h1"><a href="#setting-option-values">Setting Option Values</a></li>
-                    <li class="toc-h2"><a href="#environment-variables">Environment Variables</a></li>
                     <li class="toc-h2"><a href="#command-line-flags">Command Line Flags</a></li>
+                    <li class="toc-h2"><a href="#environment-variables">Environment Variables</a></li>
                     <li class="toc-h2"><a href="#config-file">Config File</a></li>
-                    <li class="toc-h2"><a href="#how-to-overlay-ini-files-with-config-override">How to Overlay .ini Files with --config-override</a></li>
+                    <li class="toc-h2"><a href="#overlyaing-config-files">Overlyaing Config Files</a></li>
                     <li class="toc-h1"><a href="#troubleshooting-config-files">Troubleshooting Config Files</a></li>
                 </ul>
               </nav>
@@ -342,23 +342,16 @@ plus the values in <code>pants.ini</code>. To override the value, use <code>--fo
 <li>To see global (or goal-specific) basic and advanced options, enter <code>./pants help-advanced (goal)</code>.</li>
 </ul>
 <h2 id="setting-option-values">Setting Option Values</h2>
-<p>Every Pants option can be set in one three ways, in ascending order of precendence:</p>
+<p>Every Pants option can be set in one three ways, in descending order of precendence:</p>
 <ul>
-<li>In a config file.</li>
-<li>Using an environment variable.</li>
 <li>Using a command-line flag.</li>
+<li>Using an environment variable.</li>
+<li>In a config file.</li>
 </ul>
 <p>Config files are typically used to set codebase-wide defaults for all users.  Individual
 users can then override various values using environment variables or command-line flags.</p>
 <p>Options that aren't set by one of these three methods will fall back to a sensible default, so
 that Pants will work "out of the box" in common scenarios.</p>
-<h3 id="environment-variables">Environment Variables</h3>
-<p>Option <code>option</code> in scope <code>foo.bar</code> can be set via the environment variable <code>PANTS_FOO_BAR_OPTION</code>.
-E.g., <code>PANTS_COMPILE_ZINC_INCREMENTAL=false</code>.</p>
-<p>Global options can be set using <code>PANTS_GLOBAL_OPTION</code> as expected, but you can also omit the GLOBAL
-and use <code>PANTS_OPTION</code>. E.g., <code>PANTS_LEVEL=debug</code>.</p>
-<p>If a global option name itself starts with the word 'pants' then you can omit the repetition. E.g.,
-<code>PANTS_WORKDIR</code> instead of <code>PANTS_PANTS_WORKDIR</code>.</p>
 <h3 id="command-line-flags">Command Line Flags</h3>
 <p>Option <code>option</code> in scope <code>foo.bar</code> can be set using the flag <code>--foo-bar-option=&lt;value&gt;</code>.</p>
 <p>Global options are set with no scope qualifier, e.g., <code>--pants-workdir=/path/to/workdir</code>.</p>
@@ -374,6 +367,15 @@ instead of just <code>./pants compile</code> as you would usually enter. All tas
 still be executed, not just <code>compile.zinc</code>, but the <code>.zinc</code> addition is a convenience to support shorthand options.</p>
 <p>Of course this works when specifying multiple goals, e.g.,</p>
 <p><code>./pants compile.zinc --no-incremental --name-hashing test.junit --parallel-threads=4</code></p>
+<h3 id="environment-variables">Environment Variables</h3>
+<p>Option <code>option</code> in scope <code>foo.bar</code> can be set via the environment variable <code>PANTS_FOO_BAR_OPTION</code>.
+E.g., <code>PANTS_COMPILE_ZINC_INCREMENTAL=false</code>.</p>
+<p>Global options can be set using <code>PANTS_GLOBAL_OPTION</code> as expected, but you can also omit the GLOBAL
+and use <code>PANTS_OPTION</code>. E.g., <code>PANTS_LEVEL=debug</code>.</p>
+<p>If a global option name itself starts with the word 'pants' then you can omit the repetition. E.g.,
+<code>PANTS_WORKDIR</code> instead of <code>PANTS_PANTS_WORKDIR</code>.</p>
+<p>Environment variables are overridden by command line flags, but take
+precedence over settings in config files.</p>
 <h3 id="config-file">Config File</h3>
 <p>The main Pants config file location is <code>pants.ini</code> in your source tree's top-level directory.
 If you installed pants <a href="install.html">as recommended</a> this file should already exist.</p>
@@ -402,6 +404,8 @@ subsystem name, or a combination of both.</p>
 </pre></div>
 <p>Note that continuation lines of multiple-line values must be indented. For example, the closing
 bracket in the multi-line list above.</p>
+<p>Settings in config files are overridden by options specified in the
+environemnt or by command line flags.</p>
 <p>There are a few differences in using options in the config file compared to invoking them from the
 command line:</p>
 <ul>
@@ -411,7 +415,7 @@ command line:</p>
 <li>The prefix for long form options is not specified. Instead, you must organize the options
     into their appropriate sections.</li>
 </ul>
-<h3 id="how-to-overlay-ini-files-with-config-override">How to Overlay <code>.ini</code> Files with <code>--config-override</code></h3>
+<h3 id="overlyaing-config-files">Overlyaing Config Files</h3>
 <p>Sometimes it's convenient to keep <code>.ini</code> settings in more than one file. Perhaps you usually
 operate Pants in one "mode", but occasionally need to use a tweaked set of settings.</p>
 <p>Use the <code>--config-override</code> command-line option to specify a second <code>.ini</code> file. Each of
@@ -489,7 +493,7 @@ using the syntax <code>%(&lt;variable name&gt;)s</code> inside of a string.</p>
 
             <div class="generated">
               Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/options.html 2016-04-30T13:46:27.428985
+              from dist/markdown/html/src/docs/options.html 2016-04-30T13:56:05.489958
             </div>
 
           </div> <!-- mainflow -->
