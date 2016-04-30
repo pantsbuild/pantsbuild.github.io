@@ -268,7 +268,7 @@
 <p>To use Pants effectively, it helps to understand a few concepts:</p>
 <ul>
 <li><strong>Goals</strong> help users tell pants what actions to take</li>
-<li><strong>Tasks</strong> are the pants modules that actually run actions on the targets</li>
+<li><strong>Tasks</strong> are the pants modules that run actions</li>
 <li><strong>Targets</strong> describe what files to take those actions upon</li>
 <li><strong>Target types</strong> define the types of operations that can be performed on
 a target</li>
@@ -281,19 +281,22 @@ run tests, you would invoke Pants with the <code>test</code> goal. To create a
 bundle--an archive containing a runnable binary and resource
 files--you would invoke Pants with the <code>bundle</code> goal.</p>
 <p><strong>Tasks</strong> actually perform the work.  When you invoke a goal, it finds
-all the tasks needed to make that goal work.  Tasks do not have to
-belong to a goal, but often do. One or more tasks can be registered
-inside of a goal.  For example, the <code>junit</code> task is the task that runs
-tests for JVM projects.  It is registered in the <code>test</code> goal and
-sometimes referred to as <code>test.junit</code>.</p>
-<p>In a nutshell, goals are helpful groupings of tasks to make it
-easier for users to tell pants what they want to do.</p>
+all the tasks needed to make that goal work. Sometimes, there is a one
+to one mapping between a task name and a goal name, but often multiple tasks
+are registered in a goal.  For example, the <code>junit</code>
+task runs tests for JVM projects.  It is registered in the <code>test</code>
+goal and sometimes referred to as <code>test.junit</code>.</p>
+<p>In a nutshell, goals are the way users specify tasks.  Sometimes goals
+are helpful groupings of tasks to make it easier for users to tell
+pants what they want to do.</p>
 <p>Tasks can depend on other tasks. When you invoke a goal in
 Pants, it builds a list of dependent tasks that need to be executed
 first.  So, when you invoke the <code>test</code> goal, it will also invoke the
 tasks in the <code>gen</code>, <code>resolve</code> and <code>compile</code> goals, because tasks for
 code generation, artifact resolution, and compilation need to occur
-before a test can be run.</p>
+before a test can be run.  To find out more about how task dependencies
+are computed, read about <em>product types</em> in
+<a href="dev_tasks.html">Developing a Pants Task</a>.</p>
 <h2 id="targets">Targets</h2>
 <p><strong>Targets</strong> are the "nouns" of Pants, things pants can act upon. You
 annotate your source code with <code>BUILD</code> files to define these
@@ -315,6 +318,9 @@ Pants build target has a <em>type</em>, such as <code>java_library</code> or
 <code>python_binary</code>. Tasks choose to work on particular targets by
 selecting the target types they are interested in from the build
 graph.</p>
+<p>For a list of all Target types (and other things that can go in <code>BUILD</code>
+files), see the <a href="build_dictionary.html">BUILD Dictionary</a>,
+but the following list describes the most common ones:</p>
 <p><strong>Library Targets</strong><br>
 To define an "importable" thing, you want a library target type, such as
 <code>java_library</code> or <code>python_library</code>. Another target whose code imports a
@@ -322,7 +328,7 @@ library target's code should list the library target in its
 <code>dependencies</code>.</br></p>
 <p><strong>Binary Targets</strong><br>
 To define a "runnable" thing, you want a <code>jvm_binary</code> or <code>python_binary</code>
-target. A binary probably has a <code>main</code> and dependent libraries. (We encourage a
+target. A binary probably has a <code>main</code> and dependency libraries. (We encourage a
 binary's main to be separate from the libraries it uses to run, if any.)</br></p>
 <p><strong>External Dependencies</strong><br>
 Not everything is source code is in your repository. Your targets can
@@ -333,8 +339,6 @@ To define a collection of tests, you want a <code>junit_tests</code> or
 code it tests. This isn't just logical, it's handy, too: you can
 compute dependencies to figure out what tests to run if you change some
 target's code.</br></p>
-<p>For a list of all Target types (and other things that can go in <code>BUILD</code>
-files), see the <a href="build_dictionary.html">BUILD Dictionary</a>.</p>
 <h2 id="addresses">Addresses</h2>
 <p><strong>Addresses</strong>  describe the location of a target in the build
 graph.  The address has two parts:  the directory to the BUILD file
@@ -345,12 +349,14 @@ write the address as:</p>
 <div class="codehilite"><pre>tests/com/twitter/mybird:test-flight
 </pre></div>
 <p>You use an address whenever you specify a target to build on the
-command line or when one target depends on another in a BUILD file.</p>
+command line or when one target depends on another in a BUILD file.
+To find out more about addresses, see
+<a href="target_addresses.html">Target Addresses</a>.</p>
 <h2 id="what-pants-does">What Pants Does</h2>
 <p>When you invoke Pants, you specify goals (actions to take) and targets
 (things to act upon).</p>
 <p><strong>Pants plans a list of tasks.</strong> You specify one or more goals on the
-command line. Pants finds the toals and tasks needed to complete that goal.
+command line. Pants finds the tasks needed to complete that goal.
 Pants knows that some tasks depend on others. If you
 invoke Pants with, say, the <code>test</code> goal to test some code, Pants knows
 it must first compile code; before it can compile code, it needs to
@@ -375,11 +381,11 @@ by goal. If it has a problem carrying out one task, it does not continue
 to the others. (Thus, if you attempt to test targets <em>A</em> and <em>B</em>,
 but there's a compilation error in <em>A</em>, then Pants won't test <em>B</em> even
 if it compiled fine.)</p>
-<p>For each task to be executed, Pants attempts to apply that task to all
+<p>For each task in the plan, Pants executes that task to all
 targets in its computed dependency tree[s]. It starts with
 depended-upon targets and works its way up to depending targets. Each
 Pants target has a type; Pants uses this to determine how to apply a
-task to that target. In many cases, applying a goal to a target is a
+task to that target. In many cases, applying a task to a target is a
 no-op. In the more interesting cases, Pants does something. It
 probably invokes other tools. For example, depending on the code in
 the relevant targets, that "compile" goal might invoke <code>javac</code> a few
@@ -399,7 +405,7 @@ warnings again, instead of using <code>touch</code>, you might append a newline.
 
             <div class="generated">
               Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/first_concepts.html 2016-04-30T13:24:21.727232
+              from dist/markdown/html/src/docs/first_concepts.html 2016-04-30T15:40:39.055880
             </div>
 
           </div> <!-- mainflow -->
