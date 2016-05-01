@@ -190,6 +190,7 @@
               <nav class="pagetoc">
                 <ul>
                     <li class="toc-h1"><a href="#order-of-arguments">Order of Arguments</a></li>
+                    <li class="toc-h1"><a href="#how-to-use-shorthand-flags">How to Use Shorthand Flags</a></li>
                     <li class="toc-h1"><a href="#passthrough-args">Passthrough Args</a></li>
                 </ul>
               </nav>
@@ -265,7 +266,7 @@
 We assume you already know the <a href="first_tutorial.html">basic command-line structure</a>.</p>
 <ul>
 <li>For details on how to specify target addresses, see <a href="target_addresses.html">Target Addresses</a>.</li>
-<li>For details on how to specify options using command-line flags, see <a href="options.html">Options</a>.</li>
+<li>For details on how to specify options, see <a href="options.html">Options</a>.</li>
 <li>For a list of Pants' goals and their options, see the <a href="options_reference.html">Options Reference</a>.</li>
 </ul>
 <h2 id="order-of-arguments">Order of Arguments</h2>
@@ -277,22 +278,64 @@ We assume you already know the <a href="first_tutorial.html">basic command-line 
         ... <span class="se">\</span>
         &lt;target1&gt; &lt;target2&gt; ... <span class="o">[</span>-- passthrough options <span class="k">for </span>last goal<span class="o">]</span>
 </pre></div>
-<p>Task options can be specified using either fully-qualified flags, or shorthand flags (which
-require adding the flags' task to the goal). E.g.,</p>
-<div class="codehilite"><pre>./pants --level<span class="o">=</span>debug compile.zinc --no-delete-scratch src::
+<p>Fully qualified flags can be passed anywhere on the command line
+before the <code>--</code> separator for passthrough args, but
+shorthand flags must immediately follow the goal they apply to.</p>
+<p>Consider the following command:</p>
+<div class="codehilite"><pre>./pants --level<span class="o">=</span>debug compile.zinc --no-delete-scratch --resolve-ivy-open src::
 </pre></div>
-<p>Which is the same as:</p>
-<div class="codehilite"><pre>./pants --level<span class="o">=</span>debug --no-compile-zinc-delete-scratch compile src::
+<ul>
+<li><code>--level</code> is a global flag.</li>
+<li>The goal and task to run are <code>compile.zinc</code>.</li>
+<li>The <code>--no-delete-scratch</code> is shorthand for the
+  <code>--compile-zinc-no-delete-scratch</code> flag.</li>
+<li>The <code>--resolve-ivy-open</code> command is a fully qualified flag and
+  applies to the <code>resolve.ivy</code> task.  Although the task <code>resolve.ivy</code>
+  isn't specified on the command line it implicitly runs because
+  <code>compile.zinc</code> task depends on it.</li>
+</ul>
+<p>You can pass options to pants using the a config file, the
+environment, or command line flags. See the
+<a href="options.html">Options</a> page for more details.</p>
+<h2 id="how-to-use-shorthand-flags">How to Use Shorthand Flags</h2>
+<p>Either fully qualified or shorthand flags can be used to pass an
+option to a task. The fully qualified (or long form) options are
+listed in the <code>help</code> output and the <a href="options_reference.html">Options Reference</a>.
+The long form is more foolproof to use because it can go almost anywhere on
+the command line, but the shorthand version can save typing.</p>
+<p>For many goals, there is only a single task registered. For example,
+to specify the <code>--list-sep</code> option for the <code>list</code> goal you could use
+the long form:</p>
+<div class="codehilite"><pre>./pants list --list-sep<span class="o">=</span><span class="s1">'|'</span> examples/src/python/example:
 </pre></div>
-<p>Many goals naturally have only one task, in which case you omit the repetition:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants --level<span class="o">=</span>debug list --sep<span class="o">=</span><span class="s1">'|'</span> examples/src/python/example:
+<p>or you could use the short form:</p>
+<div class="codehilite"><pre>./pants list --sep<span class="o">=</span><span class="s1">'|'</span> examples/src/python/example:
+</pre></div>
+<p>When a goal has multiple tasks registered, you must fully specify the
+task and goal name to use the short form flag.  Here's an example of
+using the long form to pass an option to the <code>zinc</code> task:</p>
+<div class="codehilite"><pre>./pants --no-compile-zinc-delete-scratch compile src::
+</pre></div>
+<p>To use the shorthand form of the option, specify both goal and task
+name as <code>compile.zinc</code>:</p>
+<div class="codehilite"><pre>./pants  compile.zinc --no-delete-scratch src::
+</pre></div>
+<p>This is especially handy if you have lots of options to type:</p>
+<div class="codehilite"><pre>./pants publish.jar --named-snapshot<span class="o">=</span>1.2.3-SNAPSHOT --no-dryrun --force src/java::
+</pre></div>
+<p>You can use shorthand even when you want to pass options to multiple
+tasks by listing each task.  For example:</p>
+<div class="codehilite"><pre>./pants compile --compile-zinc-no-delete-scratch --resolve-ivy-open src::
+</pre></div>
+<p>can also be expressed using shorthand flags:</p>
+<div class="codehilite"><pre>./pants --level<span class="o">=</span>debug compile.zinc --no-delete-scratch resolve.ivy --open src::
 </pre></div>
 <h2 id="passthrough-args">Passthrough Args</h2>
 <p>In some cases Pants allows you to pass arguments directly through to the underlying tool it invokes.
 These are specified last on the command line after a double-hyphen, and are passed through the
 last goal specified.</p>
 <p>E.g., to pass <code>-k foo</code> to <code>pytest</code> (to say "only run tests whose names contain <code>foo</code>"):</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants test.pytest tests/python/pants_test/tasks -- -k foo
+<div class="codehilite"><pre>./pants test.pytest tests/python/pants_test/tasks -- -k foo
 </pre></div>
 <p>You can use <code>test</code> instead of <code>test.pytest</code> above; Pants then applies the passthrough args
 through all tasks in <code>test</code> that support them. In this case, it would pass them to JUnit as well.
@@ -303,7 +346,7 @@ you're not invoking Pants on any Java tests).</p>
 
             <div class="generated">
               Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/invoking.html 2016-04-30T18:03:30.322874
+              from dist/markdown/html/src/docs/invoking.html 2016-05-01T07:43:37.476272
             </div>
 
           </div> <!-- mainflow -->
