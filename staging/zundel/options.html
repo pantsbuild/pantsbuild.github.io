@@ -192,17 +192,21 @@
                     <li class="toc-h1"><a href="#option-scopes">Option Scopes</a></li>
                     <li class="toc-h1"><a href="#basic-vs-advanced-options">Basic vs. Advanced Options</a></li>
                     <li class="toc-h1"><a href="#recursive-options">Recursive Options</a></li>
-                    <li class="toc-h1"><a href="#setting-option-values">Setting Option Values</a></li>
-                    <li class="toc-h2"><a href="#config-file">Config File</a></li>
-                    <li class="toc-h2"><a href="#environment-variables">Environment Variables</a></li>
-                    <li class="toc-h2"><a href="#command-line-flags">Command Line Flags</a></li>
                     <li class="toc-h1"><a href="#option-types">Option Types</a></li>
                     <li class="toc-h2"><a href="#boolean-options">Boolean Options</a></li>
                     <li class="toc-h2"><a href="#int-and-float-options">Int and Float Options</a></li>
-                    <li class="toc-h1"><a href="#string-options">String Options</a></li>
+                    <li class="toc-h2"><a href="#string-options">String Options</a></li>
                     <li class="toc-h2"><a href="#list-options">List Options</a></li>
                     <li class="toc-h2"><a href="#dict-options">Dict Options</a></li>
                     <li class="toc-h2"><a href="#available-options">Available Options</a></li>
+                    <li class="toc-h1"><a href="#setting-option-values">Setting Option Values</a></li>
+                    <li class="toc-h2"><a href="#command-line-flags">Command Line Flags</a></li>
+                    <li class="toc-h2"><a href="#environment-variables">Environment Variables</a></li>
+                    <li class="toc-h2"><a href="#config-file">Config File</a></li>
+                    <li class="toc-h2"><a href="#overlaying-config-files">Overlaying Config Files</a></li>
+                    <li class="toc-h1"><a href="#troubleshooting-config-files">Troubleshooting Config Files</a></li>
+                    <li class="toc-h2"><a href="#use-the-right-section-name">Use the Right Section Name</a></li>
+                    <li class="toc-h2"><a href="#check-the-formatting">Check the Formatting</a></li>
                 </ul>
               </nav>
 
@@ -294,72 +298,22 @@ each configurable component is qualified by a <em>scope</em>.</p>
 <p>The scope names are used to qualify the option names when setting their values, as explained in
 the remainder of this document.</p>
 <h2 id="basic-vs-advanced-options">Basic vs. Advanced Options</h2>
-<p>Some options, such as <code>-l</code> to control the logging verbosity level, are expected to be set directly by users, as needed.
-But most options are expected to be configured once by a codebase administrator and not directly modified by users.
-These latter options are called <em>advanced</em> options, and are not enumerated in help messages by default.</p>
+<p>Some options, such as <code>-l</code> to control the logging verbosity level, are
+expected to be set directly by users, as needed. But most options are
+expected to be configured once by a codebase administrator and not
+directly modified by users. These latter options are called <em>advanced</em>
+options, and are not enumerated in help messages by default.  Advanced
+options may change the way projects are built and packaged, impact the
+build cache or change test behavior.  For that reason, they should
+usually be set in config files and checked in to the repo so that
+build output is consistent, no matter which user invokes it.</p>
+<p>To show the full list of options for a goal, including advanced
+options, use <code>./pants &lt;goal&gt; --help-advanced</code>.  You can view
+all options for all scopes with <code>./pants --help-all --help-advanced</code>.</p>
 <h2 id="recursive-options">Recursive Options</h2>
 <p>A handful of global options, such as <code>-l</code>, are <em>recursive</em>. That is, they have a global value which
 can be overridden in each scope.  This allows you, for example, to set different logging verbosity
 levels in different tasks.</p>
-<h2 id="setting-option-values">Setting Option Values</h2>
-<p>Every Pants option can be set in one three ways, in ascending order of precendence:</p>
-<ul>
-<li>In a config file.</li>
-<li>Using an environment variable.</li>
-<li>Using a command-line flag.</li>
-</ul>
-<p>Config files are typically used to set codebase-wide defaults for all users.  Individual
-users can then override various values using environment variables or command-line flags.</p>
-<p>Options that aren't set by one of these three methods will fall back to a sensible default, so
-that Pants will work "out of the box" in common scenarios.</p>
-<h3 id="config-file">Config File</h3>
-<p>The main Pants config file location is <code>pants.ini</code> in your source tree's top-level directory.
-If you installed pants <a href="install.html">as recommended</a> this file should already exist.</p>
-<p>The <code>pants.ini</code> file is an INI file parsed by <a href="http://docs.python.org/library/configparser.html">ConfigParser</a>.
-Thus, it looks something like:</p>
-<div class="codehilite"><pre><span class="k">[scope]</span>
-<span class="err">option1:</span> <span class="err">value1</span>
-<span class="err">option2:</span> <span class="err">value2</span>
-</pre></div>
-<p>The <code>[DEFAULT]</code> section is special: its values are available in all other sections. E.g.,</p>
-<div class="codehilite"><pre><span class="k">[DEFAULT]</span>
-<span class="err">thrift_workdir:</span> <span class="err">%(pants_workdir)s/thrift</span>
-
-<span class="k">[GLOBAL]</span>
-<span class="err">print_exception_stacktrace:</span> <span class="err">True</span>
-
-<span class="k">[gen.thrift]</span>
-<span class="err">workdir:</span> <span class="err">%(thrift_workdir)s</span>
-
-<span class="k">[compile.zinc]</span>
-<span class="err">args:</span> <span class="err">[</span>
-    <span class="err">'-C-Tnowarnprefixes',</span> <span class="err">'-C%(thrift_workdir)s',</span>
-  <span class="err">]</span>
-</pre></div>
-<p>Note that continuation lines of multiple-line values must be indented. For example, the closing
-bracket in the multi-line list above.</p>
-<h3 id="environment-variables">Environment Variables</h3>
-<p>Option <code>option</code> in scope <code>foo.bar</code> can be set via the environment variable <code>PANTS_FOO_BAR_OPTION</code>.
-E.g., <code>PANTS_COMPILE_ZINC_INCREMENTAL=false</code>.</p>
-<p>Global options can be set using <code>PANTS_GLOBAL_OPTION</code> as expected, but you can also omit the GLOBAL
-and use <code>PANTS_OPTION</code>. E.g., <code>PANTS_LEVEL=debug</code>.</p>
-<p>If a global option name itself starts with the word 'pants' then you can omit the repetition. E.g.,
-<code>PANTS_WORKDIR</code> instead of <code>PANTS_PANTS_WORKDIR</code>.</p>
-<h3 id="command-line-flags">Command Line Flags</h3>
-<p>Option <code>option</code> in scope <code>foo.bar</code> can be set using the flag <code>--foo-bar-option=&lt;value&gt;</code>.</p>
-<p>Global options are set with no scope qualifier, e.g., <code>--pants-workdir=/path/to/workdir</code>.</p>
-<p>Values for single-letter flags (those that start with a single dash) can be set without the equals
-sign: <code>-ldebug</code> is the same as <code>--level=debug</code> (<code>-l</code> is a synonym for <code>--level</code>).  All other flags
-must use an equals sign to set a value.</p>
-<p>There's a useful shorthand that can save some typing when setting multiple options for a single task:
-If you invoke a task explicitly on the command line then you can follow that task with unqualified
-options in its scope. E.g., <code>./pants compile.zinc --no-incremental --name-hashing</code>
-instead of <code>./pants compile --no-compile-zinc-incremental --compile-zinc-name-hashing</code>.</p>
-<p>Note that this shorthand requires you to mention a specific task, not just a goal: <code>./pants compile.zinc</code>
-instead of just <code>./pants compile</code> as you would usually enter. All tasks in the <code>compile</code> goal will
-still be executed, not just <code>compile.zinc</code>, but the <code>.zinc</code> addition is a convenience to support shorthand options.</p>
-<p>Of course this works when specifying multiple goals, e.g.,</p>
-<p><code>./pants compile.zinc --no-incremental --name-hashing test.junit --parallel-threads=4</code></p>
 <h2 id="option-types">Option Types</h2>
 <p>Option value literal formats are the same on the command-line, environment variables and in <code>pants.ini</code>,
 with a couple of extra command-line conveniences.</p>
@@ -369,7 +323,7 @@ with a couple of extra command-line conveniences.</p>
   and <code>--no-foo-bar</code> is the same as <code>--foo-bar=false</code>.</p>
 <h3 id="int-and-float-options">Int and Float Options</h3>
 <p>Specify values in decimal notation: <code>--foo=5</code>, <code>--bar=4.5</code>.</p>
-<h2 id="string-options">String Options</h2>
+<h3 id="string-options">String Options</h3>
 <p>Surround strings with single or double quotes if they contain embedded spaces: <code>--foo="hello, world"</code>.</p>
 <h3 id="list-options">List Options</h3>
 <p>List options can be appended to, as well as overridden. For example, for an option <code>--foo</code>
@@ -395,12 +349,163 @@ plus the values in <code>pants.ini</code>. To override the value, use <code>--fo
 <li>To see global (or goal-specific) basic options, enter <code>./pants help (goal)</code>.</li>
 <li>To see global (or goal-specific) basic and advanced options, enter <code>./pants help-advanced (goal)</code>.</li>
 </ul>
+<h2 id="setting-option-values">Setting Option Values</h2>
+<p>Every Pants option can be set in one three ways, in descending order of precendence:</p>
+<ul>
+<li>Using a command-line flag.</li>
+<li>Using an environment variable.</li>
+<li>In a config file.</li>
+</ul>
+<p>Config files are typically used to set codebase-wide defaults for all users.  Individual
+users can then override various values using environment variables or command-line flags.</p>
+<p>Options that aren't set by one of these three methods will fall back to a sensible default, so
+that Pants will work "out of the box" in common scenarios.</p>
+<h3 id="command-line-flags">Command Line Flags</h3>
+<p>Option <code>option</code> in scope <code>foo.bar</code> can be set using the flag <code>--foo-bar-option=&lt;value&gt;</code>.</p>
+<p>Global options are set with no scope qualifier, e.g., <code>--pants-workdir=/path/to/workdir</code>.</p>
+<p>Values for single-letter flags (those that start with a single dash) can be set without the equals
+sign: <code>-ldebug</code> is the same as <code>--level=debug</code> (<code>-l</code> is a synonym for <code>--level</code>).  All other flags
+must use an equals sign to set a value.</p>
+<p>There's a useful shorthand that can save some typing when setting multiple options for a single task:
+If you invoke a task explicitly on the command line then you can follow that task with unqualified
+options in its scope. E.g., <code>./pants compile.zinc --no-incremental --name-hashing</code>
+instead of <code>./pants compile --no-compile-zinc-incremental --compile-zinc-name-hashing</code>.</p>
+<p>Note that this shorthand requires you to mention a specific task, not just a goal: <code>./pants compile.zinc</code>
+instead of just <code>./pants compile</code> as you would usually enter. All tasks in the <code>compile</code> goal will
+still be executed, not just <code>compile.zinc</code>, but the <code>.zinc</code> addition is a convenience to support shorthand options.</p>
+<p>Of course this works when specifying multiple goals, e.g.,</p>
+<p><code>./pants compile.zinc --no-incremental --name-hashing test.junit --parallel-threads=4</code></p>
+<h3 id="environment-variables">Environment Variables</h3>
+<p>Option <code>option</code> in scope <code>foo.bar</code> can be set via the environment variable <code>PANTS_FOO_BAR_OPTION</code>.
+E.g., <code>PANTS_COMPILE_ZINC_INCREMENTAL=false</code>.</p>
+<p>Global options can be set using <code>PANTS_GLOBAL_OPTION</code> as expected, but you can also omit the GLOBAL
+and use <code>PANTS_OPTION</code>. E.g., <code>PANTS_LEVEL=debug</code>.</p>
+<p>If a global option name itself starts with the word 'pants' then you can omit the repetition. E.g.,
+<code>PANTS_WORKDIR</code> instead of <code>PANTS_PANTS_WORKDIR</code>.</p>
+<p>Environment variables are overridden by command line flags, but take
+precedence over settings in config files.</p>
+<h3 id="config-file">Config File</h3>
+<p>The main Pants config file location is <code>pants.ini</code> in your source tree's top-level directory.
+If you installed pants <a href="install.html">as recommended</a> this file should already exist.</p>
+<p>The <code>pants.ini</code> file is an INI file parsed by
+<a href="http://docs.python.org/library/configparser.html">ConfigParser</a>.  See
+<a href="http://tools.ietf.org/html/rfc822.html#section-3.1">RFC #822</a>
+section 3.1.1 for the full rules python uses to parse ini file
+entries.</p>
+<p>A <code>pants.ini</code> file looks something like:</p>
+<div class="codehilite"><pre><span class="k">[scope]</span>
+<span class="err">option1:</span> <span class="err">value1</span>
+<span class="err">option2:</span> <span class="err">value2</span>
+</pre></div>
+<p>Sections in the <code>.ini</code> file correspond to the task name or
+subsystem name, or a combination of both.</p>
+<p>The <code>[DEFAULT]</code> section is special: its values are available in all other sections. E.g.,</p>
+<div class="codehilite"><pre><span class="k">[DEFAULT]</span>
+<span class="err">thrift_workdir:</span> <span class="err">%(pants_workdir)s/thrift</span>
+
+<span class="k">[GLOBAL]</span>
+<span class="err">print_exception_stacktrace:</span> <span class="err">True</span>
+
+<span class="k">[gen.thrift]</span>
+<span class="err">workdir:</span> <span class="err">%(thrift_workdir)s</span>
+
+<span class="k">[compile.zinc]</span>
+<span class="err">args:</span> <span class="err">[</span>
+    <span class="err">'-C-Tnowarnprefixes',</span> <span class="err">'-C%(thrift_workdir)s',</span>
+  <span class="err">]</span>
+</pre></div>
+<p>Note that continuation lines of multiple-line values must be indented. For example, the closing
+bracket in the multi-line list above.</p>
+<p>Settings in config files are overridden by options specified in the
+environment or by command line flags.</p>
+<p>There are a few differences in using options in the config file compared to invoking them from the
+command line:</p>
+<ul>
+<li>Omit the leading double dash (<code>--</code>)</li>
+<li>Dash characters (<code>-</code>) are transposed to underscores (<code>_</code>).</li>
+<li>Boolean flag values are enabled and disabled by setting the value
+    of the option to <code>True</code> or <code>False</code></li>
+<li>The prefix for long form options is not specified. Instead, you must organize the options
+    into their appropriate sections.</li>
+</ul>
+<h3 id="overlaying-config-files">Overlaying Config Files</h3>
+<p>Sometimes it's convenient to keep <code>.ini</code> settings in more than one file. Perhaps you usually
+operate Pants in one "mode", but occasionally need to use a tweaked set of settings.</p>
+<p>Use the <code>--pants-config-files</code> command-line option to specify a second <code>.ini</code> file. Each of
+this <code>.ini</code> file's values override the corresponding value in <code>pants.ini</code>, if any.
+For example, if your <code>pants.ini</code> contains the section</p>
+<div class="codehilite"><pre>[test.junit]
+coverage_html_open: True
+debug: False
+</pre></div>
+<p>...and you invoke <code>--pants-config-files=quick.ini</code> and your <code>quick.ini</code> says</p>
+<div class="codehilite"><pre>[test.junit]
+coverage_html_open: False
+skip: True
+</pre></div>
+<p>...then Pants will act as if you specified</p>
+<div class="codehilite"><pre>[test.junit]
+coverage_html_open: False
+skip: True
+debug: False
+</pre></div>
+<p>Note that <code>--pants-config-files</code> is a list-valued option, so all the
+idioms of lists work  You can add a third file with another invocation
+of <code>--pants-config-files=&lt;path&gt;</code>, or you can replace the standard one
+entirely with <code>--pants-config-files=[&lt;list&gt;]</code>.</p>
+<h2 id="troubleshooting-config-files">Troubleshooting Config Files</h2>
+<h3 id="use-the-right-section-name">Use the Right Section Name</h3>
+<p>Section names must correspond to actual option scopes.  Use the correct section name as specified
+in the help output:</p>
+<div class="codehilite"><pre><span class="c"># Wrong</span>
+<span class="err">[compile]</span>  <span class="c"># The correct scope for the 'warnings' option is compile.zinc</span>
+<span class="err">zinc_warnings:</span> <span class="err">False</span>
+
+<span class="c"># Right</span>
+<span class="k">[compile.zinc]</span>
+<span class="err">warnings:</span> <span class="err">False</span>
+</pre></div>
+<p>When in doubt, the scope is described in the heading for each option in the help output:</p>
+<div class="codehilite"><pre><span class="nv">$ </span>./pants compile.zinc --help
+
+compile.zinc options:
+Compile Scala and Java code using Zinc.
+
+--<span class="o">[</span>no-<span class="o">]</span>compile-zinc-debug-symbols <span class="o">(</span>default: False<span class="o">)</span>
+    Compile with debug symbol enabled.
+...
+</pre></div>
+<h3 id="check-the-formatting">Check the Formatting</h3>
+<p>Settings that span multiple lines should be indented.  To minimize problems, follow these
+conventions:</p>
+<ul>
+<li>Followon lines should be indented four spaces.</li>
+<li>The ending bracket for lists and dicts should be indented two spaces.</li>
+</ul>
+<p>Here are some examples of correctly and incorrectly formatted values:</p>
+<div class="codehilite"><pre><span class="c"># Right</span>
+<span class="err">jvm_options:</span> <span class="k">[ "foo", "bar" ]</span>
+
+<span class="c"># Right</span>
+<span class="err">jvm_options:</span> <span class="err">[</span>
+    <span class="err">"foo",</span> <span class="err">"bar"</span>
+  <span class="err">]</span>
+
+<span class="c"># Wrong</span>
+<span class="err">jvm_options:</span> <span class="err">[</span> <span class="err">"foo",</span>
+<span class="err">"bar"</span> <span class="err">]</span>  <span class="c"># Followon line must be indented</span>
+
+<span class="c"># Wrong</span>
+<span class="err">jvm_options:</span> <span class="err">[</span>
+    <span class="err">"foo",</span> <span class="err">"bar"</span>
+<span class="err">]</span> <span class="c"># closing bracket must be indented</span>
+</pre></div>
 
             <!-- main content end -->
 
             <div class="generated">
               Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/options.html 2016-05-01T08:57:34.566142
+              from dist/markdown/html/src/docs/options.html 2016-05-01T13:10:59.439766
             </div>
 
           </div> <!-- mainflow -->
