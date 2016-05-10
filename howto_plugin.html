@@ -261,8 +261,6 @@
 .codehilite .il { color: #40a070 } /* Literal.Number.Integer.Long */
 </style>
 <h1 id="developing-a-pants-plugin">Developing a Pants Plugin</h1>
-<p><em>As of September 2014, this process is new and still evolving;</em> <em>expect
-it to change somewhat.</em></p>
 <p>This page documents how to develop a Pants plugin, a set of code that
 defines new Pants functionality. If you
 <a href="dev_tasks.html">develop a new task</a>
@@ -278,10 +276,10 @@ Pants' <code>jvm</code> code registers in
 Pants' backend-loader code assumes your plugin has a <code>register.py</code> file
 there.</p>
 <h2 id="simple-configuration">Simple Configuration</h2>
-<p>If you want to extend Pants without adding any 3rd Party libraries that aren't already referenced by
-Pants, you can use the following technique using sources stored directly
-in your repo.  All you need to do is add the directory where your plugin sources are stored
-to <code>PYTHONPATH</code> and put the package where the plugin is defined in <code>pants.ini</code>.</p>
+<p>If you want to extend Pants without adding any 3rd-party libraries that aren't already referenced by
+Pants, you can use the following technique using sources stored directly in your repo.
+All you need to do is name the package where the plugin is defined, and the pythonpath entry to
+load it from.</p>
 <p>In the example below, the stock <code>JvmBinary</code> target will subclassed so that a custom task (not shown)
 can consume it specifically but disregard regular <code>JvmBinary</code> instances (using <code>isinstance()</code>).</p>
 <ul>
@@ -303,10 +301,10 @@ can consume it specifically but disregard regular <code>JvmBinary</code> instanc
 </pre></div>
 </li>
 <li>
-<p>Create <code>plugins/hadoop_binary/register.py</code> to register the functions in your plugin.  When registering a
-backend in pants.ini, register.py is used by the pants plugin api to register new functions
+<p>Create <code>src/python/yourorg/pants/hadoop_binary/register.py</code> to register the functions in your plugin.  When registering a
+backend in <code>pants.ini</code>, register.py is used by the pants plugin api to register new functions
 exposed in build files, targets, tasks and goals:</p>
-<div class="codehilite"><pre><span class="c"># plugins/hadoop_binary/register.py</span>
+<div class="codehilite"><pre><span class="c"># src/python/yourorg/pants/hadoop_binary/register.py</span>
 
 <span class="kn">from</span> <span class="nn">pants.build_graph.build_file_aliases</span> <span class="kn">import</span> <span class="n">BuildFileAliases</span>
 <span class="kn">from</span> <span class="nn">hadoop_binary.target</span> <span class="kn">import</span> <span class="n">HadoopBinary</span>
@@ -320,57 +318,47 @@ exposed in build files, targets, tasks and goals:</p>
 </pre></div>
 </li>
 <li>
-<p>Update your <code>pants</code> wrapper script to include the <code>plugins/</code> directory on <code>PYTHONPATH</code>:</p>
-<div class="codehilite"><pre><span class="nv">PYTHONPATH</span><span class="o">=</span>plugins:<span class="k">${</span><span class="nv">PYTHONPATH</span><span class="k">}</span>
-<span class="nb">export </span>PYTHONPATH
-</pre></div>
-</li>
-<li>
-<p>In <code>pants.ini</code>, add your new plugins directory to the list of backends to load when pants starts.
-This instructs pants to look for a module named <code>hadoop_binary.register</code> and invoke
-it.</p>
+<p>In <code>pants.ini</code>, add your new plugin package to the list of backends to load when pants starts.
+This instructs pants to load a module named <code>yourorg.pants.hadoop_binary.register</code>.</p>
 <div class="codehilite"><pre><span class="p">[</span><span class="n">GLOBAL</span><span class="p">]</span>
+<span class="n">pythonpath</span><span class="p">:</span> <span class="p">[</span>
+  <span class="s">"</span><span class="si">%(buildroot)s</span><span class="s">/src/python"</span><span class="p">,</span>
+<span class="p">]</span>
 <span class="n">backend_packages</span><span class="p">:</span> <span class="p">[</span>
-    <span class="s">"hadoop_binary"</span><span class="p">,</span>
+    <span class="s">"yourorg.pants.hadoop_binary"</span><span class="p">,</span>
   <span class="p">]</span>
 </pre></div>
 </li>
 </ul>
+<p>Note that you can also set the PYTHONPATH in your <code>./pants</code> wrapper script, instead of in
+<code>pants.ini</code>, if you have other reasons to do so.</p>
 <h2 id="examples-from-twittercommons">Examples from <code>twitter/commons</code></h2>
 <p>For an example of a code repo with plugins to add features to Pants when building in that repo,
 take a look at <a href="https://github.com/twitter/commons"><code>twitter/commons</code></a>, especially its
-<a href="https://github.com/twitter/commons"><code>pants-plugin</code> directory</a>.</p>
-<p>This repo has a <a href="https://github.com/twitter/commons/blob/master/pants"><code>pants</code> wrapper script</a>
-that script adds <code>pants-plugins/src/python</code> to <code>PYTHONPATH</code>.</p>
-<p>The repo's <a href="https://github.com/twitter/commons/blob/master/pants"><code>pants.ini</code> file</a> has a
+<a href="https://github.com/twitter/commons/tree/32011ab5351fea23e8c70e24e752540b06d1389f/pants-plugins"><code>pants-plugins</code> directory</a>.</p>
+<p>The repo's <a href="https://github.com/twitter/commons/blob/32011ab5351fea23e8c70e24e752540b06d1389f/pants.ini"><code>pants.ini</code> file</a> has a
 <code>backend_packages</code> entry listing the plugin packages (packages with <code>register.py</code> files):</p>
 <div class="codehilite"><pre><span class="p">[</span><span class="n">GLOBAL</span><span class="p">]</span>
+<span class="n">pythonpath</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s">"</span><span class="si">%(buildroot)s</span><span class="s">/pants-plugins/src/python"</span><span class="p">,</span>
+  <span class="p">]</span>
 <span class="n">backend_packages</span><span class="p">:</span> <span class="p">[</span>
-    <span class="s">'twitter.common.pants.jvm.args'</span><span class="p">,</span>
     <span class="s">'twitter.common.pants.jvm.extras'</span><span class="p">,</span>
     <span class="s">'twitter.common.pants.python.commons'</span><span class="p">,</span>
-<span class="p">]</span>
+    <span class="s">'pants.contrib.python.checks'</span><span class="p">,</span>
+  <span class="p">]</span>
 </pre></div>
 <p>The <a href="https://github.com/twitter/commons/blob/master/pants-plugins/src/python/twitter/common/pants/jvm/extras/register.py"><code>...jvm/extras/register.py</code></a>
 file registers a <code>checkstyle</code> goal. To find the code for this task, come back to the
 <code>pantsbuild/pants</code> repo: Pants defines the
-<a href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/backend/jvm/tasks/checkstyle.py"><code>Checkstyle</code> task class</a> but doesn't register it. But other Pants workspaces can register it, as
-<code>twitter/commons</code> illustrates.</p>
-<p>The <a href="https://github.com/twitter/commons/blob/master/pants-plugins/src/python/twitter/common/pants/jvm/args/register.py"><code>...jvm/args/register.py</code></a>
-registers a goal, <code>args-apt</code>. This plugin also defines the
-<a href="https://github.com/twitter/commons/blob/master/pants-plugins/src/python/twitter/common/pants/jvm/args/tasks/resource_mapper.py"><code>Task</code> class for this goal</a>.</p>
-<p>(Somewhat confusingly, <code>twitter/commons</code>' has a <code>BUILD</code> file so it can publish its plugins as a
-<code>setup_py</code> artifact. If you only use your plugin to build code in the <em>same</em> workspace,
-your plugin directory tree does <em>not</em> need any <code>BUILD</code> files. By publishing this plugin, Twitter can
-use its code in other workspaces, e.g., Twitter's internal codebase. Other folks can use it too:
-introduce a dependency on <code>twitter.common.pants</code> and add entries to their <code>pants.ini backend_packages</code>
-section.)</p>
+<a href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/backend/jvm/tasks/checkstyle.py"><code>Checkstyle</code> task class</a> but doesn't register it. 
+But other Pants workspaces can register it, as <code>twitter/commons</code> illustrates.</p>
 
             <!-- main content end -->
 
             <div class="generated">
               Generated by <a href="http://pantsbuild.org/docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/howto_plugin.html 2016-05-02T11:56:05.724515
+              from dist/markdown/html/src/docs/howto_plugin.html 2016-05-10T21:48:52.405159
             </div>
 
           </div> <!-- mainflow -->
