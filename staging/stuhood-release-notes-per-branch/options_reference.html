@@ -13944,7 +13944,7 @@
 </br></li>
 <li>
 <span class="option-args">--test-junit-junit=&lt;target_option&gt;</span> <span class="option-default">(default: //:junit)</span>
-<br><span>Target address spec for overriding the classpath of the junit jvm tool which is, by default: [JarDependency(org=u'org.pantsbuild', base_name=u'junit-runner', rev=u'1.0.5', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=())]</span>
+<br><span>Target address spec for overriding the classpath of the junit jvm tool which is, by default: [JarDependency(org=u'org.pantsbuild', base_name=u'junit-runner', rev=u'1.0.7', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=())]</span>
 </br></li>
 <li>
 <span class="option-args">--test-junit-jvm-options=&lt;option&gt;... (--test-junit-jvm-options=&lt;option&gt;...) ..., --test-junit-jvm-options="[&lt;option&gt;..., &lt;option&gt;..., ...]", --test-junit-jvm-options="+[&lt;option&gt;..., &lt;option&gt;..., ...]"</span> <span class="option-default">(default: ['-Xmx1g','-XX:MaxPermSize=256m'])</span>
@@ -13977,6 +13977,10 @@
 <li>
 <span class="option-args">--test-junit-timeout-terminate-wait=&lt;int&gt;</span> <span class="option-default">(default: 10)</span>
 <br><span>If a test does not terminate on a SIGTERM, how long to wait (in seconds) before sending a SIGKILL.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]test-junit-use-experimental-runner</span> <span class="option-default">(default: False)</span>
+<br><span>Use experimental junit-runner logic for more options for parallelism.</span>
 </br></li>
 </ul>
 </li>
@@ -14114,6 +14118,18 @@
 <div class="scope">test.node</div>
 <div class="scope-description">Runs a test script from package.json in a NodeModule, currently via "npm run [script name]".</div>
 <ul class="nobullets collapsible">
+<li class="collapsed options-group">Basic options
+                    <ul class="nobullets">
+<li>
+<span class="option-args">--[no-]test-node-skip</span> <span class="option-default">(default: False)</span>
+<br><span>Skip running tests.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]test-node-timeouts</span> <span class="option-default">(default: True)</span>
+<br><span>Enable test target timeouts. If timeouts are enabled then tests with a timeout= parameter set on their target will time out after the given number of seconds if not completed. If no timeout is set, then either the default timeout is used or no timeout is configured. In the current implementation, all the timeouts for the test targets to be run are summed and all tests are run with the total timeout covering the entire run of tests. If a single target in a test run has no timeout and there is no default, the entire run will have no timeout. This should change in the future to provide more granularity.</span>
+</br></li>
+</ul>
+</li>
 <li class="collapsed options-group">Advanced options
                     <ul class="nobullets">
 <li>
@@ -14131,6 +14147,18 @@
 <li>
 <span class="option-args">--test-node-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
 <br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+<li>
+<span class="option-args">--test-node-timeout-default=&lt;int&gt;</span> <span class="option-default">(default: None)</span>
+<br><span>The default timeout (in seconds) for a test if timeout is not set on the target.</span>
+</br></li>
+<li>
+<span class="option-args">--test-node-timeout-maximum=&lt;int&gt;</span> <span class="option-default">(default: None)</span>
+<br><span>The maximum timeout (in seconds) that can be set on a test target.</span>
+</br></li>
+<li>
+<span class="option-args">--test-node-timeout-terminate-wait=&lt;int&gt;</span> <span class="option-default">(default: 10)</span>
+<br><span>If a test does not terminate on a SIGTERM, how long to wait (in seconds) before sending a SIGKILL.</span>
 </br></li>
 </ul>
 </li>
@@ -15202,50 +15230,6 @@
 </li>
 <li>
 <div class="global-subsystem-header">
-<div class="scope">pycheck-pep8</div>
-<div class="scope-description"></div>
-</div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Basic options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--pycheck-pep8-ignore=&lt;str&gt; (--pycheck-pep8-ignore=&lt;str&gt;) ..., --pycheck-pep8-ignore="[&lt;str&gt;, &lt;str&gt;, ...]", --pycheck-pep8-ignore="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['E121','E124','E125','E127','E128','E401','E111','W291','W293','E701','E301','E302','W292'])</span>
-<br><span>Prevent test failure but still produce output for problems.</span>
-</br></li>
-<li>
-<span class="option-args">--pycheck-pep8-max-length=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Max line length to use for PEP8 checks.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]pycheck-pep8-skip</span> <span class="option-default">(default: True)</span>
-<br><span>If enabled, skip this style checker.</span>
-</br></li>
-</ul>
-</li>
-<li class="collapsed options-group">Advanced options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--pycheck-pep8-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
-<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</br></li>
-<li>
-<span class="option-args">--pycheck-pep8-exclude-target-regexp=&lt;regexp&gt; (--pycheck-pep8-exclude-target-regexp=&lt;regexp&gt;) ..., --pycheck-pep8-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --pycheck-pep8-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
-<br><span>Exclude targets that match these regexes.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]pycheck-pep8-fail-fast</span> <span class="option-default">(default: False)</span>
-<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</br></li>
-<li>
-<span class="option-args">--pycheck-pep8-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</br></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="global-subsystem-header">
 <div class="scope">pycheck-print-statements</div>
 <div class="scope-description"></div>
 </div>
@@ -15660,42 +15644,6 @@
 </li>
 <li>
 <div class="global-subsystem-header">
-<div class="scope">pycheck-except-statement</div>
-<div class="scope-description"></div>
-</div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Basic options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--[no-]pycheck-except-statement-skip</span> <span class="option-default">(default: False)</span>
-<br><span>If enabled, skip this style checker.</span>
-</br></li>
-</ul>
-</li>
-<li class="collapsed options-group">Advanced options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--pycheck-except-statement-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
-<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</br></li>
-<li>
-<span class="option-args">--pycheck-except-statement-exclude-target-regexp=&lt;regexp&gt; (--pycheck-except-statement-exclude-target-regexp=&lt;regexp&gt;) ..., --pycheck-except-statement-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --pycheck-except-statement-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
-<br><span>Exclude targets that match these regexes.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]pycheck-except-statement-fail-fast</span> <span class="option-default">(default: False)</span>
-<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</br></li>
-<li>
-<span class="option-args">--pycheck-except-statement-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</br></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="global-subsystem-header">
 <div class="scope">python-setup</div>
 <div class="scope-description">A python environment.</div>
 </div>
@@ -15904,35 +15852,35 @@
 </li>
 <li>
 <div class="global-subsystem-header">
-<div class="scope">pycheck-class-factoring</div>
+<div class="scope">thrift-binary</div>
 <div class="scope-description"></div>
 </div>
 <ul class="nobullets collapsible">
-<li class="collapsed options-group">Basic options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--[no-]pycheck-class-factoring-skip</span> <span class="option-default">(default: True)</span>
-<br><span>If enabled, skip this style checker.</span>
-</br></li>
-</ul>
-</li>
 <li class="collapsed options-group">Advanced options
               <ul class="nobullets">
 <li>
-<span class="option-args">--pycheck-class-factoring-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<span class="option-args">--thrift-binary-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
 <br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
 </br></li>
 <li>
-<span class="option-args">--pycheck-class-factoring-exclude-target-regexp=&lt;regexp&gt; (--pycheck-class-factoring-exclude-target-regexp=&lt;regexp&gt;) ..., --pycheck-class-factoring-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --pycheck-class-factoring-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
+<span class="option-args">--thrift-binary-exclude-target-regexp=&lt;regexp&gt; (--thrift-binary-exclude-target-regexp=&lt;regexp&gt;) ..., --thrift-binary-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --thrift-binary-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
 <br><span>Exclude targets that match these regexes.</span>
 </br></li>
 <li>
-<span class="option-args">--[no-]pycheck-class-factoring-fail-fast</span> <span class="option-default">(default: False)</span>
+<span class="option-args">--[no-]thrift-binary-fail-fast</span> <span class="option-default">(default: False)</span>
 <br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
 </br></li>
 <li>
-<span class="option-args">--pycheck-class-factoring-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<span class="option-args">--thrift-binary-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
 <br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+<li>
+<span class="option-args">--thrift-binary-supportdir=&lt;str&gt;</span> <span class="option-default">(default: 'bin/thrift')</span>
+<br><span>Find thrift binaries under this dir.   Used as part of the path to lookup thetool with --binary-util-baseurls and --pants-bootstrapdir</span>
+</br></li>
+<li>
+<span class="option-args">--thrift-binary-version=&lt;str&gt;</span> <span class="option-default">(default: '0.9.2')</span>
+<br><span>Thrift compiler version.   Used as part of the path to lookup thetool with --binary-util-baseurls and --pants-bootstrapdir</span>
 </br></li>
 </ul>
 </li>
@@ -16044,6 +15992,50 @@
 </br></li>
 <li>
 <span class="option-args">--pycheck-variable-names-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<div class="global-subsystem-header">
+<div class="scope">pycheck-pep8</div>
+<div class="scope-description"></div>
+</div>
+<ul class="nobullets collapsible">
+<li class="collapsed options-group">Basic options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--pycheck-pep8-ignore=&lt;str&gt; (--pycheck-pep8-ignore=&lt;str&gt;) ..., --pycheck-pep8-ignore="[&lt;str&gt;, &lt;str&gt;, ...]", --pycheck-pep8-ignore="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['E121','E124','E125','E127','E128','E401','E111','W291','W293','E701','E301','E302','W292'])</span>
+<br><span>Prevent test failure but still produce output for problems.</span>
+</br></li>
+<li>
+<span class="option-args">--pycheck-pep8-max-length=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Max line length to use for PEP8 checks.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]pycheck-pep8-skip</span> <span class="option-default">(default: True)</span>
+<br><span>If enabled, skip this style checker.</span>
+</br></li>
+</ul>
+</li>
+<li class="collapsed options-group">Advanced options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--pycheck-pep8-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
+</br></li>
+<li>
+<span class="option-args">--pycheck-pep8-exclude-target-regexp=&lt;regexp&gt; (--pycheck-pep8-exclude-target-regexp=&lt;regexp&gt;) ..., --pycheck-pep8-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --pycheck-pep8-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
+<br><span>Exclude targets that match these regexes.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]pycheck-pep8-fail-fast</span> <span class="option-default">(default: False)</span>
+<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
+</br></li>
+<li>
+<span class="option-args">--pycheck-pep8-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
 <br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
 </br></li>
 </ul>
@@ -16321,42 +16313,6 @@
 <li>
 <span class="option-args">--binaries-path-by-id="{'key1':val1,'key2':val2,...}"</span> <span class="option-default">(default: {})</span>
 <br><span>Maps output of uname for a machine to a binary search path.  e.g. { ("darwin", "15"): ["mac", "10.11"]), ("linux", "arm32"): ["linux", "arm32"] }</span>
-</br></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="global-subsystem-header">
-<div class="scope">thrift-binary</div>
-<div class="scope-description"></div>
-</div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Advanced options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--thrift-binary-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
-<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-exclude-target-regexp=&lt;regexp&gt; (--thrift-binary-exclude-target-regexp=&lt;regexp&gt;) ..., --thrift-binary-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --thrift-binary-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
-<br><span>Exclude targets that match these regexes.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]thrift-binary-fail-fast</span> <span class="option-default">(default: False)</span>
-<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-supportdir=&lt;str&gt;</span> <span class="option-default">(default: 'bin/thrift')</span>
-<br><span>Find thrift binaries under this dir.   Used as part of the path to lookup thetool with --binary-util-baseurls and --pants-bootstrapdir</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-version=&lt;str&gt;</span> <span class="option-default">(default: '0.9.2')</span>
-<br><span>Thrift compiler version.   Used as part of the path to lookup thetool with --binary-util-baseurls and --pants-bootstrapdir</span>
 </br></li>
 </ul>
 </li>
@@ -16740,6 +16696,42 @@
 </li>
 <li>
 <div class="global-subsystem-header">
+<div class="scope">pycheck-class-factoring</div>
+<div class="scope-description"></div>
+</div>
+<ul class="nobullets collapsible">
+<li class="collapsed options-group">Basic options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--[no-]pycheck-class-factoring-skip</span> <span class="option-default">(default: True)</span>
+<br><span>If enabled, skip this style checker.</span>
+</br></li>
+</ul>
+</li>
+<li class="collapsed options-group">Advanced options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--pycheck-class-factoring-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
+</br></li>
+<li>
+<span class="option-args">--pycheck-class-factoring-exclude-target-regexp=&lt;regexp&gt; (--pycheck-class-factoring-exclude-target-regexp=&lt;regexp&gt;) ..., --pycheck-class-factoring-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --pycheck-class-factoring-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
+<br><span>Exclude targets that match these regexes.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]pycheck-class-factoring-fail-fast</span> <span class="option-default">(default: False)</span>
+<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
+</br></li>
+<li>
+<span class="option-args">--pycheck-class-factoring-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<div class="global-subsystem-header">
 <div class="scope">go-distribution</div>
 <div class="scope-description"></div>
 </div>
@@ -16848,6 +16840,42 @@
 </li>
 <li>
 <div class="global-subsystem-header">
+<div class="scope">pycheck-except-statement</div>
+<div class="scope-description"></div>
+</div>
+<ul class="nobullets collapsible">
+<li class="collapsed options-group">Basic options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--[no-]pycheck-except-statement-skip</span> <span class="option-default">(default: False)</span>
+<br><span>If enabled, skip this style checker.</span>
+</br></li>
+</ul>
+</li>
+<li class="collapsed options-group">Advanced options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--pycheck-except-statement-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
+</br></li>
+<li>
+<span class="option-args">--pycheck-except-statement-exclude-target-regexp=&lt;regexp&gt; (--pycheck-except-statement-exclude-target-regexp=&lt;regexp&gt;) ..., --pycheck-except-statement-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --pycheck-except-statement-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
+<br><span>Exclude targets that match these regexes.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]pycheck-except-statement-fail-fast</span> <span class="option-default">(default: False)</span>
+<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
+</br></li>
+<li>
+<span class="option-args">--pycheck-except-statement-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<div class="global-subsystem-header">
 <div class="scope">pycheck-pyflakes</div>
 <div class="scope-description"></div>
 </div>
@@ -16895,7 +16923,7 @@
 
             <div class="generated">
               Generated by <a href="http://pantsbuild.org/docs.html">publish_docs</a>
-              from dist/reference/pants_reference_body.html 2016-05-19T11:24:08.599121
+              from dist/reference/pants_reference_body.html 2016-05-19T16:15:18.736317
             </div>
 
           </div> <!-- mainflow -->
