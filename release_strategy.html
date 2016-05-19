@@ -8,11 +8,11 @@
 
 <head>
   <meta charset="utf-8"/>
-  <title>Pants Style Guide</title>
+  <title>Release Strategy</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" href="pants-logo.ico">
   <!-- In case this is a "test publish", tell search engines where real version lives: -->
-  <link rel="canonical" href="http://pantsbuild.org/styleguide.html">
+  <link rel="canonical" href="http://pantsbuild.org/release_strategy.html">
 
   <link rel="stylesheet" href="bootstrap-custom.min.css">
   <link rel="stylesheet" href="bootstrap-custom-theme.min.css">
@@ -195,9 +195,18 @@
           <div class="mainflow">
               <nav class="pagetoc">
                 <ul>
-                    <li class="toc-h1"><a href="#comments">Comments</a></li>
-                    <li class="toc-h1"><a href="#indentation-line-lengths">Indentation, Line lengths</a></li>
-                    <li class="toc-h1"><a href="#string-interpolation-and-formatting">String Interpolation and formatting</a></li>
+                    <li class="toc-h1"><a href="#release-responsibilities">Release Responsibilities</a></li>
+                    <li class="toc-h1"><a href="#release-cadence">Release Cadence</a></li>
+                    <li class="toc-h1"><a href="#release-types">Release Types</a></li>
+                    <li class="toc-h2"><a href="#pre-releases">pre releases</a></li>
+                    <li class="toc-h2"><a href="#stable-releases">stable releases</a></li>
+                    <li class="toc-h3"><a href="#major-and-minor-stable-branches">major and minor stable branches</a></li>
+                    <li class="toc-h3"><a href="#patch-stable-releases">patch stable Releases</a></li>
+                    <li class="toc-h1"><a href="#naming-conventions">Naming conventions</a></li>
+                    <li class="toc-h2"><a href="#stable-naming">stable naming</a></li>
+                    <li class="toc-h2"><a href="#pre-naming">pre naming</a></li>
+                    <li class="toc-h1"><a href="#examples">Examples</a></li>
+                    <li class="toc-h1"><a href="#stable-release-candidates">stable Release Candidates</a></li>
                 </ul>
               </nav>
 
@@ -267,38 +276,107 @@
 .codehilite .vi { color: #bb60d5 } /* Name.Variable.Instance */
 .codehilite .il { color: #40a070 } /* Literal.Number.Integer.Long */
 </style>
-<h1 id="pants-style-guide">Pants Style Guide</h1>
-<p>The Pants project has accumulated a number of conventions around organizing code within the project.
-This document tries to cover some of the common style issues that new contributors run into in their
-first contributions to the project.</p>
-<p>A number of style checks are already automated. Some of these are covered by the pre-commit script
-(<a href="howto_contribute.html#getting-pants-source-code">setup instructions</a>).
-Others are run as when tests are run.</p>
-<p>Beyond that, we've got a number of guidelines that haven't been automated.</p>
-<h2 id="comments">Comments</h2>
-<p>Comments must have a space after the starting <code>#</code>. All comments must be formed with complete
-sentences including a period.</p>
-<p>Good</p>
-<div class="codehilite"><pre># This is a good comment.
-</pre></div>
-<p>Bad</p>
-<div class="codehilite"><pre>#Not This
-</pre></div>
-<h2 id="indentation-line-lengths">Indentation, Line lengths</h2>
+<h1 id="release-strategy">Release Strategy</h1>
+<p>This page describes the "who", "what", and "when" of Pants releases. If you're interested
+in learning "how" to release, see the <a href="release.html">Release Process</a> page.</p>
+<h2 id="release-responsibilities">Release Responsibilities</h2>
+<p>There is one release manager per week, decided via a shared calendar (to volunteer to be added
+to the calendar, see <a href="howto_contribute.html">How to Contribute</a>).</p>
+<p>The release manager is responsible for:</p>
 <ul>
-<li>Pants uses a code line width of 100 characters.</li>
-<li>Pants code uses 2 spaces for indentation.</li>
+<li>Creating <code>stable</code> branches</li>
+<li>Creating and gathering feedback on release candidates</li>
+<li>Cutting <code>pre</code> and <code>stable</code> releases</li>
 </ul>
-<h2 id="string-interpolation-and-formatting">String Interpolation and formatting</h2>
+<p>These release types and responsibilities are described below.</p>
+<h2 id="release-cadence">Release Cadence</h2>
+<p>The release manager for a particular week decides whether to cut <code>stable</code> or <code>pre</code> releases (or
+both!) based on the following criteria:</p>
+<ol>
+<li>Decide whether to create a <em>new</em> <code>stable</code> branch:<ul>
+<li>If it has been approximately <a href="deprecation_policy.html">three months</a> since the
+previous <code>stable</code> branch, the release manager should inspect changes that have landed in master
+since the previous <code>stable</code> branch was created, and decide whether the changes justify a new
+<code>stable</code> branch (this is intentionally left open for discussion). If a new <code>stable</code> branch is
+justified, it will be either a <code>major</code> or <code>minor</code> branch (described below).</li>
+<li>If a new <code>stable</code> branch is <em>not</em> created (because of insufficient time/change to justify the
+stable vetting process), the release manager must cut a <code>pre</code> release from master instead.</li>
+</ul>
+</li>
+<li>In addition to any <code>pre</code> release or newly-created <code>stable</code> branches, the release manager should
+determine whether any existing <code>stable</code> branches need new release candidates by inspecting the
+<a href="https://docs.google.com/spreadsheets/d/12rsaVVhmSXrMVlZV6PUu5uzsKNNcceP9Lpf7rpju_IE/edit#gid=0">Pants Backport Proposals</a>
+sheet. If there are requests "sufficient" to justify <code>patch</code> releases for existing <code>stable</code> branches, the
+release manager should cut release candidates for those branches.</li>
+</ol>
+<p>In other words, for a given week: <em>one of either</em> a <code>pre</code> release or a new <code>stable</code> branch are
+created, and additionally, <code>patch</code> releases for existing <code>stable</code> branches <em>might</em> be created.</p>
+<h2 id="release-types">Release Types</h2>
+<h3 id="pre-releases"><code>pre</code> releases</h3>
+<p><code>pre</code> releases are releases that occur directly from master, without the additional vetting that
+is applied to <code>stable</code> releases. They help to ensure a steady release cadence from master by filling
+in the gaps between the (generally more time consuming) <code>stable</code> releases.</p>
+<h3 id="stable-releases"><code>stable</code> releases</h3>
+<p><code>stable</code> release candidates generally happen every two weeks, provided that there are enough user
+facing changes to warrant a new <code>stable</code> release. Of those two weeks, five business days are allocated
+to bugfixing and testing by pants contributors on a release candidate announcement thread (described
+below).</p>
+<h4 id="major-and-minor-stable-branches"><code>major</code> and <code>minor</code> stable branches</h4>
+<p>The decision to create a <code>major</code> or a <code>minor</code> stable branch is based on consensus on
+<a href="howto_contribute.html">pants-devel@</a> as to the impact of the changes.
+<code>major</code> releases signify large or breaking changes. <code>minor</code> releases however should be compatible
+with the last two <code>minor</code> releases. In other words if a feature is deprecated in version <code>1.2.x</code>
+you should be able to continue using that feature at least through version <code>1.4.0</code>.</p>
+<h4 id="patch-stable-releases"><code>patch</code> stable Releases</h4>
+<p>In order to allow us to react quickly to bugs, <code>patch</code> fixes are released for <code>stable</code> branches as
+needed and should always consist of fixes or small backwards-compatible features backported from
+master. These releases update the patch version number, (ie, from <code>1.0.x</code> to <code>1.0.y</code>) and should
+only include commits from the Pants Backport Proposals that are deemed to be
+<a href="deprecation_policy.html">backwards compatible</a>.</p>
+<h2 id="naming-conventions">Naming conventions</h2>
+<h3 id="stable-naming"><code>stable</code> naming</h3>
+<p>Leading up to a <code>stable</code> release, development work should be done on a branch named with the
+following format: <code>n.n.x</code> where n.n are the <code>major</code>/<code>minor</code> version numbers and "<code>x</code>" is a literal
+character placeholder for the <code>patch</code> version. Release candidates of an upcoming <code>stable</code> release
+are suffixed with <code>-rcN</code>. For instance: "the <code>1.1.x</code> <code>stable</code> branch",
+"the <code>1.1.1-rc0</code> release candidate", and "the <code>1.1.1</code> <code>stable</code> release".</p>
+<h3 id="pre-naming"><code>pre</code> naming</h3>
+<p><code>pre</code> releases occur between <code>stable</code> branches, and are differentiated by a <code>-preN</code> suffix. The pattern
+to follow is <code>N.N.0-preN</code>, where <code>N.N</code> are the <em>next</em> <code>major</code>/<code>minor</code> branch that will be created
+and N is the next sequential number starting from <code>0</code>. For instance: "the <code>1.1.0-pre0</code> <code>pre</code> release".</p>
+<h2 id="examples">Examples</h2>
 <ul>
-<li>Prefer <code>.format</code> for formatting strings over using <code>%</code>.</li>
+<li>
+<p>Leading up to the release of <code>2.0.0</code> the release manager would create a <code>stable</code> branch with
+the literal name "<code>2.0.x</code>". They would cut release candidates named <code>2.0.0-rc0</code> (and so on), and
+afterwards, they'd finalize the <code>2.0.0</code> release in that <code>2.0.x</code> branch by tagging the
+commit with the release version: <code>v2.0.0</code>.</p>
+</li>
+<li>
+<p>If a release manager had a bugfix from master that they needed to backport to the <code>1.1.x</code> <code>stable</code>
+branch, they would cherry-pick the commit to the <code>1.1.x</code> branch, run a series of release candidates
+(ie, <code>1.1.1-rc0</code>, etc), and finally tag the validated commit with a new patch version (ie <code>v1.1.1</code>).</p>
+</li>
+<li>
+<p>If <code>pre</code> releases were required after having created the <code>1.0.x</code> branch, but before having created
+the <code>1.1.x</code> branch, then they would start with <code>1.1.0-pre0</code>, and continue weekly to <code>1.1.0-preN</code>
+until the <code>1.1.x</code> branch had been created.</p>
+</li>
 </ul>
+<h2 id="stable-release-candidates"><code>stable</code> Release Candidates</h2>
+<p>In order to make a <code>stable</code> release, the release manager needs to create a release candidate for
+contributors to test. Once a release candidate has been created and announced according to the
+<a href="release.html">Release Process</a>, the release manager should allow five business days
+for contributors to raise concerns on the release candidate announcement thread. During those five
+days the release manager might need to perform multiple release candidates, until finally, when no
+more blockers are raised against a particular release candidate, the final version of that release
+can be cut.</p>
 
             <!-- main content end -->
 
             <div class="generated">
               Generated by <a href="http://pantsbuild.org/docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/styleguide.html 2016-05-19T16:12:31.106958
+              from dist/markdown/html/src/docs/release_strategy.html 2016-05-19T16:12:30.536429
             </div>
 
           </div> <!-- mainflow -->

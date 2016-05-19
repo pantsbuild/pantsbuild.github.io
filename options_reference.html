@@ -691,7 +691,7 @@
 <br><span>Override config with values from these files. Later files override earlier ones.</span>
 </br></li>
 <li>
-<span class="option-args">--plugin-cache-dir=&lt;str&gt;</span> <span class="option-default">(default: '/var/folders/tc/kq93y4pd5jn6gy3pfzd2zd5h0000gn/T/plugins_cache.XXXXX.XUxDez4I')</span>
+<span class="option-args">--plugin-cache-dir=&lt;str&gt;</span> <span class="option-default">(default: '/Users/stuhood/.cache/pants/plugins')</span>
 <br><span>Cache resolved plugin requirements here.</span>
 </br></li>
 <li>
@@ -7786,6 +7786,10 @@
 <span class="option-args">--gen-scrooge-structs-deps="{'key1':val1,'key2':val2,...}"</span> <span class="option-default">(default: { 'java':'[u'3rdparty:thrift-0.6.1', u'3rdparty/jvm/com/twitter:scrooge-core']','scala':'[u'3rdparty:thrift-0.6.1', u'3rdparty/jvm/com/twitter:scrooge-core']' })</span>
 <br><span>A map of language to targets to add as dependencies of synthetic thrift libraries that contain structs.</span>
 </br></li>
+<li>
+<span class="option-args">--gen-scrooge-target-types="{'key1':val1,'key2':val2,...}"</span> <span class="option-default">(default: { 'android':'java_library','java':'java_library','scala':'scala_library' })</span>
+<br><span>Registered target types.</span>
+</br></li>
 </ul>
 </li>
 </ul>
@@ -13934,7 +13938,7 @@
 </br></li>
 <li>
 <span class="option-args">--test-junit-junit=&lt;target_option&gt;</span> <span class="option-default">(default: //:junit)</span>
-<br><span>Target address spec for overriding the classpath of the junit jvm tool which is, by default: [JarDependency(org=u'org.pantsbuild', base_name=u'junit-runner', rev=u'1.0.5', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=())]</span>
+<br><span>Target address spec for overriding the classpath of the junit jvm tool which is, by default: [JarDependency(org=u'org.pantsbuild', base_name=u'junit-runner', rev=u'1.0.7', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=())]</span>
 </br></li>
 <li>
 <span class="option-args">--test-junit-jvm-options=&lt;option&gt;... (--test-junit-jvm-options=&lt;option&gt;...) ..., --test-junit-jvm-options="[&lt;option&gt;..., &lt;option&gt;..., ...]", --test-junit-jvm-options="+[&lt;option&gt;..., &lt;option&gt;..., ...]"</span> <span class="option-default">(default: ['-Xmx1g','-XX:MaxPermSize=256m'])</span>
@@ -13967,6 +13971,10 @@
 <li>
 <span class="option-args">--test-junit-timeout-terminate-wait=&lt;int&gt;</span> <span class="option-default">(default: 10)</span>
 <br><span>If a test does not terminate on a SIGTERM, how long to wait (in seconds) before sending a SIGKILL.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]test-junit-use-experimental-runner</span> <span class="option-default">(default: False)</span>
+<br><span>Use experimental junit-runner logic for more options for parallelism.</span>
 </br></li>
 </ul>
 </li>
@@ -14104,6 +14112,18 @@
 <div class="scope">test.node</div>
 <div class="scope-description">Runs a test script from package.json in a NodeModule, currently via "npm run [script name]".</div>
 <ul class="nobullets collapsible">
+<li class="collapsed options-group">Basic options
+                    <ul class="nobullets">
+<li>
+<span class="option-args">--[no-]test-node-skip</span> <span class="option-default">(default: False)</span>
+<br><span>Skip running tests.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]test-node-timeouts</span> <span class="option-default">(default: True)</span>
+<br><span>Enable test target timeouts. If timeouts are enabled then tests with a timeout= parameter set on their target will time out after the given number of seconds if not completed. If no timeout is set, then either the default timeout is used or no timeout is configured. In the current implementation, all the timeouts for the test targets to be run are summed and all tests are run with the total timeout covering the entire run of tests. If a single target in a test run has no timeout and there is no default, the entire run will have no timeout. This should change in the future to provide more granularity.</span>
+</br></li>
+</ul>
+</li>
 <li class="collapsed options-group">Advanced options
                     <ul class="nobullets">
 <li>
@@ -14121,6 +14141,18 @@
 <li>
 <span class="option-args">--test-node-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
 <br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+<li>
+<span class="option-args">--test-node-timeout-default=&lt;int&gt;</span> <span class="option-default">(default: None)</span>
+<br><span>The default timeout (in seconds) for a test if timeout is not set on the target.</span>
+</br></li>
+<li>
+<span class="option-args">--test-node-timeout-maximum=&lt;int&gt;</span> <span class="option-default">(default: None)</span>
+<br><span>The maximum timeout (in seconds) that can be set on a test target.</span>
+</br></li>
+<li>
+<span class="option-args">--test-node-timeout-terminate-wait=&lt;int&gt;</span> <span class="option-default">(default: 10)</span>
+<br><span>If a test does not terminate on a SIGTERM, how long to wait (in seconds) before sending a SIGKILL.</span>
 </br></li>
 </ul>
 </li>
@@ -15616,6 +15648,52 @@
 </li>
 <li>
 <div class="global-subsystem-header">
+<div class="scope">go-archive-fetcher</div>
+<div class="scope-description">A fetcher that knows how find archives for remote import paths and unpack them.</div>
+</div>
+<ul class="nobullets collapsible">
+<li class="collapsed options-group">Advanced options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--go-archive-fetcher-buffer-size=&lt;bytes&gt;</span> <span class="option-default">(default: 10240)</span>
+<br><span>The number of bytes of archive content to buffer in memory before flushing to disk when downloading an archive.</span>
+</br></li>
+<li>
+<span class="option-args">--go-archive-fetcher-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
+</br></li>
+<li>
+<span class="option-args">--go-archive-fetcher-exclude-target-regexp=&lt;regexp&gt; (--go-archive-fetcher-exclude-target-regexp=&lt;regexp&gt;) ..., --go-archive-fetcher-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --go-archive-fetcher-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
+<br><span>Exclude targets that match these regexes.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]go-archive-fetcher-fail-fast</span> <span class="option-default">(default: False)</span>
+<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
+</br></li>
+<li>
+<span class="option-args">--go-archive-fetcher-matchers=&lt;mapping&gt;</span> <span class="option-default">(default: { 'bitbucket\.org/(?P&lt;user&gt;[^/]+)/(?P&lt;repo&gt;[^/]+)':'UrlInfo(url_format=u'https://bitbucket.org/\\g&lt;user&gt;/\\g&lt;repo&gt;/get/{rev}.tar.gz', default_rev=u'tip', strip_level=1)','github\.com/(?P&lt;user&gt;[^/]+)/(?P&lt;repo&gt;[^/]+)':'UrlInfo(url_format=u'https://github.com/\\g&lt;user&gt;/\\g&lt;repo&gt;/archive/{rev}.tar.gz', default_rev=u'master', strip_level=1)','google\.golang\.org/.*':'UrlInfo(url_format=u'{meta_repo_url}/+archive/{rev}.tar.gz', default_rev=u'master', strip_level=0)','golang\.org/x/(?P&lt;repo&gt;[^/]+)':'UrlInfo(url_format=u'https://github.com/golang/\\g&lt;repo&gt;/archive/{rev}.tar.gz', default_rev=u'master', strip_level=1)' })</span>
+<br><span>A mapping from a remote import path matching regex to an UrlInfo struct describing how to fetch and unpack a remote import path.  The regex must match the beginning of the remote import path (no '^' anchor is needed, it is assumed) until the first path element that is contained in the archive. (e.g. for 'bazil.org/fuse/fs', which lives in the archive of 'bazil.org/fuse', it must match 'bazil.org/fuse'.) The UrlInfo struct is a 3-tuple with the following slots:
+0. An url format string that is supplied to the regex match's `.template` method and then formatted with the remote import path's `rev`, `import_prefix`, and `pkg`.
+1. The default revision string to use when no `rev` is supplied; ie 'HEAD' or 'master' for git. 2. An integer indicating the number of leading path components to strip from files upacked from the archive. An example configuration that works against github.com is: {r'github.com/(?P&lt;user&gt;[^/]+)/(?P&lt;repo&gt;[^/]+)':  ('https://github.com/\g&lt;user&gt;/\g&lt;repo&gt;/archive/{rev}.zip', 'master', 1)}</span>
+</br></li>
+<li>
+<span class="option-args">--go-archive-fetcher-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+<li>
+<span class="option-args">--go-archive-fetcher-prefixes=&lt;paths&gt; (--go-archive-fetcher-prefixes=&lt;paths&gt;) ..., --go-archive-fetcher-prefixes="[&lt;paths&gt;, &lt;paths&gt;, ...]", --go-archive-fetcher-prefixes="+[&lt;paths&gt;, &lt;paths&gt;, ...]"</span> <span class="option-default">(default: [])</span>
+<br><span>Known import-prefixes for go packages</span>
+</br></li>
+<li>
+<span class="option-args">--go-archive-fetcher-retries=&lt;str&gt;</span> <span class="option-default">(default: '1')</span>
+<br><span>How many times to retry to fetch a remote library.</span>
+</br></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<div class="global-subsystem-header">
 <div class="scope">pycheck-indentation</div>
 <div class="scope-description"></div>
 </div>
@@ -15644,6 +15722,34 @@
 </br></li>
 <li>
 <span class="option-args">--pycheck-indentation-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<div class="global-subsystem-header">
+<div class="scope">gopkg-in</div>
+<div class="scope-description">A fetcher implementing the URL re-writing protocol of gopkg.in.</div>
+</div>
+<ul class="nobullets collapsible">
+<li class="collapsed options-group">Advanced options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--gopkg-in-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
+</br></li>
+<li>
+<span class="option-args">--gopkg-in-exclude-target-regexp=&lt;regexp&gt; (--gopkg-in-exclude-target-regexp=&lt;regexp&gt;) ..., --gopkg-in-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --gopkg-in-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
+<br><span>Exclude targets that match these regexes.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]gopkg-in-fail-fast</span> <span class="option-default">(default: False)</span>
+<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
+</br></li>
+<li>
+<span class="option-args">--gopkg-in-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
 <br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
 </br></li>
 </ul>
@@ -15709,42 +15815,6 @@
 <li>
 <span class="option-args">--python-setup-wheel-version=&lt;str&gt;</span> <span class="option-default">(default: '0.24.0')</span>
 <br><span>The wheel version for this python environment.</span>
-</br></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="global-subsystem-header">
-<div class="scope">pycheck-import-order</div>
-<div class="scope-description"></div>
-</div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Basic options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--[no-]pycheck-import-order-skip</span> <span class="option-default">(default: True)</span>
-<br><span>If enabled, skip this style checker.</span>
-</br></li>
-</ul>
-</li>
-<li class="collapsed options-group">Advanced options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--pycheck-import-order-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
-<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</br></li>
-<li>
-<span class="option-args">--pycheck-import-order-exclude-target-regexp=&lt;regexp&gt; (--pycheck-import-order-exclude-target-regexp=&lt;regexp&gt;) ..., --pycheck-import-order-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --pycheck-import-order-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
-<br><span>Exclude targets that match these regexes.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]pycheck-import-order-fail-fast</span> <span class="option-default">(default: False)</span>
-<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</br></li>
-<li>
-<span class="option-args">--pycheck-import-order-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
 </br></li>
 </ul>
 </li>
@@ -15853,6 +15923,74 @@
 <li>
 <span class="option-args">--unknown-arguments-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
 <br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<div class="global-subsystem-header">
+<div class="scope">go-fetchers</div>
+<div class="scope-description">A registry of installed remote code fetchers.</div>
+</div>
+<ul class="nobullets collapsible">
+<li class="collapsed options-group">Advanced options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--go-fetchers-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
+</br></li>
+<li>
+<span class="option-args">--go-fetchers-exclude-target-regexp=&lt;regexp&gt; (--go-fetchers-exclude-target-regexp=&lt;regexp&gt;) ..., --go-fetchers-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --go-fetchers-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
+<br><span>Exclude targets that match these regexes.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]go-fetchers-fail-fast</span> <span class="option-default">(default: False)</span>
+<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
+</br></li>
+<li>
+<span class="option-args">--go-fetchers-mapping=&lt;mapping&gt;</span> <span class="option-default">(default: { 'bitbucket\.org/.*':'ArchiveFetcher','golang\.org/x/.*':'ArchiveFetcher','github\.com/.*':'ArchiveFetcher','google\.golang\.org/.*':'ArchiveFetcher','gopkg\.in/.*':'GopkgInFetcher' })</span>
+<br><span>A mapping from a remote import path matching regex to a fetcher type to use to fetch the remote sources.  The regex must match the beginning of the remote import path; no '^' anchor is needed, it is assumed.  The Fetcher types are fully qualified class names or else an installed alias for a fetcher type; I.e., the built-in 'contrib.go.subsystems.fetchers.ArchiveFetcher' is aliased as 'ArchiveFetcher'.</span>
+</br></li>
+<li>
+<span class="option-args">--go-fetchers-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<div class="global-subsystem-header">
+<div class="scope">thrift-binary</div>
+<div class="scope-description"></div>
+</div>
+<ul class="nobullets collapsible">
+<li class="collapsed options-group">Advanced options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--thrift-binary-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
+</br></li>
+<li>
+<span class="option-args">--thrift-binary-exclude-target-regexp=&lt;regexp&gt; (--thrift-binary-exclude-target-regexp=&lt;regexp&gt;) ..., --thrift-binary-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --thrift-binary-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
+<br><span>Exclude targets that match these regexes.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]thrift-binary-fail-fast</span> <span class="option-default">(default: False)</span>
+<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
+</br></li>
+<li>
+<span class="option-args">--thrift-binary-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+<li>
+<span class="option-args">--thrift-binary-supportdir=&lt;str&gt;</span> <span class="option-default">(default: 'bin/thrift')</span>
+<br><span>Find thrift binaries under this dir.   Used as part of the path to lookup thetool with --binary-util-baseurls and --pants-bootstrapdir</span>
+</br></li>
+<li>
+<span class="option-args">--thrift-binary-version=&lt;str&gt;</span> <span class="option-default">(default: '0.9.2')</span>
+<br><span>Thrift compiler version.   Used as part of the path to lookup thetool with --binary-util-baseurls and --pants-bootstrapdir</span>
 </br></li>
 </ul>
 </li>
@@ -16032,6 +16170,42 @@
 </li>
 <li>
 <div class="global-subsystem-header">
+<div class="scope">pycheck-import-order</div>
+<div class="scope-description"></div>
+</div>
+<ul class="nobullets collapsible">
+<li class="collapsed options-group">Basic options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--[no-]pycheck-import-order-skip</span> <span class="option-default">(default: True)</span>
+<br><span>If enabled, skip this style checker.</span>
+</br></li>
+</ul>
+</li>
+<li class="collapsed options-group">Advanced options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--pycheck-import-order-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
+</br></li>
+<li>
+<span class="option-args">--pycheck-import-order-exclude-target-regexp=&lt;regexp&gt; (--pycheck-import-order-exclude-target-regexp=&lt;regexp&gt;) ..., --pycheck-import-order-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --pycheck-import-order-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
+<br><span>Exclude targets that match these regexes.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]pycheck-import-order-fail-fast</span> <span class="option-default">(default: False)</span>
+<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
+</br></li>
+<li>
+<span class="option-args">--pycheck-import-order-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<div class="global-subsystem-header">
 <div class="scope">reporting</div>
 <div class="scope-description"></div>
 </div>
@@ -16165,42 +16339,6 @@
 <li>
 <span class="option-args">--binaries-path-by-id="{'key1':val1,'key2':val2,...}"</span> <span class="option-default">(default: {})</span>
 <br><span>Maps output of uname for a machine to a binary search path.  e.g. { ("darwin", "15"): ["mac", "10.11"]), ("linux", "arm32"): ["linux", "arm32"] }</span>
-</br></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="global-subsystem-header">
-<div class="scope">thrift-binary</div>
-<div class="scope-description"></div>
-</div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Advanced options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--thrift-binary-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
-<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-exclude-target-regexp=&lt;regexp&gt; (--thrift-binary-exclude-target-regexp=&lt;regexp&gt;) ..., --thrift-binary-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --thrift-binary-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
-<br><span>Exclude targets that match these regexes.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]thrift-binary-fail-fast</span> <span class="option-default">(default: False)</span>
-<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-supportdir=&lt;str&gt;</span> <span class="option-default">(default: 'bin/thrift')</span>
-<br><span>Find thrift binaries under this dir.   Used as part of the path to lookup thetool with --binary-util-baseurls and --pants-bootstrapdir</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-version=&lt;str&gt;</span> <span class="option-default">(default: '0.9.2')</span>
-<br><span>Thrift compiler version.   Used as part of the path to lookup thetool with --binary-util-baseurls and --pants-bootstrapdir</span>
 </br></li>
 </ul>
 </li>
@@ -16516,42 +16654,6 @@
 </li>
 <li>
 <div class="global-subsystem-header">
-<div class="scope">pycheck-except-statement</div>
-<div class="scope-description"></div>
-</div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Basic options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--[no-]pycheck-except-statement-skip</span> <span class="option-default">(default: False)</span>
-<br><span>If enabled, skip this style checker.</span>
-</br></li>
-</ul>
-</li>
-<li class="collapsed options-group">Advanced options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--pycheck-except-statement-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
-<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</br></li>
-<li>
-<span class="option-args">--pycheck-except-statement-exclude-target-regexp=&lt;regexp&gt; (--pycheck-except-statement-exclude-target-regexp=&lt;regexp&gt;) ..., --pycheck-except-statement-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --pycheck-except-statement-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
-<br><span>Exclude targets that match these regexes.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]pycheck-except-statement-fail-fast</span> <span class="option-default">(default: False)</span>
-<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</br></li>
-<li>
-<span class="option-args">--pycheck-except-statement-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</br></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="global-subsystem-header">
 <div class="scope">pycheck-newstyle-classes</div>
 <div class="scope-description"></div>
 </div>
@@ -16696,6 +16798,42 @@
 </li>
 <li>
 <div class="global-subsystem-header">
+<div class="scope">pycheck-except-statement</div>
+<div class="scope-description"></div>
+</div>
+<ul class="nobullets collapsible">
+<li class="collapsed options-group">Basic options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--[no-]pycheck-except-statement-skip</span> <span class="option-default">(default: False)</span>
+<br><span>If enabled, skip this style checker.</span>
+</br></li>
+</ul>
+</li>
+<li class="collapsed options-group">Advanced options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--pycheck-except-statement-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
+</br></li>
+<li>
+<span class="option-args">--pycheck-except-statement-exclude-target-regexp=&lt;regexp&gt; (--pycheck-except-statement-exclude-target-regexp=&lt;regexp&gt;) ..., --pycheck-except-statement-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --pycheck-except-statement-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
+<br><span>Exclude targets that match these regexes.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]pycheck-except-statement-fail-fast</span> <span class="option-default">(default: False)</span>
+<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
+</br></li>
+<li>
+<span class="option-args">--pycheck-except-statement-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<div class="global-subsystem-header">
 <div class="scope">pycheck-pyflakes</div>
 <div class="scope-description"></div>
 </div>
@@ -16743,7 +16881,7 @@
 
             <div class="generated">
               Generated by <a href="http://pantsbuild.org/docs.html">publish_docs</a>
-              from dist/reference/pants_reference_body.html 2016-05-17T12:22:39.570221
+              from dist/reference/pants_reference_body.html 2016-05-19T16:12:31.059134
             </div>
 
           </div> <!-- mainflow -->
