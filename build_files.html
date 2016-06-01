@@ -7,209 +7,45 @@
 -->
 
 <head>
-  <meta charset="utf-8"/>
+  <meta charset="utf-8" />
   <title>BUILD files</title>
+  <link rel="stylesheet" href="s.css">
+  <script src="s.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="shortcut icon" href="pants-logo.ico">
+  <link rel="shortcut icon" href="logo.ico">
   <!-- In case this is a "test publish", tell search engines where real version lives: -->
-  <link rel="canonical" href="http://pantsbuild.org/build_files.html">
-
-  <link rel="stylesheet" href="bootstrap-custom.min.css">
-  <link rel="stylesheet" href="bootstrap-custom-theme.min.css">
-  <link rel="stylesheet" href="docsite.css">
+  <link rel="canonical" href="https://pantsbuild.github.io/build_files.html">
 </head>
 
 <body>
 
-<div class="header">
-  <nav class="navbar navbar-default navbar-static-top">
-    <div class="container">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand navbar-brand-img" href="index.html">
-          <img src="pants-logo.ico" alt="[pantsbuild logo]">
-        </a>
-        <a class="navbar-brand" href="index.html">
-          Pants
-        </a>
-      </div>
-      <div id="navbar" class="navbar-collapse collapse">
-        <ul class="nav navbar-nav navbar-right">
-          <li><a href="/">Docs</a></li>
-          <li><a href="community.html">Community</a></li>
-          <li><a href="https://www.github.com/pantsbuild/pants">GitHub</a></li>
-          <li>
-            <form class="navbar-form navbar-left search" role="search" action="https://www.google.com/search">
-              <div class="form-group">
-                <input type="text" name="as_q" class="form-control query" placeholder="Search">
-                <input name="as_sitesearch" value="pantsbuild.org" type="hidden">
-              </div>
-            </form>
-          </li>
-        </ul>
-      </div><!--/.nav-collapse -->
-    </div>
-  </nav>
+<div id="navtoggler">
+&#x25c4; <!-- triangle -->
 </div>
+<div class="mainflow">
+<nav class="breadcrumbs">
+<ul>
+<li><a href="index.html">Pants Build</a>
+<li><a href="build_files.html">BUILD files</a>
+</ul>
+</nav>
 
-<div class="page">
+<nav class="pagetoc">
+<ul>
+<li class="toc-h1"><a href="#debugging-a-build-file">Debugging a BUILD File</a></li>
+<li class="toc-h1"><a href="#default-target">Default Target</a></li>
+<li class="toc-h1"><a href="#the-111-rule">The 1:1:1 Rule</a></li>
+<li class="toc-h1"><a href="#avoid-rglobs">Avoid rglobs</a></li>
+<li class="toc-h1"><a href="#define-separate-targets-for-interface-and-implementation">Define Separate Targets for Interface and Implementation</a></li>
+<li class="toc-h1"><a href="#depend-on-api-in-library-targets-implementation-in-binary-targets">Depend on API in Library Targets, Implementation in Binary Targets</a></li>
+<li class="toc-h1"><a href="#which-build-files-are-executed-and-how">Which BUILD Files are &quot;Executed&quot;? (and how?)</a></li>
+<li class="toc-h1"><a href="#build-files_1">BUILD.* files</a></li>
+<li class="toc-h1"><a href="#what-happened-to-the-pants-wrapper-around-targets">What happened to the pants() wrapper around targets?</a></li>
+</ul>
+</nav>
 
-  <div class="container-fluid">
-    <div class="row">
-
-      <div class="col-md-1">
-      </div>
-
-      <div class="col-md-2">
-        <div class="site-toc">
-          <ul>
-                <li class="toc-h1 toc-heading">
-                  Getting Started
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="install.html">Installing Pants</a>
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="setup_repo.html">Setting Up Pants</a>
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="first_tutorial.html">Tutorial</a>
-                </li>
-                <li class="toc-h1 toc-heading">
-                  Pants Basics
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="why_use_pants.html">Why Use Pants?</a>
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="first_concepts.html">Pants Concepts</a>
-                </li>
-                <li class="toc-h1 toc-link toc-here">
-                  BUILD files
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="target_addresses.html">Target Addresses</a>
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="3rdparty.html">Third-Party Dependencies</a>
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="options.html">Pants Options</a>
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="invoking.html">Invoking Pants</a>
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="reporting_server.html">Reporting Server</a>
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="ide_support.html">IDE Support</a>
-                </li>
-                <li class="toc-h1 toc-heading">
-                  JVM
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="jvm_projects.html">JVM Projects with Pants</a>
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="3rdparty_jvm.html">JVM 3rdparty Pattern</a>
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="scala.html">Scala Support</a>
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="publish.html">Publishing Artifacts</a>
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="from_maven.html">Pants for Maven Experts</a>
-                </li>
-                <li class="toc-h1 toc-heading">
-                  Python
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="python_readme.html">Python Projects with Pants</a>
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="3rdparty_py.html">Python 3rdparty Pattern</a>
-                </li>
-                <li class="toc-h1 toc-heading">
-                  Go
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="go_readme.html">Go support for Pants</a>
-                </li>
-                <li class="toc-h1 toc-heading">
-                  Codegen
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="thrift_deps.html">Thrift</a>
-                </li>
-                <li class="toc-h1 toc-heading">
-                  Docgen
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="page.html">Markdown</a>
-                </li>
-                <li class="toc-h1 toc-heading">
-                  Getting Help
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="tshoot.html">Troubleshooting</a>
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="community.html">Community</a>
-                </li>
-                <li class="toc-h1 toc-heading">
-                  Reference
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="build_dictionary.html">Pants BUILD Dictionary</a>
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="options_reference.html">Pants Reference</a>
-                </li>
-                <li class="toc-h1 toc-heading">
-                  Release Notes
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="notes-1.0.x.html">1.0.x Stable Releases</a>
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="notes-master.html">Master Pre-Releases</a>
-                </li>
-                <li class="toc-h1 toc-heading">
-                  Developer
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="dev.html">Pants Developer Center</a>
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="export.html">Export Format</a>
-                </li>
-          </ul>
-        </div> <!-- site-toc -->
-      </div>
-
-      <div class="col-md-8">
-        <div class="content">
-
-          <div class="mainflow">
-              <nav class="pagetoc">
-                <ul>
-                    <li class="toc-h1"><a href="#target-granularity">Target Granularity</a></li>
-                    <li class="toc-h1"><a href="#target-definitions">Target Definitions</a></li>
-                    <li class="toc-h1"><a href="#build-files_1">BUILD.* files</a></li>
-                    <li class="toc-h1"><a href="#debugging-build-files">Debugging BUILD Files</a></li>
-                </ul>
-              </nav>
-
-            <!-- main content start -->
-            <!-- generated by pants! -->
+<!-- main content start -->
+<!-- generated by pants! -->
 <style>
 .codehilite .hll { background-color: #ffffcc }
 .codehilite  { background: #f0f0f0; }
@@ -274,100 +110,58 @@
 .codehilite .vi { color: #bb60d5 } /* Name.Variable.Instance */
 .codehilite .il { color: #40a070 } /* Literal.Number.Integer.Long */
 </style>
-<h1 id="build-files">BUILD files</h1>
-<p>A large, well-organized codebase divides into many small components. These components,
-and the code dependencies between them, form a directed graph.</p>
-<p>In Pants paralance, these components are called <em>targets</em>. The information about your
-targets and their dependencies lives in files named <code>BUILD</code>, scattered throughout your
-source tree. A <code>BUILD</code> file in a given directory describes targets that own the
-source files in or under that directory.</p>
-<ul>
-<li>See <a href="first_tutorial.html">tutorial</a> for an easy introduction to <code>BUILD</code> files.</li>
-<li>See the <a href="build_dictionary.html">BUILD Dictionary</a> for an exhaustive list of all <code>BUILD</code> file syntax.</li>
-</ul>
-<h2 id="target-granularity">Target Granularity</h2>
-<p>A target can encapsulate any amount of code, from a single source file to
-(as a silly hypothetical) the entire codebase.  In practice, you'll want to
-pick a granularity that reflects a "sensible" level at which to express
-dependencies: Too coarse, and you lose the benefits of fine-grained invalidation.
-Too fine, and you drown in BUILD boilerplate.</p>
-<p>Many programming languages (E.g., Java, Python, Go) have a concept of a <em>package</em>, usually
-corresponding to a single filesystem directory. It turns out that this is often the appropriate level
-of granularity for targets.  The idiom of having one target per directory, representing
-a single package, is sometimes referred to as the <em>1:1:1 rule</em>. It's by no means required,
-but has proven in practice to be a good rule of thumb.  And of course there are always exceptions.</p>
-<p>Note that Pants forbids circular dependencies between targets. That is, the dependency graph must
-be a DAG. In fact, this is good codebase hygiene in general. So if you have any tightly-bound
-cross dependencies between certain packages, they will all have to be part of a single target until
-you untangle the dependency "hairball".</p>
-<h2 id="target-definitions">Target Definitions</h2>
-<p>A target definition in a <code>BUILD</code> file looks something like</p>
-<div class="codehilite"><pre><span class="n">java_library</span><span class="p">(</span>
-  <span class="n">name</span><span class="o">=</span><span class="s">'util'</span><span class="p">,</span>
-  <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s">'3rdparty:commons-math'</span><span class="p">,</span>
-    <span class="s">'3rdparty:thrift'</span><span class="p">,</span>
-    <span class="s">'src/java/org/pantsbuild/auth'</span><span class="p">,</span>
-    <span class="s">':base'</span>
-  <span class="p">],</span>
-  <span class="n">sources</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s">'*.java'</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[[</span><span class="s">'Base.java'</span><span class="p">]]),</span>
-<span class="p">)</span>
-</pre></div>
-<p><strong>java_library</strong><br>
-Each target will have a different <em>target type</em>, which is <code>java_library</code> in this case.
-This tells Pants tasks what can be done with the target.</br></p>
-<p><strong>name</strong><br>
-The target's name, along with the path to its BUILD file, forms its <em>address</em>.
-The address has two important roles:</br></p>
-<ul>
-<li>It's used on the command line to specify which targets to operate on.</li>
-<li>It's used in other <code>BUILD</code> files to reference the target as a dependency.</li>
-</ul>
-<p><strong>dependencies</strong><br>
-List of targets that this target depends upon. If this target's code imports
-or otherwise depends on code in other targets, list those targets here.</br></p>
-<ul>
-<li>To reference a target <code>target</code> defined in <code>path/to/BUILD</code> use <code>path/to:target</code>.</li>
-<li>If the target has the same name as the BUILD file's directory, you can omit the repetition:
-  <br><code>path/to/target</code> instead of <code>path/to/target:target</code>.</br></li>
-<li>If the target is defined in the same BUILD file, you can omit the path:
-  <br><code>:target</code> instead of <code>path/to:target</code>.</br></li>
-<li><a href="target_addresses.html">More details</a> on how to address targets in a list of dependencies.</li>
-</ul>
-<p><strong>sources</strong><br>
-The source files in this target. These are usually specified in one of two ways:</br></p>
-<ul>
-<li>Enumerating the files: <code>sources=['FileUtil.java', 'NetUtil.java']</code>.</li>
-<li>Globbing over the files in the BUILD file's directory: <code>sources=globs('*.java')</code>.
-  <br>This means you don't have to modify your BUILD file when you add a new source file.</br></li>
-</ul>
-<p>You can exclude files from the results of a glob. For example, to glob over unit tests
-but not integration tests you could use something like this:
-<br><code>sources=globs('*.py', exclude=[globs('*_integration.py')])</code>.
-<br>The value of <code>exclude=</code> is a list of things that evaluate to lists of source files,
-i.e., globs or literal lists. This is why there are double-brackets around <code>Base.java</code> in
-the example target above.</br></br></p>
-<p>You can also recursively glob over files in all subdirectories of the BUILD file's directory: <code>sources=rglobs('*.java')</code>.
-However this is discouraged as it tends to lead to coarse-grained dependencies, and Pants's
-advantages come into play when you have many fine-grained dependencies.</p>
-<h2 id="build-files_1"><code>BUILD.*</code> files</h2>
-<p>BUILD files are usually just named <code>BUILD</code>, but they can also be named <code>BUILD.ext</code>, with any
-extension.  Pants considers all files matching <code>BUILD(.*)</code> in a single directory to be a single
-logical BUILD file. In particular, they share a single namespace, so target names must be
-distinct across all such files.</p>
-<p>This has various uses, such as the ability to separate internal-only BUILD definitions from those
-that should be pushed to an open-source mirror of an internal repo: You can put the former
-in <code>BUILD.internal</code> files and the latter in <code>BUILD.oss</code> files.</p>
-<h2 id="debugging-build-files">Debugging BUILD Files</h2>
-<p>If you're curious to know how Pants interprets your <code>BUILD</code> files, these
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h1 id="build-files">BUILD files</h1></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#build-files">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>To tell Pants about your source code, you have files named <code>BUILD</code> in
+directories of your source tree. These files define build-able targets
+and specify source code layout. This page goes into some detail about
+<code>BUILD</code> files. If you instead wanted API docs for things defined in
+<code>BUILD</code> files (<code>java_library</code>, <code>python_binary</code>, etc.), please see the
+<a href="build_dictionary.html">BUILD Dictionary</a>. If you want less detail-y
+information about <code>BUILD</code> files,
+<a href="first_tutorial.html">the Tutorial</a>
+is a good place to start.</p>
+<p><code>BUILD</code> files are little Python scripts with some
+<a href="build_dictionary.html">useful functions</a> automatically imported. Thus,
+function invocations look <code>like(this)</code>, lists look <code>[like, this]</code>, and
+dictionaries (hashmaps) look <code>{"like": "this"}</code>; Python's syntax uses
+<a href="http://en.wikipedia.org/wiki/Python_syntax_and_semantics#Indentation">indentation</a>
+to indicate scope; if you copy-paste some <code>BUILD</code> code from one place to
+another, you might need to adjust the indentation. You can <a href="http://docs.python.org/tutorial">learn more
+about Python</a>, but you should be able
+to "get along" in <code>BUILD</code> files if you know functions, lists,
+dictionaries, and indentation.</p>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="debugging-a-build-file">Debugging a BUILD File</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#debugging-a-build-file">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>If you're curious to know how Pants interprets your <code>BUILD</code> file, these
 techniques can be especially helpful:</p>
-<p><em>What targets does a BUILD file define?</em> Use the <code>list</code> goal:</p>
+<p><em>Did I define the targets I meant to?</em> Use <code>list</code>:</p>
 <div class="codehilite"><pre><span class="nv">$ </span>./pants list examples/src/java/org/pantsbuild/example/hello/greet
 examples/src/java/org/pantsbuild/example/hello/greet:greet
 </pre></div>
-<p><em>Are any BUILD files broken?</em>
-List <strong>every</strong> target to see if there are any errors:
-Use the  recursive wildcard <code>::</code> with the list goal:</p>
+<p><em>Did a change in one <code>BUILD</code> file break others?</em>
+List <strong>every</strong> target to find out:
+Use the recursive wildcard: <code>list ::</code></p>
 <div class="codehilite"><pre><span class="nv">$ </span>./pants list ::
   ...lots of output...
   File <span class="s2">"pants/commands/command.py"</span>, line 79, in __init__
@@ -377,8 +171,9 @@ TransitiveLookupError: great was not found in BUILD file examples/src/java/org/p
 ello/greet/BUILD. Perhaps you meant:
   :greet
   referenced from examples/src/scala/org/pantsbuild/example/hello/welcome:welcome
+<span class="nv">$ </span><span class="c"># Instead of listing all targets, an error message. We found a problem</span>
 </pre></div>
-<p><em>Do I pull in the transitive dependencies I expect?</em> Use <code>depmap</code>:</p>
+<p><em>Do I pull in the dependencies I expect?</em> Use <code>depmap</code> (JVM languages only):</p>
 <div class="codehilite"><pre><span class="nv">$ </span>./pants depmap examples/tests/java/org/pantsbuild/example/hello/greet
 internal-examples.tests.java.org.pantsbuild.example.hello.greet.greet
   internal-3rdparty.junit
@@ -392,47 +187,549 @@ internal-examples.tests.java.org.pantsbuild.example.hello.greet.greet
 </pre></div>
 <p><em>What source files do I depend on?</em> Use <code>filedeps</code>:</p>
 <div class="codehilite"><pre><span class="nv">$ </span>./pants filedeps examples/src/java/org/pantsbuild/example/hello/main
-~archie/workspace/pants/examples/src/java/org/pantsbuild/example/hello/greet/BUILD
-~archie/workspace/pants/examples/src/java/org/pantsbuild/example/hello/main/config/greetee.txt
 ~archie/workspace/pants/examples/src/resources/org/pantsbuild/example/hello/BUILD
-~archie/workspace/pants/examples/src/java/org/pantsbuild/example/hello/main/HelloMain.java
-~archie/workspace/pants/examples/src/resources/org/pantsbuild/example/hello/world.txt
 ~archie/workspace/pants/examples/src/java/org/pantsbuild/example/hello/main/BUILD
+~archie/workspace/pants/examples/src/java/org/pantsbuild/example/hello/main/config/greetee.txt
 ~archie/workspace/pants/examples/src/java/org/pantsbuild/example/hello/greet/Greeting.java
+~archie/workspace/pants/examples/src/resources/org/pantsbuild/example/hello/world.txt
+~archie/workspace/pants/examples/src/java/org/pantsbuild/example/hello/main/HelloMain.java
+~archie/workspace/pants/examples/src/java/org/pantsbuild/example/hello/greet/BUILD
 </pre></div>
-<p>Use the <code>-h</code> flag to get help on these commands and their various options.</p>
 
-            <!-- main content end -->
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="default-target">Default Target</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#default-target">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
 
-            <div class="generated">
-              Generated by <a href="http://pantsbuild.org/docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/build_files.html 2016-05-27T14:18:12.315177
-            </div>
+<p>A build target with the same name as the <code>BUILD</code> file's containing directory is the
+<em>default target</em>. To signal "<em>this</em> is the main useful target here" and as a convenience to users,
+have a default.</p>
+<p>Consider these libraries that use <code>tugboat</code> functionality. You can see that this code depends on
+just the default <code>tugboat</code> target, and thus uses just core functionality:</p>
+<div class="codehilite"><pre><span class="c"># depends on plain ol' tugboat</span>
+<span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'theodore'</span><span class="p">,</span>
+  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
+    <span class="s">'src/java/com/twitter/tugboat'</span><span class="p">,</span>
+  <span class="p">],</span>
+  <span class="n">sources</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s">'*.java'</span><span class="p">),</span>
+<span class="p">)</span>
+</pre></div>
+<p>You can tell this code uses optional functionality because it depends on
+a specific non-default target:</p>
+<div class="codehilite"><pre><span class="c"># depends on optional tugboat functionality</span>
+<span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'hank'</span><span class="p">,</span>
+  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
+    <span class="s">'src/java/com/twitter/tugboat:hispeed'</span><span class="p">,</span>
+  <span class="p">],</span>
+  <span class="n">sources</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s">'*.java'</span><span class="p">),</span>
+<span class="p">)</span>
+</pre></div>
+<p>Default targets are more convenient to reference on the command line. There are a
+<a href="target_addresses.html#addresses_synonyms" pantsref="addresses_synonyms">few ways to refer to a target</a> on the command line.
+It's especially convenient to refer to a default target on the command line. Consider these two
+ways to refer to the same target:</p>
+<div class="codehilite"><pre>//src/java/org/pantsbuild/tugboat:tugboat  # absolute target name
+src/java/org/pantsbuild/tugboat/           # convenient command-line-completion syntax
+</pre></div>
+<p>By providing a default-name target, you make it easier for people to refer to it on the command
+line. This gives them a better experience. BUILD files dependencies can be less verbose,
+improving readability.</p>
 
-          </div> <!-- mainflow -->
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="the-111-rule">The 1:1:1 Rule</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#the-111-rule">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
 
-        </div> <!-- content -->
+<p>Your code's organization, including <code>BUILD</code> target configuration, makes
+building easier or harder. Some folks summarize clear and scalable code
+layout choice with the <strong>1:1:1</strong> rule of thumb:</p>
+<ul>
+<li><strong>1 Folder</strong></li>
+<li><strong>1 Package</strong></li>
+<li><strong>1 BUILD Target</strong></li>
+</ul>
+<p>If there's a set of code that usually goes together, it makes sense for
+it to be in one folder using one package namespace. The folder should
+have a <code>BUILD</code> file with one target to build that set of code.</p>
+<p>If there's a subset of code that <em>doesn't</em> usually go together with the
+rest of the code in some directory/target, it makes sense to move that
+code out into another folder and its own package namespace. The new
+folder should have its own <code>BUILD</code> file containing a target to build
+that code.</p>
+<p>Code belongs at the "leaves" of your directory tree. E.g., if
+<code>.../foo/Foo.java</code> exists, you don't want to create
+<code>.../foo/bar/Bar.java</code> in a subdirectory. (Or if you do, then you want
+to move the other foo code to <code>../foo/justfoonotbar/Foo.java</code> or
+somesuch.) This keeps all the code for a package in 1 Folder, 1 BUILD
+target.</p>
+<p><strong>1:1:1</strong> is a "rule of thumb", not a law. If your code breaks this
+rule, it will still build. <strong>1:1:1</strong> tends to make your code easier to
+work with.</p>
+<p>If you're new to Pants, you might feel overwhelmed by all these <code>BUILD</code>
+files; you might think it's simpler to have fewer of them: maybe just
+one <code>BUILD</code> file in the "top folder" for a project that builds code from
+several directories. But this "target coarseness" can waste your time:
+you have a huge target that depends on everything that your source
+depends on. If you divide your code into smaller, coherent targets, each
+of those targets has only a subset of those dependencies.</p>
 
-      </div>
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="avoid-rglobs">Avoid rglobs</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#avoid-rglobs">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
 
-      <div class="col-md-1">
-      </div>
+<p>Many pants targets have sources, a list of filenames owned by the
+target. It's common pattern to specify source files with globs; it's a
+common <em>anti-pattern</em>, especially in targets hastily converted from
+Maven poms, to specify source files with rglobs, the recursive version
+of globs.</p>
+<p>While valid, rglobs increases the chances of multiple targets claiming
+the same sources. Consider the following refactor adding a subpackage:</p>
+<div class="codehilite"><pre><span class="c"># 'maint' subpackage has been added.</span>
+<span class="c"># src/java/com/twitter/tugboat/BUILD</span>
+<span class="c"># src/java/com/twitter/tugboat/Tugboat.java</span>
+<span class="c"># src/java/com/twitter/tugboat/maint/BUILD</span>
+<span class="c"># src/java/com/twitter/tugboat/maint/MaintenanceLog.java</span>
 
-    </div> <!-- row -->
-  </div> <!-- container-fluid -->
+<span class="c"># target src/java/com/twitter/tugboat</span>
+<span class="c"># Existing target now unintentionally claims the 'maint' package.</span>
+<span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'tugboat'</span><span class="p">,</span>
+  <span class="n">sources</span><span class="o">=</span><span class="n">rglobs</span><span class="p">(</span><span class="s">'*.java'</span><span class="p">),</span>
+<span class="p">)</span>
 
-</div> <!-- page -->
+<span class="c"># target src/java/com/twitter/tugboat/maint</span>
+<span class="c"># Sources are claimed by multiple targets.</span>
+<span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'maint'</span><span class="p">,</span>
+  <span class="n">sources</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s">'*.java'</span><span class="p">),</span>
+<span class="p">)</span>
+</pre></div>
+<p>Existing tugboat users now depend on tugboat's maint package, even
+though the dependency was never intended. <strong>Avoiding rglobs helps avoid
+surprises.</strong></p>
+<p>Using <code>rglobs</code> also makes it easy to fall into making circular
+dependencies. You want to avoid circular dependencies. If you later want
+to factor your big target into a few focused-purpose targets, you'll
+have to untangle those circular dependencies.</p>
+<p>When a target should claim files in subpackages, it's both easy and
+recommended to explicitly list which subpackages should be claimed.</p>
+<div class="codehilite"><pre><span class="c"># target src/java/com/twitter/tugboat</span>
+<span class="c"># Intentionally claims the 'maint' package.</span>
+<span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'tugboat'</span><span class="p">,</span>
+  <span class="n">sources</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span>
+    <span class="s">'*.java'</span><span class="p">,</span>
+    <span class="s">'maint/*.java'</span><span class="p">,</span>
+  <span class="p">),</span>
+<span class="p">)</span>
+</pre></div>
 
-<script src="https://code.jquery.com/jquery-2.2.3.min.js" integrity="sha384-I6F5OKECLVtK/BL+8iSLDEHowSAfUo76ZL9+kGAgTRdiByINKJaqTPH/QVNS1VDb" crossorigin="anonymous"></script>
-<script src="bootstrap-custom.min.js"></script>
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="define-separate-targets-for-interface-and-implementation">Define Separate Targets for Interface and Implementation</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#define-separate-targets-for-interface-and-implementation">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
 
-  ga('create', 'UA-78111411-1', 'auto');
-  ga('send', 'pageview');
-</script>
+<p>If your code defines an API to be used by other modules, define a target
+that builds just that interface.</p>
+<p>Many programs provide a plugin interface so users can provide their own
+functionality. For example, a tool might define a <code>DataImporter</code> interface
+and let users provide plugins for each data source.</p>
+<p>The simple approach of providing a single BUILD target for both
+interface and implementations has a significant drawback: anyone wishing
+to implement the interface must also depend on all dependencies for all
+implementations co-published with the interface. The classpath bloats.
+The risk of dependency conflicts increases greatly. For example:</p>
+<div class="codehilite"><pre><span class="c"># Less than ideal layout - interface and implementations together.</span>
+<span class="c"># src/java/com/twitter/etl/from/BUILD</span>
+<span class="c"># src/java/com/twitter/etl/from/DataImporter.java</span>
+<span class="c"># src/java/com/twitter/etl/from/FileDataImporter.java</span>
+<span class="c"># src/java/com/twitter/etl/from/HBaseDataImporter.java</span>
+
+<span class="c"># DO NOT bundle interface and implementations - forces extra dependencies.</span>
+<span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'from'</span><span class="p">,</span>
+  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
+    <span class="s">'3rdparty/jvm/org/apache/hbase'</span><span class="p">,</span>
+  <span class="p">],</span>
+  <span class="n">sources</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s">'*.java'</span><span class="p">),</span>
+<span class="p">)</span>
+</pre></div>
+<p>To avoid this bloat, define separate packages for code that introduces many extra dependencies.
+For example, if <code>FileDataImporter.java</code> only uses standard library classes, it's appropriate to
+package it with the interface. HBase, however, is quite large, has many transitive dependencies,
+and is only required by jobs that actually read from HBase. Not <code>DataImporter</code> user wants to pull
+down all those dependencies. Separate it out into its own target:</p>
+<div class="codehilite"><pre><span class="c"># Ideal repo layout - hbase as a subpackage and separate target.</span>
+<span class="c"># src/java/com/twitter/etl/from/BUILD</span>
+<span class="c"># src/java/com/twitter/etl/from/DataImporter.java</span>
+<span class="c"># src/java/com/twitter/etl/from/FileDataImporter.java</span>
+<span class="c"># src/java/com/twitter/etl/from/hbase/BUILD</span>
+<span class="c"># src/java/com/twitter/etl/from/hbase/HBaseDataImporter.java</span>
+
+<span class="c"># pants target src/java/com/twitter/etl/from</span>
+<span class="c"># Including FileDataImporter is appropriate because it has no additional dependencies.</span>
+<span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'from'</span><span class="p">,</span>
+  <span class="n">dependencies</span><span class="o">=</span><span class="p">[],</span> <span class="c"># no extra dependencies</span>
+  <span class="n">sources</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s">'*.java'</span><span class="p">),</span>
+<span class="p">)</span>
+
+<span class="c"># pants target src/java/com/twitter/etl/from/hbase</span>
+<span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'hbase'</span><span class="p">,</span>
+  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
+    <span class="s">'3rdparty/jvm/org/apache/hbase'</span><span class="p">,</span>
+    <span class="s">'src/java/com/twitter/etl/from'</span><span class="p">,</span>
+  <span class="p">],</span>
+  <span class="n">sources</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s">'*.java'</span><span class="p">),</span>
+<span class="p">)</span>
+</pre></div>
+<p>Existing code using a package for both an interface and implementations
+should still expose the interface separately.</p>
+<div class="codehilite"><pre><span class="c"># Less than ideal layout - interface and implementations together.</span>
+<span class="c"># src/java/com/twitter/etl/from/BUILD</span>
+<span class="c"># src/java/com/twitter/etl/from/DataImporter.java</span>
+<span class="c"># src/java/com/twitter/etl/from/FileDataImporter.java</span>
+<span class="c"># src/java/com/twitter/etl/from/HBaseDataImporter.java</span>
+
+<span class="c"># Default target contains interface and lightweight implementation.</span>
+<span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'from'</span><span class="p">,</span>
+  <span class="n">sources</span><span class="o">=</span><span class="p">[</span>
+    <span class="s">'DataImporter.java'</span><span class="p">,</span>
+    <span class="s">'FileDataImporter.java'</span><span class="p">,</span>
+  <span class="p">],</span>
+<span class="p">)</span>
+
+<span class="c"># Implementation with heavyweight dependencies exposed separately.</span>
+<span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'hbase'</span><span class="p">,</span>
+  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
+    <span class="s">'3rdparty/jvm/org/apache/hbase'</span><span class="p">,</span>
+    <span class="s">'src/java/com/twitter/etl/from'</span><span class="p">,</span>
+  <span class="p">],</span>
+  <span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="s">'HBaseDataImporter.java'</span><span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="depend-on-api-in-library-targets-implementation-in-binary-targets">Depend on API in Library Targets, Implementation in Binary Targets</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#depend-on-api-in-library-targets-implementation-in-binary-targets">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>Some projects helpfully publish their API separately from
+implementation, especially if multiple implementations are available.
+SLF4J is a widely-used example.</p>
+<p>Consider the following library target that depends on both slf4j-api and
+the specific implementation slf4j-jdk14.</p>
+<div class="codehilite"><pre><span class="c"># Incorrect - forces a logging implementation on all library users.</span>
+<span class="n">scala_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'mylib'</span><span class="p">,</span>
+  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
+    <span class="s">'3rdparty:slf4j-api'</span><span class="p">,</span>
+    <span class="s">'3rdparty:slf4j-jdk14'</span><span class="p">,</span>
+  <span class="p">],</span>
+<span class="p">)</span>
+
+<span class="n">jvm_binary</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'mybin'</span><span class="p">,</span>
+  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s">':mylib'</span><span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+<p>Structure these dependencies to only depending on the API in library
+code. Allow binary targets to specify the logging implementation of
+their choosing.</p>
+<div class="codehilite"><pre><span class="c"># Better approach - only depend on API in a library target.</span>
+<span class="n">scala_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'mylib'</span><span class="p">,</span>
+  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
+    <span class="s">'3rdparty:slf4j-api'</span><span class="p">,</span>
+  <span class="p">],</span>
+<span class="p">)</span>
+
+<span class="c"># Bring your own API implementation in the binary.</span>
+<span class="n">jvm_binary</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'mybin'</span><span class="p">,</span>
+  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
+    <span class="s">'3rdparty:slf4j-jdk14'</span><span class="p">,</span>
+    <span class="s">':mylib'</span><span class="p">,</span>
+  <span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="which-build-files-are-executed-and-how">Which <code>BUILD</code> Files are "Executed"? (and how?)</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#which-build-files-are-executed-and-how">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p><code>BUILD</code> files are little Python scripts. When you notice a target in one
+<code>BUILD</code> file can depend on a target in another <code>BUILD</code> file, you might
+think those little Python scripts are linked together into one big
+Python program, but that's not exactly what's going on. If one <code>BUILD</code>
+file has a Python variable <code>x = "Hello world"</code> and another <code>BUILD</code> file
+says <code>print(x)</code>, you'll get an error: <code>x</code> is not defined.</p>
+<p>Pants executes <code>BUILD</code> files separately. Commands in <code>BUILD</code> files
+define targets and register those targets in a Pants data structure.</p>
+<p>Though your repo might contain many <code>BUILD</code> files, Pants might not
+execute all of them. If you invoke:</p>
+<div class="codehilite"><pre>./pants <span class="nb">test </span>examples/tests/java/org/pantsbuild/example/hello/greet:greet
+</pre></div>
+<p>Pants executes the source tree's top-level <code>BUILD</code> file (executed on
+every Pants run) and
+<code>examples/tests/java/org/pantsbuild/example/hello/greet/BUILD</code>. The <code>greet</code>
+target depends on targets from other <code>BUILD</code> files, so Pants executes
+those <code>BUILD</code> files, too; it iterates over the dependency tree,
+executing <code>BUILD</code> files as it goes. It does <em>not</em> execute <code>BUILD</code> files
+that don't contain targets in that dependency tree.</p>
+<p>If there's some <code>BUILD</code> code that should be executed on every run, put
+it in the source tree's top-level <code>BUILD</code> file; that gets executed on
+every Pants run.</p>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="build-files_1"><code>BUILD.*</code> files</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#build-files_1">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>We call them "<code>BUILD</code> files" because they're usually named <code>BUILD</code>, but
+they can also be named <code>BUILD.something</code>, where <em>something</em> is typically
+a short nickname for an organization, e.g., <code>BUILD.twitter</code>. This can be
+handy if your organization has some internal definitions that you need
+to combine with code that you open-source, perhaps a <code>credentials</code>
+definition that only makes sense behind your organization's firewall.</p>
+<p>A build target defined in <code>BUILD.foo</code> can't have the same <code>name</code> as a
+build target defined in the same directory's <code>BUILD</code> file; they share a
+namespace.</p>
+<p><a id="build_pants_wrapper_gone" pantsmark="build_pants_wrapper_gone"> </a></p>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="what-happened-to-the-pants-wrapper-around-targets">What happened to the <code>pants()</code> wrapper around targets?</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#what-happened-to-the-pants-wrapper-around-targets">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<p>If you have an existing project using Pants and have recently upgraded, you
+may encounter this exception:</p>
+<div class="codehilite"><pre>AddressLookupError: name 'pants' is not defined
+</pre></div>
+<p>In previous versions of Pants, targets declared in the <code>dependencies</code>
+attribute had to be wrapped in a call to the <code>pants()</code> method:</p>
+<div class="codehilite"><pre><span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'foo'</span><span class="p">,</span>
+    <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="n">pants</span><span class="p">(</span><span class="s">'bar'</span><span class="p">)])</span>
+</pre></div>
+<p>The <code>pants()</code> method has since been replaced with a noop and as of Pants 0.0.24 is officially
+deprecated. As of pants 0.0.46, use of this method now triggers an exception. Thus, the above
+snippet should be re-written to use the target as a plain string:</p>
+<div class="codehilite"><pre><span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'foo'</span><span class="p">,</span>
+    <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s">'bar'</span><span class="p">])</span>
+</pre></div>
+<p>You can use <code>sed</code> or a similar utility to quickly remove these
+references from your BUILD files with a regular expression.</p>
+<div class="codehilite"><pre><span class="c"># Run this command from the root of your repo.</span>
+<span class="nv">$ </span>sed -i <span class="s2">""</span> -e <span class="s1">'s/pants(\([^)]*\))/\1/g'</span> <span class="sb">`</span>find . -name <span class="s2">"BUILD*"</span><span class="sb">`</span>
+</pre></div>
+
+<!-- main content end -->
+
+<div class="generated">
+Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
+from dist/markdown/html/src/docs/build_files.html 2016-05-31T17:51:28.004572
+</div>
+
+</div> <!-- end of mainflow -->
+
+<nav class="bignav">
+  <div class="bignav-logo">
+    <a href="index.html">
+      <img src="logo.ico" alt="[pantsbuild logo]">
+    </a>
+  </div>
+  <form class="search" action="https://www.google.com/search">
+  <input name="as_q" class="query" placeholder="Search">
+  <input name="as_sitesearch" value="pantsbuild.github.io" type="hidden">
+  </form>
+
+<div class="site-toc">
+<ul>
+<li class="toc-h1 ">
+<a href="first_concepts.html">Pants Conceptual Overview</a>
+</li>
+<li class="toc-h1 ">
+<a href="install.html">Installing Pants</a>
+</li>
+<li class="toc-h1 ">
+<a href="first_tutorial.html">First Tutorial</a>
+</li>
+<li class="toc-h1 ">
+<a href="target_addresses.html">Target Addresses</a>
+</li>
+<li class="toc-h1 ">
+<a href="JVMProjects.html">JVM Projects with Pants</a>
+</li>
+<li class="toc-h2 ">
+<a href="3rdparty_jvm.html">JVM 3rdparty Pattern</a>
+</li>
+<li class="toc-h2 ">
+<a href="scala.html">Scala Projects with Pants</a>
+</li>
+<li class="toc-h2 ">
+<a href="from_maven.html">Pants for Maven Experts</a>
+</li>
+<li class="toc-h1 ">
+<a href="python-readme.html">Python Projects with Pants</a>
+</li>
+<li class="toc-h2 ">
+<a href="3rdparty_py.html">Python 3rdparty Pattern</a>
+</li>
+<li class="toc-h2 ">
+<a href="pex_design.html">PEX Design</a>
+</li>
+<li class="toc-h1 ">
+<a href="page.html">README Files and Markdown</a>
+</li>
+<li class="toc-h1 toc-here">
+BUILD files
+</li>
+<li class="toc-h1 ">
+<a href="invoking.html">Invoking Pants Build</a>
+</li>
+<li class="toc-h1 ">
+<a href="tshoot.html">Troubleshooting</a>
+</li>
+<li class="toc-h1 ">
+<a href="3rdparty.html">Third-Party Dependencies</a>
+</li>
+<li class="toc-h2 ">
+<a href="3rdparty_jvm.html">JVM 3rdparty Pattern</a>
+</li>
+<li class="toc-h2 ">
+<a href="3rdparty_py.html">Python 3rdparty Pattern</a>
+</li>
+<li class="toc-h1 ">
+<a href="ThriftDeps.html">Using Pants with Thrift Dependencies</a>
+</li>
+<li class="toc-h1 ">
+<a href="publish.html">Publishing Artifacts</a>
+</li>
+<li class="toc-h1 ">
+<a href="with_emacs.html">Emacs With Pants</a>
+</li>
+<li class="toc-h1 ">
+<a href="with_intellij.html">Using Pants with IntelliJ IDEA</a>
+</li>
+<li class="toc-h1 ">
+<a href="setup_repo.html">Set up Your Source Tree for Pants</a>
+</li>
+<li class="toc-h1 ">
+<a href="build_dictionary.html">Pants BUILD Dictionary</a>
+</li>
+<li class="toc-h1 ">
+<a href="options_reference.html">Pants Reference</a>
+</li>
+<li class="toc-h1 ">
+<a href="changelog.html">Release Notes</a>
+</li>
+<li class="toc-h1 ">
+<a href="export.html">Export Format</a>
+</li>
+<li class="toc-h1 ">
+<a href="dev.html">Pants Developer Center</a>
+</li>
+<li class="toc-h2 ">
+<a href="howto_contribute.html">Pants Contributors Guide</a>
+</li>
+<li class="toc-h2 ">
+<a href="howto_ask.html">How To Ask</a>
+</li>
+<li class="toc-h2 ">
+<a href="howto_develop.html">Pants Developers Guide</a>
+</li>
+<li class="toc-h2 ">
+<a href="dev_tasks.html">Task Developer's Guide</a>
+</li>
+<li class="toc-h3 ">
+<a href="dev_tasks_publish_extras.html">Develop a Task to Publish &quot;Extra&quot; Artifacts</a>
+</li>
+<li class="toc-h2 ">
+<a href="styleguide.html">Pants Style Guide</a>
+</li>
+<li class="toc-h2 ">
+<a href="howto_plugin.html">Developing a Pants Plugin</a>
+</li>
+<li class="toc-h2 ">
+<a href="intellij.html">Pants Development with IntelliJ IDEA</a>
+</li>
+<li class="toc-h2 ">
+<a href="internals.html">Pants Internals</a>
+</li>
+<li class="toc-h2 ">
+<a href="deprecation_policy.html">Pants Deprecation Policy</a>
+</li>
+<li class="toc-h2 ">
+<a href="release.html">Release Process</a>
+</li>
+<li class="toc-h3 ">
+<a href="release_jvm.html">JVM Artifact Release Process</a>
+</li>
+<li class="toc-h3 ">
+<a href="branching_strategy.html">Branching Strategy</a>
+</li>
+<li class="toc-h3 ">
+<a href="deprecation_policy.html">Pants Deprecation Policy</a>
+</li>
+<li class="toc-h2 ">
+<a href="docs.html">About the documentation</a>
+</li>
+<li class="toc-h2 ">
+<a href="credits.html">Credits</a>
+</li>
+</ul>
+</div>
+</nav>
+
+<div class="ci-status">
+<a href="https://travis-ci.org/pantsbuild/pants">
+<img src="https://travis-ci.org/pantsbuild/pants.png?branch=master"
+     alt="Are the tests passing?" title="Are the tests passing?"></a><br>
+<a href="https://coveralls.io/r/pantsbuild/pants?branch=master">
+<img src="https://coveralls.io/repos/pantsbuild/pants/badge.png?branch=master"
+     alt="Test Coverage Status" title="Test Coverage Status"></a>
+</div>
+
 </body>
 </html>

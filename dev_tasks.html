@@ -7,216 +7,48 @@
 -->
 
 <head>
-  <meta charset="utf-8"/>
+  <meta charset="utf-8" />
   <title>Task Developer's Guide</title>
+  <link rel="stylesheet" href="s.css">
+  <script src="s.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="shortcut icon" href="pants-logo.ico">
+  <link rel="shortcut icon" href="logo.ico">
   <!-- In case this is a "test publish", tell search engines where real version lives: -->
-  <link rel="canonical" href="http://pantsbuild.org/dev_tasks.html">
-
-  <link rel="stylesheet" href="bootstrap-custom.min.css">
-  <link rel="stylesheet" href="bootstrap-custom-theme.min.css">
-  <link rel="stylesheet" href="docsite.css">
+  <link rel="canonical" href="https://pantsbuild.github.io/dev_tasks.html">
 </head>
 
 <body>
 
-<div class="header">
-  <nav class="navbar navbar-default navbar-static-top">
-    <div class="container">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand navbar-brand-img" href="index.html">
-          <img src="pants-logo.ico" alt="[pantsbuild logo]">
-        </a>
-        <a class="navbar-brand" href="index.html">
-          Pants
-        </a>
-      </div>
-      <div id="navbar" class="navbar-collapse collapse">
-        <ul class="nav navbar-nav navbar-right">
-          <li><a href="/">Docs</a></li>
-          <li><a href="community.html">Community</a></li>
-          <li><a href="https://www.github.com/pantsbuild/pants">GitHub</a></li>
-          <li>
-            <form class="navbar-form navbar-left search" role="search" action="https://www.google.com/search">
-              <div class="form-group">
-                <input type="text" name="as_q" class="form-control query" placeholder="Search">
-                <input name="as_sitesearch" value="pantsbuild.org" type="hidden">
-              </div>
-            </form>
-          </li>
-        </ul>
-      </div><!--/.nav-collapse -->
-    </div>
-  </nav>
+<div id="navtoggler">
+&#x25c4; <!-- triangle -->
 </div>
+<div class="mainflow">
+<nav class="breadcrumbs">
+<ul>
+<li><a href="index.html">Pants Build</a>
+<li><a href="dev.html">Pants Developer Center</a>
+<li><a href="dev_tasks.html">Task Developer's Guide</a>
+</ul>
+</nav>
 
-<div class="page">
+<nav class="pagetoc">
+<ul>
+<li class="toc-h1"><a href="#hello-task">Hello Task</a></li>
+<li class="toc-h1"><a href="#task-installation-associate-task-with-goals">Task Installation: Associate Task with Goal[s]</a></li>
+<li class="toc-h1"><a href="#products-how-one-task-consumes-the-output-of-another">Products: How one Task consumes the output of another</a></li>
+<li class="toc-h1"><a href="#product_types-and-require_data-why-test-comes-after-compile">product_types and require_data: Why &quot;test&quot; comes after &quot;compile&quot;</a></li>
+<li class="toc-h1"><a href="#task-implementation-versioning">Task Implementation Versioning</a></li>
+<li class="toc-h1"><a href="#task-configuration">Task Configuration</a></li>
+<li class="toc-h2"><a href="#scopes">Scopes</a></li>
+<li class="toc-h2"><a href="#fine-tuning-options">Fine-tuning Options</a></li>
+<li class="toc-h1"><a href="#grouptask">GroupTask</a></li>
+<li class="toc-h1"><a href="#jvm-tool-bootstrapping">JVM Tool Bootstrapping</a></li>
+<li class="toc-h1"><a href="#enabling-artifact-caching-for-tasks">Enabling Artifact Caching For Tasks</a></li>
+</ul>
+</nav>
 
-  <div class="container-fluid">
-    <div class="row">
-
-      <div class="col-md-1">
-      </div>
-
-      <div class="col-md-2">
-        <div class="site-toc">
-          <ul>
-                <li class="toc-h1 toc-heading">
-                  Getting Started
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="install.html">Installing Pants</a>
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="setup_repo.html">Setting Up Pants</a>
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="first_tutorial.html">Tutorial</a>
-                </li>
-                <li class="toc-h1 toc-heading">
-                  Pants Basics
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="why_use_pants.html">Why Use Pants?</a>
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="first_concepts.html">Pants Concepts</a>
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="build_files.html">BUILD files</a>
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="target_addresses.html">Target Addresses</a>
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="3rdparty.html">Third-Party Dependencies</a>
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="options.html">Pants Options</a>
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="invoking.html">Invoking Pants</a>
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="reporting_server.html">Reporting Server</a>
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="ide_support.html">IDE Support</a>
-                </li>
-                <li class="toc-h1 toc-heading">
-                  JVM
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="jvm_projects.html">JVM Projects with Pants</a>
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="3rdparty_jvm.html">JVM 3rdparty Pattern</a>
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="scala.html">Scala Support</a>
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="publish.html">Publishing Artifacts</a>
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="from_maven.html">Pants for Maven Experts</a>
-                </li>
-                <li class="toc-h1 toc-heading">
-                  Python
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="python_readme.html">Python Projects with Pants</a>
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="3rdparty_py.html">Python 3rdparty Pattern</a>
-                </li>
-                <li class="toc-h1 toc-heading">
-                  Go
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="go_readme.html">Go support for Pants</a>
-                </li>
-                <li class="toc-h1 toc-heading">
-                  Codegen
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="thrift_deps.html">Thrift</a>
-                </li>
-                <li class="toc-h1 toc-heading">
-                  Docgen
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="page.html">Markdown</a>
-                </li>
-                <li class="toc-h1 toc-heading">
-                  Getting Help
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="tshoot.html">Troubleshooting</a>
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="community.html">Community</a>
-                </li>
-                <li class="toc-h1 toc-heading">
-                  Reference
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="build_dictionary.html">Pants BUILD Dictionary</a>
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="options_reference.html">Pants Reference</a>
-                </li>
-                <li class="toc-h1 toc-heading">
-                  Release Notes
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="notes-1.0.x.html">1.0.x Stable Releases</a>
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="notes-master.html">Master Pre-Releases</a>
-                </li>
-                <li class="toc-h1 toc-heading">
-                  Developer
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="dev.html">Pants Developer Center</a>
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="export.html">Export Format</a>
-                </li>
-          </ul>
-        </div> <!-- site-toc -->
-      </div>
-
-      <div class="col-md-8">
-        <div class="content">
-
-          <div class="mainflow">
-              <nav class="pagetoc">
-                <ul>
-                    <li class="toc-h1"><a href="#hello-task">Hello Task</a></li>
-                    <li class="toc-h1"><a href="#task-installation-associate-task-with-goals">Task Installation: Associate Task with Goal[s]</a></li>
-                    <li class="toc-h1"><a href="#products-how-one-task-consumes-the-output-of-another">Products: How one Task consumes the output of another</a></li>
-                    <li class="toc-h1"><a href="#product_types-and-require_data-why-test-comes-after-compile">product_types and require_data: Why &quot;test&quot; comes after &quot;compile&quot;</a></li>
-                    <li class="toc-h1"><a href="#task-implementation-versioning">Task Implementation Versioning</a></li>
-                    <li class="toc-h1"><a href="#task-configuration">Task Configuration</a></li>
-                    <li class="toc-h2"><a href="#scopes">Scopes</a></li>
-                    <li class="toc-h2"><a href="#fine-tuning-options">Fine-tuning Options</a></li>
-                    <li class="toc-h1"><a href="#grouptask">GroupTask</a></li>
-                    <li class="toc-h1"><a href="#jvm-tool-bootstrapping">JVM Tool Bootstrapping</a></li>
-                    <li class="toc-h1"><a href="#enabling-artifact-caching-for-tasks">Enabling Artifact Caching For Tasks</a></li>
-                </ul>
-              </nav>
-
-            <!-- main content start -->
-            <!-- generated by pants! -->
+<!-- main content start -->
+<!-- generated by pants! -->
 <style>
 .codehilite .hll { background-color: #ffffcc }
 .codehilite  { background: #f0f0f0; }
@@ -281,7 +113,18 @@
 .codehilite .vi { color: #bb60d5 } /* Name.Variable.Instance */
 .codehilite .il { color: #40a070 } /* Literal.Number.Integer.Long */
 </style>
-<h1 id="task-developers-guide">Task Developer's Guide</h1>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h1 id="task-developers-guide">Task Developer's Guide</h1></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#task-developers-guide">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
 <p>In Pants, code that does "real build work" (e.g., downloads prebuilt
 artifacts, compiles Java code, runs tests) lives in <em>Tasks</em>. To add a
 feature to Pants so that it can, e.g., compile a new language, you want
@@ -292,7 +135,18 @@ the Tasks that are built into Pants, look over
 <code>src/python/pants/backend/*/tasks/*.py</code>. The code makes more sense if
 you know the concepts from internals. The rest of this page introduces
 some concepts especially useful when defining a Task.</p>
-<h2 id="hello-task">Hello Task</h2>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="hello-task">Hello Task</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#hello-task">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
 <p>To implement a Task, you define a subclass of
 <a href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/task/task.py">pants.task.task.Task</a>
 and define an <code>execute</code> method for that class. The <code>execute</code> method does
@@ -307,7 +161,18 @@ to build those targets, the targets needed to build <em>those</em> targets,
 etc. Call <code>self.context.targets()</code> to get these. This method takes an
 optional parameter, a predicate function; this is useful for filtering
 just those targets that match some criteria.</p>
-<h2 id="task-installation-associate-task-with-goals">Task Installation: Associate Task with Goal[s]</h2>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="task-installation-associate-task-with-goals">Task Installation: Associate Task with Goal[s]</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#task-installation-associate-task-with-goals">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
 <p>Defining a Task is nice, but doesn't hook it up so users can get to it.
 <em>Install</em> a task to make it available to users. To do this, you register
 it with Pants, associating it with a goal. A <a href="howto_plugin.html">plugin's</a> <code>register.py</code>
@@ -329,7 +194,18 @@ installs the task in a goal with the same name. To install a task in
 goal <code>foo</code>, use <code>Goal.by_name('foo').install</code>. You can install more than
 one task in a goal; e.g., there are separate tasks to run Java tests and
 Python tests; but both are in the <code>test</code> goal.</p>
-<h2 id="products-how-one-task-consumes-the-output-of-another">Products: How one Task consumes the output of another</h2>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="products-how-one-task-consumes-the-output-of-another">Products: How one Task consumes the output of another</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#products-how-one-task-consumes-the-output-of-another">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
 <p>One task might need to consume the "products" (outputs) of another. E.g., the Java test runner
 task uses Java <code>.class</code> files that the Java compile task produces. Pants
 tasks keep track of this in the
@@ -341,7 +217,18 @@ that is provided in the task's context at <code>self.context.products</code>.</p
 at that key; later tasks can read (and perhaps further change) that
 value. That value might be, say, a dictionary that maps target specs to
 file paths.</p>
-<h2 id="product_types-and-require_data-why-test-comes-after-compile"><code>product_types</code> and <code>require_data</code>: Why "test" comes after "compile"</h2>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="product_types-and-require_data-why-test-comes-after-compile"><code>product_types</code> and <code>require_data</code>: Why "test" comes after "compile"</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#product_types-and-require_data-why-test-comes-after-compile">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
 <p>It might only make sense to run your Task after some other Task has
 finished. E.g., Pants has separate tasks to compile Java code and run
 Java tests; it only makes sense to run those tests after compiling. To
@@ -375,7 +262,18 @@ required a product type:</p>
           <span class="s">'Cannot provide {} target mappings for combined output'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jvmdoc</span><span class="p">()</span><span class="o">.</span><span class="n">product_type</span><span class="p">))</span>
 </pre></div></div>
 </p>
-<h2 id="task-implementation-versioning">Task Implementation Versioning</h2>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="task-implementation-versioning">Task Implementation Versioning</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#task-implementation-versioning">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
 <p>Tasks may optionally specify an implementation version.  This is useful to be sure that cached
 objects from previous runs of pants using an older version are not used.  If you change a task
 class in a way that will impact its outputs you should update the version.  Implementation
@@ -387,7 +285,18 @@ versions are set with the class method implementation_version.</p>
 </pre></div>
 <p>We store both a version number and the name of the class in order to disambiguate changes in
 different classes that have the same implementation version set.</p>
-<h2 id="task-configuration">Task Configuration</h2>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="task-configuration">Task Configuration</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#task-configuration">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
 <p>Tasks may be configured via the options system.</p>
 <p>To define an option, implement your Task's <code>register_options</code>
 class method and call the passed-in <code>register</code> function:</p>
@@ -406,7 +315,18 @@ class method and call the passed-in <code>register</code> function:</p>
 <div class="codehilite"><pre><span class="c"># Did user pass in the --my-option CLI flag (or set it in pants.ini)?</span>
 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_options</span><span class="p">()</span><span class="o">.</span><span class="n">my_option</span><span class="p">:</span>
 </pre></div>
-<h3 id="scopes">Scopes</h3>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="scopes">Scopes</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#scopes">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
 <p>Every task has an options <em>scope</em>: If the task is registered as <code>my-task</code> in goal <code>my-goal</code>, then its
 scope is <code>my-goal.my-task</code>, unless goal and task are the same string, in which case the scope is simply
 that string. For example, the <code>ZincCompile</code> task has scope <code>compile.zinc</code>, and the <code>filemap</code>
@@ -420,12 +340,23 @@ task with scope <code>scope</code> is set by, in this order:
 scope from the cmd-line flag name. For example, instead of
 <code>./pants compile --compile-java-foo-bar</code> you can do <code>./pants compile.java --foo-bar</code>. See
 <a href="invoking.html">Invoking Pants</a> for more information.</p>
-<h3 id="fine-tuning-options">Fine-tuning Options</h3>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h3 id="fine-tuning-options">Fine-tuning Options</h3></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#fine-tuning-options">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
 <p>When calling the <code>register</code> function, passing a few additional arguments
 will affect the behaviour of the registered option. The most common parameters are:</p>
 <ul>
 <li><code>type</code>: Constrains the type of the option. Takes a python type constructor (one of <code>bool</code>, <code>str</code>, <code>int</code>, <code>float</code>, <code>list</code>, <code>dict</code>), or a
-  special option type constructor like <code>target_option</code> from <a href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/option/custom_types.py">pants.option.custom_types</a>.
+  special option type constructor like <code>target_option</code> from <a href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/option/custom_types.py">pants.option.custom_types</a>. 
   If not specified, the option will be a string.</li>
 <li><code>default</code>: Sets a default value that will be used if the option is not specified by the user.</li>
 <li><code>advanced</code>: Indicates that an option is intended either for use by power users, or for use in
@@ -434,7 +365,18 @@ will affect the behaviour of the registered option. The most common parameters a
   of the task, such that changing the option would result in different products. When <code>True</code>,
   changing the option will cause targets built by the task to be invalidated and rebuilt.</li>
 </ul>
-<h2 id="grouptask">GroupTask</h2>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="grouptask">GroupTask</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#grouptask">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
 <p><code>Task</code>s may be grouped together under a parent <code>GroupTask</code>.
 Specifically, the JVM compile tasks:</p>
 <div class="codehilite"><pre><span class="n">jvm_compile</span> <span class="o">=</span> <span class="n">GroupTask</span><span class="o">.</span><span class="n">named</span><span class="p">(</span>
@@ -449,7 +391,18 @@ Specifically, the JVM compile tasks:</p>
 processing, and can iterate between those tasks until all work is done.
 This allows, e.g., Java code to depend on Scala code which itself
 depends on some other Java code.</p>
-<h2 id="jvm-tool-bootstrapping">JVM Tool Bootstrapping</h2>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="jvm-tool-bootstrapping">JVM Tool Bootstrapping</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#jvm-tool-bootstrapping">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
 <p>If you want to integrate an existing JVM-based tool with a pants task,
 Pants must be able to bootstrap it. That is, a running Pants will need
 to fetch the tool and create a classpath with which to run it.</p>
@@ -474,7 +427,18 @@ shows some useful idioms for JVM tasks.</p>
 <li>Let organizations/users override the jar in <code>pants.ini</code>; it makes it
     easy to use/test a new version.</li>
 </ul>
-<h2 id="enabling-artifact-caching-for-tasks">Enabling Artifact Caching For Tasks</h2>
+
+<table class="h-plus-pilcrow">
+<tbody>
+<tr>
+<td class="h-plus-pilcrow-holder"><h2 id="enabling-artifact-caching-for-tasks">Enabling Artifact Caching For Tasks</h2></td>
+<td><div class="pilcrow-div">
+<a class="pilcrow-link" href="#enabling-artifact-caching-for-tasks">¶</a>
+</div></td>
+</tr>
+</tbody>
+</table>
+
 <p>An artifact is the output file produced by a task processing some target.
 For example, the artifacts of a <code>JavaCompile</code> task on a target
 <code>java_library</code> would be the <code>.class</code> files produced by compiling the library.
@@ -530,37 +494,172 @@ independently.</p>
   return [VersionedTargetSet.from_versioned_targets(invalidation_check.invalid_vts)]
 </pre></div>
 
-            <!-- main content end -->
+<!-- main content end -->
 
-            <div class="generated">
-              Generated by <a href="http://pantsbuild.org/docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/dev_tasks.html 2016-05-27T14:18:12.338821
-            </div>
+<div class="generated">
+Generated by <a href="http://pantsbuild.github.io/docs.html">publish_docs</a>
+from dist/markdown/html/src/python/pants/docs/dev_tasks.html 2016-05-31T17:51:28.036220
+</div>
 
-          </div> <!-- mainflow -->
+</div> <!-- end of mainflow -->
 
-        </div> <!-- content -->
+<nav class="bignav">
+  <div class="bignav-logo">
+    <a href="index.html">
+      <img src="logo.ico" alt="[pantsbuild logo]">
+    </a>
+  </div>
+  <form class="search" action="https://www.google.com/search">
+  <input name="as_q" class="query" placeholder="Search">
+  <input name="as_sitesearch" value="pantsbuild.github.io" type="hidden">
+  </form>
 
-      </div>
+<div class="site-toc">
+<ul>
+<li class="toc-h1 ">
+<a href="first_concepts.html">Pants Conceptual Overview</a>
+</li>
+<li class="toc-h1 ">
+<a href="install.html">Installing Pants</a>
+</li>
+<li class="toc-h1 ">
+<a href="first_tutorial.html">First Tutorial</a>
+</li>
+<li class="toc-h1 ">
+<a href="target_addresses.html">Target Addresses</a>
+</li>
+<li class="toc-h1 ">
+<a href="JVMProjects.html">JVM Projects with Pants</a>
+</li>
+<li class="toc-h2 ">
+<a href="3rdparty_jvm.html">JVM 3rdparty Pattern</a>
+</li>
+<li class="toc-h2 ">
+<a href="scala.html">Scala Projects with Pants</a>
+</li>
+<li class="toc-h2 ">
+<a href="from_maven.html">Pants for Maven Experts</a>
+</li>
+<li class="toc-h1 ">
+<a href="python-readme.html">Python Projects with Pants</a>
+</li>
+<li class="toc-h2 ">
+<a href="3rdparty_py.html">Python 3rdparty Pattern</a>
+</li>
+<li class="toc-h2 ">
+<a href="pex_design.html">PEX Design</a>
+</li>
+<li class="toc-h1 ">
+<a href="page.html">README Files and Markdown</a>
+</li>
+<li class="toc-h1 ">
+<a href="build_files.html">BUILD files</a>
+</li>
+<li class="toc-h1 ">
+<a href="invoking.html">Invoking Pants Build</a>
+</li>
+<li class="toc-h1 ">
+<a href="tshoot.html">Troubleshooting</a>
+</li>
+<li class="toc-h1 ">
+<a href="3rdparty.html">Third-Party Dependencies</a>
+</li>
+<li class="toc-h2 ">
+<a href="3rdparty_jvm.html">JVM 3rdparty Pattern</a>
+</li>
+<li class="toc-h2 ">
+<a href="3rdparty_py.html">Python 3rdparty Pattern</a>
+</li>
+<li class="toc-h1 ">
+<a href="ThriftDeps.html">Using Pants with Thrift Dependencies</a>
+</li>
+<li class="toc-h1 ">
+<a href="publish.html">Publishing Artifacts</a>
+</li>
+<li class="toc-h1 ">
+<a href="with_emacs.html">Emacs With Pants</a>
+</li>
+<li class="toc-h1 ">
+<a href="with_intellij.html">Using Pants with IntelliJ IDEA</a>
+</li>
+<li class="toc-h1 ">
+<a href="setup_repo.html">Set up Your Source Tree for Pants</a>
+</li>
+<li class="toc-h1 ">
+<a href="build_dictionary.html">Pants BUILD Dictionary</a>
+</li>
+<li class="toc-h1 ">
+<a href="options_reference.html">Pants Reference</a>
+</li>
+<li class="toc-h1 ">
+<a href="changelog.html">Release Notes</a>
+</li>
+<li class="toc-h1 ">
+<a href="export.html">Export Format</a>
+</li>
+<li class="toc-h1 ">
+<a href="dev.html">Pants Developer Center</a>
+</li>
+<li class="toc-h2 ">
+<a href="howto_contribute.html">Pants Contributors Guide</a>
+</li>
+<li class="toc-h2 ">
+<a href="howto_ask.html">How To Ask</a>
+</li>
+<li class="toc-h2 ">
+<a href="howto_develop.html">Pants Developers Guide</a>
+</li>
+<li class="toc-h2 toc-here">
+Task Developer's Guide
+</li>
+<li class="toc-h3 ">
+<a href="dev_tasks_publish_extras.html">Develop a Task to Publish &quot;Extra&quot; Artifacts</a>
+</li>
+<li class="toc-h2 ">
+<a href="styleguide.html">Pants Style Guide</a>
+</li>
+<li class="toc-h2 ">
+<a href="howto_plugin.html">Developing a Pants Plugin</a>
+</li>
+<li class="toc-h2 ">
+<a href="intellij.html">Pants Development with IntelliJ IDEA</a>
+</li>
+<li class="toc-h2 ">
+<a href="internals.html">Pants Internals</a>
+</li>
+<li class="toc-h2 ">
+<a href="deprecation_policy.html">Pants Deprecation Policy</a>
+</li>
+<li class="toc-h2 ">
+<a href="release.html">Release Process</a>
+</li>
+<li class="toc-h3 ">
+<a href="release_jvm.html">JVM Artifact Release Process</a>
+</li>
+<li class="toc-h3 ">
+<a href="branching_strategy.html">Branching Strategy</a>
+</li>
+<li class="toc-h3 ">
+<a href="deprecation_policy.html">Pants Deprecation Policy</a>
+</li>
+<li class="toc-h2 ">
+<a href="docs.html">About the documentation</a>
+</li>
+<li class="toc-h2 ">
+<a href="credits.html">Credits</a>
+</li>
+</ul>
+</div>
+</nav>
 
-      <div class="col-md-1">
-      </div>
+<div class="ci-status">
+<a href="https://travis-ci.org/pantsbuild/pants">
+<img src="https://travis-ci.org/pantsbuild/pants.png?branch=master"
+     alt="Are the tests passing?" title="Are the tests passing?"></a><br>
+<a href="https://coveralls.io/r/pantsbuild/pants?branch=master">
+<img src="https://coveralls.io/repos/pantsbuild/pants/badge.png?branch=master"
+     alt="Test Coverage Status" title="Test Coverage Status"></a>
+</div>
 
-    </div> <!-- row -->
-  </div> <!-- container-fluid -->
-
-</div> <!-- page -->
-
-<script src="https://code.jquery.com/jquery-2.2.3.min.js" integrity="sha384-I6F5OKECLVtK/BL+8iSLDEHowSAfUo76ZL9+kGAgTRdiByINKJaqTPH/QVNS1VDb" crossorigin="anonymous"></script>
-<script src="bootstrap-custom.min.js"></script>
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-78111411-1', 'auto');
-  ga('send', 'pageview');
-</script>
 </body>
 </html>
