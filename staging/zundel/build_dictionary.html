@@ -138,6 +138,12 @@
                   <a href="3rdparty_py.html">Python 3rdparty Pattern</a>
                 </li>
                 <li class="toc-h1 toc-heading">
+                  Go
+                </li>
+                <li class="toc-h1 toc-link ">
+                  <a href="go_readme.html">Go support for Pants</a>
+                </li>
+                <li class="toc-h1 toc-heading">
                   Codegen
                 </li>
                 <li class="toc-h1 toc-link ">
@@ -168,13 +174,22 @@
                   <a href="options_reference.html">Pants Reference</a>
                 </li>
                 <li class="toc-h1 toc-heading">
+                  Release Notes
+                </li>
+                <li class="toc-h1 toc-link ">
+                  <a href="notes-1.1.x.html">1.1.x Stable Releases</a>
+                </li>
+                <li class="toc-h1 toc-link ">
+                  <a href="notes-1.0.x.html">1.0.x Stable Releases</a>
+                </li>
+                <li class="toc-h1 toc-link ">
+                  <a href="notes-master.html">Master Pre-Releases</a>
+                </li>
+                <li class="toc-h1 toc-heading">
                   Developer
                 </li>
                 <li class="toc-h1 toc-link ">
                   <a href="dev.html">Pants Developer Center</a>
-                </li>
-                <li class="toc-h1 toc-link ">
-                  <a href="changelog.html">Release History</a>
                 </li>
                 <li class="toc-h1 toc-link ">
                   <a href="export.html">Export Format</a>
@@ -381,6 +396,37 @@
 <h2 id="heading_targettypes_102">Target Types</h2>
 <div class="build-symbols">
 <ul class="nobullets collapsible">
+<a id="bdict_alias" pantsmark="bdict_alias"></a>
+<li class="collapsed">
+<code class="build-symbol">alias</code>: <span class="build-symbol-description">A target that gets replaced by its dependencies.</span>
+<ul class="nobullets">
+<span class="build-symbol-details"></span>
+<li>
+<table class="build-symbol-args">
+<tr>
+<td><span class="build-symbol-arg-name">name = ...,</span></td>
+<td></td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">dependencies = ...,</span></td>
+<td><span class="build-symbol-arg-default"> (default: [])</span></td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">description = ...,</span></td>
+<td><span class="build-symbol-arg-default"> (default: None)</span></td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">tags = ...,</span></td>
+<td><span class="build-symbol-arg-default"> (default: None)</span></td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">no_cache = ...,</span></td>
+<td><span class="build-symbol-arg-default"> (default: False)</span></td>
+</tr>
+</table>
+</li>
+</ul>
+</li>
 <a id="bdict_android_binary" pantsmark="bdict_android_binary"></a>
 <li class="collapsed">
 <code class="build-symbol">android_binary</code>: <span class="build-symbol-description">An Android binary.</span>
@@ -1731,7 +1777,7 @@ more sensible thing to bundle.
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">concurrency = ...,</span></td>
-<td>One of 'SERIAL', 'PARALLEL_CLASSES', 'PARALLEL_METHODS', or 'PARALLEL_BOTH'.  Overrides the setting of --test-junit-default-parallel or --test-junit-parallel-methods options.<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>One of 'SERIAL', 'PARALLEL_CLASSES', 'PARALLEL_METHODS', or 'PARALLEL_CLASSES_AND_METHODS'.  Overrides the setting of --test-junit-default-concurrency.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">threads = ...,</span></td>
@@ -1926,6 +1972,101 @@ But note this requires you to write a custom wire code generator with a command 
 </li>
 </ul>
 </li>
+<a id="bdict_javac_plugin" pantsmark="bdict_javac_plugin"></a>
+<li class="collapsed">
+<code class="build-symbol">javac_plugin</code>: <span class="build-symbol-description">A Java compiler plugin.</span>
+<ul class="nobullets">
+<span class="build-symbol-details"></span>
+<li>
+<table class="build-symbol-args">
+<tr>
+<td><span class="build-symbol-arg-name">name = ...,</span></td>
+<td></td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">dependencies = ...,</span></td>
+<td><span class="build-symbol-arg-default"> (default: [])</span></td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">description = ...,</span></td>
+<td><span class="build-symbol-arg-default"> (default: None)</span></td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">tags = ...,</span></td>
+<td><span class="build-symbol-arg-default"> (default: None)</span></td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">no_cache = ...,</span></td>
+<td><span class="build-symbol-arg-default"> (default: False)</span></td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">sources = ...,</span></td>
+<td>Source code files to build. Paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">provides = ...,</span></td>
+<td><span class="build-symbol-arg-default"> (default: None)</span></td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">excludes = ...,</span></td>
+<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's transitive dependencies against.<span class="build-symbol-arg-default"> (default: None)</span></td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">resources = ...,</span></td>
+<td><span class="build-symbol-arg-default"> (default: None)</span></td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">services = ...,</span></td>
+<td>A dict mapping service interface names to the classes owned by this target that implement them.  Keys are fully qualified service class names, values are lists of strings, each string the fully qualified class name of a class owned by this target that implements the service interface and should be discoverable by the jvm service provider discovery mechanism described here: https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html<span class="build-symbol-arg-default"> (default: None)</span></td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">platform = ...,</span></td>
+<td>The name of the platform (defined under the jvm-platform subsystem) to use for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified, the platform will default to the first one of these that exist: (1) the default_platform specified for jvm-platform, (2) a platform constructed from whatever java version is returned by DistributionLocator.cached().version.<span class="build-symbol-arg-default"> (default: None)</span></td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">strict_deps = ...,</span></td>
+<td>When True, only the directly declared deps of the target will be used at compilation time. This enforces that all direct deps of the target are declared, and can improve compilation speed due to smaller classpaths. Transitive deps are always provided at runtime.<span class="build-symbol-arg-default"> (default: None)</span></td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">fatal_warnings = ...,</span></td>
+<td>Whether to turn warnings into errors for this target.  If present, takes priority over the language's fatal-warnings option.<span class="build-symbol-arg-default"> (default: None)</span></td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">*args = ...,</span></td>
+<td>None</td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">provides = ...,</span></td>
+<td>An optional Dependency object indicating the The ivy artifact to export.<span class="build-symbol-arg-default"> (default: None)</span></td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">*args = ...,</span></td>
+<td>None</td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">provides = ...,</span></td>
+<td>The ``artifact`` to publish that represents this target outside the repo.<span class="build-symbol-arg-default"> (default: None)</span></td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">resources = ...,</span></td>
+<td>An optional list of file paths (DEPRECATED) or ``resources`` targets (which in turn point to file paths). The paths indicate text file resources to place in this module's jar.<span class="build-symbol-arg-default"> (default: None)</span></td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">classname = ...,</span></td>
+<td>The fully qualified plugin class name - required.<span class="build-symbol-arg-default"> (default: None)</span></td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">plugin = ...,</span></td>
+<td>The name of the plugin. Defaults to name if not supplied.  These are the names passed to javac's -Xplugin flag.<span class="build-symbol-arg-default"> (default: None)</span></td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">*args = ...,</span></td>
+<td>None</td>
+</tr>
+</table>
+</li>
+</ul>
+</li>
 <a id="bdict_jaxb_library" pantsmark="bdict_jaxb_library"></a>
 <li class="collapsed">
 <code class="build-symbol">jaxb_library</code>: <span class="build-symbol-description">A Java library generated from JAXB xsd files.</span>
@@ -2078,7 +2219,7 @@ But note this requires you to write a custom wire code generator with a command 
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">concurrency = ...,</span></td>
-<td>One of 'SERIAL', 'PARALLEL_CLASSES', 'PARALLEL_METHODS', or 'PARALLEL_BOTH'.  Overrides the setting of --test-junit-default-parallel or --test-junit-parallel-methods options.<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>One of 'SERIAL', 'PARALLEL_CLASSES', 'PARALLEL_METHODS', or 'PARALLEL_CLASSES_AND_METHODS'.  Overrides the setting of --test-junit-default-concurrency.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">threads = ...,</span></td>
@@ -2135,6 +2276,14 @@ extra files like config files, startup scripts, etc.
 <tr>
 <td><span class="build-symbol-arg-name">basename = ...,</span></td>
 <td>Name of this application, if different from the ``name``. Optionally pants uses this in the ``bundle`` goal to name the distribution artifact.  Note this is unsafe because of the possible conflict when multiple bundles are built.<span class="build-symbol-arg-default"> (default: None)</span></td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">deployjar = ...,</span></td>
+<td>If True, pack all 3rdparty and internal jar classfiles into a single deployjar in the bundle's root dir. If unset, all jars will go into the bundle's libs directory, the root will only contain a synthetic jar with its manifest's Class-Path set to those jars.<span class="build-symbol-arg-default"> (default: None)</span></td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">archive = ...,</span></td>
+<td>Create an archive of this type from the bundle.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -2578,6 +2727,10 @@ NodePreinstalledModuleResolver subject to future change or removal for now.</spa
 <tr>
 <td><span class="build-symbol-arg-name">script_name = ...,</span></td>
 <td>The tests script name in package.json. Defaults to "test".<span class="build-symbol-arg-default"> (default: None)</span></td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">timeout = ...,</span></td>
+<td>The test target timeout.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -3170,6 +3323,52 @@ http://pantsbuild.github.io/python-readme.html#how-pex-files-work.
 </li>
 </ul>
 </li>
+<a id="bdict_remote_sources" pantsmark="bdict_remote_sources"></a>
+<li class="collapsed">
+<code class="build-symbol">remote_sources</code>: <span class="build-symbol-description">A target that generates a synthetic target using deferred sources.</span>
+<ul class="nobullets">
+<span class="build-symbol-details">This provides a mechanism for using the contents of a jar as sources for another target. The jar
+where the sources are specified from is given via the `sources_target` parameter, and the type for
+the target that should be created with those sources is given via the `dest` parameter. Any
+additional arguments for the new target go into the `args` parameter.</span>
+<li>
+<table class="build-symbol-args">
+<tr>
+<td><span class="build-symbol-arg-name">name = ...,</span></td>
+<td></td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">dependencies = ...,</span></td>
+<td><span class="build-symbol-arg-default"> (default: [])</span></td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">description = ...,</span></td>
+<td><span class="build-symbol-arg-default"> (default: None)</span></td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">tags = ...,</span></td>
+<td><span class="build-symbol-arg-default"> (default: None)</span></td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">no_cache = ...,</span></td>
+<td><span class="build-symbol-arg-default"> (default: False)</span></td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">sources_target = ...,</span></td>
+<td>The address of the (typically unpacked_jars) target to get sources from.<span class="build-symbol-arg-default"> (default: None)</span></td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">dest = ...,</span></td>
+<td>The target type of the synthetic target to generate (eg, java_library).<span class="build-symbol-arg-default"> (default: None)</span></td>
+</tr>
+<tr>
+<td><span class="build-symbol-arg-name">args = ...,</span></td>
+<td>Any additional arguments necessary to construct the synthetic destination target (sources and dependencies are supplied automatically).<span class="build-symbol-arg-default"> (default: None)</span></td>
+</tr>
+</table>
+</li>
+</ul>
+</li>
 <a id="bdict_resources" pantsmark="bdict_resources"></a>
 <li class="collapsed">
 <code class="build-symbol">resources</code>: <span class="build-symbol-description">JVM resource files.</span>
@@ -3452,82 +3651,7 @@ more sensible thing to bundle.
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">plugin = ...,</span></td>
-<td>The name of the plugin which defaults to name if not supplied.<span class="build-symbol-arg-default"> (default: None)</span></td>
-</tr>
-<tr>
-<td><span class="build-symbol-arg-name">*args = ...,</span></td>
-<td>None</td>
-</tr>
-</table>
-</li>
-</ul>
-</li>
-<a id="bdict_spindle_thrift_library" pantsmark="bdict_spindle_thrift_library"></a>
-<li class="collapsed">
-<code class="build-symbol">spindle_thrift_library</code>: <span class="build-symbol-description">A Scala library generated from Spindle IDL files.</span>
-<ul class="nobullets">
-<span class="build-symbol-details"></span>
-<li>
-<table class="build-symbol-args">
-<tr>
-<td><span class="build-symbol-arg-name">name = ...,</span></td>
-<td></td>
-</tr>
-<tr>
-<td><span class="build-symbol-arg-name">dependencies = ...,</span></td>
-<td><span class="build-symbol-arg-default"> (default: [])</span></td>
-</tr>
-<tr>
-<td><span class="build-symbol-arg-name">description = ...,</span></td>
-<td><span class="build-symbol-arg-default"> (default: None)</span></td>
-</tr>
-<tr>
-<td><span class="build-symbol-arg-name">tags = ...,</span></td>
-<td><span class="build-symbol-arg-default"> (default: None)</span></td>
-</tr>
-<tr>
-<td><span class="build-symbol-arg-name">no_cache = ...,</span></td>
-<td><span class="build-symbol-arg-default"> (default: False)</span></td>
-</tr>
-<tr>
-<td><span class="build-symbol-arg-name">sources = ...,</span></td>
-<td>Source code files to build. Paths are relative to the BUILD file's directory.<span class="build-symbol-arg-default"> (default: None)</span></td>
-</tr>
-<tr>
-<td><span class="build-symbol-arg-name">provides = ...,</span></td>
-<td><span class="build-symbol-arg-default"> (default: None)</span></td>
-</tr>
-<tr>
-<td><span class="build-symbol-arg-name">excludes = ...,</span></td>
-<td>List of `exclude &lt;#exclude&gt;`_\s to filter this target's transitive dependencies against.<span class="build-symbol-arg-default"> (default: None)</span></td>
-</tr>
-<tr>
-<td><span class="build-symbol-arg-name">resources = ...,</span></td>
-<td><span class="build-symbol-arg-default"> (default: None)</span></td>
-</tr>
-<tr>
-<td><span class="build-symbol-arg-name">services = ...,</span></td>
-<td>A dict mapping service interface names to the classes owned by this target that implement them.  Keys are fully qualified service class names, values are lists of strings, each string the fully qualified class name of a class owned by this target that implements the service interface and should be discoverable by the jvm service provider discovery mechanism described here: https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html<span class="build-symbol-arg-default"> (default: None)</span></td>
-</tr>
-<tr>
-<td><span class="build-symbol-arg-name">platform = ...,</span></td>
-<td>The name of the platform (defined under the jvm-platform subsystem) to use for compilation (that is, a key into the --jvm-platform-platforms dictionary). If unspecified, the platform will default to the first one of these that exist: (1) the default_platform specified for jvm-platform, (2) a platform constructed from whatever java version is returned by DistributionLocator.cached().version.<span class="build-symbol-arg-default"> (default: None)</span></td>
-</tr>
-<tr>
-<td><span class="build-symbol-arg-name">strict_deps = ...,</span></td>
-<td>When True, only the directly declared deps of the target will be used at compilation time. This enforces that all direct deps of the target are declared, and can improve compilation speed due to smaller classpaths. Transitive deps are always provided at runtime.<span class="build-symbol-arg-default"> (default: None)</span></td>
-</tr>
-<tr>
-<td><span class="build-symbol-arg-name">fatal_warnings = ...,</span></td>
-<td>Whether to turn warnings into errors for this target.  If present, takes priority over the language's fatal-warnings option.<span class="build-symbol-arg-default"> (default: None)</span></td>
-</tr>
-<tr>
-<td><span class="build-symbol-arg-name">*args = ...,</span></td>
-<td>None</td>
-</tr>
-<tr>
-<td><span class="build-symbol-arg-name">provides = ...,</span></td>
-<td>An optional Dependency object indicating the The ivy artifact to export.<span class="build-symbol-arg-default"> (default: None)</span></td>
+<td>The name of the plugin. Defaults to name if not supplied.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 <tr>
 <td><span class="build-symbol-arg-name">*args = ...,</span></td>
@@ -3898,8 +4022,12 @@ in the bundle. ::
 <li>
 <table class="build-symbol-args">
 <tr>
+<td><span class="build-symbol-arg-name">*args = ...,</span></td>
+<td>None</td>
+</tr>
+<tr>
 <td><span class="build-symbol-arg-name">address = ...,</span></td>
-<td>A target address.</td>
+<td>A target address.<span class="build-symbol-arg-default"> (default: None)</span></td>
 </tr>
 </table>
 </li>
@@ -4264,7 +4392,7 @@ for use in a repo that tracks `pantsbuild/pants` or otherwise uses custom pants 
 </li>
 <a id="bdict_pants_version" pantsmark="bdict_pants_version"></a>
 <li class="collapsed">
-<code class="build-symbol">pants_version</code>: <span class="build-symbol-description">Returns the pants semantic version number: http://semver.org/</span>
+<code class="build-symbol">pants_version</code>: <span class="build-symbol-description">Returns the pants semantic version number as a string: http://semver.org/</span>
 <ul class="nobullets">
 <span class="build-symbol-details"></span>
 <li>
@@ -4894,8 +5022,8 @@ wiki-specific parameters, such as the title, parent page, etc.</span>
             <!-- main content end -->
 
             <div class="generated">
-              Generated by <a href="http://pantsbuild.org/docs.html">publish_docs</a>
-              from dist/reference/build_dictionary_body.html 2016-05-02T09:28:05.855896
+              Generated by <a href="docs.html">publish_docs</a>
+              from dist/reference/build_dictionary_body.html 2016-07-21T06:58:28.918742
             </div>
 
           </div> <!-- mainflow -->
@@ -4920,9 +5048,8 @@ wiki-specific parameters, such as the title, parent page, etc.</span>
       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
   })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
-  ga('create', 'UA-39101739-2', 'auto');
+  ga('create', 'UA-78111411-1', 'auto');
   ga('send', 'pageview');
 </script>
-
 </body>
 </html>

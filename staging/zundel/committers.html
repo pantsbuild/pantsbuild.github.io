@@ -8,11 +8,11 @@
 
 <head>
   <meta charset="utf-8"/>
-  <title>About the documentation</title>
+  <title>Pants Committers</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" href="pants-logo.ico">
   <!-- In case this is a "test publish", tell search engines where real version lives: -->
-  <link rel="canonical" href="http://pantsbuild.org/docs.html">
+  <link rel="canonical" href="http://pantsbuild.org/committers.html">
 
   <link rel="stylesheet" href="bootstrap-custom.min.css">
   <link rel="stylesheet" href="bootstrap-custom-theme.min.css">
@@ -204,13 +204,10 @@
           <div class="mainflow">
               <nav class="pagetoc">
                 <ul>
-                    <li class="toc-h1"><a href="#docs-in-the-code">Docs in the Code</a></li>
-                    <li class="toc-h2"><a href="#goals-tasks-and-options">Goals, tasks, and options</a></li>
-                    <li class="toc-h2"><a href="#target-types-and-other-build-file-symbols">Target types and other BUILD file symbols</a></li>
-                    <li class="toc-h1"><a href="#generating-the-site">Generating the site</a></li>
-                    <li class="toc-h1"><a href="#publishing-the-site">Publishing the site</a></li>
-                    <li class="toc-h1"><a href="#cross-references">Cross References</a></li>
-                    <li class="toc-h1"><a href="#doc-site-config">Doc Site Config</a></li>
+                    <li class="toc-h1"><a href="#becoming-a-committer">Becoming a Committer</a></li>
+                    <li class="toc-h1"><a href="#committer-responsibilities">Committer Responsibilities</a></li>
+                    <li class="toc-h1"><a href="#releaser">Releaser</a></li>
+                    <li class="toc-h1"><a href="#committer-emeritus">Committer Emeritus</a></li>
                 </ul>
               </nav>
 
@@ -280,98 +277,48 @@
 .codehilite .vi { color: #bb60d5 } /* Name.Variable.Instance */
 .codehilite .il { color: #40a070 } /* Literal.Number.Integer.Long */
 </style>
-<h1 id="about-the-documentation">About the documentation</h1>
-<p>Pants' user-facing documentation lives in markdown sources, in docstrings, and in some other
-special strings. We keep documentation close to the code it describes. If you change some code
-and wonder "should I update the docs?" the documentation that needs updating should be nearby.</p>
-<h2 id="docs-in-the-code">Docs in the Code</h2>
-<p>"Reference" information tends to live in the code. (Information for Pants developers, of course,
-lives in docstrings and comments; but some information for Pants <em>users</em> lives in the code, too.)</p>
-<h3 id="goals-tasks-and-options">Goals, tasks, and options</h3>
-<p>When a user views a goal's options by entering <code>./pants compile -h</code> or browsing the
-<a href="options_reference.html#oref_goal_compile" pantsref="oref_goal_compile">Pants Options Reference</a>, they see text that "lives" in the
-Pants source code. If you <a href="dev_tasks.html">develop a <code>Task</code></a>, document it:</p>
-<p><strong>Goal description:</strong> You can explicitly register a goal's description
-using <code>Goal.register(name, description)</code>.</p>
-<p>This description will default to the description of a task in that goal with the same name
-as the goal, if any.</p>
-<p><strong>Task description:</strong> Task descriptions are derived from the first sentence of the docstring
-of the task class.</p>
-<p><strong>Option help</strong> When registering a <code>Task</code> option, pass a <code>help</code> parameter to describe that option.</p>
-<p>
-<div class="md-included-snippet"><div class="codehilite"><pre>  <span class="k">def</span> <span class="nf">register_options</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">register</span><span class="p">):</span>
-    <span class="nb">super</span><span class="p">(</span><span class="n">ListGoals</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">register_options</span><span class="p">(</span><span class="n">register</span><span class="p">)</span>
-    <span class="n">register</span><span class="p">(</span><span class="s">'--graph'</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
-             <span class="n">help</span><span class="o">=</span><span class="s">'Generate a graphviz graph of installed goals.'</span><span class="p">)</span>
-</pre></div></div>
+<h1 id="pants-committers">Pants Committers</h1>
+<p>The Pants project welcomes contributions from all developers.  In order to properly vet changes to the codebase, we have a review process and your code must be approved and committed to the repo by a developer with commit access to the pantsbuild github project.</p>
+<p>A Committer is a member of the community that has access to commit changes to the master branch of the github repo.  We limit the number of committers to developers that have a proven track record with contributing code changes and actively participating in the project through code contributions, reviews, and community discussions.<br/>
 </p>
-<h3 id="target-types-and-other-build-file-symbols">Target types and other <code>BUILD</code> file symbols</h3>
-<p>When a user views a target's parameters by entering <code>./pants targets --details=java_library</code> or
-by browsing the <a href="build_dictionary.html#bdict_java_library" pantsref="bdict_java_library">Pants BUILD Dictionary</a>, that information
-is derived from the docstrings of the classes implementing those symbols.</p>
-<h2 id="generating-the-site">Generating the site</h2>
-<p>To see http://pantsbuild.org/ site's content as it would be generated based on your local
-copy of the pants repo, enter the command</p>
-<div class="codehilite"><pre><span class="c"># This publishes the docs **locally** and opens (-o) them in your browser for review</span>
-./build-support/bin/publish_docs.sh -o
-</pre></div>
-<h2 id="publishing-the-site">Publishing the site</h2>
-<p>We publish the site via <a href="https://pages.github.com/">Github Pages</a>. You need <code>pantsbuild</code> commit
-privilege to publish the site.</p>
-<p>Use the same script as for generating the site, but request it also be published. Don't
-worry—you'll get a chance to abort the publish just before it's committed remotely:</p>
-<div class="codehilite"><pre><span class="c"># This publishes the docs locally and opens (-o) them in your browser for review</span>
-<span class="c"># and then prompts you to confirm you want to publish these docs remotely before</span>
-<span class="c"># proceeding to publish to http://pantsbuild.org</span>
-./build-support/bin/publish_docs.sh -op
-</pre></div>
-<p>If you'd like to publish remotely for others to preview your changes easily, the <code>-d</code> option creates
-a copy of the site in a subdir of <a href="http://pantsbuild.org/">http://pantsbuild.org/</a>:</p>
-<div class="codehilite"><pre><span class="c"># This publishes the docs locally and opens (-o) them in your browser for review</span>
-<span class="c"># and then prompts you to confirm you want to publish these docs remotely before</span>
-<span class="c"># proceeding to publish to http://pantsbuild.org/sirois-test-site</span>
-./build-support/bin/publish_docs.sh -opd sirois-test-site
-</pre></div>
-<h2 id="cross-references">Cross References</h2>
-<p>If your doc has a
-link like <code>&lt;a pantsref="bdict_java_library"&gt;java_library&lt;/a&gt;</code>, it links to
-the BUILD Dictionary entry for <code>java_library</code>. To set up a short-hand
-link like this...</p>
-<p>Define the destination of the link with an <code>pantsmark</code> anchor, e.g.,
-<code>&lt;a pantsmark="bdict_java_library"&gt; &lt;/a&gt;</code>. The <code>pantsmark</code> attribute (here,
-<code>bdict_java_library</code>) must be unique within the doc set.</p>
-<p>Link to the destination with an <code>pantsref</code>, e.g.,
-<code>&lt;a pantsref="bdict_java_library"&gt;java_library&lt;/a&gt;</code>.</p>
-<h2 id="doc-site-config">Doc Site Config</h2>
-<p>The site generator
-takes "raw" <code>.html</code> files, "wraps" them in a template with some
-navigation UI, and writes out the resulting <code>.html</code> files.</p>
-<p>You configure this with <code>src/docs/docsite.json</code>:</p>
-<p><code>sources</code>:<br>
-Map of pages to the <code>.html</code> files they're generated from. E.g.,
-<code>"build_dictionary": "dist/builddict/build_dictionary.html",</code> means to
-generate the site's /build_dictionary.html page, the site generator
-should get the "raw" file <code>dist/builddict/build_dictionary.html</code> and
-apply the template to it.</br></p>
-<p><code>tree</code>:<br>
-Outline structure of the site. Each node of the tree is a dict. Each
-node-dict can have a <code>page</code>, a page defined in <code>sources</code> above. Each
-node-dict can have a <code>children</code>, a list of more nodes.</br></p>
-<p><code>template</code>:<br>
-Path to mustache template to apply to each page.</br></p>
-<p><code>extras</code>:<br>
-Map of "extra" files to copy over. Handy for graphics, stylesheets, and
-such.</br></p>
-<p><code>outdir</code>:<br>
-Path to which to write the generated site.</br></p>
-<p>To add a page and have it show up in the side navigation UI, add the
-page to the <code>sources</code> dict and to the <code>tree</code> hierarchy.</p>
+<h2 id="becoming-a-committer">Becoming a Committer</h2>
+<p>The minimum requirement to become a committer is evidence of at least 10 "meaty" contributions to the open source repo.  Committers are then approved via a vote on the pants-commiters@googlegroups.com private group. The definition of what constitutes "meaty" is kept intentionally vague, but at a minimum, those contributions should:</p>
+<ul>
+<li>Include changes that impact code, test, and documentation</li>
+<li>Be vetted by committers from multiple organizations</li>
+<li>Cover more than a single area of the pants codebase</li>
+<li>Be more substantial than simply fixing typos and updating error messages</li>
+</ul>
+<p>A committer has access to the following resources:</p>
+<ul>
+<li>Commit access to the github repo</li>
+<li>Ability to Stop/restart builds on Travis-CI</li>
+<li>An account on the code review site (RBCommons) that is part of the 'twitter’ team (this needs to be fixed!).</li>
+<li>Access to the pants-committers@ review site</li>
+</ul>
+<p>Some committers will also have access to publish changes to the Maven Central Repository</p>
+<p>The list of current and past committers will be listed in a file named COMMITTERS.rb in the root of the pantsbuild/pants repo.</p>
+<h2 id="committer-responsibilities">Committer Responsibilities</h2>
+<p>It is the responsibility of a Committer is to ensure the ongoing good health and high quality of the project is maintained.</p>
+<ul>
+<li>Committers are responsible for the quality of the changes that they approve</li>
+<li>Committers should raise objections to changes that may impact the performance, security, or maintainability of the project</li>
+<li>Committers should help shepherd changes from non-committers through our contribution process.</li>
+<li>Committers should maintain a courteous and professional demeanor when participating in the community.</li>
+<li>Committers should be regular participants on our public communications channels.</li>
+</ul>
+<p>Committers should respond to public requests for code reviews.  While it is not necessary for every review to be approved by every committer, the health of the community depends on quality vetting of incoming changes.  If only a single committer is tagged on a review and is unable to participate, the committer should respond to the review and recommend another committer.</p>
+<h2 id="releaser">Releaser</h2>
+<p>A Releaser is a Committer that has access to the pantsbuild.pants pypi repository.  A Committer that wishes to participate in the pants release rotation may additionally become a Releaser.   A Releaser is responsible for updating the release documentation, creating release builds, and shepherding them through the review and release process. </p>
+<h2 id="committer-emeritus">Committer Emeritus</h2>
+<p>A committer may be placed on emeritus status.  This is an honorary position for committers that were formerly active in the community but have retired from acetive Pants life.  These committers do not have commit access to the repositories.</p>
+<p>The decision to place a committer on emeritus status is either by request, or by majority vote of the committers.  If you have not participated in code reviews or contributed a patch to pants within the past three months an automatic recommendation for emeritus status may be put forward to the committers.</p>
 
             <!-- main content end -->
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/docs.html 2016-07-21T06:58:29.007123
+              from dist/markdown/html/src/docs/committers.html 2016-07-21T06:58:29.796408
             </div>
 
           </div> <!-- mainflow -->

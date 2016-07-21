@@ -8,11 +8,11 @@
 
 <head>
   <meta charset="utf-8"/>
-  <title>About the documentation</title>
+  <title>Release Strategy</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" href="pants-logo.ico">
   <!-- In case this is a "test publish", tell search engines where real version lives: -->
-  <link rel="canonical" href="http://pantsbuild.org/docs.html">
+  <link rel="canonical" href="http://pantsbuild.org/release_strategy.html">
 
   <link rel="stylesheet" href="bootstrap-custom.min.css">
   <link rel="stylesheet" href="bootstrap-custom-theme.min.css">
@@ -204,13 +204,18 @@
           <div class="mainflow">
               <nav class="pagetoc">
                 <ul>
-                    <li class="toc-h1"><a href="#docs-in-the-code">Docs in the Code</a></li>
-                    <li class="toc-h2"><a href="#goals-tasks-and-options">Goals, tasks, and options</a></li>
-                    <li class="toc-h2"><a href="#target-types-and-other-build-file-symbols">Target types and other BUILD file symbols</a></li>
-                    <li class="toc-h1"><a href="#generating-the-site">Generating the site</a></li>
-                    <li class="toc-h1"><a href="#publishing-the-site">Publishing the site</a></li>
-                    <li class="toc-h1"><a href="#cross-references">Cross References</a></li>
-                    <li class="toc-h1"><a href="#doc-site-config">Doc Site Config</a></li>
+                    <li class="toc-h1"><a href="#release-responsibilities">Release Responsibilities</a></li>
+                    <li class="toc-h1"><a href="#release-cadence">Release Cadence</a></li>
+                    <li class="toc-h1"><a href="#release-types">Release Types</a></li>
+                    <li class="toc-h2"><a href="#dev-releases">dev releases</a></li>
+                    <li class="toc-h2"><a href="#stable-releases">stable releases</a></li>
+                    <li class="toc-h3"><a href="#major-and-minor-stable-branches">major and minor stable branches</a></li>
+                    <li class="toc-h3"><a href="#patch-stable-releases">patch stable Releases</a></li>
+                    <li class="toc-h1"><a href="#naming-conventions">Naming conventions</a></li>
+                    <li class="toc-h2"><a href="#stable-naming">stable naming</a></li>
+                    <li class="toc-h2"><a href="#dev-naming">dev naming</a></li>
+                    <li class="toc-h1"><a href="#examples">Examples</a></li>
+                    <li class="toc-h1"><a href="#stable-release-candidates">stable Release Candidates</a></li>
                 </ul>
               </nav>
 
@@ -280,98 +285,107 @@
 .codehilite .vi { color: #bb60d5 } /* Name.Variable.Instance */
 .codehilite .il { color: #40a070 } /* Literal.Number.Integer.Long */
 </style>
-<h1 id="about-the-documentation">About the documentation</h1>
-<p>Pants' user-facing documentation lives in markdown sources, in docstrings, and in some other
-special strings. We keep documentation close to the code it describes. If you change some code
-and wonder "should I update the docs?" the documentation that needs updating should be nearby.</p>
-<h2 id="docs-in-the-code">Docs in the Code</h2>
-<p>"Reference" information tends to live in the code. (Information for Pants developers, of course,
-lives in docstrings and comments; but some information for Pants <em>users</em> lives in the code, too.)</p>
-<h3 id="goals-tasks-and-options">Goals, tasks, and options</h3>
-<p>When a user views a goal's options by entering <code>./pants compile -h</code> or browsing the
-<a href="options_reference.html#oref_goal_compile" pantsref="oref_goal_compile">Pants Options Reference</a>, they see text that "lives" in the
-Pants source code. If you <a href="dev_tasks.html">develop a <code>Task</code></a>, document it:</p>
-<p><strong>Goal description:</strong> You can explicitly register a goal's description
-using <code>Goal.register(name, description)</code>.</p>
-<p>This description will default to the description of a task in that goal with the same name
-as the goal, if any.</p>
-<p><strong>Task description:</strong> Task descriptions are derived from the first sentence of the docstring
-of the task class.</p>
-<p><strong>Option help</strong> When registering a <code>Task</code> option, pass a <code>help</code> parameter to describe that option.</p>
-<p>
-<div class="md-included-snippet"><div class="codehilite"><pre>  <span class="k">def</span> <span class="nf">register_options</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">register</span><span class="p">):</span>
-    <span class="nb">super</span><span class="p">(</span><span class="n">ListGoals</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">register_options</span><span class="p">(</span><span class="n">register</span><span class="p">)</span>
-    <span class="n">register</span><span class="p">(</span><span class="s">'--graph'</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
-             <span class="n">help</span><span class="o">=</span><span class="s">'Generate a graphviz graph of installed goals.'</span><span class="p">)</span>
-</pre></div></div>
-</p>
-<h3 id="target-types-and-other-build-file-symbols">Target types and other <code>BUILD</code> file symbols</h3>
-<p>When a user views a target's parameters by entering <code>./pants targets --details=java_library</code> or
-by browsing the <a href="build_dictionary.html#bdict_java_library" pantsref="bdict_java_library">Pants BUILD Dictionary</a>, that information
-is derived from the docstrings of the classes implementing those symbols.</p>
-<h2 id="generating-the-site">Generating the site</h2>
-<p>To see http://pantsbuild.org/ site's content as it would be generated based on your local
-copy of the pants repo, enter the command</p>
-<div class="codehilite"><pre><span class="c"># This publishes the docs **locally** and opens (-o) them in your browser for review</span>
-./build-support/bin/publish_docs.sh -o
-</pre></div>
-<h2 id="publishing-the-site">Publishing the site</h2>
-<p>We publish the site via <a href="https://pages.github.com/">Github Pages</a>. You need <code>pantsbuild</code> commit
-privilege to publish the site.</p>
-<p>Use the same script as for generating the site, but request it also be published. Don't
-worry—you'll get a chance to abort the publish just before it's committed remotely:</p>
-<div class="codehilite"><pre><span class="c"># This publishes the docs locally and opens (-o) them in your browser for review</span>
-<span class="c"># and then prompts you to confirm you want to publish these docs remotely before</span>
-<span class="c"># proceeding to publish to http://pantsbuild.org</span>
-./build-support/bin/publish_docs.sh -op
-</pre></div>
-<p>If you'd like to publish remotely for others to preview your changes easily, the <code>-d</code> option creates
-a copy of the site in a subdir of <a href="http://pantsbuild.org/">http://pantsbuild.org/</a>:</p>
-<div class="codehilite"><pre><span class="c"># This publishes the docs locally and opens (-o) them in your browser for review</span>
-<span class="c"># and then prompts you to confirm you want to publish these docs remotely before</span>
-<span class="c"># proceeding to publish to http://pantsbuild.org/sirois-test-site</span>
-./build-support/bin/publish_docs.sh -opd sirois-test-site
-</pre></div>
-<h2 id="cross-references">Cross References</h2>
-<p>If your doc has a
-link like <code>&lt;a pantsref="bdict_java_library"&gt;java_library&lt;/a&gt;</code>, it links to
-the BUILD Dictionary entry for <code>java_library</code>. To set up a short-hand
-link like this...</p>
-<p>Define the destination of the link with an <code>pantsmark</code> anchor, e.g.,
-<code>&lt;a pantsmark="bdict_java_library"&gt; &lt;/a&gt;</code>. The <code>pantsmark</code> attribute (here,
-<code>bdict_java_library</code>) must be unique within the doc set.</p>
-<p>Link to the destination with an <code>pantsref</code>, e.g.,
-<code>&lt;a pantsref="bdict_java_library"&gt;java_library&lt;/a&gt;</code>.</p>
-<h2 id="doc-site-config">Doc Site Config</h2>
-<p>The site generator
-takes "raw" <code>.html</code> files, "wraps" them in a template with some
-navigation UI, and writes out the resulting <code>.html</code> files.</p>
-<p>You configure this with <code>src/docs/docsite.json</code>:</p>
-<p><code>sources</code>:<br>
-Map of pages to the <code>.html</code> files they're generated from. E.g.,
-<code>"build_dictionary": "dist/builddict/build_dictionary.html",</code> means to
-generate the site's /build_dictionary.html page, the site generator
-should get the "raw" file <code>dist/builddict/build_dictionary.html</code> and
-apply the template to it.</br></p>
-<p><code>tree</code>:<br>
-Outline structure of the site. Each node of the tree is a dict. Each
-node-dict can have a <code>page</code>, a page defined in <code>sources</code> above. Each
-node-dict can have a <code>children</code>, a list of more nodes.</br></p>
-<p><code>template</code>:<br>
-Path to mustache template to apply to each page.</br></p>
-<p><code>extras</code>:<br>
-Map of "extra" files to copy over. Handy for graphics, stylesheets, and
-such.</br></p>
-<p><code>outdir</code>:<br>
-Path to which to write the generated site.</br></p>
-<p>To add a page and have it show up in the side navigation UI, add the
-page to the <code>sources</code> dict and to the <code>tree</code> hierarchy.</p>
+<h1 id="release-strategy">Release Strategy</h1>
+<p>This page describes the "who", "what", and "when" of Pants releases. If you're interested
+in learning "how" to release, see the <a href="release.html">Release Process</a> page.</p>
+<h2 id="release-responsibilities">Release Responsibilities</h2>
+<p>There is one release manager per week, decided via a shared calendar (to volunteer to be added
+to the calendar, see <a href="howto_contribute.html">How to Contribute</a>).</p>
+<p>The release manager is responsible for:</p>
+<ul>
+<li>Creating <code>stable</code> branches</li>
+<li>Creating and gathering feedback on release candidates</li>
+<li>Cutting <code>dev</code> and <code>stable</code> releases</li>
+</ul>
+<p>These release types and responsibilities are described below.</p>
+<h2 id="release-cadence">Release Cadence</h2>
+<p>The release manager for a particular week decides whether to cut <code>stable</code> or <code>dev</code> releases (or
+both!) based on the following criteria:</p>
+<ol>
+<li>Decide whether to create a <em>new</em> <code>stable</code> branch:<ul>
+<li>If it has been approximately <a href="deprecation_policy.html">three months</a> since the
+previous <code>stable</code> branch, the release manager should inspect changes that have landed in master
+since the previous <code>stable</code> branch was created, and decide whether the changes justify a new
+<code>stable</code> branch (this is intentionally left open for discussion). If a new <code>stable</code> branch is
+justified, it will be either a <code>major</code> or <code>minor</code> branch (described below).</li>
+<li>If a new <code>stable</code> branch is <em>not</em> created (because of insufficient time/change to justify the
+stable vetting process), the release manager must cut a <code>dev</code> release from master instead.</li>
+</ul>
+</li>
+<li>In addition to any <code>dev</code> release or newly-created <code>stable</code> branches, the release manager should
+determine whether any existing <code>stable</code> branches need new release candidates by inspecting the
+<a href="https://docs.google.com/spreadsheets/d/12rsaVVhmSXrMVlZV6PUu5uzsKNNcceP9Lpf7rpju_IE/edit#gid=0">Pants Backport Proposals</a>
+sheet. If there are requests "sufficient" to justify <code>patch</code> releases for existing <code>stable</code> branches, the
+release manager should cut release candidates for those branches.</li>
+</ol>
+<p>In other words, for a given week: <em>one of either</em> a <code>dev</code> release or a new <code>stable</code> branch are
+created, and additionally, <code>patch</code> releases for existing <code>stable</code> branches <em>might</em> be created.</p>
+<h2 id="release-types">Release Types</h2>
+<h3 id="dev-releases"><code>dev</code> releases</h3>
+<p><code>dev</code> releases are releases that occur directly from master, without the additional vetting that
+is applied to <code>stable</code> releases. They help to ensure a steady release cadence from master by filling
+in the gaps between the (generally more time consuming) <code>stable</code> releases.</p>
+<h3 id="stable-releases"><code>stable</code> releases</h3>
+<p><code>stable</code> release candidates generally happen every two weeks, provided that there are enough user
+facing changes to warrant a new <code>stable</code> release. Of those two weeks, five business days are allocated
+to bugfixing and testing by pants contributors on a release candidate announcement thread (described
+below).</p>
+<h4 id="major-and-minor-stable-branches"><code>major</code> and <code>minor</code> stable branches</h4>
+<p>The decision to create a <code>major</code> or a <code>minor</code> stable branch is based on consensus on
+<a href="howto_contribute.html">pants-devel@</a> as to the impact of the changes.
+<code>major</code> releases signify large or breaking changes. <code>minor</code> releases however should be compatible
+with the last two <code>minor</code> releases. In other words if a feature is deprecated in version <code>1.2.x</code>
+you should be able to continue using that feature at least through version <code>1.4.0</code>.</p>
+<h4 id="patch-stable-releases"><code>patch</code> stable Releases</h4>
+<p>In order to allow us to react quickly to bugs, <code>patch</code> fixes are released for <code>stable</code> branches as
+needed and should always consist of fixes or small backwards-compatible features backported from
+master. These releases update the patch version number, (ie, from <code>1.0.x</code> to <code>1.0.y</code>) and should
+only include commits from the Pants Backport Proposals that are deemed to be
+<a href="deprecation_policy.html">backwards compatible</a>.</p>
+<h2 id="naming-conventions">Naming conventions</h2>
+<h3 id="stable-naming"><code>stable</code> naming</h3>
+<p>Leading up to a <code>stable</code> release, development work should be done on a branch named with the
+following format: <code>n.n.x</code> where n.n are the <code>major</code>/<code>minor</code> version numbers and "<code>x</code>" is a literal
+character placeholder for the <code>patch</code> version. Release candidates of an upcoming <code>stable</code> release
+are suffixed with <code>rcN</code>. For instance: "the <code>1.1.x</code> <code>stable</code> branch",
+"the <code>1.1.1rc0</code> release candidate", and "the <code>1.1.1</code> <code>stable</code> release".</p>
+<h3 id="dev-naming"><code>dev</code> naming</h3>
+<p><code>dev</code> releases occur between <code>stable</code> branches, and are differentiated by a <code>devN</code> suffix. The pattern
+to follow is <code>N.N.0devN</code>, where <code>N.N</code> are the <em>next</em> <code>major</code>/<code>minor</code> branch that will be created
+and N is the next sequential number starting from <code>0</code>. For instance: "the <code>1.1.0dev0</code> <code>dev</code> release".</p>
+<h2 id="examples">Examples</h2>
+<ul>
+<li>
+<p>Leading up to the release of <code>2.0.0</code> the release manager would create a <code>stable</code> branch with
+the literal name "<code>2.0.x</code>". They would cut release candidates named <code>2.0.0rc0</code> (and so on), and
+afterwards, they'd finalize the <code>2.0.0</code> release in that <code>2.0.x</code> branch by tagging the
+commit with the release version: <code>v2.0.0</code>.</p>
+</li>
+<li>
+<p>If a release manager had a bugfix from master that they needed to backport to the <code>1.1.x</code> <code>stable</code>
+branch, they would cherry-pick the commit to the <code>1.1.x</code> branch, run a series of release candidates
+(ie, <code>1.1.1rc0</code>, etc), and finally tag the validated commit with a new patch version (ie <code>v1.1.1</code>).</p>
+</li>
+<li>
+<p>If <code>dev</code> releases were required after having created the <code>1.0.x</code> branch, but before having created
+the <code>1.1.x</code> branch, then they would start with <code>1.1.0dev0</code>, and continue weekly to <code>1.1.0devN</code>
+until the <code>1.1.x</code> branch had been created.</p>
+</li>
+</ul>
+<h2 id="stable-release-candidates"><code>stable</code> Release Candidates</h2>
+<p>In order to make a <code>stable</code> release, the release manager needs to create a release candidate for
+contributors to test. Once a release candidate has been created and announced according to the
+<a href="release.html">Release Process</a>, the release manager should allow five business days
+for contributors to raise concerns on the release candidate announcement thread. During those five
+days the release manager might need to perform multiple release candidates, until finally, when no
+more blockers are raised against a particular release candidate, the final version of that release
+can be cut.</p>
 
             <!-- main content end -->
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/docs.html 2016-07-21T06:58:29.007123
+              from dist/markdown/html/src/docs/release_strategy.html 2016-07-21T06:58:29.054942
             </div>
 
           </div> <!-- mainflow -->
