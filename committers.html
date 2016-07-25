@@ -8,11 +8,11 @@
 
 <head>
   <meta charset="utf-8"/>
-  <title>Pants Concepts</title>
+  <title>Pants Committers</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" href="pants-logo.ico">
   <!-- In case this is a "test publish", tell search engines where real version lives: -->
-  <link rel="canonical" href="http://pantsbuild.org/first_concepts.html">
+  <link rel="canonical" href="http://pantsbuild.org/committers.html">
 
   <link rel="stylesheet" href="bootstrap-custom.min.css">
   <link rel="stylesheet" href="bootstrap-custom-theme.min.css">
@@ -86,8 +86,8 @@
                 <li class="toc-h1 toc-link ">
                   <a href="why_use_pants.html">Why Use Pants?</a>
                 </li>
-                <li class="toc-h1 toc-link toc-here">
-                  Pants Concepts
+                <li class="toc-h1 toc-link ">
+                  <a href="first_concepts.html">Pants Concepts</a>
                 </li>
                 <li class="toc-h1 toc-link ">
                   <a href="build_files.html">BUILD files</a>
@@ -204,12 +204,10 @@
           <div class="mainflow">
               <nav class="pagetoc">
                 <ul>
-                    <li class="toc-h1"><a href="#goals-and-tasks">Goals and Tasks</a></li>
-                    <li class="toc-h1"><a href="#targets">Targets</a></li>
-                    <li class="toc-h1"><a href="#target-types">Target Types</a></li>
-                    <li class="toc-h1"><a href="#addresses">Addresses</a></li>
-                    <li class="toc-h1"><a href="#what-pants-does">What Pants Does</a></li>
-                    <li class="toc-h1"><a href="#next-step">Next Step</a></li>
+                    <li class="toc-h1"><a href="#becoming-a-committer">Becoming a Committer</a></li>
+                    <li class="toc-h1"><a href="#committer-responsibilities">Committer Responsibilities</a></li>
+                    <li class="toc-h1"><a href="#releaser">Releaser</a></li>
+                    <li class="toc-h1"><a href="#committer-emeritus">Committer Emeritus</a></li>
                 </ul>
               </nav>
 
@@ -279,149 +277,48 @@
 .codehilite .vi { color: #bb60d5 } /* Name.Variable.Instance */
 .codehilite .il { color: #40a070 } /* Literal.Number.Integer.Long */
 </style>
-<h1 id="pants-concepts">Pants Concepts</h1>
-<p>To use Pants effectively, it helps to understand a few concepts:</p>
+<h1 id="pants-committers">Pants Committers</h1>
+<p>The Pants project welcomes contributions from all developers.  In order to properly vet changes to the codebase, we have a review process and your code must be approved and committed to the repo by a developer with commit access to the pantsbuild github project.</p>
+<p>A Committer is a member of the community who has access to commit changes to the master branch of the github repo.  We limit the number of committers to developers who have a proven track record with contributing code changes and actively participate in the project through code contributions, reviews, and community discussions.</p>
+<h2 id="becoming-a-committer">Becoming a Committer</h2>
+<p>Nominations for committers are discussed on the pants-committers@googlegroups.com group.  The discussion will consider commits contributed to date and the participation of the contributor in reviews and public communication channels.  Feedback is gathered on what might be required for the contributor to be approved as a committer.</p>
+<p>The minimum requirement to become a committer is evidence of at least 10 "significant contributions" to the open source repo.  The definition of what constitutes a "significant contribution" is kept intentionally vague, but at a minimum, those contributions should:</p>
 <ul>
-<li><strong>Goals</strong> help users tell pants what actions to take</li>
-<li><strong>Tasks</strong> are the pants modules that run actions</li>
-<li><strong>Targets</strong> describe what files to take those actions upon</li>
-<li><strong>Target types</strong> define the types of operations that can be performed on
-a target</li>
-<li><strong>Addresses</strong> describe the location of a target in the repo</li>
+<li>Include changes that impact code, test, and documentation.</li>
+<li>Be vetted by committers from multiple organizations.</li>
+<li>Cover more than a single area of the pants codebase.</li>
+<li>Demonstrate knowledge of and willingness to follow project development processes and procedures.</li>
 </ul>
-<h2 id="goals-and-tasks">Goals and Tasks</h2>
-<p><strong>Goals</strong> are the "verbs" of Pants.  When you invoke Pants, you name
-goals on the command line to say what Pants should do. For example, to
-run tests, you would invoke Pants with the <code>test</code> goal. To create a
-bundle--an archive containing a runnable binary and resource
-files--you would invoke Pants with the <code>bundle</code> goal.</p>
-<p><strong>Tasks</strong> actually perform the work.  When you invoke a goal, it finds
-all the tasks needed to make that goal work. Sometimes, there is a one
-to one mapping between a task name and a goal name, but often multiple tasks
-are registered in a goal.  For example, the <code>junit</code>
-task runs tests for JVM projects.  It is registered in the <code>test</code>
-goal and sometimes referred to as <code>test.junit</code>.</p>
-<p>In a nutshell, goals are the way users specify tasks.  Sometimes goals
-are helpful groupings of tasks to make it easier for users to tell
-pants what they want to do.</p>
-<p>Tasks can depend on other tasks. When you invoke a goal in
-Pants, it builds a list of dependent tasks that need to be executed
-first.  So, when you invoke the <code>test</code> goal, it will also invoke the
-tasks in the <code>gen</code>, <code>resolve</code> and <code>compile</code> goals, because tasks for
-code generation, artifact resolution, and compilation need to occur
-before a test can be run.  To find out more about how task dependencies
-are computed, read about <em>product types</em> in
-<a href="dev_tasks.html">Developing a Pants Task</a>.</p>
-<h2 id="targets">Targets</h2>
-<p><strong>Targets</strong> are the "nouns" of Pants, things pants can act upon. You
-annotate your source code with <code>BUILD</code> files to define these
-targets. For example, if your <code>tests/com/twitter/mybird/</code> directory
-contains JUnit tests, you have a <code>tests/com/twitter/mybird/BUILD</code> file
-with a <code>junit_tests</code> target definition. As you change your source code,
-you'll occasionally change the set of Targets by editing <code>BUILD</code> files.
-E.g., if you refactor some code, moving part of it to a new directory,
-you'll probably set up a new <code>BUILD</code> file with a target to build that
-new directory's code.</p>
-<p>Targets can "depend" on other targets. For example, if your <code>foo</code> code
-imports code from another target <code>bar</code>, then <code>foo</code> depends on <code>bar</code>. You
-specify this dependency in <code>foo</code>'s target definition in its <code>BUILD</code>
-file. If you invoke Pants to compile <code>foo</code>, it "knows" it also needs to
-compile <code>bar</code>, and does so.</p>
-<h2 id="target-types">Target Types</h2>
-<p><strong>Target Types</strong> describe the kind of target to be operated on. Each
-Pants build target has a <em>type</em>, such as <code>java_library</code> or
-<code>python_binary</code>. Tasks choose to work on particular targets by
-selecting the target types they are interested in from the build
-graph.</p>
-<p>For a list of all Target types (and other things that can go in <code>BUILD</code>
-files), see the <a href="build_dictionary.html">BUILD Dictionary</a>.
-The following list describes the most common target types:</p>
-<p><strong>Library Targets</strong><br>
-To define an "importable" thing, you want a library target type, such as
-<code>java_library</code> or <code>python_library</code>. Another target whose code imports a
-library target's code should list the library target in its
-<code>dependencies</code>.</br></p>
-<p><strong>Binary Targets</strong><br>
-To define a "runnable" thing, you want a <code>jvm_binary</code> or <code>python_binary</code>
-target. A binary probably has a <code>main</code> and dependency libraries. (We encourage a
-binary's main to be separate from the libraries it uses to run, if any.)</br></p>
-<p><strong>External Dependencies</strong><br>
-Not everything is source code is in your repository. Your targets can
-depend on <code>.jar</code>s or <code>.whl</code>s from elsewhere.</br></p>
-<p><strong>Test Targets</strong><br>
-To define a collection of tests, you want a <code>junit_tests</code> or
-<code>python_tests</code> target. The test target depends upon the targets whose
-code it tests. This isn't just logical, it's handy, too: you can
-compute dependencies to figure out what tests to run if you change some
-target's code.</br></p>
-<h2 id="addresses">Addresses</h2>
-<p><strong>Addresses</strong>  describe the location of a target in the build
-graph.  The address has two parts:  the directory to the BUILD file
-and the name of the target within that BUILD file.</p>
-<p>For example, if you have a <code>tests/com/twitter/mybird/BUILD</code> file
-with a <code>junit_tests(name='test-flight)</code> target definition, you would
-write the address as:</p>
-<div class="codehilite"><pre>tests/com/twitter/mybird:test-flight
-</pre></div>
-<p>You use an address whenever you specify a target to build on the
-command line or when one target depends on another in a BUILD file.
-To find out more about addresses, see
-<a href="target_addresses.html">Target Addresses</a>.</p>
-<h2 id="what-pants-does">What Pants Does</h2>
-<p>When you invoke Pants, you specify goals (actions to take) and targets
-(things to act upon).</p>
-<p><strong>Pants plans a list of tasks.</strong> You specify one or more goals on the
-command line. Pants finds the tasks needed to complete that goal.
-Pants knows that some tasks depend on others. If you
-invoke Pants with, say, the <code>test</code> goal to test some code, Pants knows
-it must first compile code; before it can compile code, it needs to
-resolve artifact dependencies and generate code from IDL files (e.g.,
-Thrift). Pants thus generates a topologically-sorted list of goals and
-tasks to perform, a
-<em>build execution plan</em>. This plan might look something like</p>
-<div class="codehilite"><pre>./pants --explain <span class="nb">test </span>src/java::
-Goal Execution Order:
-
-bootstrap -&gt; imports -&gt; unpack-jars -&gt; deferred-sources -&gt; gen
-   -&gt; jvm-platform-validate -&gt; resolve -&gt; compile -&gt; resources -&gt; <span class="nb">test</span>
-</pre></div>
-<p>Pants does <em>not</em> consider targets while planning; some of these tasks
-might thus turn out to be no-ops. E.g., Pants might plan a <code>gen</code>
-(generate code) task even if you don't, in fact, use any generated code.</p>
-<p><strong>Pants computes a target dependencies graph.</strong> It starts with the
-target[s] you specify on the command line. It notes which targets they
-depend on, which targets those targets depend on, which targets <em>those</em>
-targets depend on, and so on.</p>
-<p><strong>Pants then attempts to carry out its planned tasks.</strong> It proceeds goal
-by goal. If it has a problem carrying out one task, it does not continue
-to the others. (Thus, if you attempt to test targets <em>A</em> and <em>B</em>,
-but there's a compilation error in <em>A</em>, then Pants won't test <em>B</em> even
-if it compiled fine.)</p>
-<p>For each task in the plan, Pants executes that task to all
-targets in its computed dependency tree[s]. It starts with
-depended-upon targets and works its way up to depending targets. Each
-Pants target has a type; Pants uses this to determine how to apply a
-task to that target. In many cases, applying a task to a target is a
-no-op. In the more interesting cases, Pants does something. It
-probably invokes other tools. For example, depending on the code in
-the relevant targets, that "compile" goal might invoke <code>javac</code> a few
-times and <code>scalac</code>.</p>
-<p>Pants caches things it builds. Thus, if you change one source file and
-re-build, Pants probably doesn't "build the world." It just builds a few
-things. Pants keys its cache on hashed file contents. This is a
-straightforward way to build the right things after some files' contents
-change. (It <em>can</em> surprise you if you <code>touch</code> a file, start a compile,
-and nothing happens. If you want to, e.g., see <code>Foo.java</code>'s compile
-warnings again, instead of using <code>touch</code>, you might append a newline.)</p>
-<h2 id="next-step">Next Step</h2>
-<p>If you're ready to give Pants a try, go to
-<a href="first_tutorial.html">First Tutorial</a>.</p>
+<p>After approval by a vote of the current committers, a new committer has access to the following resources:</p>
+<ul>
+<li>Commit access to the github repo.</li>
+<li>Ability to Stop/restart builds on Travis-CI.</li>
+<li>An account on the code review site (RBCommons) that is part of the 'twitter’ team.</li>
+<li>Access to the pants-committers@googlegroups.com group.</li>
+</ul>
+<p>A committer may also request access to publish changes to the org.pantsbuild groupId on the Maven Central Repository.</p>
+<p>The list of current and past committers will be listed in a file named COMMITTERS.rb in the root of the pantsbuild/pants repo.</p>
+<h2 id="committer-responsibilities">Committer Responsibilities</h2>
+<p>It is the responsibility of a Committer to ensure that the ongoing good health and high quality of the project is maintained.</p>
+<ul>
+<li>Committers are responsible for the quality of the changes that they approve.</li>
+<li>Committers should raise objections to changes that may impact the performance, security, or maintainability of the project.</li>
+<li>Committers should help shepherd changes from non-committers through our contribution process.</li>
+<li>Committers should maintain a courteous and professional demeanor when participating in the community.</li>
+<li>Committers should be regular participants on our public communications channels.</li>
+</ul>
+<p>Committers should respond to public requests for code reviews.  While it is not necessary for every review to be approved by every committer, the health of the community depends on quality vetting of incoming changes.  If only a single committer is tagged on a review and is unable to participate, the committer should respond to the review and recommend another committer.</p>
+<h2 id="releaser">Releaser</h2>
+<p>A Releaser is a Committer who has permission to publish releases to the pantsbuild.pants PyPi repository.  A Committer who wishes to participate in the pants release rotation may additionally become a Releaser.   A Releaser is responsible for updating the release documentation, creating release builds, and shepherding them through the review and release process.</p>
+<h2 id="committer-emeritus">Committer Emeritus</h2>
+<p>A committer may be placed on emeritus status.  This is an honorary position for committers who were formerly active in the community but have retired from active Pants life.  These committers do not have commit access to the repositories.</p>
+<p>The decision to place a committer on emeritus status is either by request, or by majority vote of the committers.  If you have not participated in code reviews or contributed a patch to pants within the past three months an automatic recommendation for emeritus status may be put forward to the committers.</p>
 
             <!-- main content end -->
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/first_concepts.html 2016-07-25T17:36:54.828086
+              from dist/markdown/html/src/docs/committers.html 2016-07-25T17:36:55.944963
             </div>
 
           </div> <!-- mainflow -->
