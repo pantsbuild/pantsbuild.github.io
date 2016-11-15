@@ -177,6 +177,12 @@
                   Release Notes
                 </li>
                 <li class="toc-h1 toc-link ">
+                  <a href="notes-1.2.x.html">1.2.x Stable Releases</a>
+                </li>
+                <li class="toc-h1 toc-link ">
+                  <a href="notes-1.1.x.html">1.1.x Stable Releases</a>
+                </li>
+                <li class="toc-h1 toc-link ">
                   <a href="notes-1.0.x.html">1.0.x Stable Releases</a>
                 </li>
                 <li class="toc-h1 toc-link ">
@@ -213,8 +219,14 @@
                     <li class="toc-h2"><a href="#generating-a-bundle">Generating a Bundle</a></li>
                     <li class="toc-h2"><a href="#contents-of-a-bundle">Contents of a Bundle</a></li>
                     <li class="toc-h2"><a href="#deploying-a-bundle">Deploying a Bundle</a></li>
-                    <li class="toc-h1"><a href="#omit-parts-from-binary">Omit Parts from Binary</a></li>
-                    <li class="toc-h1"><a href="#shading">Shading</a></li>
+                    <li class="toc-h1"><a href="#omitting-or-shading-the-contents-of-a-binary">Omitting or Shading the Contents of a Binary</a></li>
+                    <li class="toc-h2"><a href="#omitting">Omitting</a></li>
+                    <li class="toc-h2"><a href="#shading">Shading</a></li>
+                    <li class="toc-h1"><a href="#target-scopes">Target Scopes</a></li>
+                    <li class="toc-h2"><a href="#overview">Overview</a></li>
+                    <li class="toc-h2"><a href="#correspondence-with-other-build-systems">Correspondence with other build systems</a></li>
+                    <li class="toc-h2"><a href="#scope-values">Scope values</a></li>
+                    <li class="toc-h2"><a href="#setting-target-scopes">Setting target scopes</a></li>
                     <li class="toc-h1"><a href="#dependency-hygiene">Dependency Hygiene</a></li>
                     <li class="toc-h2"><a href="#for-local-analysis">For local analysis</a></li>
                     <li class="toc-h2"><a href="#for-global-analysis">For global analysis</a></li>
@@ -392,10 +404,13 @@ of this code to another directory," you probably also want to set up a
 see the library target which <code>main-bin</code> depends on. This library target
 lives in <code>hello/greet/BUILD</code>:</p>
 <p>
-<div class="md-included-snippet"><div class="codehilite"><pre><span class="n">java_library</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">'greet'</span><span class="p">,</span>
+<div class="md-included-snippet"><div class="codehilite"><pre><span class="c"># Note that the target has no explicit name, so it defaults to the name</span>
+<span class="c"># of the directory, in this case 'greet'.</span>
+<span class="c"># It also has no explicit sources, so it defaults to the sources implied</span>
+<span class="c"># by the target type, in this case "globs('*.java')".</span>
+<span class="n">java_library</span><span class="p">(</span>
   <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[],</span> <span class="c"># A more realistic example would depend on other libs,</span>
                      <span class="c"># but this "hello world" is pretty simple.</span>
-  <span class="n">sources</span> <span class="o">=</span> <span class="n">globs</span><span class="p">(</span><span class="s">'*.java'</span><span class="p">),</span>
   <span class="n">provides</span> <span class="o">=</span> <span class="n">artifact</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s">'org.pantsbuild.example'</span><span class="p">,</span>
                       <span class="n">name</span><span class="o">=</span><span class="s">'hello-greet'</span><span class="p">,</span>
                       <span class="n">repo</span><span class="o">=</span><span class="n">public</span><span class="p">,),</span>
@@ -410,10 +425,8 @@ tests</a>
 are normal JUnit tests. To run them with Pants, we need a target for
 them:</p>
 <p>
-<div class="md-included-snippet"><div class="codehilite"><pre><span class="n">junit_tests</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'greet'</span><span class="p">,</span>
-  <span class="n">sources</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s">'*.java'</span><span class="p">),</span>
+<div class="md-included-snippet"><div class="codehilite"><pre><span class="n">junit_tests</span><span class="p">(</span>
   <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
-    <span class="s">'3rdparty:junit'</span><span class="p">,</span>
     <span class="s">'examples/src/java/org/pantsbuild/example/hello/greet'</span><span class="p">,</span>
   <span class="p">],</span>
   <span class="n">resources</span><span class="o">=</span><span class="p">[</span>
@@ -433,10 +446,8 @@ version conflicts, we use the 3rdparty idiom: we keep references to
 these "third-party" jars together in <code>BUILD</code> files under the <code>3rdparty/</code>
 directory. Thus, the test has a <code>3rdparty</code> dependency:</p>
 <p>
-<div class="md-included-snippet"><div class="codehilite"><pre><span class="n">junit_tests</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'greet'</span><span class="p">,</span>
-  <span class="n">sources</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s">'*.java'</span><span class="p">),</span>
+<div class="md-included-snippet"><div class="codehilite"><pre><span class="n">junit_tests</span><span class="p">(</span>
   <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
-    <span class="s">'3rdparty:junit'</span><span class="p">,</span>
     <span class="s">'examples/src/java/org/pantsbuild/example/hello/greet'</span><span class="p">,</span>
   <span class="p">],</span>
   <span class="n">resources</span><span class="o">=</span><span class="p">[</span>
@@ -553,8 +564,7 @@ probably only have to make it work for one version of the JDK. Otherwise, you
 should design your bootclasspath to reference the union of all possible jars
 you might need to pull in from different JVMs (any paths that aren't available
 will simply be ignored by java).</p>
-<p><strong>Note:</strong> Currently, pants is known to work with OpenJDK version 7 or greater,
-and Oracle JDK version 6 or greater.</p>
+<p><strong>Note:</strong> Currently, pants is known to work with OpenJDK and Oracle JDK version 7 or greater.</p>
 <p><a id="jvm_bundles" pantsmark="jvm_bundles"></a></p>
 <h2 id="bundles-deploy-able-runnable-file-trees">Bundles: Deploy-able Runnable File Trees</h2>
 <p>You can enjoy your web service on your development machine's
@@ -566,7 +576,9 @@ correctly. (You can try to run without the configuration file, but the
 program crashes immediately.) We define a <code>jvm_app</code> that represents a
 runnable binary and "bundles" of extra files:</p>
 <p>
-<div class="md-included-snippet"><div class="codehilite"><pre><span class="n">jvm_app</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'main'</span><span class="p">,</span>
+<div class="md-included-snippet"><div class="codehilite"><pre><span class="c"># Note that the target has no explicit name, so it defaults to the name</span>
+<span class="c"># of the directory, in this case 'main'.</span>
+<span class="n">jvm_app</span><span class="p">(</span>
   <span class="n">basename</span> <span class="o">=</span> <span class="s">'hello-example'</span><span class="p">,</span>
   <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s">':main-bin'</span>
@@ -654,7 +666,8 @@ Hello, Bundled-File World!
 Hello, Resource World!
 <span class="err">$</span>
 </pre></div>
-<h2 id="omit-parts-from-binary">Omit Parts from Binary</h2>
+<h2 id="omitting-or-shading-the-contents-of-a-binary">Omitting or Shading the Contents of a Binary</h2>
+<h3 id="omitting">Omitting</h3>
 <p>Sometimes you want to leave some files out of your binary.</p>
 <p>You can omit jars from the binary by means of the <code>jvm_binary</code>'s <code>deploy_excludes</code> parameter.
 For example, if you're making a binary to run on Hadoop and there are some "standard jars"
@@ -686,7 +699,7 @@ org/pantsbuild/example/hello/
 org/pantsbuild/example/hello/world.txt
 <span class="err">$</span>
 </pre></div>
-<h2 id="shading">Shading</h2>
+<h3 id="shading">Shading</h3>
 <p>Sometimes you have dependencies that have conflicting package or class names. This typically occurs
 in the following scenario: Your jvm_binary depends on a 3rdparty library A (rev 1.0), and a 3rdparty
 library B (rev 1.3). It turns out that A happens to also depend on B, but it depends on B (rev 2.0),
@@ -731,6 +744,70 @@ and try running</p>
 <div class="codehilite"><pre>./pants binary testprojects/src/java/org/pantsbuild/testproject/shading
 jar -tf dist/shading.jar
 </pre></div>
+<h2 id="target-scopes">Target Scopes</h2>
+<h3 id="overview">Overview</h3>
+<p>Pants supports marking targets with a <code>scope</code> value which the JVM backend will use to filter
+dependency subgraphs at compiletime and runtime. Scopes are also used for unused dependency
+detection: only <code>default</code> scoped targets are eligible to be considered as "unused" deps.</p>
+<h3 id="correspondence-with-other-build-systems">Correspondence with other build systems</h3>
+<p>Scopes in pants are similar to scopes in other build systems, with the fundamental difference
+that they apply to targets (the "nodes" of the build graph), rather than to dependency "edges".
+The reason that Pants differs in this regard is that, in a monorepo, it is strongly encouraged
+to make changes to your dependency targets (which benefits all consumers) rather than to work
+around an issue in a dependency by making a local change to your target.</p>
+<h3 id="scope-values">Scope values</h3>
+<p>Pants' built in scopes are:</p>
+<ul>
+<li><code>default</code>: The "default" scope when a scope is not specified on a target. <code>default</code> targets are
+  included on classpaths at both compiletime and runtime, and are the only targets eligible for
+  unused dep detection.</li>
+<li><code>compile</code>: Indicates that a target is only used at compiletime, and should not be included
+  in runtime binaries or bundles. javac annotation processors or scalac macros are good examples
+  of compiletime-only dependencies.</li>
+<li><code>runtime</code>: Indicates that a target is only used at runtime, and should not be presented to the
+  compiler. Targets which are only used via JVM reflection are good examples of runtime-only
+  dependencies.</li>
+<li><code>forced</code> <em>(available from pants 1.1.0)</em>: The <code>forced</code> scope is equivalent to the <code>default</code> scope, but additionally indicates
+  that a target is not eligible to be considered an "unused" dependency. It is sometimes necessary
+  to mark a target <code>forced</code> due to false positives in the static analysis used for unused
+  dependency detection; if possible, you should always prefer to mark a target <code>runtime</code> or
+  <code>compile</code> if that more accurately describes their usage.</li>
+</ul>
+<h3 id="setting-target-scopes">Setting target scopes</h3>
+<p>To set the scope of a target, you should generally prefer to pass the <code>scope</code> parameter for
+that target:</p>
+<div class="codehilite"><pre><span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'lib'</span><span class="p">,</span>
+  <span class="o">..</span><span class="p">,</span>
+  <span class="n">scope</span><span class="o">=</span><span class="s">'runtime'</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+<p>If the scope of a target is not matched for a particular context, the entire subgraph represented
+by the dependency will be pruned. This means that if a dependency 'B' of a target 'A' is marked
+<code>compile</code> (for example), the dependency targets of 'B' will only be included at compiletime (unless
+'A' has other dependency paths to those targets).</p>
+<p>One effect of this behavior is that you can introduce intermediate aliases to "re-scope" a target
+when consumers need to use it in multiple ways:</p>
+<div class="codehilite"><pre><span class="c"># An alias of `:lib` which consumers can use to indicate that they only need it at compile time.</span>
+<span class="n">target</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'lib-compile'</span><span class="p">,</span>
+  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s">':lib'</span><span class="p">],</span>
+  <span class="n">scope</span><span class="o">=</span><span class="s">'compile'</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'lib'</span><span class="p">,</span>
+  <span class="o">..</span><span class="p">,</span>
+  <span class="n">scope</span><span class="o">=</span><span class="s">'default'</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+<p>Finally, for cases where only a few consumers need to "re-scope" a particular target, it is possible
+to change the scope of a single edge locally to a consumer via the <code>scoped</code> macro (which, under the
+hood, uses the previous technique of creating an intermediate alias):</p>
+<div class="codehilite"><pre><span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'lib'</span><span class="p">,</span>
+  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
+    <span class="n">scoped</span><span class="p">(</span><span class="s">'src/java/the/best/lib'</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s">'compile'</span><span class="p">),</span>
+    <span class="s">'src/scala/some/other/lib'</span><span class="p">,</span>
+  <span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
 <h2 id="dependency-hygiene">Dependency Hygiene</h2>
 <p>As the set of targets in a repository grows larger, it becomes increasingly important that they
 observe good dependency hygiene. In particular, following
@@ -773,8 +850,8 @@ doing analytics or graph analysis with an external tool.</p>
             <!-- main content end -->
 
             <div class="generated">
-              Generated by <a href="http://pantsbuild.org/docs.html">publish_docs</a>
-              from dist/markdown/html/examples/src/java/org/pantsbuild/example/README.html 2016-05-27T17:22:15.425954
+              Generated by <a href="docs.html">publish_docs</a>
+              from dist/markdown/html/examples/src/java/org/pantsbuild/example/README.html 2016-11-15T13:33:53.607450
             </div>
 
           </div> <!-- mainflow -->

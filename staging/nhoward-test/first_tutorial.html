@@ -177,6 +177,12 @@
                   Release Notes
                 </li>
                 <li class="toc-h1 toc-link ">
+                  <a href="notes-1.2.x.html">1.2.x Stable Releases</a>
+                </li>
+                <li class="toc-h1 toc-link ">
+                  <a href="notes-1.1.x.html">1.1.x Stable Releases</a>
+                </li>
+                <li class="toc-h1 toc-link ">
                   <a href="notes-1.0.x.html">1.0.x Stable Releases</a>
                 </li>
                 <li class="toc-h1 toc-link ">
@@ -458,7 +464,9 @@ define targets. For example, this code snippet of <code>java/org/pantsbuild/exam
 defines two targets: the app we ran and the binary that contains its code.
 These targets are named <code>main</code> (of type <code>jvm_app</code>) and and <code>main-bin</code> (of type <code>jvm_binary</code>):</p>
 <p>
-<div class="md-included-snippet"><div class="codehilite"><pre><span class="n">jvm_app</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'main'</span><span class="p">,</span>
+<div class="md-included-snippet"><div class="codehilite"><pre><span class="c"># Note that the target has no explicit name, so it defaults to the name</span>
+<span class="c"># of the directory, in this case 'main'.</span>
+<span class="n">jvm_app</span><span class="p">(</span>
   <span class="n">basename</span> <span class="o">=</span> <span class="s">'hello-example'</span><span class="p">,</span>
   <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s">':main-bin'</span>
@@ -492,10 +500,13 @@ The <code>main-bin</code> binary's dependency,
 another target. Addresses look, roughly, like <code>path/to/dir:targetname</code>. We can see this build
 target in the <code>.../hello/greet/BUILD</code> file:</p>
 <p>
-<div class="md-included-snippet"><div class="codehilite"><pre><span class="n">java_library</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">'greet'</span><span class="p">,</span>
+<div class="md-included-snippet"><div class="codehilite"><pre><span class="c"># Note that the target has no explicit name, so it defaults to the name</span>
+<span class="c"># of the directory, in this case 'greet'.</span>
+<span class="c"># It also has no explicit sources, so it defaults to the sources implied</span>
+<span class="c"># by the target type, in this case "globs('*.java')".</span>
+<span class="n">java_library</span><span class="p">(</span>
   <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[],</span> <span class="c"># A more realistic example would depend on other libs,</span>
                      <span class="c"># but this "hello world" is pretty simple.</span>
-  <span class="n">sources</span> <span class="o">=</span> <span class="n">globs</span><span class="p">(</span><span class="s">'*.java'</span><span class="p">),</span>
   <span class="n">provides</span> <span class="o">=</span> <span class="n">artifact</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s">'org.pantsbuild.example'</span><span class="p">,</span>
                       <span class="n">name</span><span class="o">=</span><span class="s">'hello-greet'</span><span class="p">,</span>
                       <span class="n">repo</span><span class="o">=</span><span class="n">public</span><span class="p">,),</span>
@@ -523,24 +534,36 @@ they still work.</p>
 <p>Here, <code>java_library</code> is the target's <em>type</em>. Different target types
 support different arguments. The following arguments are pretty common:</p>
 <p><strong>name</strong><br>
-We use a target's name to refer to the target. This argument isn't just
-"pretty common," it's required. You use names on the command line to
-specify which targets to operate on. You also use names in <code>BUILD</code> files
-when one target refers to another, e.g. in <code>dependencies</code>:</br></p>
+We use a target's name to refer to the target. If you omit the name,
+it defaults to the name of the directory the <code>BUILD</code> file is in.</br></p>
+<p>You use names on the command line to specify which targets to operate on.
+You also use names in <code>BUILD</code> files when one target refers to another,
+e.g. in <code>dependencies</code>:</p>
 <p><strong>dependencies</strong><br>
 List of things this target depends upon. If this target's code imports
 code that "lives" in other targets, list those targets here. If this
 target imports code that "lives" in <code>.jar</code>s/<code>.egg</code>s from elsewhere,
 refer to them here.</br></p>
 <p><strong>sources</strong><br>
-List of source files. The <code>globs</code> function is handy here.</br></p>
+List of source files, which must be under the directory tree rooted
+at the BUILD file's directory.</br></p>
+<p>You can provide an explicit list, e.g.,
+<code>sources=['Foo.java', 'Bar.java']</code>, or use the <code>globs</code> function
+to glob over files, e.g., <code>sources=globs('*.java')</code>. Similarly,
+<code>rglobs</code> will apply the glob pattern recursively in all subdirectories
+of the BUILD file's directory.</p>
+<p>If you omit <code>sources</code> in a target, Pants will attempt to apply a
+sensible default that depends on the target type.
+E.g., <code>junit_tests</code> will default to globbing over <code>*Test.java</code>,
+<code>java_library</code> will default to globbing over <code>*.java</code>, minus the
+test files, and so on.</p>
 <h2 id="the-usual-commands">The Usual Commands</h2>
 <p><strong>Make sure code compiles and tests pass:</strong><br>
 Use the <code>test</code> goal with the targets you're interested in. If they are
 test targets, Pants runs the tests. If they aren't test targets, Pants
 will still compile them since it knows it must compile before it can
 test.</br></p>
-<div class="codehilite"><pre><span class="nv">$ </span>pants <span class="nb">test </span>src/java/com/myorg/myproject tests/java/com/myorg/myproject
+<div class="codehilite"><pre><span class="nv">$ </span>./pants <span class="nb">test </span>src/java/com/myorg/myproject tests/java/com/myorg/myproject
 </pre></div>
 <p><strong>Run a binary</strong><br>
 Use pants to execute a binary target.  Compiles the code first if it is not up to date.</br></p>
@@ -562,8 +585,8 @@ Get the list of goals:</br></p>
             <!-- main content end -->
 
             <div class="generated">
-              Generated by <a href="http://pantsbuild.org/docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/first_tutorial.html 2016-05-27T17:22:14.897158
+              Generated by <a href="docs.html">publish_docs</a>
+              from dist/markdown/html/src/docs/first_tutorial.html 2016-11-15T13:33:52.975555
             </div>
 
           </div> <!-- mainflow -->

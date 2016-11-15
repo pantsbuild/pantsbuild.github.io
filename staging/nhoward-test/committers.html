@@ -8,11 +8,11 @@
 
 <head>
   <meta charset="utf-8"/>
-  <title>Troubleshooting</title>
+  <title>Pants Committers</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" href="pants-logo.ico">
   <!-- In case this is a "test publish", tell search engines where real version lives: -->
-  <link rel="canonical" href="http://pantsbuild.org/tshoot.html">
+  <link rel="canonical" href="http://pantsbuild.org/committers.html">
 
   <link rel="stylesheet" href="bootstrap-custom.min.css">
   <link rel="stylesheet" href="bootstrap-custom-theme.min.css">
@@ -158,8 +158,8 @@
                 <li class="toc-h1 toc-heading">
                   Getting Help
                 </li>
-                <li class="toc-h1 toc-link toc-here">
-                  Troubleshooting
+                <li class="toc-h1 toc-link ">
+                  <a href="tshoot.html">Troubleshooting</a>
                 </li>
                 <li class="toc-h1 toc-link ">
                   <a href="community.html">Community</a>
@@ -207,15 +207,10 @@
           <div class="mainflow">
               <nav class="pagetoc">
                 <ul>
-                    <li class="toc-h1"><a href="#reporting-server">Reporting Server</a></li>
-                    <li class="toc-h1"><a href="#maximum-verbosity">Maximum Verbosity</a></li>
-                    <li class="toc-h1"><a href="#cleaning">Cleaning</a></li>
-                    <li class="toc-h1"><a href="#stopping-nailguns">Stopping Nailguns</a></li>
-                    <li class="toc-h1"><a href="#nailgun-errors">Nailgun Errors</a></li>
-                    <li class="toc-h1"><a href="#ivy-failures">Ivy Failures</a></li>
-                    <li class="toc-h1"><a href="#ivy-resolution">Ivy Resolution</a></li>
-                    <li class="toc-h1"><a href="#ivy-http-debugging">Ivy HTTP Debugging</a></li>
-                    <li class="toc-h1"><a href="#questions-issues-bug-reports">Questions, Issues, Bug Reports</a></li>
+                    <li class="toc-h1"><a href="#becoming-a-committer">Becoming a Committer</a></li>
+                    <li class="toc-h1"><a href="#committer-responsibilities">Committer Responsibilities</a></li>
+                    <li class="toc-h1"><a href="#releaser">Releaser</a></li>
+                    <li class="toc-h1"><a href="#committer-emeritus">Committer Emeritus</a></li>
                 </ul>
               </nav>
 
@@ -285,106 +280,48 @@
 .codehilite .vi { color: #bb60d5 } /* Name.Variable.Instance */
 .codehilite .il { color: #40a070 } /* Literal.Number.Integer.Long */
 </style>
-<h1 id="troubleshooting">Troubleshooting</h1>
-<h2 id="reporting-server">Reporting Server</h2>
-<p>You can get a huge amount of useful debugging information from the detailed HTML
-build reports. See  for information on how to view these reports.</p>
-<h2 id="maximum-verbosity">Maximum Verbosity</h2>
-<p>To output verbose debugging information to stdout set the log level to <code>debug</code>:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants -ldebug ...
-</pre></div>
-<p><a id="washpants" pantsmark="washpants"> </a></p>
-<h2 id="cleaning">Cleaning</h2>
-<p>If you suspect that your build products are in a bad state you can remove
-them with <code>./pants clean-all</code>.</p>
-<h2 id="stopping-nailguns">Stopping Nailguns</h2>
-<p>Pants runs JVM processes in persistent daemons called "nailguns".  If you think they may
-be holding bad state, you can kill them with <code>./pants ng-killall</code>.  They will
-restart on the next build.</p>
-<h2 id="nailgun-errors">Nailgun Errors</h2>
-<p>If nailguns stop resonding, look for clues in the <code>stdout</code> and <code>stderr</code> files in
-<code>.pants.d/ng/*/*</code>.</p>
-<h2 id="ivy-failures">Ivy Failures</h2>
-<p>You can see an Ivy invocation's detailed outputs in the <a href="reporting_server.html">HTML report</a>.</p>
-<p>You can get more verbose information from Ivy with the <code>--resolve-ivy-debug</code> option.</p>
-<p>This setting does not affect the output of the Ivy tasks used for bootstrapping tools.</p>
-<h2 id="ivy-resolution">Ivy Resolution</h2>
-<p>You can view Ivy's report of how it resolved each (transitive) third-party dependency:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants resolve.ivy --open examples/tests/java/org/pantsbuild/example/hello/greet
-</pre></div>
-<h2 id="ivy-http-debugging">Ivy HTTP Debugging</h2>
-<p>This is a bit more involved, but gives you deeper inspection into the
-network traffic between Ivy and the repo.</p>
-<p>First, you need to add commons-httpclient to the bootstrapped Ivy
-installation by creating a custom ivy.xml.  You can
-start with the org.apache.ivy xml file under the ivy cache and just
-add a dependency for commons-httpclient as follows:</p>
-<div class="codehilite"><pre>$ cat ./ivy-with-commons-httpclient.xml
-<span class="nt">&lt;ivy-module</span> <span class="na">version=</span><span class="s">"2.0"</span><span class="nt">&gt;</span>
-        <span class="nt">&lt;info</span> <span class="na">organisation=</span><span class="s">"org.apache.ivy"</span> <span class="na">module=</span><span class="s">"ivy-caller"</span> <span class="nt">/&gt;</span>
-        <span class="nt">&lt;configurations</span> <span class="na">defaultconf=</span><span class="s">"default"</span> <span class="nt">/&gt;</span>
-        <span class="nt">&lt;dependencies&gt;</span>
-                <span class="nt">&lt;dependency</span> <span class="na">org=</span><span class="s">"org.apache.ivy"</span> <span class="na">name=</span><span class="s">"ivy"</span> <span class="na">rev=</span><span class="s">"2.3.0"</span> <span class="nt">/&gt;</span>
-                <span class="nt">&lt;dependency</span> <span class="na">org=</span><span class="s">"commons-httpclient"</span> <span class="na">name=</span><span class="s">"commons-httpclient"</span> <span class="na">rev=</span><span class="s">"3.0"</span> <span class="nt">/&gt;</span>
-        <span class="nt">&lt;/dependencies&gt;</span>
-<span class="nt">&lt;/ivy-module&gt;</span>
-</pre></div>
-<p>Then, reference your modified ivy profile from pants.ini and flip on
-some extra logging in the commons-httpclient by setting some system properties:</p>
-<div class="codehilite"><pre><span class="k">[ivy]</span>
-<span class="err">ivy_profile:</span> <span class="err">ivy-with-commons-httpclient.xml</span>
-
-<span class="c"># Enable httpcommons debugging when bootstrapping tools</span>
-<span class="k">[bootstrap.bootstrap-jvm-tools]</span>
-<span class="err">jvm_options:</span> <span class="err">[</span>
-    <span class="na">"-Dorg.apache.commons.logging.Log</span><span class="o">=</span><span class="s">org.apache.commons.logging.impl.SimpleLog",</span>
-<span class="s">    "-Dorg.apache.commons.logging.simplelog.showdatetime=true",</span>
-<span class="s">    "-Dorg.apache.commons.logging.simplelog.log.httpclient.wire.header=debug",</span>
-<span class="s">    "-Dorg.apache.commons.logging.simplelog.log.org.apache.commons.httpclient=debug",</span>
-<span class="s">  ]</span>
-
-<span class="c"># Enable httpcommons debugging when resolving 3rdparty libraries</span>
-<span class="k">[resolve.ivy]</span>
-<span class="err">jvm_options:</span> <span class="err">[</span>
-    <span class="na">"-Dorg.apache.commons.logging.Log</span><span class="o">=</span><span class="s">org.apache.commons.logging.impl.SimpleLog",</span>
-<span class="s">    "-Dorg.apache.commons.logging.simplelog.showdatetime=true",</span>
-<span class="s">    "-Dorg.apache.commons.logging.simplelog.log.httpclient.wire.header=debug",</span>
-<span class="s">    "-Dorg.apache.commons.logging.simplelog.log.org.apache.commons.httpclient=debug",</span>
-<span class="s">    ]</span>
-</pre></div>
-<p>You'll be able to see the output in the pants reporting server output
-by expanding the <code>stderr</code> nodes.</p>
-<div class="codehilite"><pre>2015/03/12 03:55:56:456 PDT [DEBUG] HttpConnection - -Open connection to repo1.maven.org:443
-2015/03/12 03:55:57:144 PDT [DEBUG] header - -&gt;&gt; "HEAD /maven2/org/antlr/antlr4/4.1/antlr4-4.1.pom HTTP/1.1[\r][\n]"
-2015/03/12 03:55:57:144 PDT [DEBUG] HttpMethodBase - -Adding Host request header
-2015/03/12 03:55:57:149 PDT [DEBUG] header - -&gt;&gt; "User-Agent: Apache Ivy/2.3.0[\r][\n]"
-2015/03/12 03:55:57:150 PDT [DEBUG] header - -&gt;&gt; "Host: repo1.maven.org[\r][\n]"
-2015/03/12 03:55:57:150 PDT [DEBUG] header - -&gt;&gt; "[\r][\n]"
-2015/03/12 03:55:57:448 PDT [DEBUG] header - -&lt;&lt; "HTTP/1.1 200 OK[\r][\n]"
-2015/03/12 03:55:57:450 PDT [DEBUG] header - -&lt;&lt; "Date: Thu, 12 Mar 2015 10:55:57 GMT[\r][\n]"
-2015/03/12 03:55:57:450 PDT [DEBUG] header - -&lt;&lt; "Server: nginx[\r][\n]"
-2015/03/12 03:55:57:450 PDT [DEBUG] header - -&lt;&lt; "Content-Type: text/xml[\r][\n]"
-2015/03/12 03:55:57:450 PDT [DEBUG] header - -&lt;&lt; "Content-Length: 4800[\r][\n]"
-2015/03/12 03:55:57:450 PDT [DEBUG] header - -&lt;&lt; "Last-Modified: Fri, 05 Jul 2013 21:35:45 GMT[\r][\n]"
-2015/03/12 03:55:57:450 PDT [DEBUG] header - -&lt;&lt; "ETag: "51d73c31-12c0"[\r][\n]"
-2015/03/12 03:55:57:450 PDT [DEBUG] header - -&lt;&lt; "Accept-Ranges: bytes[\r][\n]"
-2015/03/12 03:55:57:450 PDT [DEBUG] header - -&lt;&lt; "Accept-Ranges: bytes[\r][\n]"
-2015/03/12 03:55:57:450 PDT [DEBUG] header - -&lt;&lt; "Via: 1.1 varnish[\r][\n]"
-2015/03/12 03:55:57:451 PDT [DEBUG] header - -&lt;&lt; "Accept-Ranges: bytes[\r][\n]"
-2015/03/12 03:55:57:451 PDT [DEBUG] header - -&lt;&lt; "Via: 1.1 varnish[\r][\n]"
-2015/03/12 03:55:57:451 PDT [DEBUG] header - -&lt;&lt; "X-Served-By: cache-iad2127-IAD, cache-atl6233-ATL[\r][\n]"
-2015/03/12 03:55:57:451 PDT [DEBUG] header - -&lt;&lt; "X-Cache: MISS, MISS[\r][\n]"
-2015/03/12 03:55:57:451 PDT [DEBUG] header - -&lt;&lt; "X-Cache-Hits: 0, 0[\r][\n]"
-2015/03/12 03:55:57:451 PDT [DEBUG] header - -&lt;&lt; "X-Timer: S1426157757.333469,VS0,VE36[\r][\n]"
-</pre></div>
-<h2 id="questions-issues-bug-reports">Questions, Issues, Bug Reports</h2>
-<p>See <a href="howto_ask.html">How to Ask</a></p>
+<h1 id="pants-committers">Pants Committers</h1>
+<p>The Pants project welcomes contributions from all developers.  In order to properly vet changes to the codebase, we have a review process and your code must be approved and committed to the repo by a developer with commit access to the pantsbuild github project.</p>
+<p>A Committer is a member of the community who has access to commit changes to the master branch of the github repo.  We limit the number of committers to developers who have a proven track record with contributing code changes and actively participate in the project through code contributions, reviews, and community discussions.</p>
+<h2 id="becoming-a-committer">Becoming a Committer</h2>
+<p>Nominations for committers are discussed on the pants-committers@googlegroups.com group.  The discussion will consider commits contributed to date and the participation of the contributor in reviews and public communication channels.  Feedback is gathered on what might be required for the contributor to be approved as a committer.</p>
+<p>The minimum requirement to become a committer is evidence of at least 10 "significant contributions" to the open source repo.  The definition of what constitutes a "significant contribution" is kept intentionally vague, but at a minimum, those contributions should:</p>
+<ul>
+<li>Include changes that impact code, test, and documentation.</li>
+<li>Be vetted by committers from multiple organizations.</li>
+<li>Cover more than a single area of the pants codebase.</li>
+<li>Demonstrate knowledge of and willingness to follow project development processes and procedures.</li>
+</ul>
+<p>After approval by a vote of the current committers, a new committer has access to the following resources:</p>
+<ul>
+<li>Commit access to the github repo.</li>
+<li>Ability to Stop/restart builds on Travis-CI.</li>
+<li>An account on the code review site (RBCommons) that is part of the 'twitter’ team.</li>
+<li>Access to the pants-committers@googlegroups.com group.</li>
+</ul>
+<p>A committer may also request access to publish changes to the org.pantsbuild groupId on the Maven Central Repository.</p>
+<p>The list of current and past committers will be listed in a file named COMMITTERS.rb in the root of the pantsbuild/pants repo.</p>
+<h2 id="committer-responsibilities">Committer Responsibilities</h2>
+<p>It is the responsibility of a Committer to ensure that the ongoing good health and high quality of the project is maintained.</p>
+<ul>
+<li>Committers are responsible for the quality of the changes that they approve.</li>
+<li>Committers should raise objections to changes that may impact the performance, security, or maintainability of the project.</li>
+<li>Committers should help shepherd changes from non-committers through our contribution process.</li>
+<li>Committers should maintain a courteous and professional demeanor when participating in the community.</li>
+<li>Committers should be regular participants on our public communications channels.</li>
+</ul>
+<p>Committers should respond to public requests for code reviews.  While it is not necessary for every review to be approved by every committer, the health of the community depends on quality vetting of incoming changes.  If only a single committer is tagged on a review and is unable to participate, the committer should respond to the review and recommend another committer.</p>
+<h2 id="releaser">Releaser</h2>
+<p>A Releaser is a Committer who has permission to publish releases to the pantsbuild.pants PyPi repository.  A Committer who wishes to participate in the pants release rotation may additionally become a Releaser.   A Releaser is responsible for updating the release documentation, creating release builds, and shepherding them through the review and release process.</p>
+<h2 id="committer-emeritus">Committer Emeritus</h2>
+<p>A committer may be placed on emeritus status.  This is an honorary position for committers who were formerly active in the community but have retired from active Pants life.  These committers do not have commit access to the repositories.</p>
+<p>The decision to place a committer on emeritus status is either by request, or by majority vote of the committers.  If you have not participated in code reviews or contributed a patch to pants within the past three months an automatic recommendation for emeritus status may be put forward to the committers.</p>
 
             <!-- main content end -->
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/tshoot.html 2016-11-15T13:33:53.038001
+              from dist/markdown/html/src/docs/committers.html 2016-11-15T13:33:53.808127
             </div>
 
           </div> <!-- mainflow -->

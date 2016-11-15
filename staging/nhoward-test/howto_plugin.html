@@ -177,6 +177,12 @@
                   Release Notes
                 </li>
                 <li class="toc-h1 toc-link ">
+                  <a href="notes-1.2.x.html">1.2.x Stable Releases</a>
+                </li>
+                <li class="toc-h1 toc-link ">
+                  <a href="notes-1.1.x.html">1.1.x Stable Releases</a>
+                </li>
+                <li class="toc-h1 toc-link ">
                   <a href="notes-1.0.x.html">1.0.x Stable Releases</a>
                 </li>
                 <li class="toc-h1 toc-link ">
@@ -296,16 +302,18 @@ load it from.</p>
 can consume it specifically but disregard regular <code>JvmBinary</code> instances (using <code>isinstance()</code>).</p>
 <ul>
 <li>
-<p>Define a home for your plugins. In this example we'll use a directory named 'plugins'</p>
+<p>Define a home for your plugins. In this example we'll use a top-level <code>plugins/</code> directory but
+  this is not special.</p>
 </li>
 <li>
-<p>Create an empty  <code>plugins/hadoop_binary/target/__init__.py</code> to define your python package.
-  Also create empty <code>__init__.py</code> files in each directory up to but not including the root
-  directory of your python package layout.</p>
+<p>Create an empty <code>plugins/hadoop/targets/__init__.py</code> to define a python package structure
+  for your custom hadoop target type plugin. Also create empty <code>__init__.py</code> files in each
+  directory up to but not including the root directory of your python package layout; in this case,
+  just <code>plugins/hadoop/__init__.py</code>.</p>
 </li>
 <li>
-<p>Create a python module <code>plugins/hadoop_binary/target/hadoop_binary.py</code>:</p>
-<div class="codehilite"><pre><span class="c"># plugins/target/hadoop_binary.py</span>
+<p>Create a python module for your custom target type in <code>plugins/hadoop/targets/hadoop_binary.py</code>:</p>
+<div class="codehilite"><pre><span class="c"># plugins/hadoop/targets/hadoop_binary.py</span>
 <span class="kn">from</span> <span class="nn">pants.backend.jvm.targets.jvm_binary</span> <span class="kn">import</span> <span class="n">JvmBinary</span>
 
 <span class="k">class</span> <span class="nc">HadoopBinary</span><span class="p">(</span><span class="n">JvmBinary</span><span class="p">):</span>
@@ -313,17 +321,18 @@ can consume it specifically but disregard regular <code>JvmBinary</code> instanc
 </pre></div>
 </li>
 <li>
-<p>Create <code>src/python/yourorg/pants/hadoop_binary/register.py</code> to register the functions in your plugin.  When registering a
-backend in <code>pants.ini</code>, register.py is used by the pants plugin api to register new functions
-exposed in build files, targets, tasks and goals:</p>
-<div class="codehilite"><pre><span class="c"># src/python/yourorg/pants/hadoop_binary/register.py</span>
+<p>Create <code>plugins/hadoop/register.py</code> to register the elements exposed by your plugin to BUILD file
+  authors:</p>
+<div class="codehilite"><pre><span class="c"># plugins/hadoop/register.py</span>
 
 <span class="kn">from</span> <span class="nn">pants.build_graph.build_file_aliases</span> <span class="kn">import</span> <span class="n">BuildFileAliases</span>
-<span class="kn">from</span> <span class="nn">hadoop_binary.target</span> <span class="kn">import</span> <span class="n">HadoopBinary</span>
+<span class="kn">from</span> <span class="nn">hadoop.targets.hadoop_binary</span> <span class="kn">import</span> <span class="n">HadoopBinary</span>
 
 <span class="k">def</span> <span class="nf">build_file_aliases</span><span class="p">():</span>
   <span class="k">return</span> <span class="n">BuildFileAliases</span><span class="p">(</span>
     <span class="n">targets</span><span class="o">=</span><span class="p">{</span>
+      <span class="c"># NB: This allows a HadoopBinary target to be created in a BUILD file using the</span>
+      <span class="c"># hadoop_binary alias.</span>
       <span class="s">'hadoop_binary'</span><span class="p">:</span> <span class="n">HadoopBinary</span><span class="p">,</span>
     <span class="p">},</span>
   <span class="p">)</span>
@@ -331,19 +340,22 @@ exposed in build files, targets, tasks and goals:</p>
 </li>
 <li>
 <p>In <code>pants.ini</code>, add your new plugin package to the list of backends to load when pants starts.
-This instructs pants to load a module named <code>yourorg.pants.hadoop_binary.register</code>.</p>
-<div class="codehilite"><pre><span class="p">[</span><span class="n">GLOBAL</span><span class="p">]</span>
-<span class="n">pythonpath</span><span class="p">:</span> <span class="p">[</span>
-  <span class="s">"</span><span class="si">%(buildroot)s</span><span class="s">/src/python"</span><span class="p">,</span>
-<span class="p">]</span>
-<span class="n">backend_packages</span><span class="p">:</span> <span class="p">[</span>
-    <span class="s">"yourorg.pants.hadoop_binary"</span><span class="p">,</span>
-  <span class="p">]</span>
+  This instructs pants to load a module named <code>hadoop.register</code>.</p>
+<div class="codehilite"><pre><span class="k">[GLOBAL]</span>
+<span class="err">pythonpath:</span> <span class="err">[</span>
+    <span class="err">'%(buildroot)s/plugins',</span>
+  <span class="err">]</span>
+<span class="err">backend_packages:</span> <span class="err">[</span>
+    <span class="err">'hadoop',</span>
+  <span class="err">]</span>
 </pre></div>
 </li>
 </ul>
 <p>Note that you can also set the PYTHONPATH in your <code>./pants</code> wrapper script, instead of in
-<code>pants.ini</code>, if you have other reasons to do so.</p>
+<code>pants.ini</code>, if you have other reasons to do so. Either way, pants will look for a <code>register.py</code>
+file for each backend package you list by prefixing that package with the python path; ie roughly
+<code>pythonpath + backend package + register.py</code> is tried for each pythonpath prefix until a
+<code>register.py</code> is found, in this example <code>plugins/hadoop/register.py</code>.</p>
 <h2 id="examples-from-twittercommons">Examples from <code>twitter/commons</code></h2>
 <p>For an example of a code repo with plugins to add features to Pants when building in that repo,
 take a look at <a href="https://github.com/twitter/commons"><code>twitter/commons</code></a>, especially its
@@ -369,8 +381,8 @@ But other Pants workspaces can register it, as <code>twitter/commons</code> illu
             <!-- main content end -->
 
             <div class="generated">
-              Generated by <a href="http://pantsbuild.org/docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/howto_plugin.html 2016-05-27T17:22:15.619405
+              Generated by <a href="docs.html">publish_docs</a>
+              from dist/markdown/html/src/docs/howto_plugin.html 2016-11-15T13:33:53.833133
             </div>
 
           </div> <!-- mainflow -->
