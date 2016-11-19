@@ -217,7 +217,7 @@
                     <li class="toc-h2"><a href="#code-review">Code Review</a></li>
                     <li class="toc-h3"><a href="#posting-the-first-draft">Posting the First Draft</a></li>
                     <li class="toc-h3"><a href="#iterating">Iterating</a></li>
-                    <li class="toc-h2"><a href="#commit-your-change">Commit Your Change</a></li>
+                    <li class="toc-h2"><a href="#committing-a-change">Committing a Change</a></li>
                 </ul>
               </nav>
 
@@ -318,11 +318,6 @@ level, the steps are:</p>
 <li>Get a code review.</li>
 <li>Commit your change to master.</li>
 </ul>
-<p>Please note--despite being hosted on GitHub--we do not use pull
-requests to merge to master; we prefer to maintain a linear commit
-history and to do code reviews with Review Board. You will however
-need to create a Github pull request in order to kick off CI and test
-coverage runs.</p>
 <h3 id="identify-the-change">Identify the change</h3>
 <p>It's a good idea to make sure the work you'll be embarking on is
 generally agreed to be in a useful direction for the project before
@@ -370,11 +365,11 @@ before pushing branches to ci:</p>
 <p>You can always run the pre-commit checks manually via:</p>
 <div class="codehilite"><pre><span class="nv">$ </span>./build-support/bin/pre-commit.sh
 </pre></div>
-<p><strong>Pro tip:</strong> If you want your local master branch to be an exact copy of
+<p><strong>Pro tip:</strong> If you are certain that you have not accidentally committed anything to
+the <code>master</code> branch that you want to keep, and you want to reset to an <em>exact</em> copy of
 the <code>pantsbuild/pants</code> repo's master branch, use these commands:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>git co master
-<span class="nv">$ </span>git fetch upstream
-<span class="nv">$ </span>git reset --hard upstream/master
+<div class="codehilite"><pre><span class="nv">$ </span>git fetch upstream
+<span class="nv">$ </span>git checkout master <span class="o">&amp;&amp;</span> git reset --hard upstream/master
 </pre></div>
 <h3 id="making-the-change">Making the Change</h3>
 <p>You might want to familiarize yourself with the
@@ -395,94 +390,59 @@ so, then along with changing code...</p>
 run relevant tests. If you're not sure what those are,
 <a href="howto_develop.html#dev_run_all_tests" pantsref="dev_run_all_tests">run all the tests</a>.</p>
 <h3 id="code-review">Code Review</h3>
-<p>Now that your change is complete, post it for review. We use <code>rbcommons.com</code> to host code reviews:</p>
+<p>Now that your change is complete, post it for review. We use <code>github.com</code> pull requests
+to host code reviews:</p>
 <h4 id="posting-the-first-draft">Posting the First Draft</h4>
-<p><strong>Before posting your first review,</strong> you need to both subscribe to the <a href="https://groups.google.com/forum/#!forum/pants-reviews">pants-reviews
-Google Group</a> and create an
-<a href="https://rbcommons.com">RBCommons</a> account.  Its critical that the email address you use for each
-of these is the same, and it's also recommended that you have that same email address registered as
-one of your <a href="https://github.com/settings/emails">email addresses</a> with Github.</p>
-<p><em>A special warning to <code>@twitter.com</code> contributors:</em> The twitter.com email domain does not permit
-emails being sent on behalf of its members by RBCommons. As such, you should use a personal email
-address or some other non-<code>@twitter.com</code> email address to subscribe to both RBCommons and
-pants-reviews.</p>
-<p>To create your RBCommons account, visit <a href="https://rbcommons.com/account/login/">https://rbcommons.com/account/login/</a> and click "Create
-one now.".  To sign up for pants-reviews@googlegroups.com, just browse to
-<a href="https://groups.google.com/forum/#!forum/pants-reviews/join">https://groups.google.com/forum/#!forum/pants-reviews/join</a>.</p>
-<p>To set up local tools, run <code>./rbt help</code>. (<code>./rbt</code> is a wrapper around
-the usual RBTools <a href="http://www.reviewboard.org/docs/rbtools/dev/">rbt</a>
-script.) The first time this runs it will bootstrap: you'll see a lot of
-building info.</p>
-<p>Before you post your review to Review Board you should <a href="howto_develop.html#dev_run_all_tests" pantsref="dev_run_all_tests">create a Github pull request</a> in order
-to kick off a Travis-CI run against your change.</p>
-<p>Post your change for review:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./rbt post -o -g
-</pre></div>
-<p>The first time you <code>post</code>, rbt asks you to log in. Subsequent runs use
-your cached login credentials.</p>
-<p>This <code>post</code> creates a new review, but does not yet publish it.</p>
-<p>At the provided URL, there's a web form. To get your change reviewed,
-you must fill in the change description, reviewers, testing done, etc.
-To make sure it gets seen by the appropriate people and that they have
-the appropriate context, add:</p>
+<p>When <a href="howto_develop.html#dev_run_all_tests" pantsref="dev_run_all_tests">all of the tests are green on travis</a>, you're
+probably ready to request review for the change!</p>
+<p>To get your pull request reviewed, you should:</p>
 <ul>
-<li><code>pants-reviews</code> to the Groups field</li>
-<li>Any specific <a href="https://www.rbcommons.com/s/twitter/users/">pants committers</a>
-  who should review your change to the People field</li>
-<li>The pull request number from your Github pull request in the Bug field</li>
-<li>Your git branch name in the Branch field.</li>
+<li>Include a short and descriptive title.</li>
+<li>Fill in each of the sections of the pull request template, and include links to any
+  relevant github issues for the change.</li>
+<li>Mention (usually in a comment on the PR) any specific
+  <a href="https://github.com/orgs/pantsbuild/teams/committers">pants committers</a>
+  who should review your change. Running <code>git log -- $filename</code> on one or more of the files that
+  you changed is a good way to find potential reviewers!</li>
 </ul>
-<p>When the review looks good, publish it. An email will be sent to the
-<code>pants-reviews</code> mailing list and the reviewers will take a look. (For
-your first review, double-check that the mail got sent; rbcommons tries
-to "spoof" mail from you and it doesn't work for everybody's email
-address. If your address doesn't work, you might want to use another
-one.)</p>
-<p>Note that while only committers are available to add in the People field,
-users with an rbcommons account may still post reviews if you provide
-them with a link manually or they see it in the google group.</p>
+<p>Finally, when the review is ready for attention, add the <code>reviewable</code> label: this is the
+signal to committers and contributors that the review is ready for attention. You can see
+a list of all actively <code>reviewable</code> reviews <a href="https://github.com/pantsbuild/pants/labels/reviewable">here</a>.</p>
 <h4 id="iterating">Iterating</h4>
-<p>If reviewers have feedback, there might be a few iterations before
-finally getting a Ship It. As reviewers enter feedback, the rbcommons
-page updates; it should also send you mail (but sometimes its "spoof"
-fails).</p>
-<p>If those reviews inspire you to change some code, great. Change some
-code, commit locally. To update the code review with the new diff where
-<code>&lt;RB_ID&gt;</code> is a review number like <code>123</code>:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./rbt post -o -r &lt;RB_ID&gt;
+<p>If reviewers post any feedback
+(<a href="https://help.github.com/articles/reviewing-proposed-changes-in-a-pull-request/">for more information on providing feedback see</a>),
+there might be a few iterations before finally getting a Ship It. As reviewers enter
+feedback, the github page updates; it should also send
+you mail as long as you are <code>Subscribed</code> to notifications for the pull request.</p>
+<p>Github pull requests currently lack the ability to mark a review comment as "blocking"
+for a change, so it's important for contributors and reviewers to communicate clearly which
+comments they view as blocking. If it's unclear whether a reviewer feels strongly about
+a particular point, please bias toward clearing up the uncertainty before proceeding.</p>
+<p>If those reviews inspire you to change some code, great.  Change some
+code and commit locally. When you're ready to update the pull request with your changes,
+push to the relevant branch on your fork as you did before:</p>
+<div class="codehilite"><pre><span class="nv">$ </span>git push &lt;your-username&gt; <span class="nv">$FEATURE_BRANCH</span>
 </pre></div>
-<p>Look over the fields in the web form; perhaps some could use updating.
-Press the web form's Publish button.</p>
-<p>If need a reminder of your review number, you can get a quick list with:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./rbt status
-r/1234 - Make pants go even faster
-</pre></div>
-<h3 id="commit-your-change">Commit Your Change</h3>
-<p>At this point you've made a change, had it reviewed and are ready to
-complete things by getting your change in master. (If you're not a
+<p>Look over the fields in the pull request you created earlier; perhaps some could use updating.
+Press the web form's <code>edit</code> button.</p>
+<p>If at any point you need to make changes that will fundamentally overhaul a review,
+consider temporarily removing the <code>reviewable</code> label in order to let reviewers know
+to hold off until the code is ready.</p>
+<h3 id="committing-a-change">Committing a Change</h3>
+<p>At this point you've made a change, had it reviewed (and received one or more Ship Its!) and
+are ready to complete things by getting your change in master. (If you're not a
 committer, please ask one to do this section for you.)</p>
-<div class="codehilite"><pre><span class="nv">$ </span><span class="nb">cd</span> /path/to/pants/repo
-<span class="nv">$ </span>./build-support/bin/ci.sh
-<span class="nv">$ </span>git checkout master
-<span class="nv">$ </span>git pull
-<span class="nv">$ </span>./rbt patch -c &lt;RB_ID&gt;
-</pre></div>
-<p>Here, ensure that the commit message generated from the review summary
-is accurate, and that the resulting commit contains the changes you
-expect. (If <code>rbt</code> gives mysterious errors, pass <code>--debug</code> for more info.
-If that doesn't clarify the problem, mail pants-devel (and include that
-<code>--debug</code> output).)</p>
-<p>Finally,</p>
-<div class="codehilite"><pre><span class="nv">$ </span>git push origin master
-</pre></div>
-<p>The very last step is closing the review as "Submitted". The change is
-now complete. Huzzah!</p>
+<p>A committer should push the <code>Squash and merge</code> button on the PR, and ensure that the
+commit message generated from the review summary is accurate. In particular, the title should
+contain a useful summary of the change, and the description should follow the pull request
+template (defined in the root of the repo at <code>PULL_REQUEST_TEMPLATE.md</code>).</p>
+<p>Finally, the committer will select <code>Confirm squash and merge</code>. The change is now complete. Huzzah!</p>
 
             <!-- main content end -->
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/howto_contribute.html 2016-11-17T10:31:40.089670
+              from dist/markdown/html/src/docs/howto_contribute.html 2016-11-18T16:54:19.197356
             </div>
 
           </div> <!-- mainflow -->

@@ -512,6 +512,7 @@
 <tr><td><a href="#bootstrap" onclick="expandGoal('bootstrap')">bootstrap</a></td><td>Bootstrap tools needed by subsequent build steps.</td></tr>
 <tr><td><a href="#buildgen" onclick="expandGoal('buildgen')">buildgen</a></td><td>Automatically generate BUILD files.</td></tr>
 <tr><td><a href="#bundle" onclick="expandGoal('bundle')">bundle</a></td><td>Create a deployable application bundle.</td></tr>
+<tr><td><a href="#changed" onclick="expandGoal('changed')">changed</a></td><td>Emits the targets that have been modified since a given commit.</td></tr>
 <tr><td><a href="#check-published-deps" onclick="expandGoal('check-published-deps')">check-published-deps</a></td><td>Find references to outdated JVM artifacts.</td></tr>
 <tr><td><a href="#clean-all" onclick="expandGoal('clean-all')">clean-all</a></td><td>Delete all build products, creating a clean workspace.</td></tr>
 <tr><td><a href="#cloc" onclick="expandGoal('cloc')">cloc</a></td><td>Print counts of lines of code.</td></tr>
@@ -3303,6 +3304,94 @@
 </li>
 </ul>
 </li>
+<li class="goal-data" id="changed">
+<a id="oref_goal_changed" pantsmark="oref_goal_changed"></a>
+<a name="changed"></a>
+<div class="goal-header">
+<div class="goal-name">changed</div>
+<div class="goal-description">Emits the targets that have been modified since a given commit.</div>
+</div>
+<ul class="nobullets collapsible">
+<li>
+<div class="scope">cache.changed</div>
+<div class="scope-description"></div>
+<ul class="nobullets collapsible">
+<li class="collapsed options-group">Basic options
+                    <ul class="nobullets">
+<li>
+<span class="option-args">--[no-]cache-changed-dereference-symlinks</span> <span class="option-default">(default: True)</span>
+<br><span>Dereference symlinks when creating cache tarball.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]cache-changed-read</span> <span class="option-default">(default: True)</span>
+<br><span>Read build artifacts from cache, if available.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]cache-changed-write</span> <span class="option-default">(default: True)</span>
+<br><span>Write build artifacts to cache, if available.</span>
+</br></li>
+</ul>
+</li>
+<li class="collapsed options-group">Advanced options
+                    <ul class="nobullets">
+<li>
+<span class="option-args">--cache-changed-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
+</br></li>
+<li>
+<span class="option-args">--cache-changed-compression-level=&lt;int&gt;</span> <span class="option-default">(default: 5)</span>
+<br><span>The gzip compression level (0-9) for created artifacts.</span>
+</br></li>
+<li>
+<span class="option-args">--cache-changed-exclude-target-regexp=&lt;regexp&gt; (--cache-changed-exclude-target-regexp=&lt;regexp&gt;) ..., --cache-changed-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --cache-changed-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
+<br><span>Exclude targets that match these regexes.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]cache-changed-fail-fast</span> <span class="option-default">(default: False)</span>
+<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
+</br></li>
+<li>
+<span class="option-args">--cache-changed-max-entries-per-target=&lt;int&gt;</span> <span class="option-default">(default: 8)</span>
+<br><span>Maximum number of old cache files to keep per task target pair</span>
+</br></li>
+<li>
+<span class="option-args">--cache-changed-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]cache-changed-overwrite</span> <span class="option-default">(default: False)</span>
+<br><span>If writing build artifacts to cache, overwrite existing artifacts instead of skipping them.</span>
+</br></li>
+<li>
+<span class="option-args">--cache-changed-pinger-timeout=&lt;float&gt;</span> <span class="option-default">(default: 0.5)</span>
+<br><span>number of seconds before pinger times out</span>
+</br></li>
+<li>
+<span class="option-args">--cache-changed-pinger-tries=&lt;int&gt;</span> <span class="option-default">(default: 2)</span>
+<br><span>number of times pinger tries a cache</span>
+</br></li>
+<li>
+<span class="option-args">--cache-changed-read-from=&lt;str&gt; (--cache-changed-read-from=&lt;str&gt;) ..., --cache-changed-read-from="[&lt;str&gt;, &lt;str&gt;, ...]", --cache-changed-read-from="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['/Users/stuhood/src/pants/.cache'])</span>
+<br><span>The URIs of artifact caches to read directly from. Each entry is a URL of a RESTful cache, a path of a filesystem cache, or a pipe-separated list of alternate caches to choose from. This list is also used as input to the resolver. When resolver is 'none' list is used as is.</span>
+</br></li>
+<li>
+<span class="option-args">--cache-changed-resolver=&lt;str&gt;</span> <span class="option-default">(default: 'none')</span>
+<br><span>Select which resolver strategy to use for discovering URIs that access artifact caches. none: use URIs from static config options, i.e. --read-from, --write-to. rest: look up URIs by querying a RESTful URL, which is a remote address from --read-from, --write-to.</span>
+</br></li>
+<li>
+<span class="option-args">--cache-changed-write-permissions=&lt;str&gt;</span> <span class="option-default">(default: None)</span>
+<br><span>Permissions to use when writing artifacts to a local cache, in octal.</span>
+</br></li>
+<li>
+<span class="option-args">--cache-changed-write-to=&lt;str&gt; (--cache-changed-write-to=&lt;str&gt;) ..., --cache-changed-write-to="[&lt;str&gt;, &lt;str&gt;, ...]", --cache-changed-write-to="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['/Users/stuhood/src/pants/.cache'])</span>
+<br><span>The URIs of artifact caches to write directly to. Each entry is a URL ofa RESTful cache, a path of a filesystem cache, or a pipe-separated list of alternate caches to choose from. This list is also used as input to the resolver. When resolver is 'none' list is used as is.</span>
+</br></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="goal-data" id="check-published-deps">
 <a id="oref_goal_check-published-deps" pantsmark="oref_goal_check-published-deps"></a>
 <a name="check-published-deps"></a>
@@ -5486,8 +5575,12 @@
 <br><span>When set, any invalid/incompatible analysis files will be deleted automatically.  When unset, an error is raised instead.</span>
 </br></li>
 <li>
+<span class="option-args">--compile-zinc-compiler-bridge=&lt;target_option&gt;</span> <span class="option-default">(default: //:compiler-bridge)</span>
+<br><span>Target address spec for overriding the classpath of the compiler-bridge jvm tool which is, by default: [JarDependency(org=u'org.scala-sbt', base_name=u'compiler-bridge_2.10', rev=u'1.0.0-X5', force=False, ext=None, url=None, apidocs=None, classifier=u'sources', mutable=None, intransitive=True, excludes=())]</span>
+</br></li>
+<li>
 <span class="option-args">--compile-zinc-compiler-interface=&lt;target_option&gt;</span> <span class="option-default">(default: //:compiler-interface)</span>
-<br><span>Target address spec for overriding the classpath of the compiler-interface jvm tool which is, by default: [JarDependency(org=u'com.typesafe.sbt', base_name=u'compiler-interface', rev=u'0.13.9', force=False, ext=None, url=None, apidocs=None, classifier=u'sources', mutable=None, intransitive=True, excludes=())]</span>
+<br><span>Target address spec for overriding the classpath of the compiler-interface jvm tool which is, by default: [JarDependency(org=u'org.scala-sbt', base_name=u'compiler-interface', rev=u'1.0.0-X5', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=())]</span>
 </br></li>
 <li>
 <span class="option-args">--compile-zinc-confs=&lt;str&gt; (--compile-zinc-confs=&lt;str&gt;) ..., --compile-zinc-confs="[&lt;str&gt;, &lt;str&gt;, ...]", --compile-zinc-confs="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['default'])</span>
@@ -5554,16 +5647,8 @@
 <br><span>Timeout (secs) for nailgun startup.</span>
 </br></li>
 <li>
-<span class="option-args">--[no-]compile-zinc-name-hashing</span> <span class="option-default">(default: False)</span>
-<br><span>Use zinc name hashing.</span>
-</br></li>
-<li>
 <span class="option-args">--compile-zinc-no-warning-args=&lt;str&gt; (--compile-zinc-no-warning-args=&lt;str&gt;) ..., --compile-zinc-no-warning-args="[&lt;str&gt;, &lt;str&gt;, ...]", --compile-zinc-no-warning-args="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['-S-nowarn'])</span>
 <br><span>Extra compiler args to use when warnings are disabled.</span>
-</br></li>
-<li>
-<span class="option-args">--compile-zinc-sbt-interface=&lt;target_option&gt;</span> <span class="option-default">(default: //:sbt-interface)</span>
-<br><span>Target address spec for overriding the classpath of the sbt-interface jvm tool which is, by default: [JarDependency(org=u'com.typesafe.sbt', base_name=u'sbt-interface', rev=u'0.13.9', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=True, excludes=())]</span>
 </br></li>
 <li>
 <span class="option-args">--compile-zinc-scalac-plugin-args="{'key1':val1,'key2':val2,...}"</span> <span class="option-default">(default: {})</span>
@@ -5599,7 +5684,7 @@
 </br></li>
 <li>
 <span class="option-args">--compile-zinc-zinc=&lt;target_option&gt;</span> <span class="option-default">(default: //:zinc)</span>
-<br><span>Target address spec for overriding the classpath of the zinc jvm tool which is, by default: [JarDependency(org=u'org.pantsbuild', base_name=u'zinc_2.10', rev=u'0.0.4', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=())]</span>
+<br><span>Target address spec for overriding the classpath of the zinc jvm tool which is, by default: [JarDependency(org=u'org.pantsbuild', base_name=u'zinc_2.10', rev=u'0.0.5', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=())]</span>
 </br></li>
 </ul>
 </li>
@@ -6786,6 +6871,10 @@
 <br><span>Target address spec for overriding the classpath of the scala-repl_2_11 jvm tool which is, by default: [JarDependency(org=u'org.scala-lang', base_name=u'scala-compiler', rev=u'2.11.8', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=())]</span>
 </br></li>
 <li>
+<span class="option-args">--scala-platform-doc-scaladoc-scala-repl_2_12=&lt;target_option&gt;</span> <span class="option-default">(default: //:scala-repl_2_12)</span>
+<br><span>Target address spec for overriding the classpath of the scala-repl_2_12 jvm tool which is, by default: [JarDependency(org=u'org.scala-lang', base_name=u'scala-compiler', rev=u'2.12.0', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=())]</span>
+</br></li>
+<li>
 <span class="option-args">--scala-platform-doc-scaladoc-scalac=&lt;target_option&gt;</span> <span class="option-default">(default: //:scalac)</span>
 <br><span>Target address spec for overriding the classpath of the scalac jvm tool which is, by default: [JarDependency(org=u'missing spec', base_name=u' //:scalac', rev=None, force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=())]</span>
 </br></li>
@@ -6798,16 +6887,24 @@
 <br><span>Target address spec for overriding the classpath of the scalac_2_11 jvm tool which is, by default: [JarDependency(org=u'org.scala-lang', base_name=u'scala-compiler', rev=u'2.11.8', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=())]</span>
 </br></li>
 <li>
+<span class="option-args">--scala-platform-doc-scaladoc-scalac_2_12=&lt;target_option&gt;</span> <span class="option-default">(default: //:scalac_2_12)</span>
+<br><span>Target address spec for overriding the classpath of the scalac_2_12 jvm tool which is, by default: [JarDependency(org=u'org.scala-lang', base_name=u'scala-compiler', rev=u'2.12.0', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=())]</span>
+</br></li>
+<li>
 <span class="option-args">--scala-platform-doc-scaladoc-scalastyle=&lt;target_option&gt;</span> <span class="option-default">(default: //:scalastyle)</span>
 <br><span>Target address spec for overriding the classpath of the scalastyle jvm tool which is, by default: [JarDependency(org=u'missing spec', base_name=u' //:scalastyle', rev=None, force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=())]</span>
 </br></li>
 <li>
 <span class="option-args">--scala-platform-doc-scaladoc-scalastyle_2_10=&lt;target_option&gt;</span> <span class="option-default">(default: //:scalastyle_2_10)</span>
-<br><span>Target address spec for overriding the classpath of the scalastyle_2_10 jvm tool which is, by default: [JarDependency(org=u'org.scalastyle', base_name=u'scalastyle_2.10', rev=u'0.3.2', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=())]</span>
+<br><span>Target address spec for overriding the classpath of the scalastyle_2_10 jvm tool which is, by default: [JarDependency(org=u'org.scalastyle', base_name=u'scalastyle_2.11', rev=u'0.8.0', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=())]</span>
 </br></li>
 <li>
 <span class="option-args">--scala-platform-doc-scaladoc-scalastyle_2_11=&lt;target_option&gt;</span> <span class="option-default">(default: //:scalastyle_2_11)</span>
 <br><span>Target address spec for overriding the classpath of the scalastyle_2_11 jvm tool which is, by default: [JarDependency(org=u'org.scalastyle', base_name=u'scalastyle_2.11', rev=u'0.8.0', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=())]</span>
+</br></li>
+<li>
+<span class="option-args">--scala-platform-doc-scaladoc-scalastyle_2_12=&lt;target_option&gt;</span> <span class="option-default">(default: //:scalastyle_2_12)</span>
+<br><span>Target address spec for overriding the classpath of the scalastyle_2_12 jvm tool which is, by default: [JarDependency(org=u'org.scalastyle', base_name=u'scalastyle_2.11', rev=u'0.8.0', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=())]</span>
 </br></li>
 <li>
 <span class="option-args">--[no-]scala-platform-doc-scaladoc-strict-deps</span> <span class="option-default">(default: False)</span>
@@ -6818,8 +6915,12 @@
 <br><span>Scala suffix to be used in `scala_jar` definitions. For example, specifying `2.11` or `2.12.0-RC1` would cause `scala_jar` lookups for artifacts with those suffixes.</span>
 </br></li>
 <li>
-<span class="option-args">--scala-platform-doc-scaladoc-version=&lt;str&gt;</span> <span class="option-default">(default: '2.11')</span>
+<span class="option-args">--scala-platform-doc-scaladoc-version=&lt;str&gt;</span> <span class="option-default">(default: '2.12')</span>
 <br><span>The scala platform version. If --version=custom, the targets //:scala-library, //:scalac, //:scala-repl and //:scalastyle will be used, and must exist.  Otherwise, defaults for the specified version will be used.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]scala-platform-doc-scaladoc-zinc-file-manager</span> <span class="option-default">(default: True)</span>
+<br><span>Use zinc provided file manager to ensure transactional rollback.</span>
 </br></li>
 </ul>
 </li>
@@ -11263,7 +11364,7 @@
 </br></li>
 <li>
 <span class="option-args">--publish-jar-publish-extras="{'key1':val1,'key2':val2,...}"</span> <span class="option-default">(default: {})</span>
-<br><span>Extra products to publish. See https://pantsbuild.github.io/dev_tasks_publish_extras.html for details.</span>
+<br><span>Extra products to publish. See https://pantsbuild.org/dev_tasks_publish_extras.html for details.</span>
 </br></li>
 <li>
 <span class="option-args">--publish-jar-push-postscript=&lt;str&gt;</span> <span class="option-default">(default: ' # Prevent Travis-CI from running for this automated jar publish commit: #   http://docs.travis-ci.com/user/how-to-skip-a-build/ [ci skip]')</span>
@@ -11271,7 +11372,7 @@
 </br></li>
 <li>
 <span class="option-args">--publish-jar-repos="{'key1':val1,'key2':val2,...}"</span> <span class="option-default">(default: { 'public':'{u'auth': u'build-support/ivy:netrc', u'resolver': u'oss.sonatype.org', u'help': u'Configure your ~/.netrc for oss.sonatype.org access.'}' })</span>
-<br><span>Settings for repositories that can be pushed to. See https://pantsbuild.github.io/publish.html for details.</span>
+<br><span>Settings for repositories that can be pushed to. See https://pantsbuild.org/publish.html for details.</span>
 </br></li>
 <li>
 <span class="option-args">--publish-jar-restrict-push-branches=&lt;str&gt; (--publish-jar-restrict-push-branches=&lt;str&gt;) ..., --publish-jar-restrict-push-branches="[&lt;str&gt;, &lt;str&gt;, ...]", --publish-jar-restrict-push-branches="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['master'])</span>
@@ -12518,8 +12619,12 @@
 <br><span>When set, any invalid/incompatible analysis files will be deleted automatically.  When unset, an error is raised instead.</span>
 </br></li>
 <li>
+<span class="option-args">--resolve-scala-js-compile-compiler-bridge=&lt;target_option&gt;</span> <span class="option-default">(default: //:compiler-bridge)</span>
+<br><span>Target address spec for overriding the classpath of the compiler-bridge jvm tool which is, by default: [JarDependency(org=u'org.scala-sbt', base_name=u'compiler-bridge_2.10', rev=u'1.0.0-X5', force=False, ext=None, url=None, apidocs=None, classifier=u'sources', mutable=None, intransitive=True, excludes=())]</span>
+</br></li>
+<li>
 <span class="option-args">--resolve-scala-js-compile-compiler-interface=&lt;target_option&gt;</span> <span class="option-default">(default: //:compiler-interface)</span>
-<br><span>Target address spec for overriding the classpath of the compiler-interface jvm tool which is, by default: [JarDependency(org=u'com.typesafe.sbt', base_name=u'compiler-interface', rev=u'0.13.9', force=False, ext=None, url=None, apidocs=None, classifier=u'sources', mutable=None, intransitive=True, excludes=())]</span>
+<br><span>Target address spec for overriding the classpath of the compiler-interface jvm tool which is, by default: [JarDependency(org=u'org.scala-sbt', base_name=u'compiler-interface', rev=u'1.0.0-X5', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=())]</span>
 </br></li>
 <li>
 <span class="option-args">--resolve-scala-js-compile-confs=&lt;str&gt; (--resolve-scala-js-compile-confs=&lt;str&gt;) ..., --resolve-scala-js-compile-confs="[&lt;str&gt;, &lt;str&gt;, ...]", --resolve-scala-js-compile-confs="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['default'])</span>
@@ -12578,16 +12683,8 @@
 <br><span>Timeout (secs) for nailgun startup.</span>
 </br></li>
 <li>
-<span class="option-args">--[no-]resolve-scala-js-compile-name-hashing</span> <span class="option-default">(default: False)</span>
-<br><span>Use zinc name hashing.</span>
-</br></li>
-<li>
 <span class="option-args">--resolve-scala-js-compile-no-warning-args=&lt;str&gt; (--resolve-scala-js-compile-no-warning-args=&lt;str&gt;) ..., --resolve-scala-js-compile-no-warning-args="[&lt;str&gt;, &lt;str&gt;, ...]", --resolve-scala-js-compile-no-warning-args="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['-C-nowarn','-C-Xlint:none','-S-nowarn','-S-Xlint:none'])</span>
 <br><span>Extra compiler args to use when warnings are disabled.</span>
-</br></li>
-<li>
-<span class="option-args">--resolve-scala-js-compile-sbt-interface=&lt;target_option&gt;</span> <span class="option-default">(default: //:sbt-interface)</span>
-<br><span>Target address spec for overriding the classpath of the sbt-interface jvm tool which is, by default: [JarDependency(org=u'com.typesafe.sbt', base_name=u'sbt-interface', rev=u'0.13.9', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=True, excludes=())]</span>
 </br></li>
 <li>
 <span class="option-args">--resolve-scala-js-compile-scala-js-compiler=&lt;target_option&gt;</span> <span class="option-default">(default: //:scala-js-compiler)</span>
@@ -12615,7 +12712,7 @@
 </br></li>
 <li>
 <span class="option-args">--resolve-scala-js-compile-zinc=&lt;target_option&gt;</span> <span class="option-default">(default: //:zinc)</span>
-<br><span>Target address spec for overriding the classpath of the zinc jvm tool which is, by default: [JarDependency(org=u'org.pantsbuild', base_name=u'zinc_2.10', rev=u'0.0.4', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=())]</span>
+<br><span>Target address spec for overriding the classpath of the zinc jvm tool which is, by default: [JarDependency(org=u'org.pantsbuild', base_name=u'zinc_2.10', rev=u'0.0.5', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=())]</span>
 </br></li>
 </ul>
 </li>
@@ -16088,7 +16185,7 @@
 <br><span>Find native engine binaries under this dir. Used as part of the path to lookup the binary with --binary-util-baseurls and --pants-bootstrapdir.</span>
 </br></li>
 <li>
-<span class="option-args">--native-engine-version=&lt;str&gt;</span> <span class="option-default">(default: '27e0016cfd490ba89830d6e99c93764c4357c268')</span>
+<span class="option-args">--native-engine-version=&lt;str&gt;</span> <span class="option-default">(default: 'da39a3ee5e6b4b0d3255bfef95601890afd80709')</span>
 <br><span>Native engine version.</span>
 </br></li>
 </ul>
@@ -16209,6 +16306,50 @@
 </li>
 <li>
 <div class="global-subsystem-header">
+<div class="scope">pycheck-pep8</div>
+<div class="scope-description"></div>
+</div>
+<ul class="nobullets collapsible">
+<li class="collapsed options-group">Basic options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--pycheck-pep8-ignore=&lt;str&gt; (--pycheck-pep8-ignore=&lt;str&gt;) ..., --pycheck-pep8-ignore="[&lt;str&gt;, &lt;str&gt;, ...]", --pycheck-pep8-ignore="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['E121','E124','E125','E127','E128','E401','E111','W291','W293','E701','E301','E302','W292'])</span>
+<br><span>Prevent test failure but still produce output for problems.</span>
+</br></li>
+<li>
+<span class="option-args">--pycheck-pep8-max-length=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Max line length to use for PEP8 checks.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]pycheck-pep8-skip</span> <span class="option-default">(default: True)</span>
+<br><span>If enabled, skip this style checker.</span>
+</br></li>
+</ul>
+</li>
+<li class="collapsed options-group">Advanced options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--pycheck-pep8-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
+</br></li>
+<li>
+<span class="option-args">--pycheck-pep8-exclude-target-regexp=&lt;regexp&gt; (--pycheck-pep8-exclude-target-regexp=&lt;regexp&gt;) ..., --pycheck-pep8-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --pycheck-pep8-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
+<br><span>Exclude targets that match these regexes.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]pycheck-pep8-fail-fast</span> <span class="option-default">(default: False)</span>
+<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
+</br></li>
+<li>
+<span class="option-args">--pycheck-pep8-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<div class="global-subsystem-header">
 <div class="scope">pycheck-print-statements</div>
 <div class="scope-description"></div>
 </div>
@@ -16237,66 +16378,6 @@
 </br></li>
 <li>
 <span class="option-args">--pycheck-print-statements-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</br></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="global-subsystem-header">
-<div class="scope">changed</div>
-<div class="scope-description"></div>
-</div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Basic options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--changed-changes-since=&lt;str&gt;, --changed-parent=&lt;str&gt;, --changed-since=&lt;str&gt;</span> <span class="option-default">(default: None)</span>
-<br><span>Calculate changes since this tree-ish/scm ref (defaults to current HEAD/tip).</span>
-</br></li>
-<li>
-<span class="option-args">--changed-diffspec=&lt;str&gt;</span> <span class="option-default">(default: None)</span>
-<br><span>Calculate changes contained within given scm spec (commit range/sha/ref/etc).</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]changed-fast</span> <span class="option-default">(default: False)</span>
-<br><span>Stop searching for owners once a source is mapped to at least one owning target.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]changed-files</span> <span class="option-default">(default: False)</span>
-<br><span>Show changed files instead of the targets that own them.</span>
-</br></li>
-<li>
-<span class="option-args">--changed-include-dependees=&lt;str&gt;</span> <span class="option-default">(default: 'none')</span>
-<br><span>Include direct or transitive dependees of changed targets.</span>
-</br></li>
-<li>
-<span class="option-args">--changed-output-file=&lt;path&gt;</span> <span class="option-default">(default: None)</span>
-<br><span>Write the console output to this file instead.</span>
-</br></li>
-<li>
-<span class="option-args">--changed-sep=&lt;separator&gt;</span> <span class="option-default">(default: '\n')</span>
-<br><span>String to use to separate results.</span>
-</br></li>
-</ul>
-</li>
-<li class="collapsed options-group">Advanced options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--changed-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
-<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</br></li>
-<li>
-<span class="option-args">--changed-exclude-target-regexp=&lt;regexp&gt; (--changed-exclude-target-regexp=&lt;regexp&gt;) ..., --changed-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --changed-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
-<br><span>Exclude targets that match these regexes.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]changed-fail-fast</span> <span class="option-default">(default: False)</span>
-<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</br></li>
-<li>
-<span class="option-args">--changed-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
 <br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
 </br></li>
 </ul>
@@ -16450,42 +16531,6 @@
 <li>
 <span class="option-args">--cache-write-to=&lt;str&gt; (--cache-write-to=&lt;str&gt;) ..., --cache-write-to="[&lt;str&gt;, &lt;str&gt;, ...]", --cache-write-to="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: [])</span>
 <br><span>The URIs of artifact caches to write directly to. Each entry is a URL ofa RESTful cache, a path of a filesystem cache, or a pipe-separated list of alternate caches to choose from. This list is also used as input to the resolver. When resolver is 'none' list is used as is.</span>
-</br></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="global-subsystem-header">
-<div class="scope">pycheck-newlines</div>
-<div class="scope-description"></div>
-</div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Basic options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--[no-]pycheck-newlines-skip</span> <span class="option-default">(default: False)</span>
-<br><span>If enabled, skip this style checker.</span>
-</br></li>
-</ul>
-</li>
-<li class="collapsed options-group">Advanced options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--pycheck-newlines-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
-<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</br></li>
-<li>
-<span class="option-args">--pycheck-newlines-exclude-target-regexp=&lt;regexp&gt; (--pycheck-newlines-exclude-target-regexp=&lt;regexp&gt;) ..., --pycheck-newlines-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --pycheck-newlines-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
-<br><span>Exclude targets that match these regexes.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]pycheck-newlines-fail-fast</span> <span class="option-default">(default: False)</span>
-<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</br></li>
-<li>
-<span class="option-args">--pycheck-newlines-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
 </br></li>
 </ul>
 </li>
@@ -16648,6 +16693,10 @@
 <br><span>Target address spec for overriding the classpath of the scala-repl_2_11 jvm tool which is, by default: [JarDependency(org=u'org.scala-lang', base_name=u'scala-compiler', rev=u'2.11.8', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=())]</span>
 </br></li>
 <li>
+<span class="option-args">--scala-platform-scala-repl_2_12=&lt;target_option&gt;</span> <span class="option-default">(default: //:scala-repl_2_12)</span>
+<br><span>Target address spec for overriding the classpath of the scala-repl_2_12 jvm tool which is, by default: [JarDependency(org=u'org.scala-lang', base_name=u'scala-compiler', rev=u'2.12.0', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=())]</span>
+</br></li>
+<li>
 <span class="option-args">--scala-platform-scalac=&lt;target_option&gt;</span> <span class="option-default">(default: //:scalac)</span>
 <br><span>Target address spec for overriding the classpath of the scalac jvm tool which is, by default: [JarDependency(org=u'missing spec', base_name=u' //:scalac', rev=None, force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=())]</span>
 </br></li>
@@ -16660,16 +16709,24 @@
 <br><span>Target address spec for overriding the classpath of the scalac_2_11 jvm tool which is, by default: [JarDependency(org=u'org.scala-lang', base_name=u'scala-compiler', rev=u'2.11.8', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=())]</span>
 </br></li>
 <li>
+<span class="option-args">--scala-platform-scalac_2_12=&lt;target_option&gt;</span> <span class="option-default">(default: //:scalac_2_12)</span>
+<br><span>Target address spec for overriding the classpath of the scalac_2_12 jvm tool which is, by default: [JarDependency(org=u'org.scala-lang', base_name=u'scala-compiler', rev=u'2.12.0', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=())]</span>
+</br></li>
+<li>
 <span class="option-args">--scala-platform-scalastyle=&lt;target_option&gt;</span> <span class="option-default">(default: //:scalastyle)</span>
 <br><span>Target address spec for overriding the classpath of the scalastyle jvm tool which is, by default: [JarDependency(org=u'missing spec', base_name=u' //:scalastyle', rev=None, force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=())]</span>
 </br></li>
 <li>
 <span class="option-args">--scala-platform-scalastyle_2_10=&lt;target_option&gt;</span> <span class="option-default">(default: //:scalastyle_2_10)</span>
-<br><span>Target address spec for overriding the classpath of the scalastyle_2_10 jvm tool which is, by default: [JarDependency(org=u'org.scalastyle', base_name=u'scalastyle_2.10', rev=u'0.3.2', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=())]</span>
+<br><span>Target address spec for overriding the classpath of the scalastyle_2_10 jvm tool which is, by default: [JarDependency(org=u'org.scalastyle', base_name=u'scalastyle_2.11', rev=u'0.8.0', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=())]</span>
 </br></li>
 <li>
 <span class="option-args">--scala-platform-scalastyle_2_11=&lt;target_option&gt;</span> <span class="option-default">(default: //:scalastyle_2_11)</span>
 <br><span>Target address spec for overriding the classpath of the scalastyle_2_11 jvm tool which is, by default: [JarDependency(org=u'org.scalastyle', base_name=u'scalastyle_2.11', rev=u'0.8.0', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=())]</span>
+</br></li>
+<li>
+<span class="option-args">--scala-platform-scalastyle_2_12=&lt;target_option&gt;</span> <span class="option-default">(default: //:scalastyle_2_12)</span>
+<br><span>Target address spec for overriding the classpath of the scalastyle_2_12 jvm tool which is, by default: [JarDependency(org=u'org.scalastyle', base_name=u'scalastyle_2.11', rev=u'0.8.0', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=())]</span>
 </br></li>
 <li>
 <span class="option-args">--[no-]scala-platform-strict-deps</span> <span class="option-default">(default: False)</span>
@@ -16682,6 +16739,10 @@
 <li>
 <span class="option-args">--scala-platform-version=&lt;str&gt;</span> <span class="option-default">(default: '2.10')</span>
 <br><span>The scala platform version. If --version=custom, the targets //:scala-library, //:scalac, //:scala-repl and //:scalastyle will be used, and must exist.  Otherwise, defaults for the specified version will be used.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]scala-platform-zinc-file-manager</span> <span class="option-default">(default: True)</span>
+<br><span>Use zinc provided file manager to ensure transactional rollback.</span>
 </br></li>
 </ul>
 </li>
@@ -16796,8 +16857,8 @@
 <br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
 </br></li>
 <li>
-<span class="option-args">--python-setup-platforms=&lt;str&gt; (--python-setup-platforms=&lt;str&gt;) ..., --python-setup-platforms="[&lt;str&gt;, &lt;str&gt;, ...]", --python-setup-platforms="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['current'])</span>
-<br><span>The wheel version for this python environment.</span>
+<span class="option-args">--python-setup-platforms=&lt;platform&gt; (--python-setup-platforms=&lt;platform&gt;) ..., --python-setup-platforms="[&lt;platform&gt;, &lt;platform&gt;, ...]", --python-setup-platforms="+[&lt;platform&gt;, &lt;platform&gt;, ...]"</span> <span class="option-default">(default: ['current'])</span>
+<br><span>A list of platforms to be supported by this python environment. Each platformis a string, as returned by pkg_resources.get_supported_platform().</span>
 </br></li>
 <li>
 <span class="option-args">--python-setup-resolver-cache-dir=&lt;dir&gt;</span> <span class="option-default">(default: '/Users/stuhood/.cache/pants/python_cache/requirements')</span>
@@ -16897,6 +16958,42 @@
 </li>
 <li>
 <div class="global-subsystem-header">
+<div class="scope">unknown-arguments</div>
+<div class="scope-description">Options relating to handling target arguments.</div>
+</div>
+<ul class="nobullets collapsible">
+<li class="collapsed options-group">Advanced options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--unknown-arguments-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
+</br></li>
+<li>
+<span class="option-args">--unknown-arguments-exclude-target-regexp=&lt;regexp&gt; (--unknown-arguments-exclude-target-regexp=&lt;regexp&gt;) ..., --unknown-arguments-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --unknown-arguments-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
+<br><span>Exclude targets that match these regexes.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]unknown-arguments-fail-fast</span> <span class="option-default">(default: False)</span>
+<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
+</br></li>
+<li>
+<span class="option-args">--unknown-arguments-ignored="{'key1':val1,'key2':val2,...}"</span> <span class="option-default">(default: {})</span>
+<br><span>Map of target name to a list of keyword arguments that should be ignored if a target receives them unexpectedly. Typically used to allow usage of arguments in BUILD files that are not yet available in the current version of pants.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]unknown-arguments-implicit-sources</span> <span class="option-default">(default: False)</span>
+<br><span>If True, Pants will infer the value of the sources argument for certain target types, if they do not have explicit sources specified.</span>
+</br></li>
+<li>
+<span class="option-args">--unknown-arguments-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<div class="global-subsystem-header">
 <div class="scope">go-fetchers</div>
 <div class="scope-description">A fetcher that retrieves and unpacks remote libraries from archive files.</div>
 </div>
@@ -16935,42 +17032,6 @@ The UrlInfo struct is a 3-tuple with the following slots:
 <li>
 <span class="option-args">--go-fetchers-prefixes=&lt;paths&gt; (--go-fetchers-prefixes=&lt;paths&gt;) ..., --go-fetchers-prefixes="[&lt;paths&gt;, &lt;paths&gt;, ...]", --go-fetchers-prefixes="+[&lt;paths&gt;, &lt;paths&gt;, ...]"</span> <span class="option-default">(default: [])</span>
 <br><span>Does nothing.</span>
-</br></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="global-subsystem-header">
-<div class="scope">pycheck-class-factoring</div>
-<div class="scope-description"></div>
-</div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Basic options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--[no-]pycheck-class-factoring-skip</span> <span class="option-default">(default: True)</span>
-<br><span>If enabled, skip this style checker.</span>
-</br></li>
-</ul>
-</li>
-<li class="collapsed options-group">Advanced options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--pycheck-class-factoring-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
-<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</br></li>
-<li>
-<span class="option-args">--pycheck-class-factoring-exclude-target-regexp=&lt;regexp&gt; (--pycheck-class-factoring-exclude-target-regexp=&lt;regexp&gt;) ..., --pycheck-class-factoring-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --pycheck-class-factoring-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
-<br><span>Exclude targets that match these regexes.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]pycheck-class-factoring-fail-fast</span> <span class="option-default">(default: False)</span>
-<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</br></li>
-<li>
-<span class="option-args">--pycheck-class-factoring-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
 </br></li>
 </ul>
 </li>
@@ -17078,50 +17139,6 @@ The UrlInfo struct is a 3-tuple with the following slots:
 </li>
 <li>
 <div class="global-subsystem-header">
-<div class="scope">pycheck-pep8</div>
-<div class="scope-description"></div>
-</div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Basic options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--pycheck-pep8-ignore=&lt;str&gt; (--pycheck-pep8-ignore=&lt;str&gt;) ..., --pycheck-pep8-ignore="[&lt;str&gt;, &lt;str&gt;, ...]", --pycheck-pep8-ignore="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['E121','E124','E125','E127','E128','E401','E111','W291','W293','E701','E301','E302','W292'])</span>
-<br><span>Prevent test failure but still produce output for problems.</span>
-</br></li>
-<li>
-<span class="option-args">--pycheck-pep8-max-length=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Max line length to use for PEP8 checks.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]pycheck-pep8-skip</span> <span class="option-default">(default: True)</span>
-<br><span>If enabled, skip this style checker.</span>
-</br></li>
-</ul>
-</li>
-<li class="collapsed options-group">Advanced options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--pycheck-pep8-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
-<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</br></li>
-<li>
-<span class="option-args">--pycheck-pep8-exclude-target-regexp=&lt;regexp&gt; (--pycheck-pep8-exclude-target-regexp=&lt;regexp&gt;) ..., --pycheck-pep8-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --pycheck-pep8-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
-<br><span>Exclude targets that match these regexes.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]pycheck-pep8-fail-fast</span> <span class="option-default">(default: False)</span>
-<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</br></li>
-<li>
-<span class="option-args">--pycheck-pep8-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</br></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="global-subsystem-header">
 <div class="scope">java</div>
 <div class="scope-description">A subsystem to encapsulate compile-time settings and features for the Java language.</div>
 </div>
@@ -17163,6 +17180,10 @@ The UrlInfo struct is a 3-tuple with the following slots:
 <li>
 <span class="option-args">--[no-]java-strict-deps</span> <span class="option-default">(default: True)</span>
 <br><span>The default for the "strict_deps" argument for targets of this language.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]java-zinc-file-manager</span> <span class="option-default">(default: True)</span>
+<br><span>Use zinc provided file manager to ensure transactional rollback.</span>
 </br></li>
 </ul>
 </li>
@@ -17638,34 +17659,34 @@ The UrlInfo struct is a 3-tuple with the following slots:
 </li>
 <li>
 <div class="global-subsystem-header">
-<div class="scope">unknown-arguments</div>
-<div class="scope-description">Options relating to handling target arguments.</div>
+<div class="scope">pycheck-newlines</div>
+<div class="scope-description"></div>
 </div>
 <ul class="nobullets collapsible">
+<li class="collapsed options-group">Basic options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--[no-]pycheck-newlines-skip</span> <span class="option-default">(default: False)</span>
+<br><span>If enabled, skip this style checker.</span>
+</br></li>
+</ul>
+</li>
 <li class="collapsed options-group">Advanced options
               <ul class="nobullets">
 <li>
-<span class="option-args">--unknown-arguments-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<span class="option-args">--pycheck-newlines-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
 <br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
 </br></li>
 <li>
-<span class="option-args">--unknown-arguments-exclude-target-regexp=&lt;regexp&gt; (--unknown-arguments-exclude-target-regexp=&lt;regexp&gt;) ..., --unknown-arguments-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --unknown-arguments-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
+<span class="option-args">--pycheck-newlines-exclude-target-regexp=&lt;regexp&gt; (--pycheck-newlines-exclude-target-regexp=&lt;regexp&gt;) ..., --pycheck-newlines-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --pycheck-newlines-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
 <br><span>Exclude targets that match these regexes.</span>
 </br></li>
 <li>
-<span class="option-args">--[no-]unknown-arguments-fail-fast</span> <span class="option-default">(default: False)</span>
+<span class="option-args">--[no-]pycheck-newlines-fail-fast</span> <span class="option-default">(default: False)</span>
 <br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
 </br></li>
 <li>
-<span class="option-args">--unknown-arguments-ignored="{'key1':val1,'key2':val2,...}"</span> <span class="option-default">(default: {})</span>
-<br><span>Map of target name to a list of keyword arguments that should be ignored if a target receives them unexpectedly. Typically used to allow usage of arguments in BUILD files that are not yet available in the current version of pants.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]unknown-arguments-implicit-sources</span> <span class="option-default">(default: False)</span>
-<br><span>If True, Pants will infer the value of the sources argument for certain target types, if they do not have explicit sources specified.</span>
-</br></li>
-<li>
-<span class="option-args">--unknown-arguments-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<span class="option-args">--pycheck-newlines-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
 <br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
 </br></li>
 </ul>
@@ -17874,6 +17895,42 @@ The UrlInfo struct is a 3-tuple with the following slots:
 </li>
 <li>
 <div class="global-subsystem-header">
+<div class="scope">pycheck-class-factoring</div>
+<div class="scope-description"></div>
+</div>
+<ul class="nobullets collapsible">
+<li class="collapsed options-group">Basic options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--[no-]pycheck-class-factoring-skip</span> <span class="option-default">(default: True)</span>
+<br><span>If enabled, skip this style checker.</span>
+</br></li>
+</ul>
+</li>
+<li class="collapsed options-group">Advanced options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--pycheck-class-factoring-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
+</br></li>
+<li>
+<span class="option-args">--pycheck-class-factoring-exclude-target-regexp=&lt;regexp&gt; (--pycheck-class-factoring-exclude-target-regexp=&lt;regexp&gt;) ..., --pycheck-class-factoring-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --pycheck-class-factoring-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
+<br><span>Exclude targets that match these regexes.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]pycheck-class-factoring-fail-fast</span> <span class="option-default">(default: False)</span>
+<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
+</br></li>
+<li>
+<span class="option-args">--pycheck-class-factoring-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<div class="global-subsystem-header">
 <div class="scope">go-distribution</div>
 <div class="scope-description"></div>
 </div>
@@ -18065,7 +18122,7 @@ The UrlInfo struct is a 3-tuple with the following slots:
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/reference/pants_reference_body.html 2016-11-17T10:31:40.981217
+              from dist/reference/pants_reference_body.html 2016-11-18T16:54:20.093170
             </div>
 
           </div> <!-- mainflow -->
