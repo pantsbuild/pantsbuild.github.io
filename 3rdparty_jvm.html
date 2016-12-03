@@ -347,36 +347,20 @@ published jar.</p>
 <span class="p">)</span>
 </pre></div>
 <h2 id="controlling-jar-dependency-versions">Controlling JAR Dependency Versions</h2>
-<p><strong>If you notice a small number of wrong-version things,</strong> then in a JVM
-target, you can depend on a <code>jar</code> that specifies a version and sets
-<code>force=True</code> to <em>force</em> using that version:</p>
-<div class="codehilite"><pre><span class="n">scala_library</span><span class="p">(</span>
-  <span class="n">name</span> <span class="o">=</span> <span class="s">"loadtest"</span><span class="p">,</span>
-  <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s">'3rdparty/bijection:bijection-scrooge'</span><span class="p">,</span>
-    <span class="c"># our 3rdparty/BUILD still has 6.1.4 as the default version, but</span>
-    <span class="c"># finagle-[core|thrift] version 6.1.4 is superceded (evicted) by</span>
-    <span class="c"># version 6.4.1</span>
-    <span class="c"># Force inclusion of version 6.1.4, until we're bumped to finagle 6.4.1+</span>
-    <span class="n">jar</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s">'com.twitter'</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">'iago'</span><span class="p">,</span> <span class="n">rev</span><span class="o">=</span><span class="s">'0.6.3'</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
-    <span class="n">jar</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s">'com.twitter'</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">'finagle-core'</span><span class="p">,</span> <span class="n">rev</span><span class="o">=</span><span class="s">'6.1.4'</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
-    <span class="n">jar</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s">'com.twitter'</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">'finagle-thrift'</span><span class="p">,</span> <span class="n">rev</span><span class="o">=</span><span class="s">'6.1.4'</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
-  <span class="p">],</span>
-  <span class="n">sources</span> <span class="o">=</span> <span class="p">[</span><span class="s">"LoadTestRecordProcessor.scala"</span><span class="p">])</span>
-</pre></div>
 <p><strong>If you notice that one "foreign" dependency pulls in mostly wrong
 things,</strong> tell Pants not to pull in its dependencies. In your
 <code>3rdparty/.../BUILD</code> file, use <code>jar</code>'s <code>intransitive</code> argument; then
 carefully add hand-picked versions:</p>
 <div class="codehilite"><pre><span class="n">jar_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">"retro-naming-factory"</span><span class="p">,</span>
   <span class="n">jars</span><span class="o">=</span><span class="p">[</span>
-<span class="n">jar</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s">'retro'</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">'retro-factory'</span><span class="p">,</span> <span class="n">rev</span><span class="o">=</span><span class="s">'5.0.18'</span><span class="p">,</span> <span class="n">intransitive</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+      <span class="n">jar</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s">'retro'</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">'retro-factory'</span><span class="p">,</span> <span class="n">rev</span><span class="o">=</span><span class="s">'5.0.18'</span><span class="p">,</span> <span class="n">intransitive</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
   <span class="p">],</span>
   <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
     <span class="c"># Don't use retro's expected (old, incompatible) common-logging</span>
     <span class="c"># version, yipe; use the same version we use everywhere else:</span>
-<span class="s">'3rdparty/jvm/common-logging'</span><span class="p">,</span>
-  <span class="p">])</span>
+    <span class="s">'3rdparty/jvm/common-logging'</span><span class="p">,</span>
+  <span class="p">]</span>
+<span class="p">)</span>
 </pre></div>
 <p><strong>If you notice a small number of transitive dependencies to exclude</strong>
 Rather than mark the <code>jar</code> intransitive, you can <code>exclude</code> some
@@ -543,7 +527,7 @@ time pants is run (otherwise, pants will cache it):</p>
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/examples/src/java/org/pantsbuild/example/3rdparty_jvm.html 2016-11-29T08:54:09.055890
+              from dist/markdown/html/examples/src/java/org/pantsbuild/example/3rdparty_jvm.html 2016-12-02T20:40:07.215044
             </div>
 
           </div> <!-- mainflow -->
