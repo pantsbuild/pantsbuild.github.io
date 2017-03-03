@@ -8,11 +8,11 @@
 
 <head>
   <meta charset="utf-8"/>
-  <title>Developing a Pants Plugin</title>
+  <title>scalac Plugins with Pants</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" href="pants-logo.ico">
   <!-- In case this is a "test publish", tell search engines where real version lives: -->
-  <link rel="canonical" href="http://pantsbuild.org/howto_plugin.html">
+  <link rel="canonical" href="http://pantsbuild.org/scalac_plugins.html">
 
   <link rel="stylesheet" href="bootstrap-custom.min.css">
   <link rel="stylesheet" href="bootstrap-custom-theme.min.css">
@@ -210,8 +210,11 @@
           <div class="mainflow">
               <nav class="pagetoc">
                 <ul>
-                    <li class="toc-h1"><a href="#simple-configuration">Simple Configuration</a></li>
-                    <li class="toc-h1"><a href="#examples-from-twittercommons">Examples from twitter/commons</a></li>
+                    <li class="toc-h1"><a href="#building-scalac-plugins">Building scalac plugins</a></li>
+                    <li class="toc-h1"><a href="#using-scalac-plugins">Using scalac plugins</a></li>
+                    <li class="toc-h2"><a href="#global-plugins">Global plugins</a></li>
+                    <li class="toc-h2"><a href="#per-target-plugins">Per-target plugins</a></li>
+                    <li class="toc-h2"><a href="#depending-on-plugins">Depending on plugins</a></li>
                 </ul>
               </nav>
 
@@ -281,111 +284,92 @@
 .codehilite .vi { color: #bb60d5 } /* Name.Variable.Instance */
 .codehilite .il { color: #40a070 } /* Literal.Number.Integer.Long */
 </style>
-<h1 id="developing-a-pants-plugin">Developing a Pants Plugin</h1>
-<p>This page documents how to develop a Pants plugin, a set of code that
-defines new Pants functionality. If you
-<a href="dev_tasks.html">develop a new task</a>
-or target to add to Pants (or to
-override an existing part of Pants), a plugin gives you a way to
-register your code with Pants.</p>
-<p>Much of Pants' own functionality is organized in plugins; see them in
-<a href="https://github.com/pantsbuild/pants/tree/master/src/python/pants/backend"><code>src/python/pants/backend/*</code></a>.</p>
-<p>A plugin registers its functionality with Pants by defining some
-functions in a <code>register.py</code> file in its top directory. For example,
-Pants' <code>jvm</code> code registers in
-<a href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/backend/jvm/register.py">src/python/pants/backend/jvm/register.py</a>
-Pants' backend-loader code assumes your plugin has a <code>register.py</code> file
-there.</p>
-<h2 id="simple-configuration">Simple Configuration</h2>
-<p>If you want to extend Pants without adding any 3rd-party libraries that aren't already referenced by
-Pants, you can use the following technique using sources stored directly in your repo.
-All you need to do is name the package where the plugin is defined, and the pythonpath entry to
-load it from.</p>
-<p>In the example below, the stock <code>JvmBinary</code> target will subclassed so that a custom task (not shown)
-can consume it specifically but disregard regular <code>JvmBinary</code> instances (using <code>isinstance()</code>).</p>
+<h1 id="scalac-plugins-with-pants">scalac Plugins with Pants</h1>
+<p>The Scala compiler, scalac, has a plugin mechanism.</p>
+<p>Plugins allow you to hook into the compiler while it's running, to perform various
+tasks such as custom error checking, code analysis and so on.</p>
+<p>Pants supports both building and using scalac plugins.</p>
+<h2 id="building-scalac-plugins">Building scalac plugins</h2>
+<p>scalac plugins are specified using a <code>scalac_plugin</code> target:</p>
+<div class="codehilite"><pre>scalac_plugin(
+  name = 'plugin',
+  plugin = 'simple_scalac_plugin',
+  sources = ['SimpleScalacPlugin.scala'],
+  dependencies = [],
+  classname = 'org.pantsbuild.example.scalac.plugin.SimpleScalacPlugin',
+  scope='compile',
+)
+</pre></div>
+<p>A scalac plugin target has the same fields as a <code>scala_library</code> target, 
+plus two extra:</p>
 <ul>
-<li>
-<p>Define a home for your plugins. In this example we'll use a top-level <code>plugins/</code> directory but
-  this is not special.</p>
-</li>
-<li>
-<p>Create an empty <code>plugins/hadoop/targets/__init__.py</code> to define a python package structure
-  for your custom hadoop target type plugin. Also create empty <code>__init__.py</code> files in each
-  directory up to but not including the root directory of your python package layout; in this case,
-  just <code>plugins/hadoop/__init__.py</code>.</p>
-</li>
-<li>
-<p>Create a python module for your custom target type in <code>plugins/hadoop/targets/hadoop_binary.py</code>:</p>
-<div class="codehilite"><pre><span class="c"># plugins/hadoop/targets/hadoop_binary.py</span>
-<span class="kn">from</span> <span class="nn">pants.backend.jvm.targets.jvm_binary</span> <span class="kn">import</span> <span class="n">JvmBinary</span>
-
-<span class="k">class</span> <span class="nc">HadoopBinary</span><span class="p">(</span><span class="n">JvmBinary</span><span class="p">):</span>
-  <span class="k">pass</span>
-</pre></div>
-</li>
-<li>
-<p>Create <code>plugins/hadoop/register.py</code> to register the elements exposed by your plugin to BUILD file
-  authors:</p>
-<div class="codehilite"><pre><span class="c"># plugins/hadoop/register.py</span>
-
-<span class="kn">from</span> <span class="nn">pants.build_graph.build_file_aliases</span> <span class="kn">import</span> <span class="n">BuildFileAliases</span>
-<span class="kn">from</span> <span class="nn">hadoop.targets.hadoop_binary</span> <span class="kn">import</span> <span class="n">HadoopBinary</span>
-
-<span class="k">def</span> <span class="nf">build_file_aliases</span><span class="p">():</span>
-  <span class="k">return</span> <span class="n">BuildFileAliases</span><span class="p">(</span>
-    <span class="n">targets</span><span class="o">=</span><span class="p">{</span>
-      <span class="c"># NB: This allows a HadoopBinary target to be created in a BUILD file using the</span>
-      <span class="c"># hadoop_binary alias.</span>
-      <span class="s">'hadoop_binary'</span><span class="p">:</span> <span class="n">HadoopBinary</span><span class="p">,</span>
-    <span class="p">},</span>
-  <span class="p">)</span>
-</pre></div>
-</li>
-<li>
-<p>In <code>pants.ini</code>, add your new plugin package to the list of backends to load when pants starts.
-  This instructs pants to load a module named <code>hadoop.register</code>.</p>
-<div class="codehilite"><pre><span class="k">[GLOBAL]</span>
-<span class="err">pythonpath:</span> <span class="err">[</span>
-    <span class="err">'%(buildroot)s/plugins',</span>
-  <span class="err">]</span>
-<span class="err">backend_packages:</span> <span class="err">[</span>
-    <span class="err">'hadoop',</span>
-  <span class="err">]</span>
-</pre></div>
-</li>
+<li><code>classname</code>: The name of the <code>Plugin</code> implementation class. Required.</li>
+<li><code>plugin</code>: The logical name of the plugin, as returned by the <code>Plugin</code>
+  class's <code>getName()</code> method.  If unspecified, this field defaults to 
+  the target name.</li>
 </ul>
-<p>Note that you can also set the PYTHONPATH in your <code>./pants</code> wrapper script, instead of in
-<code>pants.ini</code>, if you have other reasons to do so. Either way, pants will look for a <code>register.py</code>
-file for each backend package you list by prefixing that package with the python path; ie roughly
-<code>pythonpath + backend package + register.py</code> is tried for each pythonpath prefix until a
-<code>register.py</code> is found, in this example <code>plugins/hadoop/register.py</code>.</p>
-<h2 id="examples-from-twittercommons">Examples from <code>twitter/commons</code></h2>
-<p>For an example of a code repo with plugins to add features to Pants when building in that repo,
-take a look at <a href="https://github.com/twitter/commons"><code>twitter/commons</code></a>, especially its
-<a href="https://github.com/twitter/commons/tree/32011ab5351fea23e8c70e24e752540b06d1389f/pants-plugins"><code>pants-plugins</code> directory</a>.</p>
-<p>The repo's <a href="https://github.com/twitter/commons/blob/32011ab5351fea23e8c70e24e752540b06d1389f/pants.ini"><code>pants.ini</code> file</a> has a
-<code>backend_packages</code> entry listing the plugin packages (packages with <code>register.py</code> files):</p>
-<div class="codehilite"><pre><span class="p">[</span><span class="n">GLOBAL</span><span class="p">]</span>
-<span class="n">pythonpath</span><span class="p">:</span> <span class="p">[</span>
-    <span class="s">"</span><span class="si">%(buildroot)s</span><span class="s">/pants-plugins/src/python"</span><span class="p">,</span>
-  <span class="p">]</span>
-<span class="n">backend_packages</span><span class="p">:</span> <span class="p">[</span>
-    <span class="s">'twitter.common.pants.jvm.extras'</span><span class="p">,</span>
-    <span class="s">'twitter.common.pants.python.commons'</span><span class="p">,</span>
-    <span class="s">'pants.contrib.python.checks'</span><span class="p">,</span>
-  <span class="p">]</span>
+<p>Building a plugin target will, in addition to compiling the code, generate
+the appropriate metadata into <code>scalac-plugin.xm</code>, so
+that scalac can load the plugin by name at runtime.</p>
+<p>A plugin may be published for later consumption in any repo. It can also
+be consumed (with some restrictions) from source, in the same repo.</p>
+<h2 id="using-scalac-plugins">Using scalac plugins</h2>
+<p>Plugins can be integrated in one of two ways:</p>
+<ul>
+<li>Global plugins: specified in <code>pants.ini</code> and used on all Scala code.</li>
+<li>Per-target plugins: specified on a Scala target and used only when compiling that target.</li>
+</ul>
+<h4 id="global-plugins">Global plugins</h4>
+<p>Global plugins are specified using the <code>scalac_plugins</code> key in the <code>compile.zinc</code> section of <code>pants.ini</code>:</p>
+<div class="codehilite"><pre>[compile.zinc]
+scalac_plugins: ['simple_scalac_plugin']
 </pre></div>
-<p>The <a href="https://github.com/twitter/commons/blob/master/pants-plugins/src/python/twitter/common/pants/jvm/extras/register.py"><code>...jvm/extras/register.py</code></a>
-file registers a <code>checkstyle</code> goal. To find the code for this task, come back to the
-<code>pantsbuild/pants</code> repo: Pants defines the
-<a href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/backend/jvm/tasks/checkstyle.py"><code>Checkstyle</code> task class</a> but doesn't register it. 
-But other Pants workspaces can register it, as <code>twitter/commons</code> illustrates.</p>
+<p>Plugins can optionally take arguments, specified like this:</p>
+<div class="codehilite"><pre>[compile.zinc]
+scalac_plugins: ['simple_scalac_plugin]
+scalac_plugin_args: {
+    'simple_scalac_plugin': ['arg1', 'arg2']
+  }
+</pre></div>
+<h4 id="per-target-plugins">Per-target plugins</h4>
+<p>These are specified like this:</p>
+<div class="codehilite"><pre>scala_library(
+  ...
+  scalac_plugins: ['simple_scalac_plugin'],
+  scalac_plugin_args: {
+      'simple_scalac_plugin': ['arg1', 'arg2']
+    }
+)
+</pre></div>
+<h4 id="depending-on-plugins">Depending on plugins</h4>
+<p>In order to load a plugin, it has to be on scalac's classpath. 
+This can be achieved in one of two ways:
+- Have targets that must be compiled with a plugin depend (directly or indirectly) 
+either on the <code>scalac_plugin</code> target, or on a <code>jar_library</code> pointing to a published version
+of the plugin.
+- Have a <code>scalac-plugin-dep</code> target in <code>BUILD.tools</code>:</p>
+<div class="codehilite"><pre>jar_library(name='scala-plugin-dep',
+            jars = [jar(org='com.foo', name='foo_plugin', rev='1.2.3')],
+</pre></div>
+<p>Note that, as always with <code>BUILD.tools</code>, plugin locations specified via <code>scala-plugin-dep</code> 
+must be published jars. They cannot be local <code>scalac_plugin</code> targets.</p>
+<p>Usually, it will make more sense to use <code>scala-plugin-dep</code> with global plugins, to avoid 
+laborious repetition of that dependency, and to use target dependencies for per-target plugins,
+to keep the dependencies selective.<br/>
+</p>
+<p>Depending directly on the <code>scalac_plugin</code> has the added advantage of allowing plugin changes
+to be picked up when compiling the target that uses the plugin, with no need for an intermediate 
+publishing step.</p>
+<p>Note that, to avoid a chicken-and-egg problem, an in-repo plugin will not be used when 
+compiling its own <code>scalac_plugin</code> target, or any of that target's dependencies.
+To use a plugin on its own code, you must publish it and consume the published plugin
+via <code>scala-plugin-dep</code>.</p>
 
             <!-- main content end -->
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/howto_plugin.html 2017-03-03T15:43:34.836927
+              from dist/markdown/html/examples/src/scala/org/pantsbuild/example/scalac/plugin/README.html 2017-03-03T15:43:34.829354
             </div>
 
           </div> <!-- mainflow -->
