@@ -557,6 +557,7 @@
 <tr><td><a href="#minimize" onclick="expandGoal('minimize')">minimize</a></td><td>Print a minimal covering set of targets.</td></tr>
 <tr><td><a href="#ng-killall" onclick="expandGoal('ng-killall')">ng-killall</a></td><td>Kill running nailgun servers.</td></tr>
 <tr><td><a href="#options" onclick="expandGoal('options')">options</a></td><td>Display meta-information about options.</td></tr>
+<tr><td><a href="#outdated" onclick="expandGoal('outdated')">outdated</a></td><td></td></tr>
 <tr><td><a href="#path" onclick="expandGoal('path')">path</a></td><td>Find a dependency path from one target to another.</td></tr>
 <tr><td><a href="#pathdeps" onclick="expandGoal('pathdeps')">pathdeps</a></td><td>List all paths containing BUILD files the target depends on.</td></tr>
 <tr><td><a href="#paths" onclick="expandGoal('paths')">paths</a></td><td>List all dependency paths from one target to another.</td></tr>
@@ -633,7 +634,7 @@
 <li class="collapsed options-group">Advanced options
           <ul class="nobullets">
 <li>
-<span class="option-args">--backend-packages=&lt;str&gt; (--backend-packages=&lt;str&gt;) ..., --backend-packages="[&lt;str&gt;, &lt;str&gt;, ...]", --backend-packages="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['pants.backend.graph_info','pants.backend.python','pants.backend.jvm','pants.backend.codegen.antlr.java','pants.backend.codegen.antlr.python','pants.backend.codegen.jaxb','pants.backend.codegen.protobuf.java','pants.backend.codegen.ragel.java','pants.backend.codegen.thrift.java','pants.backend.codegen.thrift.python','pants.backend.codegen.wire.java','pants.backend.project_info','pants.backend.docgen','internal_backend.optional','internal_backend.repositories','internal_backend.sitegen','internal_backend.utilities','pants.contrib.android','pants.contrib.cpp','pants.contrib.errorprone','pants.contrib.findbugs','pants.contrib.go','pants.contrib.scalajs','pants.contrib.node','pants.contrib.python.checks','pants.contrib.scrooge'])</span>
+<span class="option-args">--backend-packages=&lt;str&gt; (--backend-packages=&lt;str&gt;) ..., --backend-packages="[&lt;str&gt;, &lt;str&gt;, ...]", --backend-packages="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['pants.backend.graph_info','pants.backend.jvm','pants.backend.codegen.antlr.java','pants.backend.codegen.antlr.python','pants.backend.codegen.jaxb','pants.backend.codegen.protobuf.java','pants.backend.codegen.ragel.java','pants.backend.codegen.thrift.java','pants.backend.codegen.thrift.python','pants.backend.codegen.wire.java','pants.backend.project_info','pants.backend.python2','pants.backend.docgen','internal_backend.optional','internal_backend.repositories','internal_backend.sitegen','internal_backend.utilities','pants.contrib.android','pants.contrib.cpp','pants.contrib.errorprone','pants.contrib.findbugs','pants.contrib.go','pants.contrib.scalajs','pants.contrib.node','pants.contrib.python.checks','pants.contrib.scrooge'])</span>
 <br><span>Load backends from these packages that are already on the path. Add contrib and custom backends to this list.</span>
 </br></li>
 <li>
@@ -657,8 +658,8 @@
 <br><span>Enables use of the pants daemon (and implicitly, the v2 engine). (Beta)</span>
 </br></li>
 <li>
-<span class="option-args">--[no-]enable-v2-engine</span> <span class="option-default">(default: False)</span>
-<br><span>Enables use of the v2 engine. (Beta)</span>
+<span class="option-args">--[no-]enable-v2-engine</span> <span class="option-default">(default: True)</span>
+<br><span>Enables use of the v2 engine.</span>
 </br></li>
 <li>
 <span class="option-args">--exclude-target-regexp=&lt;regexp&gt; (--exclude-target-regexp=&lt;regexp&gt;) ..., --exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
@@ -697,7 +698,7 @@
 <br><span>Write end-product artifacts to this dir.</span>
 </br></li>
 <li>
-<span class="option-args">--pants-ignore=&lt;str&gt; (--pants-ignore=&lt;str&gt;) ..., --pants-ignore="[&lt;str&gt;, &lt;str&gt;, ...]", --pants-ignore="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['.*','/dist/','/build-support/*.venv/'])</span>
+<span class="option-args">--pants-ignore=&lt;str&gt; (--pants-ignore=&lt;str&gt;) ..., --pants-ignore="[&lt;str&gt;, &lt;str&gt;, ...]", --pants-ignore="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['.*','/dist/','/build-support/*.venv/','!.babelrc'])</span>
 <br><span>Paths to ignore for all filesystem operations performed by pants (e.g. BUILD file scanning, glob matching, etc). Patterns use the gitignore syntax (https://git-scm.com/docs/gitignore). This currently only affects the v2 engine. To experiment with v2 engine, try --enable-v2-engine option.</span>
 </br></li>
 <li>
@@ -709,7 +710,7 @@
 <br><span>Use support files from this dir.</span>
 </br></li>
 <li>
-<span class="option-args">--pants-version=&lt;str&gt;</span> <span class="option-default">(default: '1.3.0.dev14')</span>
+<span class="option-args">--pants-version=&lt;str&gt;</span> <span class="option-default">(default: '1.3.0.dev15')</span>
 <br><span>Use this pants version.</span>
 </br></li>
 <li>
@@ -725,7 +726,7 @@
 <br><span>Override config with values from these files. Later files override earlier ones.</span>
 </br></li>
 <li>
-<span class="option-args">--plugin-cache-dir=&lt;str&gt;</span> <span class="option-default">(default: '/Users/stuhood/.cache/pants/plugins')</span>
+<span class="option-args">--plugin-cache-dir=&lt;str&gt;</span> <span class="option-default">(default: '/var/folders/tc/kq93y4pd5jn6gy3pfzd2zd5h0000gn/T/plugins_cache.XXXXX.JEqun3Kv')</span>
 <br><span>Cache resolved plugin requirements here.</span>
 </br></li>
 <li>
@@ -2045,25 +2046,25 @@
 </ul>
 </li>
 <li>
-<div class="scope">binary.python-binary-create</div>
-<div class="scope-description"></div>
+<div class="scope">binary.py</div>
+<div class="scope-description">Create an executable .pex file.</div>
 <ul class="nobullets collapsible">
 <li class="collapsed options-group">Advanced options
                     <ul class="nobullets">
 <li>
-<span class="option-args">--binary-python-binary-create-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<span class="option-args">--binary-py-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
 <br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
 </br></li>
 <li>
-<span class="option-args">--binary-python-binary-create-exclude-target-regexp=&lt;regexp&gt; (--binary-python-binary-create-exclude-target-regexp=&lt;regexp&gt;) ..., --binary-python-binary-create-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --binary-python-binary-create-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
+<span class="option-args">--binary-py-exclude-target-regexp=&lt;regexp&gt; (--binary-py-exclude-target-regexp=&lt;regexp&gt;) ..., --binary-py-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --binary-py-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
 <br><span>Exclude targets that match these regexes.</span>
 </br></li>
 <li>
-<span class="option-args">--[no-]binary-python-binary-create-fail-fast</span> <span class="option-default">(default: False)</span>
+<span class="option-args">--[no-]binary-py-fail-fast</span> <span class="option-default">(default: False)</span>
 <br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
 </br></li>
 <li>
-<span class="option-args">--binary-python-binary-create-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<span class="option-args">--binary-py-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
 <br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
 </br></li>
 </ul>
@@ -2071,21 +2072,21 @@
 </ul>
 </li>
 <li>
-<div class="scope">cache.binary.python-binary-create</div>
+<div class="scope">cache.binary.py</div>
 <div class="scope-description"></div>
 <ul class="nobullets collapsible">
 <li class="collapsed options-group">Basic options
                     <ul class="nobullets">
 <li>
-<span class="option-args">--[no-]cache-binary-python-binary-create-dereference-symlinks</span> <span class="option-default">(default: True)</span>
+<span class="option-args">--[no-]cache-binary-py-dereference-symlinks</span> <span class="option-default">(default: True)</span>
 <br><span>Dereference symlinks when creating cache tarball.</span>
 </br></li>
 <li>
-<span class="option-args">--[no-]cache-binary-python-binary-create-read</span> <span class="option-default">(default: True)</span>
+<span class="option-args">--[no-]cache-binary-py-read</span> <span class="option-default">(default: True)</span>
 <br><span>Read build artifacts from cache, if available.</span>
 </br></li>
 <li>
-<span class="option-args">--[no-]cache-binary-python-binary-create-write</span> <span class="option-default">(default: True)</span>
+<span class="option-args">--[no-]cache-binary-py-write</span> <span class="option-default">(default: True)</span>
 <br><span>Write build artifacts to cache, if available.</span>
 </br></li>
 </ul>
@@ -2093,90 +2094,56 @@
 <li class="collapsed options-group">Advanced options
                     <ul class="nobullets">
 <li>
-<span class="option-args">--cache-binary-python-binary-create-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<span class="option-args">--cache-binary-py-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
 <br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
 </br></li>
 <li>
-<span class="option-args">--cache-binary-python-binary-create-compression-level=&lt;int&gt;</span> <span class="option-default">(default: 5)</span>
+<span class="option-args">--cache-binary-py-compression-level=&lt;int&gt;</span> <span class="option-default">(default: 5)</span>
 <br><span>The gzip compression level (0-9) for created artifacts.</span>
 </br></li>
 <li>
-<span class="option-args">--cache-binary-python-binary-create-exclude-target-regexp=&lt;regexp&gt; (--cache-binary-python-binary-create-exclude-target-regexp=&lt;regexp&gt;) ..., --cache-binary-python-binary-create-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --cache-binary-python-binary-create-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
+<span class="option-args">--cache-binary-py-exclude-target-regexp=&lt;regexp&gt; (--cache-binary-py-exclude-target-regexp=&lt;regexp&gt;) ..., --cache-binary-py-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --cache-binary-py-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
 <br><span>Exclude targets that match these regexes.</span>
 </br></li>
 <li>
-<span class="option-args">--[no-]cache-binary-python-binary-create-fail-fast</span> <span class="option-default">(default: False)</span>
+<span class="option-args">--[no-]cache-binary-py-fail-fast</span> <span class="option-default">(default: False)</span>
 <br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
 </br></li>
 <li>
-<span class="option-args">--cache-binary-python-binary-create-max-entries-per-target=&lt;int&gt;</span> <span class="option-default">(default: 8)</span>
+<span class="option-args">--cache-binary-py-max-entries-per-target=&lt;int&gt;</span> <span class="option-default">(default: 8)</span>
 <br><span>Maximum number of old cache files to keep per task target pair</span>
 </br></li>
 <li>
-<span class="option-args">--cache-binary-python-binary-create-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<span class="option-args">--cache-binary-py-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
 <br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
 </br></li>
 <li>
-<span class="option-args">--[no-]cache-binary-python-binary-create-overwrite</span> <span class="option-default">(default: False)</span>
+<span class="option-args">--[no-]cache-binary-py-overwrite</span> <span class="option-default">(default: False)</span>
 <br><span>If writing build artifacts to cache, overwrite existing artifacts instead of skipping them.</span>
 </br></li>
 <li>
-<span class="option-args">--cache-binary-python-binary-create-pinger-timeout=&lt;float&gt;</span> <span class="option-default">(default: 0.5)</span>
+<span class="option-args">--cache-binary-py-pinger-timeout=&lt;float&gt;</span> <span class="option-default">(default: 0.5)</span>
 <br><span>number of seconds before pinger times out</span>
 </br></li>
 <li>
-<span class="option-args">--cache-binary-python-binary-create-pinger-tries=&lt;int&gt;</span> <span class="option-default">(default: 2)</span>
+<span class="option-args">--cache-binary-py-pinger-tries=&lt;int&gt;</span> <span class="option-default">(default: 2)</span>
 <br><span>number of times pinger tries a cache</span>
 </br></li>
 <li>
-<span class="option-args">--cache-binary-python-binary-create-read-from=&lt;str&gt; (--cache-binary-python-binary-create-read-from=&lt;str&gt;) ..., --cache-binary-python-binary-create-read-from="[&lt;str&gt;, &lt;str&gt;, ...]", --cache-binary-python-binary-create-read-from="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['/Users/stuhood/src/pants/.cache'])</span>
+<span class="option-args">--cache-binary-py-read-from=&lt;str&gt; (--cache-binary-py-read-from=&lt;str&gt;) ..., --cache-binary-py-read-from="[&lt;str&gt;, &lt;str&gt;, ...]", --cache-binary-py-read-from="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['/Users/stuhood/src/pants/.cache'])</span>
 <br><span>The URIs of artifact caches to read directly from. Each entry is a URL of a RESTful cache, a path of a filesystem cache, or a pipe-separated list of alternate caches to choose from. This list is also used as input to the resolver. When resolver is 'none' list is used as is.</span>
 </br></li>
 <li>
-<span class="option-args">--cache-binary-python-binary-create-resolver=&lt;str&gt;</span> <span class="option-default">(default: 'none')</span>
+<span class="option-args">--cache-binary-py-resolver=&lt;str&gt;</span> <span class="option-default">(default: 'none')</span>
 <br><span>Select which resolver strategy to use for discovering URIs that access artifact caches. none: use URIs from static config options, i.e. --read-from, --write-to. rest: look up URIs by querying a RESTful URL, which is a remote address from --read-from, --write-to.</span>
 </br></li>
 <li>
-<span class="option-args">--cache-binary-python-binary-create-write-permissions=&lt;str&gt;</span> <span class="option-default">(default: None)</span>
+<span class="option-args">--cache-binary-py-write-permissions=&lt;str&gt;</span> <span class="option-default">(default: None)</span>
 <br><span>Permissions to use when writing artifacts to a local cache, in octal.</span>
 </br></li>
 <li>
-<span class="option-args">--cache-binary-python-binary-create-write-to=&lt;str&gt; (--cache-binary-python-binary-create-write-to=&lt;str&gt;) ..., --cache-binary-python-binary-create-write-to="[&lt;str&gt;, &lt;str&gt;, ...]", --cache-binary-python-binary-create-write-to="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['/Users/stuhood/src/pants/.cache'])</span>
+<span class="option-args">--cache-binary-py-write-to=&lt;str&gt; (--cache-binary-py-write-to=&lt;str&gt;) ..., --cache-binary-py-write-to="[&lt;str&gt;, &lt;str&gt;, ...]", --cache-binary-py-write-to="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['/Users/stuhood/src/pants/.cache'])</span>
 <br><span>The URIs of artifact caches to write directly to. Each entry is a URL ofa RESTful cache, a path of a filesystem cache, or a pipe-separated list of alternate caches to choose from. This list is also used as input to the resolver. When resolver is 'none' list is used as is.</span>
-</br></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="scope">thrift-binary.binary.python-binary-create</div>
-<div class="scope-description"></div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Advanced options
-                    <ul class="nobullets">
-<li>
-<span class="option-args">--thrift-binary-binary-python-binary-create-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
-<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-binary-python-binary-create-exclude-target-regexp=&lt;regexp&gt; (--thrift-binary-binary-python-binary-create-exclude-target-regexp=&lt;regexp&gt;) ..., --thrift-binary-binary-python-binary-create-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --thrift-binary-binary-python-binary-create-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
-<br><span>Exclude targets that match these regexes.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]thrift-binary-binary-python-binary-create-fail-fast</span> <span class="option-default">(default: False)</span>
-<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-binary-python-binary-create-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-binary-python-binary-create-supportdir=&lt;str&gt;</span> <span class="option-default">(default: 'bin/thrift')</span>
-<br><span>Find thrift binaries under this dir.   Used as part of the path to lookup thetool with --binary-util-baseurls and --pants-bootstrapdir</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-binary-python-binary-create-version=&lt;str&gt;</span> <span class="option-default">(default: '0.9.2')</span>
-<br><span>Thrift compiler version.   Used as part of the path to lookup thetool with --binary-util-baseurls and --pants-bootstrapdir</span>
 </br></li>
 </ul>
 </li>
@@ -5191,6 +5158,118 @@
 </ul>
 </li>
 <li>
+<div class="scope">compile.go-checkstyle</div>
+<div class="scope-description">Checks Go code matches gofmt style.</div>
+<ul class="nobullets collapsible">
+<li class="collapsed options-group">Basic options
+                    <ul class="nobullets">
+<li>
+<span class="option-args">--[no-]compile-go-checkstyle-skip</span> <span class="option-default">(default: False)</span>
+<br><span>Skip checkstyle.</span>
+</br></li>
+</ul>
+</li>
+<li class="collapsed options-group">Advanced options
+                    <ul class="nobullets">
+<li>
+<span class="option-args">--compile-go-checkstyle-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
+</br></li>
+<li>
+<span class="option-args">--compile-go-checkstyle-exclude-target-regexp=&lt;regexp&gt; (--compile-go-checkstyle-exclude-target-regexp=&lt;regexp&gt;) ..., --compile-go-checkstyle-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --compile-go-checkstyle-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
+<br><span>Exclude targets that match these regexes.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]compile-go-checkstyle-fail-fast</span> <span class="option-default">(default: False)</span>
+<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
+</br></li>
+<li>
+<span class="option-args">--compile-go-checkstyle-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<div class="scope">cache.compile.go-checkstyle</div>
+<div class="scope-description"></div>
+<ul class="nobullets collapsible">
+<li class="collapsed options-group">Basic options
+                    <ul class="nobullets">
+<li>
+<span class="option-args">--[no-]cache-compile-go-checkstyle-dereference-symlinks</span> <span class="option-default">(default: True)</span>
+<br><span>Dereference symlinks when creating cache tarball.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]cache-compile-go-checkstyle-read</span> <span class="option-default">(default: True)</span>
+<br><span>Read build artifacts from cache, if available.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]cache-compile-go-checkstyle-write</span> <span class="option-default">(default: True)</span>
+<br><span>Write build artifacts to cache, if available.</span>
+</br></li>
+</ul>
+</li>
+<li class="collapsed options-group">Advanced options
+                    <ul class="nobullets">
+<li>
+<span class="option-args">--cache-compile-go-checkstyle-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
+</br></li>
+<li>
+<span class="option-args">--cache-compile-go-checkstyle-compression-level=&lt;int&gt;</span> <span class="option-default">(default: 5)</span>
+<br><span>The gzip compression level (0-9) for created artifacts.</span>
+</br></li>
+<li>
+<span class="option-args">--cache-compile-go-checkstyle-exclude-target-regexp=&lt;regexp&gt; (--cache-compile-go-checkstyle-exclude-target-regexp=&lt;regexp&gt;) ..., --cache-compile-go-checkstyle-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --cache-compile-go-checkstyle-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
+<br><span>Exclude targets that match these regexes.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]cache-compile-go-checkstyle-fail-fast</span> <span class="option-default">(default: False)</span>
+<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
+</br></li>
+<li>
+<span class="option-args">--cache-compile-go-checkstyle-max-entries-per-target=&lt;int&gt;</span> <span class="option-default">(default: 8)</span>
+<br><span>Maximum number of old cache files to keep per task target pair</span>
+</br></li>
+<li>
+<span class="option-args">--cache-compile-go-checkstyle-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]cache-compile-go-checkstyle-overwrite</span> <span class="option-default">(default: False)</span>
+<br><span>If writing build artifacts to cache, overwrite existing artifacts instead of skipping them.</span>
+</br></li>
+<li>
+<span class="option-args">--cache-compile-go-checkstyle-pinger-timeout=&lt;float&gt;</span> <span class="option-default">(default: 0.5)</span>
+<br><span>number of seconds before pinger times out</span>
+</br></li>
+<li>
+<span class="option-args">--cache-compile-go-checkstyle-pinger-tries=&lt;int&gt;</span> <span class="option-default">(default: 2)</span>
+<br><span>number of times pinger tries a cache</span>
+</br></li>
+<li>
+<span class="option-args">--cache-compile-go-checkstyle-read-from=&lt;str&gt; (--cache-compile-go-checkstyle-read-from=&lt;str&gt;) ..., --cache-compile-go-checkstyle-read-from="[&lt;str&gt;, &lt;str&gt;, ...]", --cache-compile-go-checkstyle-read-from="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['/Users/stuhood/src/pants/.cache'])</span>
+<br><span>The URIs of artifact caches to read directly from. Each entry is a URL of a RESTful cache, a path of a filesystem cache, or a pipe-separated list of alternate caches to choose from. This list is also used as input to the resolver. When resolver is 'none' list is used as is.</span>
+</br></li>
+<li>
+<span class="option-args">--cache-compile-go-checkstyle-resolver=&lt;str&gt;</span> <span class="option-default">(default: 'none')</span>
+<br><span>Select which resolver strategy to use for discovering URIs that access artifact caches. none: use URIs from static config options, i.e. --read-from, --write-to. rest: look up URIs by querying a RESTful URL, which is a remote address from --read-from, --write-to.</span>
+</br></li>
+<li>
+<span class="option-args">--cache-compile-go-checkstyle-write-permissions=&lt;str&gt;</span> <span class="option-default">(default: None)</span>
+<br><span>Permissions to use when writing artifacts to a local cache, in octal.</span>
+</br></li>
+<li>
+<span class="option-args">--cache-compile-go-checkstyle-write-to=&lt;str&gt; (--cache-compile-go-checkstyle-write-to=&lt;str&gt;) ..., --cache-compile-go-checkstyle-write-to="[&lt;str&gt;, &lt;str&gt;, ...]", --cache-compile-go-checkstyle-write-to="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['/Users/stuhood/src/pants/.cache'])</span>
+<br><span>The URIs of artifact caches to write directly to. Each entry is a URL ofa RESTful cache, a path of a filesystem cache, or a pipe-separated list of alternate caches to choose from. This list is also used as input to the resolver. When resolver is 'none' list is used as is.</span>
+</br></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
 <div class="scope">compile.gofmt</div>
 <div class="scope-description">Checks Go code matches gofmt style.</div>
 <ul class="nobullets collapsible">
@@ -5225,21 +5304,21 @@
 </ul>
 </li>
 <li>
-<div class="scope">cache.compile.gofmt</div>
+<div class="scope">cache.compile.go-checkstyle</div>
 <div class="scope-description"></div>
 <ul class="nobullets collapsible">
 <li class="collapsed options-group">Basic options
                     <ul class="nobullets">
 <li>
-<span class="option-args">--[no-]cache-compile-gofmt-dereference-symlinks</span> <span class="option-default">(default: True)</span>
+<span class="option-args">--[no-]cache-compile-go-checkstyle-dereference-symlinks</span> <span class="option-default">(default: True)</span>
 <br><span>Dereference symlinks when creating cache tarball.</span>
 </br></li>
 <li>
-<span class="option-args">--[no-]cache-compile-gofmt-read</span> <span class="option-default">(default: True)</span>
+<span class="option-args">--[no-]cache-compile-go-checkstyle-read</span> <span class="option-default">(default: True)</span>
 <br><span>Read build artifacts from cache, if available.</span>
 </br></li>
 <li>
-<span class="option-args">--[no-]cache-compile-gofmt-write</span> <span class="option-default">(default: True)</span>
+<span class="option-args">--[no-]cache-compile-go-checkstyle-write</span> <span class="option-default">(default: True)</span>
 <br><span>Write build artifacts to cache, if available.</span>
 </br></li>
 </ul>
@@ -5247,55 +5326,55 @@
 <li class="collapsed options-group">Advanced options
                     <ul class="nobullets">
 <li>
-<span class="option-args">--cache-compile-gofmt-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<span class="option-args">--cache-compile-go-checkstyle-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
 <br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
 </br></li>
 <li>
-<span class="option-args">--cache-compile-gofmt-compression-level=&lt;int&gt;</span> <span class="option-default">(default: 5)</span>
+<span class="option-args">--cache-compile-go-checkstyle-compression-level=&lt;int&gt;</span> <span class="option-default">(default: 5)</span>
 <br><span>The gzip compression level (0-9) for created artifacts.</span>
 </br></li>
 <li>
-<span class="option-args">--cache-compile-gofmt-exclude-target-regexp=&lt;regexp&gt; (--cache-compile-gofmt-exclude-target-regexp=&lt;regexp&gt;) ..., --cache-compile-gofmt-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --cache-compile-gofmt-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
+<span class="option-args">--cache-compile-go-checkstyle-exclude-target-regexp=&lt;regexp&gt; (--cache-compile-go-checkstyle-exclude-target-regexp=&lt;regexp&gt;) ..., --cache-compile-go-checkstyle-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --cache-compile-go-checkstyle-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
 <br><span>Exclude targets that match these regexes.</span>
 </br></li>
 <li>
-<span class="option-args">--[no-]cache-compile-gofmt-fail-fast</span> <span class="option-default">(default: False)</span>
+<span class="option-args">--[no-]cache-compile-go-checkstyle-fail-fast</span> <span class="option-default">(default: False)</span>
 <br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
 </br></li>
 <li>
-<span class="option-args">--cache-compile-gofmt-max-entries-per-target=&lt;int&gt;</span> <span class="option-default">(default: 8)</span>
+<span class="option-args">--cache-compile-go-checkstyle-max-entries-per-target=&lt;int&gt;</span> <span class="option-default">(default: 8)</span>
 <br><span>Maximum number of old cache files to keep per task target pair</span>
 </br></li>
 <li>
-<span class="option-args">--cache-compile-gofmt-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<span class="option-args">--cache-compile-go-checkstyle-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
 <br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
 </br></li>
 <li>
-<span class="option-args">--[no-]cache-compile-gofmt-overwrite</span> <span class="option-default">(default: False)</span>
+<span class="option-args">--[no-]cache-compile-go-checkstyle-overwrite</span> <span class="option-default">(default: False)</span>
 <br><span>If writing build artifacts to cache, overwrite existing artifacts instead of skipping them.</span>
 </br></li>
 <li>
-<span class="option-args">--cache-compile-gofmt-pinger-timeout=&lt;float&gt;</span> <span class="option-default">(default: 0.5)</span>
+<span class="option-args">--cache-compile-go-checkstyle-pinger-timeout=&lt;float&gt;</span> <span class="option-default">(default: 0.5)</span>
 <br><span>number of seconds before pinger times out</span>
 </br></li>
 <li>
-<span class="option-args">--cache-compile-gofmt-pinger-tries=&lt;int&gt;</span> <span class="option-default">(default: 2)</span>
+<span class="option-args">--cache-compile-go-checkstyle-pinger-tries=&lt;int&gt;</span> <span class="option-default">(default: 2)</span>
 <br><span>number of times pinger tries a cache</span>
 </br></li>
 <li>
-<span class="option-args">--cache-compile-gofmt-read-from=&lt;str&gt; (--cache-compile-gofmt-read-from=&lt;str&gt;) ..., --cache-compile-gofmt-read-from="[&lt;str&gt;, &lt;str&gt;, ...]", --cache-compile-gofmt-read-from="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['/Users/stuhood/src/pants/.cache'])</span>
+<span class="option-args">--cache-compile-go-checkstyle-read-from=&lt;str&gt; (--cache-compile-go-checkstyle-read-from=&lt;str&gt;) ..., --cache-compile-go-checkstyle-read-from="[&lt;str&gt;, &lt;str&gt;, ...]", --cache-compile-go-checkstyle-read-from="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['/Users/stuhood/src/pants/.cache'])</span>
 <br><span>The URIs of artifact caches to read directly from. Each entry is a URL of a RESTful cache, a path of a filesystem cache, or a pipe-separated list of alternate caches to choose from. This list is also used as input to the resolver. When resolver is 'none' list is used as is.</span>
 </br></li>
 <li>
-<span class="option-args">--cache-compile-gofmt-resolver=&lt;str&gt;</span> <span class="option-default">(default: 'none')</span>
+<span class="option-args">--cache-compile-go-checkstyle-resolver=&lt;str&gt;</span> <span class="option-default">(default: 'none')</span>
 <br><span>Select which resolver strategy to use for discovering URIs that access artifact caches. none: use URIs from static config options, i.e. --read-from, --write-to. rest: look up URIs by querying a RESTful URL, which is a remote address from --read-from, --write-to.</span>
 </br></li>
 <li>
-<span class="option-args">--cache-compile-gofmt-write-permissions=&lt;str&gt;</span> <span class="option-default">(default: None)</span>
+<span class="option-args">--cache-compile-go-checkstyle-write-permissions=&lt;str&gt;</span> <span class="option-default">(default: None)</span>
 <br><span>Permissions to use when writing artifacts to a local cache, in octal.</span>
 </br></li>
 <li>
-<span class="option-args">--cache-compile-gofmt-write-to=&lt;str&gt; (--cache-compile-gofmt-write-to=&lt;str&gt;) ..., --cache-compile-gofmt-write-to="[&lt;str&gt;, &lt;str&gt;, ...]", --cache-compile-gofmt-write-to="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['/Users/stuhood/src/pants/.cache'])</span>
+<span class="option-args">--cache-compile-go-checkstyle-write-to=&lt;str&gt; (--cache-compile-go-checkstyle-write-to=&lt;str&gt;) ..., --cache-compile-go-checkstyle-write-to="[&lt;str&gt;, &lt;str&gt;, ...]", --cache-compile-go-checkstyle-write-to="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['/Users/stuhood/src/pants/.cache'])</span>
 <br><span>The URIs of artifact caches to write directly to. Each entry is a URL ofa RESTful cache, a path of a filesystem cache, or a pipe-separated list of alternate caches to choose from. This list is also used as input to the resolver. When resolver is 'none' list is used as is.</span>
 </br></li>
 </ul>
@@ -5645,40 +5724,6 @@
 <li>
 <span class="option-args">--cache-compile-python-eval-write-to=&lt;str&gt; (--cache-compile-python-eval-write-to=&lt;str&gt;) ..., --cache-compile-python-eval-write-to="[&lt;str&gt;, &lt;str&gt;, ...]", --cache-compile-python-eval-write-to="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['/Users/stuhood/src/pants/.cache'])</span>
 <br><span>The URIs of artifact caches to write directly to. Each entry is a URL ofa RESTful cache, a path of a filesystem cache, or a pipe-separated list of alternate caches to choose from. This list is also used as input to the resolver. When resolver is 'none' list is used as is.</span>
-</br></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="scope">thrift-binary.compile.python-eval</div>
-<div class="scope-description"></div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Advanced options
-                    <ul class="nobullets">
-<li>
-<span class="option-args">--thrift-binary-compile-python-eval-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
-<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-compile-python-eval-exclude-target-regexp=&lt;regexp&gt; (--thrift-binary-compile-python-eval-exclude-target-regexp=&lt;regexp&gt;) ..., --thrift-binary-compile-python-eval-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --thrift-binary-compile-python-eval-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
-<br><span>Exclude targets that match these regexes.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]thrift-binary-compile-python-eval-fail-fast</span> <span class="option-default">(default: False)</span>
-<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-compile-python-eval-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-compile-python-eval-supportdir=&lt;str&gt;</span> <span class="option-default">(default: 'bin/thrift')</span>
-<br><span>Find thrift binaries under this dir.   Used as part of the path to lookup thetool with --binary-util-baseurls and --pants-bootstrapdir</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-compile-python-eval-version=&lt;str&gt;</span> <span class="option-default">(default: '0.9.2')</span>
-<br><span>Thrift compiler version.   Used as part of the path to lookup thetool with --binary-util-baseurls and --pants-bootstrapdir</span>
 </br></li>
 </ul>
 </li>
@@ -7470,7 +7515,7 @@
 </br></li>
 <li>
 <span class="option-args">--scala-platform-doc-scaladoc-scala-repl_2_12=&lt;target_option&gt;</span> <span class="option-default">(default: //:scala-repl_2_12)</span>
-<br><span>Target address spec for overriding the classpath of the scala-repl_2_12 jvm tool which is, by default: [JarDependency(org=u'org.scala-lang', base_name=u'scala-compiler', rev=u'2.12.0', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=(), base_path=u'.')]</span>
+<br><span>Target address spec for overriding the classpath of the scala-repl_2_12 jvm tool which is, by default: [JarDependency(org=u'org.scala-lang', base_name=u'scala-compiler', rev=u'2.12.1', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=(), base_path=u'.')]</span>
 </br></li>
 <li>
 <span class="option-args">--scala-platform-doc-scaladoc-scalac=&lt;target_option&gt;</span> <span class="option-default">(default: //:scalac)</span>
@@ -7486,7 +7531,7 @@
 </br></li>
 <li>
 <span class="option-args">--scala-platform-doc-scaladoc-scalac_2_12=&lt;target_option&gt;</span> <span class="option-default">(default: //:scalac_2_12)</span>
-<br><span>Target address spec for overriding the classpath of the scalac_2_12 jvm tool which is, by default: [JarDependency(org=u'org.scala-lang', base_name=u'scala-compiler', rev=u'2.12.0', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=(), base_path=u'.')]</span>
+<br><span>Target address spec for overriding the classpath of the scalac_2_12 jvm tool which is, by default: [JarDependency(org=u'org.scala-lang', base_name=u'scala-compiler', rev=u'2.12.1', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=(), base_path=u'.')]</span>
 </br></li>
 <li>
 <span class="option-args">--scala-platform-doc-scaladoc-scalastyle=&lt;target_option&gt;</span> <span class="option-default">(default: //:scalastyle)</span>
@@ -8184,6 +8229,110 @@
 <div class="goal-description">Autoformat source code.</div>
 </div>
 <ul class="nobullets collapsible">
+<li>
+<div class="scope">fmt.go</div>
+<div class="scope-description">Format Go code using gofmt.</div>
+<ul class="nobullets collapsible">
+<li class="collapsed options-group">Advanced options
+                    <ul class="nobullets">
+<li>
+<span class="option-args">--fmt-go-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
+</br></li>
+<li>
+<span class="option-args">--fmt-go-exclude-target-regexp=&lt;regexp&gt; (--fmt-go-exclude-target-regexp=&lt;regexp&gt;) ..., --fmt-go-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --fmt-go-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
+<br><span>Exclude targets that match these regexes.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]fmt-go-fail-fast</span> <span class="option-default">(default: False)</span>
+<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
+</br></li>
+<li>
+<span class="option-args">--fmt-go-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<div class="scope">cache.fmt.go</div>
+<div class="scope-description"></div>
+<ul class="nobullets collapsible">
+<li class="collapsed options-group">Basic options
+                    <ul class="nobullets">
+<li>
+<span class="option-args">--[no-]cache-fmt-go-dereference-symlinks</span> <span class="option-default">(default: True)</span>
+<br><span>Dereference symlinks when creating cache tarball.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]cache-fmt-go-read</span> <span class="option-default">(default: True)</span>
+<br><span>Read build artifacts from cache, if available.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]cache-fmt-go-write</span> <span class="option-default">(default: True)</span>
+<br><span>Write build artifacts to cache, if available.</span>
+</br></li>
+</ul>
+</li>
+<li class="collapsed options-group">Advanced options
+                    <ul class="nobullets">
+<li>
+<span class="option-args">--cache-fmt-go-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
+</br></li>
+<li>
+<span class="option-args">--cache-fmt-go-compression-level=&lt;int&gt;</span> <span class="option-default">(default: 5)</span>
+<br><span>The gzip compression level (0-9) for created artifacts.</span>
+</br></li>
+<li>
+<span class="option-args">--cache-fmt-go-exclude-target-regexp=&lt;regexp&gt; (--cache-fmt-go-exclude-target-regexp=&lt;regexp&gt;) ..., --cache-fmt-go-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --cache-fmt-go-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
+<br><span>Exclude targets that match these regexes.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]cache-fmt-go-fail-fast</span> <span class="option-default">(default: False)</span>
+<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
+</br></li>
+<li>
+<span class="option-args">--cache-fmt-go-max-entries-per-target=&lt;int&gt;</span> <span class="option-default">(default: 8)</span>
+<br><span>Maximum number of old cache files to keep per task target pair</span>
+</br></li>
+<li>
+<span class="option-args">--cache-fmt-go-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]cache-fmt-go-overwrite</span> <span class="option-default">(default: False)</span>
+<br><span>If writing build artifacts to cache, overwrite existing artifacts instead of skipping them.</span>
+</br></li>
+<li>
+<span class="option-args">--cache-fmt-go-pinger-timeout=&lt;float&gt;</span> <span class="option-default">(default: 0.5)</span>
+<br><span>number of seconds before pinger times out</span>
+</br></li>
+<li>
+<span class="option-args">--cache-fmt-go-pinger-tries=&lt;int&gt;</span> <span class="option-default">(default: 2)</span>
+<br><span>number of times pinger tries a cache</span>
+</br></li>
+<li>
+<span class="option-args">--cache-fmt-go-read-from=&lt;str&gt; (--cache-fmt-go-read-from=&lt;str&gt;) ..., --cache-fmt-go-read-from="[&lt;str&gt;, &lt;str&gt;, ...]", --cache-fmt-go-read-from="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['/Users/stuhood/src/pants/.cache'])</span>
+<br><span>The URIs of artifact caches to read directly from. Each entry is a URL of a RESTful cache, a path of a filesystem cache, or a pipe-separated list of alternate caches to choose from. This list is also used as input to the resolver. When resolver is 'none' list is used as is.</span>
+</br></li>
+<li>
+<span class="option-args">--cache-fmt-go-resolver=&lt;str&gt;</span> <span class="option-default">(default: 'none')</span>
+<br><span>Select which resolver strategy to use for discovering URIs that access artifact caches. none: use URIs from static config options, i.e. --read-from, --write-to. rest: look up URIs by querying a RESTful URL, which is a remote address from --read-from, --write-to.</span>
+</br></li>
+<li>
+<span class="option-args">--cache-fmt-go-write-permissions=&lt;str&gt;</span> <span class="option-default">(default: None)</span>
+<br><span>Permissions to use when writing artifacts to a local cache, in octal.</span>
+</br></li>
+<li>
+<span class="option-args">--cache-fmt-go-write-to=&lt;str&gt; (--cache-fmt-go-write-to=&lt;str&gt;) ..., --cache-fmt-go-write-to="[&lt;str&gt;, &lt;str&gt;, ...]", --cache-fmt-go-write-to="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['/Users/stuhood/src/pants/.cache'])</span>
+<br><span>The URIs of artifact caches to write directly to. Each entry is a URL ofa RESTful cache, a path of a filesystem cache, or a pipe-separated list of alternate caches to choose from. This list is also used as input to the resolver. When resolver is 'none' list is used as is.</span>
+</br></li>
+</ul>
+</li>
+</ul>
+</li>
 <li>
 <div class="scope">fmt.isort</div>
 <div class="scope-description">Autoformats Python source files with isort.</div>
@@ -12150,6 +12299,214 @@
 </li>
 </ul>
 </li>
+<li class="goal-data" id="outdated">
+<a id="oref_goal_outdated" pantsmark="oref_goal_outdated"></a>
+<a name="outdated"></a>
+<div class="goal-header">
+<div class="goal-name">outdated</div>
+<div class="goal-description"></div>
+</div>
+<ul class="nobullets collapsible">
+<li>
+<div class="scope">outdated.ivy</div>
+<div class="scope-description">Checks for outdated jar dependencies with Ivy</div>
+<ul class="nobullets collapsible">
+<li class="collapsed options-group">Basic options
+                    <ul class="nobullets">
+<li>
+<span class="option-args">--outdated-ivy-confs=&lt;str&gt; (--outdated-ivy-confs=&lt;str&gt;) ..., --outdated-ivy-confs="[&lt;str&gt;, &lt;str&gt;, ...]", --outdated-ivy-confs="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['default'])</span>
+<br><span>Pass a configuration to ivy in addition to the default ones.</span>
+</br></li>
+<li>
+<span class="option-args">--outdated-ivy-exclude-patterns=&lt;str&gt; (--outdated-ivy-exclude-patterns=&lt;str&gt;) ..., --outdated-ivy-exclude-patterns="[&lt;str&gt;, &lt;str&gt;, ...]", --outdated-ivy-exclude-patterns="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: [])</span>
+<br><span>Regular expressions matching jars to be excluded from outdated report.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]outdated-ivy-use-nailgun</span> <span class="option-default">(default: True)</span>
+<br><span>Use nailgun to make repeated invocations of this task quicker.</span>
+</br></li>
+</ul>
+</li>
+<li class="collapsed options-group">Advanced options
+                    <ul class="nobullets">
+<li>
+<span class="option-args">--outdated-ivy-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
+</br></li>
+<li>
+<span class="option-args">--outdated-ivy-dependency-update-checker=&lt;target_option&gt;</span> <span class="option-default">(default: //:dependency-update-checker)</span>
+<br><span>Target address spec for overriding the classpath of the dependency-update-checker jvm tool which is, by default: [JarDependency(org=u'org.pantsbuild', base_name=u'ivy-dependency-update-checker', rev=u'0.0.1', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=(), base_path=u'.')]</span>
+</br></li>
+<li>
+<span class="option-args">--outdated-ivy-exclude-target-regexp=&lt;regexp&gt; (--outdated-ivy-exclude-target-regexp=&lt;regexp&gt;) ..., --outdated-ivy-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --outdated-ivy-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
+<br><span>Exclude targets that match these regexes.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]outdated-ivy-fail-fast</span> <span class="option-default">(default: False)</span>
+<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
+</br></li>
+<li>
+<span class="option-args">--outdated-ivy-jvm-options=&lt;option&gt;... (--outdated-ivy-jvm-options=&lt;option&gt;...) ..., --outdated-ivy-jvm-options="[&lt;option&gt;..., &lt;option&gt;..., ...]", --outdated-ivy-jvm-options="+[&lt;option&gt;..., &lt;option&gt;..., ...]"</span> <span class="option-default">(default: ['-Xmx1g','-XX:MaxPermSize=256m'])</span>
+<br><span>Run with these JVM options.</span>
+</br></li>
+<li>
+<span class="option-args">--outdated-ivy-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+<li>
+<span class="option-args">--outdated-ivy-nailgun-connect-attempts=&lt;int&gt;</span> <span class="option-default">(default: 5)</span>
+<br><span>Max attempts for nailgun connects.</span>
+</br></li>
+<li>
+<span class="option-args">--outdated-ivy-nailgun-server=&lt;target_option&gt;</span> <span class="option-default">(default: //:nailgun-server)</span>
+<br><span>Target address spec for overriding the classpath of the nailgun-server jvm tool which is, by default: [JarDependency(org=u'com.martiansoftware', base_name=u'nailgun-server', rev=u'0.9.1', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=(), base_path=u'.')]</span>
+</br></li>
+<li>
+<span class="option-args">--outdated-ivy-nailgun-timeout-seconds=&lt;float&gt;</span> <span class="option-default">(default: 10.0)</span>
+<br><span>Timeout (secs) for nailgun startup.</span>
+</br></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<div class="scope">cache.outdated.ivy</div>
+<div class="scope-description"></div>
+<ul class="nobullets collapsible">
+<li class="collapsed options-group">Basic options
+                    <ul class="nobullets">
+<li>
+<span class="option-args">--[no-]cache-outdated-ivy-dereference-symlinks</span> <span class="option-default">(default: True)</span>
+<br><span>Dereference symlinks when creating cache tarball.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]cache-outdated-ivy-read</span> <span class="option-default">(default: True)</span>
+<br><span>Read build artifacts from cache, if available.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]cache-outdated-ivy-write</span> <span class="option-default">(default: True)</span>
+<br><span>Write build artifacts to cache, if available.</span>
+</br></li>
+</ul>
+</li>
+<li class="collapsed options-group">Advanced options
+                    <ul class="nobullets">
+<li>
+<span class="option-args">--cache-outdated-ivy-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
+</br></li>
+<li>
+<span class="option-args">--cache-outdated-ivy-compression-level=&lt;int&gt;</span> <span class="option-default">(default: 5)</span>
+<br><span>The gzip compression level (0-9) for created artifacts.</span>
+</br></li>
+<li>
+<span class="option-args">--cache-outdated-ivy-exclude-target-regexp=&lt;regexp&gt; (--cache-outdated-ivy-exclude-target-regexp=&lt;regexp&gt;) ..., --cache-outdated-ivy-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --cache-outdated-ivy-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
+<br><span>Exclude targets that match these regexes.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]cache-outdated-ivy-fail-fast</span> <span class="option-default">(default: False)</span>
+<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
+</br></li>
+<li>
+<span class="option-args">--cache-outdated-ivy-max-entries-per-target=&lt;int&gt;</span> <span class="option-default">(default: 8)</span>
+<br><span>Maximum number of old cache files to keep per task target pair</span>
+</br></li>
+<li>
+<span class="option-args">--cache-outdated-ivy-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]cache-outdated-ivy-overwrite</span> <span class="option-default">(default: False)</span>
+<br><span>If writing build artifacts to cache, overwrite existing artifacts instead of skipping them.</span>
+</br></li>
+<li>
+<span class="option-args">--cache-outdated-ivy-pinger-timeout=&lt;float&gt;</span> <span class="option-default">(default: 0.5)</span>
+<br><span>number of seconds before pinger times out</span>
+</br></li>
+<li>
+<span class="option-args">--cache-outdated-ivy-pinger-tries=&lt;int&gt;</span> <span class="option-default">(default: 2)</span>
+<br><span>number of times pinger tries a cache</span>
+</br></li>
+<li>
+<span class="option-args">--cache-outdated-ivy-read-from=&lt;str&gt; (--cache-outdated-ivy-read-from=&lt;str&gt;) ..., --cache-outdated-ivy-read-from="[&lt;str&gt;, &lt;str&gt;, ...]", --cache-outdated-ivy-read-from="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['/Users/stuhood/src/pants/.cache'])</span>
+<br><span>The URIs of artifact caches to read directly from. Each entry is a URL of a RESTful cache, a path of a filesystem cache, or a pipe-separated list of alternate caches to choose from. This list is also used as input to the resolver. When resolver is 'none' list is used as is.</span>
+</br></li>
+<li>
+<span class="option-args">--cache-outdated-ivy-resolver=&lt;str&gt;</span> <span class="option-default">(default: 'none')</span>
+<br><span>Select which resolver strategy to use for discovering URIs that access artifact caches. none: use URIs from static config options, i.e. --read-from, --write-to. rest: look up URIs by querying a RESTful URL, which is a remote address from --read-from, --write-to.</span>
+</br></li>
+<li>
+<span class="option-args">--cache-outdated-ivy-write-permissions=&lt;str&gt;</span> <span class="option-default">(default: None)</span>
+<br><span>Permissions to use when writing artifacts to a local cache, in octal.</span>
+</br></li>
+<li>
+<span class="option-args">--cache-outdated-ivy-write-to=&lt;str&gt; (--cache-outdated-ivy-write-to=&lt;str&gt;) ..., --cache-outdated-ivy-write-to="[&lt;str&gt;, &lt;str&gt;, ...]", --cache-outdated-ivy-write-to="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['/Users/stuhood/src/pants/.cache'])</span>
+<br><span>The URIs of artifact caches to write directly to. Each entry is a URL ofa RESTful cache, a path of a filesystem cache, or a pipe-separated list of alternate caches to choose from. This list is also used as input to the resolver. When resolver is 'none' list is used as is.</span>
+</br></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<div class="scope">ivy.outdated.ivy</div>
+<div class="scope-description">Common configuration items for ivy tasks.</div>
+<ul class="nobullets collapsible">
+<li class="collapsed options-group">Advanced options
+                    <ul class="nobullets">
+<li>
+<span class="option-args">--ivy-outdated-ivy-bootstrap-fetch-timeout-secs=&lt;int&gt;</span> <span class="option-default">(default: 10)</span>
+<br><span>Timeout the fetch if the connection is idle for longer than this value.</span>
+</br></li>
+<li>
+<span class="option-args">--ivy-outdated-ivy-bootstrap-ivy-settings=&lt;str&gt;</span> <span class="option-default">(default: None)</span>
+<br><span>Bootstrap Ivy XML configuration file.</span>
+</br></li>
+<li>
+<span class="option-args">--ivy-outdated-ivy-bootstrap-jar-url=&lt;str&gt;</span> <span class="option-default">(default: 'https://repo1.maven.org/maven2/org/apache/ivy/ivy/2.4.0/ivy-2.4.0.jar')</span>
+<br><span>Location to download a bootstrap version of Ivy.</span>
+</br></li>
+<li>
+<span class="option-args">--ivy-outdated-ivy-cache-dir=&lt;str&gt;</span> <span class="option-default">(default: '/Users/stuhood/.ivy2/pants')</span>
+<br><span>Directory to store artifacts retrieved by Ivy.</span>
+</br></li>
+<li>
+<span class="option-args">--ivy-outdated-ivy-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
+</br></li>
+<li>
+<span class="option-args">--ivy-outdated-ivy-exclude-target-regexp=&lt;regexp&gt; (--ivy-outdated-ivy-exclude-target-regexp=&lt;regexp&gt;) ..., --ivy-outdated-ivy-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --ivy-outdated-ivy-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
+<br><span>Exclude targets that match these regexes.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]ivy-outdated-ivy-fail-fast</span> <span class="option-default">(default: False)</span>
+<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
+</br></li>
+<li>
+<span class="option-args">--ivy-outdated-ivy-http-proxy=&lt;str&gt;</span> <span class="option-default">(default: None)</span>
+<br><span>Specify a proxy URL for http requests.</span>
+</br></li>
+<li>
+<span class="option-args">--ivy-outdated-ivy-https-proxy=&lt;str&gt;</span> <span class="option-default">(default: None)</span>
+<br><span>Specify a proxy URL for https requests.</span>
+</br></li>
+<li>
+<span class="option-args">--ivy-outdated-ivy-ivy-profile=&lt;str&gt;</span> <span class="option-default">(default: '2.4.0')</span>
+<br><span>The version of ivy to fetch.</span>
+</br></li>
+<li>
+<span class="option-args">--ivy-outdated-ivy-ivy-settings=&lt;str&gt;</span> <span class="option-default">(default: None)</span>
+<br><span>Location of XML configuration file for Ivy settings.</span>
+</br></li>
+<li>
+<span class="option-args">--ivy-outdated-ivy-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="goal-data" id="path">
 <a id="oref_goal_path" pantsmark="oref_goal_path"></a>
 <a name="path"></a>
@@ -13152,7 +13509,7 @@
 </li>
 <li>
 <div class="scope">repl.py</div>
-<div class="scope-description"></div>
+<div class="scope-description">Launch an interactive Python interpreter session.</div>
 <ul class="nobullets collapsible">
 <li class="collapsed options-group">Basic options
                     <ul class="nobullets">
@@ -13265,40 +13622,6 @@
 <li>
 <span class="option-args">--cache-repl-py-write-to=&lt;str&gt; (--cache-repl-py-write-to=&lt;str&gt;) ..., --cache-repl-py-write-to="[&lt;str&gt;, &lt;str&gt;, ...]", --cache-repl-py-write-to="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['/Users/stuhood/src/pants/.cache'])</span>
 <br><span>The URIs of artifact caches to write directly to. Each entry is a URL ofa RESTful cache, a path of a filesystem cache, or a pipe-separated list of alternate caches to choose from. This list is also used as input to the resolver. When resolver is 'none' list is used as is.</span>
-</br></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="scope">thrift-binary.repl.py</div>
-<div class="scope-description"></div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Advanced options
-                    <ul class="nobullets">
-<li>
-<span class="option-args">--thrift-binary-repl-py-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
-<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-repl-py-exclude-target-regexp=&lt;regexp&gt; (--thrift-binary-repl-py-exclude-target-regexp=&lt;regexp&gt;) ..., --thrift-binary-repl-py-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --thrift-binary-repl-py-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
-<br><span>Exclude targets that match these regexes.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]thrift-binary-repl-py-fail-fast</span> <span class="option-default">(default: False)</span>
-<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-repl-py-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-repl-py-supportdir=&lt;str&gt;</span> <span class="option-default">(default: 'bin/thrift')</span>
-<br><span>Find thrift binaries under this dir.   Used as part of the path to lookup thetool with --binary-util-baseurls and --pants-bootstrapdir</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-repl-py-version=&lt;str&gt;</span> <span class="option-default">(default: '0.9.2')</span>
-<br><span>Thrift compiler version.   Used as part of the path to lookup thetool with --binary-util-baseurls and --pants-bootstrapdir</span>
 </br></li>
 </ul>
 </li>
@@ -15400,7 +15723,7 @@
 </li>
 <li>
 <div class="scope">run.py</div>
-<div class="scope-description"></div>
+<div class="scope-description">Run a Python executable.</div>
 <ul class="nobullets collapsible">
 <li class="collapsed options-group">Basic options
                     <ul class="nobullets">
@@ -15505,40 +15828,6 @@
 <li>
 <span class="option-args">--cache-run-py-write-to=&lt;str&gt; (--cache-run-py-write-to=&lt;str&gt;) ..., --cache-run-py-write-to="[&lt;str&gt;, &lt;str&gt;, ...]", --cache-run-py-write-to="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['/Users/stuhood/src/pants/.cache'])</span>
 <br><span>The URIs of artifact caches to write directly to. Each entry is a URL ofa RESTful cache, a path of a filesystem cache, or a pipe-separated list of alternate caches to choose from. This list is also used as input to the resolver. When resolver is 'none' list is used as is.</span>
-</br></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="scope">thrift-binary.run.py</div>
-<div class="scope-description"></div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Advanced options
-                    <ul class="nobullets">
-<li>
-<span class="option-args">--thrift-binary-run-py-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
-<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-run-py-exclude-target-regexp=&lt;regexp&gt; (--thrift-binary-run-py-exclude-target-regexp=&lt;regexp&gt;) ..., --thrift-binary-run-py-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --thrift-binary-run-py-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
-<br><span>Exclude targets that match these regexes.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]thrift-binary-run-py-fail-fast</span> <span class="option-default">(default: False)</span>
-<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-run-py-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-run-py-supportdir=&lt;str&gt;</span> <span class="option-default">(default: 'bin/thrift')</span>
-<br><span>Find thrift binaries under this dir.   Used as part of the path to lookup thetool with --binary-util-baseurls and --pants-bootstrapdir</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-run-py-version=&lt;str&gt;</span> <span class="option-default">(default: '0.9.2')</span>
-<br><span>Thrift compiler version.   Used as part of the path to lookup thetool with --binary-util-baseurls and --pants-bootstrapdir</span>
 </br></li>
 </ul>
 </li>
@@ -16025,40 +16314,6 @@
 <li>
 <span class="option-args">--cache-setup-py-write-to=&lt;str&gt; (--cache-setup-py-write-to=&lt;str&gt;) ..., --cache-setup-py-write-to="[&lt;str&gt;, &lt;str&gt;, ...]", --cache-setup-py-write-to="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['/Users/stuhood/src/pants/.cache'])</span>
 <br><span>The URIs of artifact caches to write directly to. Each entry is a URL ofa RESTful cache, a path of a filesystem cache, or a pipe-separated list of alternate caches to choose from. This list is also used as input to the resolver. When resolver is 'none' list is used as is.</span>
-</br></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="scope">thrift-binary.setup-py</div>
-<div class="scope-description"></div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Advanced options
-                    <ul class="nobullets">
-<li>
-<span class="option-args">--thrift-binary-setup-py-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
-<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-setup-py-exclude-target-regexp=&lt;regexp&gt; (--thrift-binary-setup-py-exclude-target-regexp=&lt;regexp&gt;) ..., --thrift-binary-setup-py-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --thrift-binary-setup-py-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
-<br><span>Exclude targets that match these regexes.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]thrift-binary-setup-py-fail-fast</span> <span class="option-default">(default: False)</span>
-<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-setup-py-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-setup-py-supportdir=&lt;str&gt;</span> <span class="option-default">(default: 'bin/thrift')</span>
-<br><span>Find thrift binaries under this dir.   Used as part of the path to lookup thetool with --binary-util-baseurls and --pants-bootstrapdir</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-setup-py-version=&lt;str&gt;</span> <span class="option-default">(default: '0.9.2')</span>
-<br><span>Thrift compiler version.   Used as part of the path to lookup thetool with --binary-util-baseurls and --pants-bootstrapdir</span>
 </br></li>
 </ul>
 </li>
@@ -17134,7 +17389,7 @@
 </br></li>
 <li>
 <span class="option-args">--[no-]test-pytest-fast</span> <span class="option-default">(default: True)</span>
-<br><span>Run all tests in a single chroot. If turned off, each test target will create a new chroot, which will be much slower, but more correct, as theisolation verifies that all dependencies are correctly declared.</span>
+<br><span>Run all tests in a single chroot. If turned off, each test target will create a new chroot, which will be much slower, but more correct, as the isolation verifies that all dependencies are correctly declared.</span>
 </br></li>
 <li>
 <span class="option-args">--test-pytest-junit-xml-dir=&lt;DIR&gt;</span> <span class="option-default">(default: None)</span>
@@ -17269,40 +17524,6 @@
 <li>
 <span class="option-args">--cache-test-pytest-write-to=&lt;str&gt; (--cache-test-pytest-write-to=&lt;str&gt;) ..., --cache-test-pytest-write-to="[&lt;str&gt;, &lt;str&gt;, ...]", --cache-test-pytest-write-to="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['/Users/stuhood/src/pants/.cache'])</span>
 <br><span>The URIs of artifact caches to write directly to. Each entry is a URL ofa RESTful cache, a path of a filesystem cache, or a pipe-separated list of alternate caches to choose from. This list is also used as input to the resolver. When resolver is 'none' list is used as is.</span>
-</br></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="scope">thrift-binary.test.pytest</div>
-<div class="scope-description"></div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Advanced options
-                    <ul class="nobullets">
-<li>
-<span class="option-args">--thrift-binary-test-pytest-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
-<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-test-pytest-exclude-target-regexp=&lt;regexp&gt; (--thrift-binary-test-pytest-exclude-target-regexp=&lt;regexp&gt;) ..., --thrift-binary-test-pytest-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --thrift-binary-test-pytest-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
-<br><span>Exclude targets that match these regexes.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]thrift-binary-test-pytest-fail-fast</span> <span class="option-default">(default: False)</span>
-<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-test-pytest-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-test-pytest-supportdir=&lt;str&gt;</span> <span class="option-default">(default: 'bin/thrift')</span>
-<br><span>Find thrift binaries under this dir.   Used as part of the path to lookup thetool with --binary-util-baseurls and --pants-bootstrapdir</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-test-pytest-version=&lt;str&gt;</span> <span class="option-default">(default: '0.9.2')</span>
-<br><span>Thrift compiler version.   Used as part of the path to lookup thetool with --binary-util-baseurls and --pants-bootstrapdir</span>
 </br></li>
 </ul>
 </li>
@@ -18162,7 +18383,7 @@
               <ul class="nobullets">
 <li>
 <span class="option-args">--native-engine-visualize-to=&lt;dir_option&gt;</span> <span class="option-default">(default: None)</span>
-<br><span>A directory to write execution graphs to as `dot` files. The contents of the directory will be overwritten if any filenames collide.</span>
+<br><span>A directory to write execution and rule graphs to as `dot` files. The contents of the directory will be overwritten if any filenames collide.</span>
 </br></li>
 </ul>
 </li>
@@ -18189,7 +18410,7 @@
 <br><span>Find native engine binaries under this dir. Used as part of the path to lookup the binary with --binary-util-baseurls and --pants-bootstrapdir.</span>
 </br></li>
 <li>
-<span class="option-args">--native-engine-version=&lt;str&gt;</span> <span class="option-default">(default: '140ea43e7c7b19d65d0a987e2917e4a7546067c6')</span>
+<span class="option-args">--native-engine-version=&lt;str&gt;</span> <span class="option-default">(default: '9bffa3ad514ec7693e718cb5db4fd633ee1decba')</span>
 <br><span>Native engine version.</span>
 </br></li>
 </ul>
@@ -18218,50 +18439,6 @@
 </br></li>
 <li>
 <span class="option-args">--npm-resolver-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</br></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="global-subsystem-header">
-<div class="scope">pycheck-pep8</div>
-<div class="scope-description"></div>
-</div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Basic options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--pycheck-pep8-ignore=&lt;str&gt; (--pycheck-pep8-ignore=&lt;str&gt;) ..., --pycheck-pep8-ignore="[&lt;str&gt;, &lt;str&gt;, ...]", --pycheck-pep8-ignore="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['E121','E124','E125','E127','E128','E401','E111','W291','W293','E701','E301','E302','W292'])</span>
-<br><span>Prevent test failure but still produce output for problems.</span>
-</br></li>
-<li>
-<span class="option-args">--pycheck-pep8-max-length=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Max line length to use for PEP8 checks.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]pycheck-pep8-skip</span> <span class="option-default">(default: True)</span>
-<br><span>If enabled, skip this style checker.</span>
-</br></li>
-</ul>
-</li>
-<li class="collapsed options-group">Advanced options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--pycheck-pep8-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
-<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</br></li>
-<li>
-<span class="option-args">--pycheck-pep8-exclude-target-regexp=&lt;regexp&gt; (--pycheck-pep8-exclude-target-regexp=&lt;regexp&gt;) ..., --pycheck-pep8-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --pycheck-pep8-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
-<br><span>Exclude targets that match these regexes.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]pycheck-pep8-fail-fast</span> <span class="option-default">(default: False)</span>
-<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</br></li>
-<li>
-<span class="option-args">--pycheck-pep8-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
 <br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
 </br></li>
 </ul>
@@ -18618,7 +18795,7 @@
 </br></li>
 <li>
 <span class="option-args">--scala-platform-scala-repl_2_12=&lt;target_option&gt;</span> <span class="option-default">(default: //:scala-repl_2_12)</span>
-<br><span>Target address spec for overriding the classpath of the scala-repl_2_12 jvm tool which is, by default: [JarDependency(org=u'org.scala-lang', base_name=u'scala-compiler', rev=u'2.12.0', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=(), base_path=u'.')]</span>
+<br><span>Target address spec for overriding the classpath of the scala-repl_2_12 jvm tool which is, by default: [JarDependency(org=u'org.scala-lang', base_name=u'scala-compiler', rev=u'2.12.1', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=(), base_path=u'.')]</span>
 </br></li>
 <li>
 <span class="option-args">--scala-platform-scalac=&lt;target_option&gt;</span> <span class="option-default">(default: //:scalac)</span>
@@ -18634,7 +18811,7 @@
 </br></li>
 <li>
 <span class="option-args">--scala-platform-scalac_2_12=&lt;target_option&gt;</span> <span class="option-default">(default: //:scalac_2_12)</span>
-<br><span>Target address spec for overriding the classpath of the scalac_2_12 jvm tool which is, by default: [JarDependency(org=u'org.scala-lang', base_name=u'scala-compiler', rev=u'2.12.0', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=(), base_path=u'.')]</span>
+<br><span>Target address spec for overriding the classpath of the scalac_2_12 jvm tool which is, by default: [JarDependency(org=u'org.scala-lang', base_name=u'scala-compiler', rev=u'2.12.1', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=(), base_path=u'.')]</span>
 </br></li>
 <li>
 <span class="option-args">--scala-platform-scalastyle=&lt;target_option&gt;</span> <span class="option-default">(default: //:scalastyle)</span>
@@ -18862,42 +19039,6 @@
 </li>
 <li>
 <div class="global-subsystem-header">
-<div class="scope">pycheck-import-order</div>
-<div class="scope-description"></div>
-</div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Basic options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--[no-]pycheck-import-order-skip</span> <span class="option-default">(default: True)</span>
-<br><span>If enabled, skip this style checker.</span>
-</br></li>
-</ul>
-</li>
-<li class="collapsed options-group">Advanced options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--pycheck-import-order-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
-<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</br></li>
-<li>
-<span class="option-args">--pycheck-import-order-exclude-target-regexp=&lt;regexp&gt; (--pycheck-import-order-exclude-target-regexp=&lt;regexp&gt;) ..., --pycheck-import-order-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --pycheck-import-order-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
-<br><span>Exclude targets that match these regexes.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]pycheck-import-order-fail-fast</span> <span class="option-default">(default: False)</span>
-<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</br></li>
-<li>
-<span class="option-args">--pycheck-import-order-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</br></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="global-subsystem-header">
 <div class="scope">jvm-distributions</div>
 <div class="scope-description">Subsystem that knows how to look up a java Distribution.</div>
 </div>
@@ -19008,42 +19149,6 @@ The UrlInfo struct is a 3-tuple with the following slots:
 <li>
 <span class="option-args">--go-fetchers-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
 <br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</br></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="global-subsystem-header">
-<div class="scope">thrift-binary</div>
-<div class="scope-description"></div>
-</div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Advanced options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--thrift-binary-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
-<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-exclude-target-regexp=&lt;regexp&gt; (--thrift-binary-exclude-target-regexp=&lt;regexp&gt;) ..., --thrift-binary-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --thrift-binary-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
-<br><span>Exclude targets that match these regexes.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]thrift-binary-fail-fast</span> <span class="option-default">(default: False)</span>
-<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-supportdir=&lt;str&gt;</span> <span class="option-default">(default: 'bin/thrift')</span>
-<br><span>Find thrift binaries under this dir.   Used as part of the path to lookup thetool with --binary-util-baseurls and --pants-bootstrapdir</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-version=&lt;str&gt;</span> <span class="option-default">(default: '0.9.2')</span>
-<br><span>Thrift compiler version.   Used as part of the path to lookup thetool with --binary-util-baseurls and --pants-bootstrapdir</span>
 </br></li>
 </ul>
 </li>
@@ -19231,6 +19336,50 @@ The UrlInfo struct is a 3-tuple with the following slots:
 </li>
 <li>
 <div class="global-subsystem-header">
+<div class="scope">pycheck-pep8</div>
+<div class="scope-description"></div>
+</div>
+<ul class="nobullets collapsible">
+<li class="collapsed options-group">Basic options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--pycheck-pep8-ignore=&lt;str&gt; (--pycheck-pep8-ignore=&lt;str&gt;) ..., --pycheck-pep8-ignore="[&lt;str&gt;, &lt;str&gt;, ...]", --pycheck-pep8-ignore="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['E121','E124','E125','E127','E128','E401','E111','W291','W293','E701','E301','E302','W292'])</span>
+<br><span>Prevent test failure but still produce output for problems.</span>
+</br></li>
+<li>
+<span class="option-args">--pycheck-pep8-max-length=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Max line length to use for PEP8 checks.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]pycheck-pep8-skip</span> <span class="option-default">(default: True)</span>
+<br><span>If enabled, skip this style checker.</span>
+</br></li>
+</ul>
+</li>
+<li class="collapsed options-group">Advanced options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--pycheck-pep8-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
+</br></li>
+<li>
+<span class="option-args">--pycheck-pep8-exclude-target-regexp=&lt;regexp&gt; (--pycheck-pep8-exclude-target-regexp=&lt;regexp&gt;) ..., --pycheck-pep8-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --pycheck-pep8-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
+<br><span>Exclude targets that match these regexes.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]pycheck-pep8-fail-fast</span> <span class="option-default">(default: False)</span>
+<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
+</br></li>
+<li>
+<span class="option-args">--pycheck-pep8-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<div class="global-subsystem-header">
 <div class="scope">java</div>
 <div class="scope-description">A subsystem to encapsulate compile-time settings and features for the Java language.</div>
 </div>
@@ -19371,6 +19520,42 @@ The UrlInfo struct is a 3-tuple with the following slots:
 </br></li>
 <li>
 <span class="option-args">--ivy-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<div class="global-subsystem-header">
+<div class="scope">pycheck-import-order</div>
+<div class="scope-description"></div>
+</div>
+<ul class="nobullets collapsible">
+<li class="collapsed options-group">Basic options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--[no-]pycheck-import-order-skip</span> <span class="option-default">(default: True)</span>
+<br><span>If enabled, skip this style checker.</span>
+</br></li>
+</ul>
+</li>
+<li class="collapsed options-group">Advanced options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--pycheck-import-order-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
+</br></li>
+<li>
+<span class="option-args">--pycheck-import-order-exclude-target-regexp=&lt;regexp&gt; (--pycheck-import-order-exclude-target-regexp=&lt;regexp&gt;) ..., --pycheck-import-order-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --pycheck-import-order-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
+<br><span>Exclude targets that match these regexes.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]pycheck-import-order-fail-fast</span> <span class="option-default">(default: False)</span>
+<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
+</br></li>
+<li>
+<span class="option-args">--pycheck-import-order-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
 <br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
 </br></li>
 </ul>
@@ -19556,6 +19741,42 @@ The UrlInfo struct is a 3-tuple with the following slots:
 <li>
 <span class="option-args">--binaries-path-by-id="{'key1':val1,'key2':val2,...}"</span> <span class="option-default">(default: {})</span>
 <br><span>Maps output of uname for a machine to a binary search path.  e.g. { ("darwin", "15"): ["mac", "10.11"]), ("linux", "arm32"): ["linux", "arm32"] }</span>
+</br></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<div class="global-subsystem-header">
+<div class="scope">thrift-binary</div>
+<div class="scope-description"></div>
+</div>
+<ul class="nobullets collapsible">
+<li class="collapsed options-group">Advanced options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--thrift-binary-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
+</br></li>
+<li>
+<span class="option-args">--thrift-binary-exclude-target-regexp=&lt;regexp&gt; (--thrift-binary-exclude-target-regexp=&lt;regexp&gt;) ..., --thrift-binary-exclude-target-regexp="[&lt;regexp&gt;, &lt;regexp&gt;, ...]", --thrift-binary-exclude-target-regexp="+[&lt;regexp&gt;, &lt;regexp&gt;, ...]"</span> <span class="option-default">(default: [])</span>
+<br><span>Exclude targets that match these regexes.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]thrift-binary-fail-fast</span> <span class="option-default">(default: False)</span>
+<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
+</br></li>
+<li>
+<span class="option-args">--thrift-binary-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+<li>
+<span class="option-args">--thrift-binary-supportdir=&lt;str&gt;</span> <span class="option-default">(default: 'bin/thrift')</span>
+<br><span>Find thrift binaries under this dir.   Used as part of the path to lookup thetool with --binary-util-baseurls and --pants-bootstrapdir</span>
+</br></li>
+<li>
+<span class="option-args">--thrift-binary-version=&lt;str&gt;</span> <span class="option-default">(default: '0.9.2')</span>
+<br><span>Thrift compiler version.   Used as part of the path to lookup thetool with --binary-util-baseurls and --pants-bootstrapdir</span>
 </br></li>
 </ul>
 </li>
@@ -20194,7 +20415,7 @@ The UrlInfo struct is a 3-tuple with the following slots:
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/reference/pants_reference_body.html 2017-03-20T13:01:48.968788
+              from dist/reference/pants_reference_body.html 2017-04-03T20:43:14.265298
             </div>
 
           </div> <!-- mainflow -->
