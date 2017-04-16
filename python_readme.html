@@ -608,31 +608,18 @@ parameters:</p>
 <div class="codehilite"><pre><span class="nv">$ </span>./pants test.pytest examples/tests/python/example_test/hello/greet -- -h
 </pre></div>
 <h3 id="code-coverage">Code Coverage</h3>
-<p>To get code coverage data, set the <code>--coverage</code> flag in <code>test.pytest</code> scope.
-If you haven't configured coverage data, it doesn't do much:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants test.pytest --coverage<span class="o">=</span>1 examples/tests/python/example_test/hello/greet:greet
-    ...lots of build output...
-                     <span class="o">============</span> 2 passed in 0.23 <span class="nv">seconds</span> <span class="o">============</span>
-                     Name    Stmts   Miss  Cover
-                     ---------------------------
-                     No data to report.
-
-14:30:36 00:04     <span class="o">[</span>junit<span class="o">]</span>
-14:30:36 00:04     <span class="o">[</span>specs<span class="o">]</span>
-</pre></div>
-<p>This uses the <code>python_tests.coverage</code> target attribute to determine what
-modules to measure coverage against for each <code>python_tests</code> target run.
-If the attribute is not present it's assumed the coverage should be
-measured over the same packages that house the test target's sources.
-This heuristic only works with parallel source and test package
-structures and reliance upon it is discouraged.</p>
-<p>There are 2 alternatives to specifying coverage attributes on all
-<code>python_tests</code> targets, but both override any existing coverage
-attributes in-play to form a global coverage specification for the test
-run.</p>
-<p><code>--coverage=modules:[module1](,...,[moduleN])</code> allows specification of
-package or module names to track coverage against. For example:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants test.pytest --coverage<span class="o">=</span>modules:example.hello.greet,example.hello.main examples/tests/python/example_test/hello/greet:greet
+<p>To get code coverage data, set the <code>--coverage</code> flag in <code>test.pytest</code> scope.</p>
+<p>The value of the flag is a comma-separated list of names of python packages or directories 
+containing code to measure coverage against.  It can also take the special value <code>auto</code>, which
+will cause Pants to attempt to deduce what to measure coverage against.</p>
+<p>This auto-deduction examines the <code>coverage</code> attribute on each <code>python_tests</code> 
+target, which should be a list of packages.  If a target has no <code>coverage</code> attribute, 
+Pants uses the package containing the test code.  This is of course only useful if the
+code under test lives in the same package as the code that tests it.</p>
+<p>If you do specify package or directory names with <code>--coverage</code>, this overrides any <code>coverage</code>
+attributes on <code>python_tests</code> targets.</p>
+<p>For example:</p>
+<div class="codehilite"><pre><span class="nv">$ </span>./pants test.pytest --coverage<span class="o">=</span>example.hello.greet,example.hello.main examples/tests/python/example_test/hello/greet
     ...lots of build output...
                  <span class="o">============</span> 2 passed in 0.22 <span class="nv">seconds</span> <span class="o">============</span>
                  Name                                               Stmts   Miss Branch BrMiss  Cover
@@ -642,11 +629,9 @@ package or module names to track coverage against. For example:</p>
                  ------------------------------------------------------------------------------------
                  TOTAL                                                  4      0      0      0   100%
 </pre></div>
-<p>This measures coverage against all python code in <code>example.hello.greet</code> and <code>example.hello.main</code>.
-It ignores <code>python_library</code> <code>coverage=...</code> attributes.</p>
-<p>Similarly, a set of base paths can be specified containing the code for
-coverage to be measured over:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants test.pytest --coverage<span class="o">=</span>paths:example/hello examples/tests/python/example_test/hello/greet:greet
+<p>This measures coverage against all python code in <code>example.hello.greet</code> and <code>example.hello.main</code>.</p>
+<p>Similarly, a list of directories can be specified (either absolute or relative to the build root):</p>
+<div class="codehilite"><pre><span class="nv">$ </span>./pants test.pytest --coverage<span class="o">=</span>example/hello examples/tests/python/example_test/hello/greet
     ...lots of build output...
                  <span class="o">============</span> 2 passed in 0.23 <span class="nv">seconds</span> <span class="o">============</span>
                  Name                                               Stmts   Miss Branch BrMiss  Cover
@@ -657,8 +642,6 @@ coverage to be measured over:</p>
                  ------------------------------------------------------------------------------------
                  TOTAL                                                  4      0      0      0   100%
 </pre></div>
-<p>Paths are relative to the source root housing the python code; for this example,
-<code>examples/src/python</code>.</p>
 <h3 id="interactive-debugging-on-test-failure">Interactive Debugging on Test Failure</h3>
 <p>You can invoke the Python debugger on a test failure by leaving out the
 <code>test</code> and passing <code>--pdb</code>. This can be useful for inspecting the
@@ -756,7 +739,7 @@ produce coverage reports.</p>
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/examples/src/python/example/README.html 2017-04-08T12:54:13.411736
+              from dist/markdown/html/examples/src/python/example/README.html 2017-04-16T04:37:33.092759
             </div>
 
           </div> <!-- mainflow -->
