@@ -8,7 +8,7 @@
 
 <head>
   <meta charset="utf-8"/>
-  <title>JVM 3rdparty Pattern</title>
+  <title>JVM Dependency Management</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" href="pants-logo.ico">
   <!-- In case this is a "test publish", tell search engines where real version lives: -->
@@ -120,7 +120,7 @@
                   <a href="jvm_projects.html">JVM Projects with Pants</a>
                 </li>
                 <li class="toc-h1 toc-link toc-here">
-                  JVM 3rdparty Pattern
+                  JVM Dependency Management
                 </li>
                 <li class="toc-h1 toc-link ">
                   <a href="scala.html">Scala Support</a>
@@ -222,6 +222,16 @@
                     <li class="toc-h2"><a href="#possible-solutions">Possible Solutions</a></li>
                     <li class="toc-h2"><a href="#managed-jar-dependencies">Managed Jar Dependencies</a></li>
                     <li class="toc-h1"><a href="#using-a-snapshot-jvm-dependency">Using a SNAPSHOT JVM Dependency</a></li>
+                    <li class="toc-h1"><a href="#strict-dependencies">Strict Dependencies</a></li>
+                    <li class="toc-h2"><a href="#what-is-strict_deps">What is strict_deps?</a></li>
+                    <li class="toc-h2"><a href="#why-strict_deps">Why strict_deps?</a></li>
+                    <li class="toc-h2"><a href="#example">Example</a></li>
+                    <li class="toc-h2"><a href="#strict_deps-for-library-developers">Strict_deps for Library Developers</a></li>
+                    <li class="toc-h3"><a href="#invalidation">Invalidation</a></li>
+                    <li class="toc-h2"><a href="#errors-exports-and-missing-deps-suggest">Errors, Exports, and Missing-deps-suggest</a></li>
+                    <li class="toc-h3"><a href="#missing-deps-suggest">Missing-deps-suggest</a></li>
+                    <li class="toc-h3"><a href="#exports">Exports</a></li>
+                    <li class="toc-h3"><a href="#how-to-solve-an-error-with-exports">How to Solve An Error With Exports</a></li>
                 </ul>
               </nav>
 
@@ -291,7 +301,7 @@
 .codehilite .vi { color: #bb60d5 } /* Name.Variable.Instance */
 .codehilite .il { color: #40a070 } /* Literal.Number.Integer.Long */
 </style>
-<h1 id="jvm-3rdparty-pattern">JVM 3rdparty Pattern</h1>
+<h1 id="jvm-dependency-management">JVM Dependency Management</h1>
 <p>In general, we recommend the <a href="3rdparty.html">3rdparty idiom</a>
 for organizing dependencies on code from outside the source tree. This document
 describes how to make this work for JVM (Java or Scala) code.</p>
@@ -532,12 +542,206 @@ time pants is run (otherwise, pants will cache it):</p>
   <span class="p">],</span>
 <span class="p">)</span>
 </pre></div>
+<h2 id="strict-dependencies">Strict Dependencies</h2>
+<h3 id="what-is-strict_deps">What is strict_deps?</h3>
+<p>Strict_deps is a feature of JVM targets which controls the dependencies
+available on the compile classpath when that target is being compiled.</p>
+<p>When compiling a JVM target with strict_deps disabled, all transitive
+dependencies of that target are included on the compile classpath.</p>
+<p>When compiling a JVM target with strict deps enabled, the compile classpath
+is more restricted. Instead of containing all transitive dependencies, only
+the direct dependencies and the targets exported by those dependencies are
+included in the compile classpath.</p>
+<p>Enabling strict_deps speeds up builds because it 1) reduces the work the
+compiler has to do when searching for symbols, and 2) improves cache hit
+rates by reducing the number of dependencies that contribute to a target's
+cache keys. This works because most targets don't need their full transitive
+dependencies available to compile. However, it does require you to be more
+exact in writing down your dependencies.</p>
+<h3 id="why-strict_deps">Why strict_deps?</h3>
+<p>Depending on the shape of your build graph, use of strict_deps improves cache
+hit rates and per-target compilation time (on the order of 10-20%).</p>
+<h3 id="example">Example</h3>
+<p>With strict_deps enabled, we can identified some gaps between what the
+compiler expects on a classpath and what is actually available on the
+classpath as specified in BUILD files.</p>
+<p>Let's look at a simple example involving 3 targets A, B and C. B depends on A,
+and C depends on B. Thus their dependency graph can be represented like this:
+C-&gt;B-&gt;A. Their declarations in BUILD file are shown as below:</p>
+<div class="codehilite"><pre><span class="n">scala_library</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s">'A'</span><span class="p">,</span>
+    <span class="n">source</span><span class="o">=</span><span class="p">[</span><span class="s">'A.scala'</span><span class="p">],</span>
+<span class="p">)</span>
+
+<span class="n">scala_library</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s">'B'</span><span class="p">,</span>
+    <span class="n">source</span><span class="o">=</span><span class="p">[</span><span class="s">'B.scala'</span><span class="p">],</span>
+    <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s">':A'</span><span class="p">],</span>
+<span class="p">)</span>
+
+<span class="n">scala_library</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s">'C'</span><span class="p">,</span>
+    <span class="n">source</span><span class="o">=</span><span class="p">[</span><span class="s">'C.scala'</span><span class="p">],</span>
+    <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s">':B'</span><span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+<p>If we compile C with strict_deps turned off, everything works fine, as all
+transitive dependencies of C will be added to compile time classpaths.
+However, the compilation may require additional dependencies if strict_deps
+is turned on. With strict_deps=True, only B is in C's compile time classpath.
+There are 2 cases for the failure.</p>
+<ol>
+<li>
+<p>C directly uses APIs from A. This is obviously a mistake by author of C,
+and the fix is simple, just add A to C's dependency list.</p>
+</li>
+<li>
+<p>C does not use APIs from A, but compiler still wants A to be in C's
+classpaths. This is tricky, as author of C may not even be aware of A. It's
+hard for C's author to get the right dependency list in this case.</p>
+</li>
+</ol>
+<p>People may wonder why the compiler asks for A to compile C in the first place.
+There are a number of reasons for this, an example of which is that the java
+compiler needs all transitively implemented interfaces to be on the classpath
+so that it can resolve default method implementations.</p>
+<h3 id="strict_deps-for-library-developers">Strict_deps for Library Developers</h3>
+<p>The compile overhead of a library change for downstream targets when
+strict_deps is enabled should be minimized to just the targets that
+depend directly on the library target or depend on a target that exports
+that target.</p>
+<h4 id="invalidation">Invalidation</h4>
+<p>This is a change from the current behavior where all downstream targets will
+have their compile invalidated.</p>
+<p>With strict_deps, a change to a library target will only invalidate the
+compile artifacts of dependent targets if they have</p>
+<ol>
+<li>A direct dependency on the changed library target, or</li>
+<li>A dependency on it via the export graph.</li>
+</ol>
+<p>Before, if a target depending on a library had an implicit dependency on a
+transitive dependency of the library target it would just work. The transitive
+dependency would end up on the dependent target’s compile classpath and that
+target would compile happily. Strict deps removes that implicit transitivity,
+which exposes undeclared dependencies.</p>
+<p>This introduces two new sources of errors.</p>
+<ol>
+<li>When adding a new library dependency to a target, if the library dependency
+requires some of its dependencies to be on the compile classpath, the compile
+can fail if those dependencies don’t make it on the classpath. These errors
+are a bit weird and will be confusing at first.</li>
+<li>When a library target adds a new publicly visible dependency, targets that
+depend on the library target will fail to compile with the same kind of error
+message as 1.</li>
+</ol>
+<h3 id="errors-exports-and-missing-deps-suggest">Errors, Exports, and Missing-deps-suggest</h3>
+<p>The errors sometimes have different messages, but usually in Scala they look
+something like this:</p>
+<div class="codehilite"><pre><span class="o">[</span>error<span class="o">]</span> &lt;path-to-current-sources&gt;/&lt;Some-file&gt;.scala:71:32: Symbol <span class="s1">'type</span>
+<span class="s1">        &lt;Some-type&gt;'</span> is missing from the classpath.
+<span class="o">[</span>error<span class="o">]</span> This symbol is required by <span class="s1">'&lt;Some-other-type&gt;.timeout'</span>.
+<span class="o">[</span>error<span class="o">]</span> Make sure that <span class="nb">type</span> &lt;Some-type&gt;is in your classpath and check <span class="k">for</span>
+<span class="k">        </span>conflicting dependencies with <span class="sb">`</span>-Ylog-classpath<span class="sb">`</span>.
+<span class="o">[</span>error<span class="o">]</span> A full rebuild may <span class="nb">help </span><span class="k">if</span> &lt;Some-other-type&gt;.class was compiled
+        against an incompatible version of &lt;none&gt;.&lt;Some-type&gt;.
+<span class="o">[</span>error<span class="o">]</span>         Some-file.code
+<span class="o">[</span>error<span class="o">]</span>
+</pre></div>
+<p><strong>NOTE: It's likely the source snippet may not be related to the error</strong></p>
+<p>There are two possible solutions for this error. One is to identify the
+dependency that is missing and add it to your target directly.</p>
+<h4 id="missing-deps-suggest">Missing-deps-suggest</h4>
+<p>Missing-deps-suggest is a feature that will try to identify the target that
+failed to compile and suggest a dependency that may be missing.</p>
+<p>If this doesn't provide a solution, then the second solution to this error
+is exporting the missing type's target in the dependency you depend on.</p>
+<h4 id="exports">Exports</h4>
+<p>A target should export any dependencies which provide types or symbols that
+are exposed in its public API. For instance, if target A has a method returning
+something of type X, it should export the target which defines the type X.</p>
+<p>Exports are transitive. This means that if a target exports one of its
+dependencies and that exported dependency has exports, those exports will
+also be end up on the classpath. This allows the export graph to model
+requirements created by type hierarchies.</p>
+<h4 id="how-to-solve-an-error-with-exports">How to Solve An Error With Exports</h4>
+<p>Let's look at an example failure:</p>
+<div class="codehilite"><pre><span class="o">[</span>1/1<span class="o">]</span> Compiling 1 zinc <span class="nb">source </span>in 1 target <span class="o">(</span>examples/src/scala/org/pantsbuild/example/strictdeps:h<span class="o">)</span>.
+17:12:58 00:03    <span class="o">[</span>compile<span class="o">]</span>
+
+17:12:58 00:03      <span class="o">[</span>zinc<span class="o">]</span>
+                     <span class="o">[</span>error<span class="o">]</span> Symbol <span class="s1">'type z.Z'</span> is missing from the classpath.
+                     <span class="o">[</span>error<span class="o">]</span> This symbol is required by <span class="s1">'method z.X.yyy'</span>.
+                     <span class="o">[</span>error<span class="o">]</span> Make sure that <span class="nb">type </span>Z is in your classpath and
+                             check <span class="k">for </span>conflicting dependencies with <span class="sb">`</span>-Ylog-classpath<span class="sb">`</span>.
+                     <span class="o">[</span>error<span class="o">]</span> A full rebuild may <span class="nb">help </span><span class="k">if</span> <span class="s1">'X.class'</span> was compiled
+                             against an incompatible version of z.
+                     <span class="o">[</span>error<span class="o">]</span> one error found
+                     <span class="o">[</span>error<span class="o">]</span> Compile failed at Sep 19, 2017 5:12:59 PM <span class="o">[</span>0.916s<span class="o">]</span>
+
+17:12:59 00:04      <span class="o">[</span>missing-deps-suggest<span class="o">]</span>
+
+                 compile<span class="o">(</span>examples/src/scala/org/pantsbuild/example/strictdeps:h<span class="o">)</span> failed: Zinc compile failed.
+FAILURE: Compilation failure: Failed <span class="nb">jobs</span>: compile<span class="o">(</span>examples/src/scala/org/pantsbuild/example/strictdeps:h<span class="o">)</span>
+</pre></div>
+<p>There are three targets that need to be identified to fix an error like this:</p>
+<ol>
+<li>the target that failed to compile.</li>
+<li>the dependency of 1 that owns the type that needed the missing type</li>
+<li>the dependency of target 2 that owns the missing type.</li>
+</ol>
+<p>Target 1 should be the most straight-forward to find. It's the target named in
+the failure message as a failed job. It's mentioned both at the end of the
+failing compile, in the line starting with <code>FAILURE: Compilation failure</code>,
+and in a line near the error message. In this example, the failure is
+<code>compile(examples/src/scala/org/pantsbuild/example/strictdeps:h)</code>. So, target
+1 is <code>examples/src/scala/org/pantsbuild/example/strictdeps:h</code>.</p>
+<p>Finding target 2 involves looking at target 1's dependencies and figuring out
+which one contains the type from the error message. First, let's find the
+type. In a message like this, target 2's type is the one that required the
+missing type. In this message specifically, it's the following line:</p>
+<div class="codehilite"><pre><span class="o">[</span>error<span class="o">]</span> This symbol is required by <span class="s1">'method z.X.yyy'</span>.
+</pre></div>
+<p>The type from target 2 is the method <code>yyy</code> on <code>z.X</code>. How to we find
+the target for that type? One way would be to eyeball it. Let's look at the
+BUILD file.</p>
+<div class="codehilite"><pre><span class="n">scala_library</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s">'h'</span><span class="p">,</span>
+    <span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="s">'H.scala'</span><span class="p">],</span>
+    <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s">':x'</span><span class="p">],</span>
+    <span class="n">strict_deps</span><span class="o">=</span><span class="bp">True</span>
+<span class="p">)</span>
+</pre></div>
+<p>In this example, target 1 only has one dependency, <code>x</code>. That makes finding
+target 2 easy. It's <code>:x</code>.</p>
+<p>Now that we know target 1 and target 2, let's find 3. Since we're doing this
+manually, we'll look at the build files again.</p>
+<p>Here's target 2's BUILD file declaration:</p>
+<div class="codehilite"><pre><span class="n">scala_library</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s">'x'</span><span class="p">,</span>
+    <span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="s">'X.scala'</span><span class="p">],</span>
+    <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s">':z'</span><span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+<p>It too has only one dependency, so we know what Target 3 is. It's <code>:z</code>.</p>
+<p>Now that we know what the missing dependency is, we can fix the error.
+Z has to be on the classpath in order to use X, so any target depending
+on <code>:x</code> will also need <code>:z</code>. We could just add a dependency on :z to :h, but
+doing so would result in new users of <code>:x</code> running into this same error. To
+prevent that, let's add an export to <code>:x</code> of <code>:z</code>.</p>
+<div class="codehilite"><pre><span class="n">scala_library</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s">'x'</span><span class="p">,</span>
+    <span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="s">'X.scala'</span><span class="p">],</span>
+    <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s">':z'</span><span class="p">],</span>
+    <span class="n">exports</span><span class="o">=</span><span class="p">[</span><span class="s">':z'</span><span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+<p>Now our target compiles successfully.</p>
 
             <!-- main content end -->
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/examples/src/java/org/pantsbuild/example/3rdparty_jvm.html 2017-10-30T02:56:18.005704
+              from dist/markdown/html/examples/src/java/org/pantsbuild/example/3rdparty_jvm.html 2017-10-30T15:25:21.686478
             </div>
 
           </div> <!-- mainflow -->
