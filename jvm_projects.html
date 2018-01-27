@@ -223,7 +223,7 @@
                     <li class="toc-h2"><a href="#depending-on-a-jar">Depending on a Jar</a></li>
                     <li class="toc-h1"><a href="#the-usual-commands-jvm">The Usual Commands: JVM</a></li>
                     <li class="toc-h1"><a href="#toolchain">Toolchain</a></li>
-                    <li class="toc-h1"><a href="#java7-vs-java6-which-java">Java7 vs Java6, Which Java</a></li>
+                    <li class="toc-h1"><a href="#java9-vs-java8-which-java">Java9 vs Java8, Which Java</a></li>
                     <li class="toc-h1"><a href="#bundles-deploy-able-runnable-file-trees">Bundles: Deploy-able Runnable File Trees</a></li>
                     <li class="toc-h2"><a href="#generating-a-bundle">Generating a Bundle</a></li>
                     <li class="toc-h2"><a href="#contents-of-a-bundle">Contents of a Bundle</a></li>
@@ -518,49 +518,49 @@ JVM daemon that runs in the background. This means you don't need to start up a 
 classes for each JVM-based operation. Things go faster.</p>
 <p>Pants uses Zinc, a dependency tracking compiler facade that supports sub-target incremental
 compilation for Java and Scala.</p>
-<h2 id="java7-vs-java6-which-java">Java7 vs Java6, Which Java</h2>
+<h2 id="java9-vs-java8-which-java">Java9 vs Java8, Which Java</h2>
 <p>Pants first looks through any JDKs specified by the <code>paths</code> map in pants.ini's jvm-distributions
 section, eg:</p>
 <div class="codehilite"><pre><span class="k">[jvm-distributions]</span>
 <span class="na">paths</span> <span class="o">=</span> <span class="s">{</span>
 <span class="s">    'macos': [</span>
-<span class="s">      '/Library/Java/JavaVirtualMachines/jdk1.7.0_79.jdk',</span>
+<span class="s">      '/Library/Java/JavaVirtualMachines/jdk-9.0.4.jdk',</span>
 <span class="s">      '/Library/Java/JavaVirtualMachines/jdk1.8.0_45.jdk',</span>
 <span class="s">    ],</span>
 <span class="s">    'linux': [</span>
-<span class="s">      '/usr/java/jdk1.7.0_80',</span>
+<span class="s">      '/usr/java/jdk1.8.0_152',</span>
 <span class="s">    ]</span>
 <span class="s">  }</span>
 </pre></div>
 <p>If no JVMs are found there, Pants uses the first Java it finds in <code>JDK_HOME</code>, <code>JAVA_HOME</code>,
 or <code>PATH</code>. If no <code>paths</code> are specified in pants.ini, you can use JDK_HOME to set the Java version
 for just one pants invocation:</p>
-<div class="codehilite"><pre><span class="nv">$ JDK_HOME</span><span class="o">=</span>/usr/lib/jvm/java-1.7.0-openjdk-amd64 ./pants ...
+<div class="codehilite"><pre><span class="nv">$ JDK_HOME</span><span class="o">=</span>/usr/lib/jvm/java-1.8.0-openjdk-amd64 ./pants ...
 </pre></div>
-<p>If you sometimes need to compile some code in Java 6 and sometimes Java 7, you can define
+<p>If you sometimes need to compile some code in Java 8 and sometimes Java 9, you can define
 jvm-platforms in pants.ini, and set what targets use which platforms. For example, in pants.ini:</p>
 <div class="codehilite"><pre><span class="k">[jvm-platform]</span>
-<span class="err">default_platform:</span> <span class="err">java6</span>
+<span class="err">default_platform:</span> <span class="err">java8</span>
 <span class="err">platforms:</span> <span class="err">{</span>
-    <span class="err">'java6':</span> <span class="err">{'source':</span> <span class="err">'6',</span> <span class="err">'target':</span> <span class="err">'6',</span> <span class="err">'args':</span> <span class="err">[]</span> <span class="err">},</span>
     <span class="err">'java7':</span> <span class="err">{'source':</span> <span class="err">'7',</span> <span class="err">'target':</span> <span class="err">'7',</span> <span class="err">'args':</span> <span class="err">[]</span> <span class="err">},</span>
     <span class="err">'java8':</span> <span class="err">{'source':</span> <span class="err">'8',</span> <span class="err">'target':</span> <span class="err">'8',</span> <span class="err">'args':</span> <span class="err">[]</span> <span class="err">},</span>
+    <span class="err">java9':</span> <span class="err">{'source':</span> <span class="err">'9',</span> <span class="err">'target':</span> <span class="err">'9',</span> <span class="err">'args':</span> <span class="err">[]</span> <span class="err">},</span>
   <span class="err">}</span>
 </pre></div>
 <p>And then in a BUILD file:</p>
 <div class="codehilite"><pre><span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'my-library'</span><span class="p">,</span>
   <span class="n">sources</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s">'*.java'</span><span class="p">),</span>
-  <span class="n">platform</span><span class="o">=</span><span class="s">'java7'</span><span class="p">,</span>
+  <span class="n">platform</span><span class="o">=</span><span class="s">'java8'</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 <p>You can also override these on the cli:</p>
-<div class="codehilite"><pre>./pants compile --jvm-platform-default-platform<span class="o">=</span>java8 examples/src/java/org/pantsbuild/example/hello/main
+<div class="codehilite"><pre>./pants compile --jvm-platform-default-platform<span class="o">=</span>java9 examples/src/java/org/pantsbuild/example/hello/main
 </pre></div>
 <p>If you want to set the <code>-bootclasspath</code> (or <code>-Xbootclasspath</code>) to use the
 appropriate java distribution, you can use the <code>$JAVA_HOME</code> symbol in the
 <code>args</code> list. For example:</p>
 <div class="codehilite"><pre><span class="k">[jvm-platform]</span>
-<span class="err">default_platform:</span> <span class="err">java6</span>
+<span class="err">default_platform:</span> <span class="err">java8</span>
 <span class="err">platforms:</span> <span class="err">{</span>
     <span class="err">'java7':</span> <span class="err">{'source':</span> <span class="err">'7',</span> <span class="err">'target':</span> <span class="err">'7',</span> <span class="err">'args':</span> <span class="err">["-C-bootclasspath:$JAVA_HOME/jre/lib/resources.jar:$JAVA_HOME/jre/lib/rt.jar:$JAVA_HOME/jre/lib/sunrsasign.jar:$JAVA_HOME/jre/lib/jsse.jar:$JAVA_HOME/jre/lib/jce.jar:$JAVA_HOME/jre/lib/charsets.jar:$JAVA_HOME/jre/lib/jfr.jar:$JAVA_HOME/jre/classes"]</span> <span class="err">},</span>
   <span class="err">}</span>
@@ -884,7 +884,7 @@ javac and scalac.  For more details:</p>
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/examples/src/java/org/pantsbuild/example/README.html 2018-01-23T10:12:01.807842
+              from dist/markdown/html/examples/src/java/org/pantsbuild/example/README.html 2018-01-26T17:24:45.858447
             </div>
 
           </div> <!-- mainflow -->
