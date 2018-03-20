@@ -552,7 +552,7 @@
 <tr><td><a href="#idea-plugin" onclick="expandGoal('idea-plugin')">idea-plugin</a></td><td>Invoke IntelliJ Pants plugin (installation required) to create a project.</td></tr>
 <tr><td><a href="#imports" onclick="expandGoal('imports')">imports</a></td><td>Resolve external source dependencies.</td></tr>
 <tr><td><a href="#index" onclick="expandGoal('index')">index</a></td><td></td></tr>
-<tr><td><a href="#invalidate" onclick="expandGoal('invalidate')">invalidate</a></td><td>Invalidate the entire build.</td></tr>
+<tr><td><a href="#invalidate" onclick="expandGoal('invalidate')">invalidate</a></td><td></td></tr>
 <tr><td><a href="#jar" onclick="expandGoal('jar')">jar</a></td><td></td></tr>
 <tr><td><a href="#jvm-platform-explain" onclick="expandGoal('jvm-platform-explain')">jvm-platform-explain</a></td><td>Console task which provides helpful analysis about jvm platform dependencies.</td></tr>
 <tr><td><a href="#jvm-platform-validate" onclick="expandGoal('jvm-platform-validate')">jvm-platform-validate</a></td><td>Validation step that runs well in advance of jvm compile.</td></tr>
@@ -665,10 +665,6 @@
 <br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
 </br></li>
 <li>
-<span class="option-args">--config-override=&lt;path&gt; (--config-override=&lt;path&gt;) ..., --config-override="[&lt;path&gt;, &lt;path&gt;, ...]", --config-override="+[&lt;path&gt;, &lt;path&gt;, ...]"</span> <span class="option-default">(default: [])</span>
-<br><span>A second config file, to override pants.ini.</span>
-</br></li>
-<li>
 <span class="option-args">--[no-]enable-pantsd</span> <span class="option-default">(default: False)</span>
 <br><span>Enables use of the pants daemon (and implicitly, the v2 engine). (Beta)</span>
 </br></li>
@@ -687,14 +683,6 @@
 <li>
 <span class="option-args">--max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
 <br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</br></li>
-<li>
-<span class="option-args">--native-engine-supportdir=&lt;str&gt;</span> <span class="option-default">(default: 'DEPRECATED')</span>
-<br><span>Find native engine binaries under this dir. Used as part of the path to lookup the binary with --binary-util-baseurls and --pants-bootstrapdir.</span>
-</br></li>
-<li>
-<span class="option-args">--native-engine-version=&lt;str&gt;</span> <span class="option-default">(default: 'DEPRECATED')</span>
-<br><span>Native engine version.</span>
 </br></li>
 <li>
 <span class="option-args">--native-engine-visualize-to=&lt;dir_option&gt;</span> <span class="option-default">(default: None)</span>
@@ -729,7 +717,7 @@
 <br><span>Use support files from this dir.</span>
 </br></li>
 <li>
-<span class="option-args">--pants-version=&lt;str&gt;</span> <span class="option-default">(default: '1.5.0rc0')</span>
+<span class="option-args">--pants-version=&lt;str&gt;</span> <span class="option-default">(default: '1.6.0.dev0')</span>
 <br><span>Use this pants version.</span>
 </br></li>
 <li>
@@ -5099,14 +5087,6 @@
 <br><span>When set, any invalid/incompatible analysis files will be deleted automatically.  When unset, an error is raised instead.</span>
 </br></li>
 <li>
-<span class="option-args">--compile-zinc-compiler-bridge=&lt;target_option&gt;</span> <span class="option-default">(default: //:compiler-bridge)</span>
-<br><span>Target address spec for overriding the classpath of the compiler-bridge jvm tool which is, by default: [JarDependency(org=u'org.scala-sbt', base_name=u'compiler-bridge_2.10', rev=u'1.0.0-X5', force=False, ext=None, url=None, apidocs=None, classifier=u'sources', mutable=None, intransitive=True, excludes=(), base_path=u'.')]</span>
-</br></li>
-<li>
-<span class="option-args">--compile-zinc-compiler-interface=&lt;target_option&gt;</span> <span class="option-default">(default: //:compiler-interface)</span>
-<br><span>Target address spec for overriding the classpath of the compiler-interface jvm tool which is, by default: [JarDependency(org=u'org.scala-sbt', base_name=u'compiler-interface', rev=u'1.0.0-X5', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=(), base_path=u'.')]</span>
-</br></li>
-<li>
 <span class="option-args">--compile-zinc-confs=&lt;str&gt; (--compile-zinc-confs=&lt;str&gt;) ..., --compile-zinc-confs="[&lt;str&gt;, &lt;str&gt;, ...]", --compile-zinc-confs="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['default'])</span>
 <br><span>Compile for these Ivy confs.</span>
 </br></li>
@@ -5209,10 +5189,6 @@
 <li>
 <span class="option-args">--compile-zinc-worker-count=&lt;int&gt;</span> <span class="option-default">(default: 8)</span>
 <br><span>The number of concurrent workers to use when compiling with zinc. Defaults to the current machine's CPU count.</span>
-</br></li>
-<li>
-<span class="option-args">--compile-zinc-zinc=&lt;target_option&gt;</span> <span class="option-default">(default: //:zinc)</span>
-<br><span>Target address spec for overriding the classpath of the zinc jvm tool which is, by default: [JarDependency(org=u'org.pantsbuild', base_name=u'zinc_2.10', rev=u'0.0.5', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=(), base_path=u'.')]</span>
 </br></li>
 </ul>
 </li>
@@ -10609,87 +10585,9 @@
 <a name="invalidate"></a>
 <div class="goal-header">
 <div class="goal-name">invalidate</div>
-<div class="goal-description">Invalidate the entire build.</div>
+<div class="goal-description"></div>
 </div>
 <ul class="nobullets collapsible">
-<li>
-<div class="scope">cache.invalidate</div>
-<div class="scope-description"></div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Basic options
-                    <ul class="nobullets">
-<li>
-<span class="option-args">--[no-]cache-invalidate-dereference-symlinks</span> <span class="option-default">(default: True)</span>
-<br><span>Dereference symlinks when creating cache tarball.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]cache-invalidate-ignore</span> <span class="option-default">(default: False)</span>
-<br><span>Ignore all other cache configuration and skip using the cache.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]cache-invalidate-read</span> <span class="option-default">(default: True)</span>
-<br><span>Read build artifacts from cache, if available.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]cache-invalidate-write</span> <span class="option-default">(default: True)</span>
-<br><span>Write build artifacts to cache, if available.</span>
-</br></li>
-</ul>
-</li>
-<li class="collapsed options-group">Advanced options
-                    <ul class="nobullets">
-<li>
-<span class="option-args">--cache-invalidate-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
-<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</br></li>
-<li>
-<span class="option-args">--cache-invalidate-compression-level=&lt;int&gt;</span> <span class="option-default">(default: 5)</span>
-<br><span>The gzip compression level (0-9) for created artifacts.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]cache-invalidate-fail-fast</span> <span class="option-default">(default: False)</span>
-<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</br></li>
-<li>
-<span class="option-args">--cache-invalidate-max-entries-per-target=&lt;int&gt;</span> <span class="option-default">(default: 8)</span>
-<br><span>Maximum number of old cache files to keep per task target pair</span>
-</br></li>
-<li>
-<span class="option-args">--cache-invalidate-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]cache-invalidate-overwrite</span> <span class="option-default">(default: False)</span>
-<br><span>If writing build artifacts to cache, overwrite existing artifacts instead of skipping them.</span>
-</br></li>
-<li>
-<span class="option-args">--cache-invalidate-pinger-timeout=&lt;float&gt;</span> <span class="option-default">(default: 0.5)</span>
-<br><span>number of seconds before pinger times out</span>
-</br></li>
-<li>
-<span class="option-args">--cache-invalidate-pinger-tries=&lt;int&gt;</span> <span class="option-default">(default: 2)</span>
-<br><span>number of times pinger tries a cache</span>
-</br></li>
-<li>
-<span class="option-args">--cache-invalidate-read-from=&lt;str&gt; (--cache-invalidate-read-from=&lt;str&gt;) ..., --cache-invalidate-read-from="[&lt;str&gt;, &lt;str&gt;, ...]", --cache-invalidate-read-from="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['/Users/yic/workspace/pants/.cache'])</span>
-<br><span>The URIs of artifact caches to read directly from. Each entry is a URL of a RESTful cache, a path of a filesystem cache, or a pipe-separated list of alternate caches to choose from. This list is also used as input to the resolver. When resolver is 'none' list is used as is.</span>
-</br></li>
-<li>
-<span class="option-args">--cache-invalidate-resolver=&lt;str&gt;</span> <span class="option-default">(default: 'none')</span>
-<br><span>Select which resolver strategy to use for discovering URIs that access artifact caches. none: use URIs from static config options, i.e. --read-from, --write-to. rest: look up URIs by querying a RESTful URL, which is a remote address from --read-from, --write-to.</span>
-</br></li>
-<li>
-<span class="option-args">--cache-invalidate-write-permissions=&lt;str&gt;</span> <span class="option-default">(default: None)</span>
-<br><span>Permissions to use when writing artifacts to a local cache, in octal.</span>
-</br></li>
-<li>
-<span class="option-args">--cache-invalidate-write-to=&lt;str&gt; (--cache-invalidate-write-to=&lt;str&gt;) ..., --cache-invalidate-write-to="[&lt;str&gt;, &lt;str&gt;, ...]", --cache-invalidate-write-to="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['/Users/yic/workspace/pants/.cache'])</span>
-<br><span>The URIs of artifact caches to write directly to. Each entry is a URL ofa RESTful cache, a path of a filesystem cache, or a pipe-separated list of alternate caches to choose from. This list is also used as input to the resolver. When resolver is 'none' list is used as is.</span>
-</br></li>
-</ul>
-</li>
-</ul>
-</li>
 <li>
 <div class="scope">invalidate.ng-killall</div>
 <div class="scope-description">Kill running nailgun servers.</div>
@@ -15863,14 +15761,6 @@
 <br><span>When set, any invalid/incompatible analysis files will be deleted automatically.  When unset, an error is raised instead.</span>
 </br></li>
 <li>
-<span class="option-args">--resolve-scala-js-compile-compiler-bridge=&lt;target_option&gt;</span> <span class="option-default">(default: //:compiler-bridge)</span>
-<br><span>Target address spec for overriding the classpath of the compiler-bridge jvm tool which is, by default: [JarDependency(org=u'org.scala-sbt', base_name=u'compiler-bridge_2.10', rev=u'1.0.0-X5', force=False, ext=None, url=None, apidocs=None, classifier=u'sources', mutable=None, intransitive=True, excludes=(), base_path=u'.')]</span>
-</br></li>
-<li>
-<span class="option-args">--resolve-scala-js-compile-compiler-interface=&lt;target_option&gt;</span> <span class="option-default">(default: //:compiler-interface)</span>
-<br><span>Target address spec for overriding the classpath of the compiler-interface jvm tool which is, by default: [JarDependency(org=u'org.scala-sbt', base_name=u'compiler-interface', rev=u'1.0.0-X5', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=(), base_path=u'.')]</span>
-</br></li>
-<li>
 <span class="option-args">--resolve-scala-js-compile-confs=&lt;str&gt; (--resolve-scala-js-compile-confs=&lt;str&gt;) ..., --resolve-scala-js-compile-confs="[&lt;str&gt;, &lt;str&gt;, ...]", --resolve-scala-js-compile-confs="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['default'])</span>
 <br><span>Compile for these Ivy confs.</span>
 </br></li>
@@ -15953,10 +15843,6 @@
 <li>
 <span class="option-args">--resolve-scala-js-compile-worker-count=&lt;int&gt;</span> <span class="option-default">(default: 8)</span>
 <br><span>The number of concurrent workers to use when compiling with scala-js. Defaults to the current machine's CPU count.</span>
-</br></li>
-<li>
-<span class="option-args">--resolve-scala-js-compile-zinc=&lt;target_option&gt;</span> <span class="option-default">(default: //:zinc)</span>
-<br><span>Target address spec for overriding the classpath of the zinc jvm tool which is, by default: [JarDependency(org=u'org.pantsbuild', base_name=u'zinc_2.10', rev=u'0.0.5', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=None, intransitive=False, excludes=(), base_path=u'.')]</span>
 </br></li>
 </ul>
 </li>
@@ -18190,7 +18076,7 @@
 </br></li>
 <li>
 <span class="option-args">--[no-]test-junit-legacy-report-layout</span> <span class="option-default">(default: False)</span>
-<br><span>Links JUnit and coverage reports to the legacy location.</span>
+<br><span>Used to link JUnit and coverage reports to the legacy location; now does nothing.</span>
 </br></li>
 <li>
 <span class="option-args">--test-junit-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
@@ -19209,7 +19095,7 @@
 <li>
 <div class="global-subsystem-header">
 <div class="scope">zinc</div>
-<div class="scope-description">Configuration for Pants' zinc wrapper tool.</div>
+<div class="scope-description"></div>
 </div>
 <ul class="nobullets collapsible">
 <li class="collapsed options-group">Advanced options
@@ -19420,6 +19306,38 @@
 </br></li>
 <li>
 <span class="option-args">--pycheck-print-statements-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<div class="global-subsystem-header">
+<div class="scope">thrift</div>
+<div class="scope-description"></div>
+</div>
+<ul class="nobullets collapsible">
+<li class="collapsed options-group">Basic options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--thrift-version=&lt;str&gt;</span> <span class="option-default">(default: '0.9.2')</span>
+<br><span>Version of the thrift binary to use</span>
+</br></li>
+</ul>
+</li>
+<li class="collapsed options-group">Advanced options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--thrift-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]thrift-fail-fast</span> <span class="option-default">(default: False)</span>
+<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
+</br></li>
+<li>
+<span class="option-args">--thrift-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
 <br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
 </br></li>
 </ul>
@@ -19888,6 +19806,50 @@
 </li>
 <li>
 <div class="global-subsystem-header">
+<div class="scope">coursier</div>
+<div class="scope-description">Common configuration items for coursier tasks.</div>
+</div>
+<ul class="nobullets collapsible">
+<li class="collapsed options-group">Basic options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--coursier-bootstrap-jar-url=&lt;str&gt;</span> <span class="option-default">(default: 'https://dl.dropboxusercontent.com/s/t8zz2nupqkv2sfv/coursier-cli-1.0.2.e943c8069180d22f352878949f9522ad91d89026.jar?dl=0')</span>
+<br><span>Location to download a bootstrap version of Coursier.</span>
+</br></li>
+<li>
+<span class="option-args">--coursier-fetch-options=&lt;str&gt; (--coursier-fetch-options=&lt;str&gt;) ..., --coursier-fetch-options="[&lt;str&gt;, &lt;str&gt;, ...]", --coursier-fetch-options="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: [])</span>
+<br><span>Additional options to pass to coursier fetch. See `coursier fetch --help`</span>
+</br></li>
+<li>
+<span class="option-args">--coursier-version=&lt;str&gt;</span> <span class="option-default">(default: '1.0.2.e943c8069180d22f352878949f9522ad91d89026')</span>
+<br><span>Version paired with --bootstrap-jar-url, in order to invalidate and fetch the new version.</span>
+</br></li>
+</ul>
+</li>
+<li class="collapsed options-group">Advanced options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--coursier-bootstrap-fetch-timeout-secs=&lt;int&gt;</span> <span class="option-default">(default: 10)</span>
+<br><span>Timeout the fetch if the connection is idle for longer than this value.</span>
+</br></li>
+<li>
+<span class="option-args">--coursier-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]coursier-fail-fast</span> <span class="option-default">(default: False)</span>
+<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
+</br></li>
+<li>
+<span class="option-args">--coursier-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<div class="global-subsystem-header">
 <div class="scope">build-invalidator</div>
 <div class="scope-description"></div>
 </div>
@@ -19904,6 +19866,38 @@
 </br></li>
 <li>
 <span class="option-args">--build-invalidator-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<div class="global-subsystem-header">
+<div class="scope">pycheck-except-statement</div>
+<div class="scope-description"></div>
+</div>
+<ul class="nobullets collapsible">
+<li class="collapsed options-group">Basic options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--[no-]pycheck-except-statement-skip</span> <span class="option-default">(default: False)</span>
+<br><span>If enabled, skip this style checker.</span>
+</br></li>
+</ul>
+</li>
+<li class="collapsed options-group">Advanced options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--pycheck-except-statement-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]pycheck-except-statement-fail-fast</span> <span class="option-default">(default: False)</span>
+<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
+</br></li>
+<li>
+<span class="option-args">--pycheck-except-statement-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
 <br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
 </br></li>
 </ul>
@@ -20197,70 +20191,6 @@ The UrlInfo struct is a 3-tuple with the following slots:
 </li>
 <li>
 <div class="global-subsystem-header">
-<div class="scope">pycheck-variable-names</div>
-<div class="scope-description"></div>
-</div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Basic options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--[no-]pycheck-variable-names-skip</span> <span class="option-default">(default: True)</span>
-<br><span>If enabled, skip this style checker.</span>
-</br></li>
-</ul>
-</li>
-<li class="collapsed options-group">Advanced options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--pycheck-variable-names-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
-<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]pycheck-variable-names-fail-fast</span> <span class="option-default">(default: False)</span>
-<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</br></li>
-<li>
-<span class="option-args">--pycheck-variable-names-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</br></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="global-subsystem-header">
-<div class="scope">ragel</div>
-<div class="scope-description"></div>
-</div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Basic options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--ragel-version=&lt;str&gt;</span> <span class="option-default">(default: '6.9')</span>
-<br><span>Version of the ragel binary to use</span>
-</br></li>
-</ul>
-</li>
-<li class="collapsed options-group">Advanced options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--ragel-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
-<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]ragel-fail-fast</span> <span class="option-default">(default: False)</span>
-<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</br></li>
-<li>
-<span class="option-args">--ragel-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</br></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="global-subsystem-header">
 <div class="scope">cache</div>
 <div class="scope-description"></div>
 </div>
@@ -20334,6 +20264,102 @@ The UrlInfo struct is a 3-tuple with the following slots:
 <li>
 <span class="option-args">--cache-write-to=&lt;str&gt; (--cache-write-to=&lt;str&gt;) ..., --cache-write-to="[&lt;str&gt;, &lt;str&gt;, ...]", --cache-write-to="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: [])</span>
 <br><span>The URIs of artifact caches to write directly to. Each entry is a URL ofa RESTful cache, a path of a filesystem cache, or a pipe-separated list of alternate caches to choose from. This list is also used as input to the resolver. When resolver is 'none' list is used as is.</span>
+</br></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<div class="global-subsystem-header">
+<div class="scope">resolver</div>
+<div class="scope-description">Used to keep track of global jvm resolver settings</div>
+</div>
+<ul class="nobullets collapsible">
+<li class="collapsed options-group">Basic options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--resolver-resolver=&lt;str&gt;</span> <span class="option-default">(default: 'ivy')</span>
+<br><span>Resolver to use for external jvm dependencies.</span>
+</br></li>
+</ul>
+</li>
+<li class="collapsed options-group">Advanced options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--resolver-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]resolver-fail-fast</span> <span class="option-default">(default: False)</span>
+<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
+</br></li>
+<li>
+<span class="option-args">--resolver-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<div class="global-subsystem-header">
+<div class="scope">pycheck-variable-names</div>
+<div class="scope-description"></div>
+</div>
+<ul class="nobullets collapsible">
+<li class="collapsed options-group">Basic options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--[no-]pycheck-variable-names-skip</span> <span class="option-default">(default: True)</span>
+<br><span>If enabled, skip this style checker.</span>
+</br></li>
+</ul>
+</li>
+<li class="collapsed options-group">Advanced options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--pycheck-variable-names-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]pycheck-variable-names-fail-fast</span> <span class="option-default">(default: False)</span>
+<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
+</br></li>
+<li>
+<span class="option-args">--pycheck-variable-names-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<div class="global-subsystem-header">
+<div class="scope">ragel</div>
+<div class="scope-description"></div>
+</div>
+<ul class="nobullets collapsible">
+<li class="collapsed options-group">Basic options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--ragel-version=&lt;str&gt;</span> <span class="option-default">(default: '6.9')</span>
+<br><span>Version of the ragel binary to use</span>
+</br></li>
+</ul>
+</li>
+<li class="collapsed options-group">Advanced options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--ragel-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]ragel-fail-fast</span> <span class="option-default">(default: False)</span>
+<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
+</br></li>
+<li>
+<span class="option-args">--ragel-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
 </br></li>
 </ul>
 </li>
@@ -20482,38 +20508,6 @@ The UrlInfo struct is a 3-tuple with the following slots:
 <li>
 <span class="option-args">--[no-]java-zinc-file-manager</span> <span class="option-default">(default: True)</span>
 <br><span>Use zinc provided file manager to ensure transactional rollback.</span>
-</br></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="global-subsystem-header">
-<div class="scope">thrift</div>
-<div class="scope-description"></div>
-</div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Basic options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--thrift-version=&lt;str&gt;</span> <span class="option-default">(default: '0.9.2')</span>
-<br><span>Version of the thrift binary to use</span>
-</br></li>
-</ul>
-</li>
-<li class="collapsed options-group">Advanced options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--thrift-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
-<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]thrift-fail-fast</span> <span class="option-default">(default: False)</span>
-<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
 </br></li>
 </ul>
 </li>
@@ -20765,31 +20759,31 @@ The UrlInfo struct is a 3-tuple with the following slots:
 </li>
 <li>
 <div class="global-subsystem-header">
-<div class="scope">pycheck-except-statement</div>
+<div class="scope">thrift-binary</div>
 <div class="scope-description"></div>
 </div>
 <ul class="nobullets collapsible">
-<li class="collapsed options-group">Basic options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--[no-]pycheck-except-statement-skip</span> <span class="option-default">(default: False)</span>
-<br><span>If enabled, skip this style checker.</span>
-</br></li>
-</ul>
-</li>
 <li class="collapsed options-group">Advanced options
               <ul class="nobullets">
 <li>
-<span class="option-args">--pycheck-except-statement-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<span class="option-args">--thrift-binary-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
 <br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
 </br></li>
 <li>
-<span class="option-args">--[no-]pycheck-except-statement-fail-fast</span> <span class="option-default">(default: False)</span>
+<span class="option-args">--[no-]thrift-binary-fail-fast</span> <span class="option-default">(default: False)</span>
 <br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
 </br></li>
 <li>
-<span class="option-args">--pycheck-except-statement-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<span class="option-args">--thrift-binary-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
 <br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+<li>
+<span class="option-args">--thrift-binary-supportdir=&lt;str&gt;</span> <span class="option-default">(default: 'bin/thrift')</span>
+<br><span>Find thrift binaries under this dir.   Used as part of the path to lookup thetool with --binary-util-baseurls and --pants-bootstrapdir</span>
+</br></li>
+<li>
+<span class="option-args">--thrift-binary-version=&lt;str&gt;</span> <span class="option-default">(default: '0.9.2')</span>
+<br><span>Thrift compiler version.   Used as part of the path to lookup thetool with --binary-util-baseurls and --pants-bootstrapdir</span>
 </br></li>
 </ul>
 </li>
@@ -20874,38 +20868,6 @@ The UrlInfo struct is a 3-tuple with the following slots:
 <li>
 <span class="option-args">--source-unmatched=&lt;str&gt;</span> <span class="option-default">(default: 'create')</span>
 <br><span>Configures the behavior when sources are defined outside of any configured source root. `create` will cause a source root to be implicitly created at the definition location of the sources; `fail` will trigger an error.</span>
-</br></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="global-subsystem-header">
-<div class="scope">resolver</div>
-<div class="scope-description">Used to keep track of global jvm resolver settings</div>
-</div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Basic options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--resolver-resolver=&lt;str&gt;</span> <span class="option-default">(default: 'ivy')</span>
-<br><span>Resolver to use for external jvm dependencies.</span>
-</br></li>
-</ul>
-</li>
-<li class="collapsed options-group">Advanced options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--resolver-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
-<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]resolver-fail-fast</span> <span class="option-default">(default: False)</span>
-<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</br></li>
-<li>
-<span class="option-args">--resolver-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
 </br></li>
 </ul>
 </li>
@@ -21179,54 +21141,6 @@ The UrlInfo struct is a 3-tuple with the following slots:
 <span class="option-args">--thrift-defaults-namespace-map="{'key1':val1,'key2':val2,...}"</span> <span class="option-default">(default: {})</span>
 <br><span>The default namespace map to generate for java_thrift_library targets, {old: new}.</span>
 </br></li>
-<li>
-<span class="option-args">--thrift-defaults-rpc-style=&lt;str&gt;</span> <span class="option-default">(default: 'sync')</span>
-<br><span>The default rpc-style to generate for java_thrift_library targets.</span>
-</br></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="global-subsystem-header">
-<div class="scope">coursier</div>
-<div class="scope-description">Common configuration items for coursier tasks.</div>
-</div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Basic options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--coursier-bootstrap-jar-url=&lt;str&gt;</span> <span class="option-default">(default: 'https://dl.dropboxusercontent.com/s/t8zz2nupqkv2sfv/coursier-cli-1.0.2.e943c8069180d22f352878949f9522ad91d89026.jar?dl=0')</span>
-<br><span>Location to download a bootstrap version of Coursier.</span>
-</br></li>
-<li>
-<span class="option-args">--coursier-fetch-options=&lt;str&gt; (--coursier-fetch-options=&lt;str&gt;) ..., --coursier-fetch-options="[&lt;str&gt;, &lt;str&gt;, ...]", --coursier-fetch-options="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: [])</span>
-<br><span>Additional options to pass to coursier fetch. See `coursier fetch --help`</span>
-</br></li>
-<li>
-<span class="option-args">--coursier-version=&lt;str&gt;</span> <span class="option-default">(default: '1.0.2.e943c8069180d22f352878949f9522ad91d89026')</span>
-<br><span>Version paired with --bootstrap-jar-url, in order to invalidate and fetch the new version.</span>
-</br></li>
-</ul>
-</li>
-<li class="collapsed options-group">Advanced options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--coursier-bootstrap-fetch-timeout-secs=&lt;int&gt;</span> <span class="option-default">(default: 10)</span>
-<br><span>Timeout the fetch if the connection is idle for longer than this value.</span>
-</br></li>
-<li>
-<span class="option-args">--coursier-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
-<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]coursier-fail-fast</span> <span class="option-default">(default: False)</span>
-<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</br></li>
-<li>
-<span class="option-args">--coursier-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</br></li>
 </ul>
 </li>
 </ul>
@@ -21257,6 +21171,42 @@ The UrlInfo struct is a 3-tuple with the following slots:
 </br></li>
 <li>
 <span class="option-args">--pycheck-newstyle-classes-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<div class="global-subsystem-header">
+<div class="scope">pycheck-pyflakes</div>
+<div class="scope-description"></div>
+</div>
+<ul class="nobullets collapsible">
+<li class="collapsed options-group">Basic options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--pycheck-pyflakes-ignore=&lt;str&gt; (--pycheck-pyflakes-ignore=&lt;str&gt;) ..., --pycheck-pyflakes-ignore="[&lt;str&gt;, &lt;str&gt;, ...]", --pycheck-pyflakes-ignore="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: [])</span>
+<br><span>List of warning codes to ignore.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]pycheck-pyflakes-skip</span> <span class="option-default">(default: False)</span>
+<br><span>If enabled, skip this style checker.</span>
+</br></li>
+</ul>
+</li>
+<li class="collapsed options-group">Advanced options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--pycheck-pyflakes-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]pycheck-pyflakes-fail-fast</span> <span class="option-default">(default: False)</span>
+<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
+</br></li>
+<li>
+<span class="option-args">--pycheck-pyflakes-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
 <br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
 </br></li>
 </ul>
@@ -21397,38 +21347,6 @@ The UrlInfo struct is a 3-tuple with the following slots:
 </li>
 <li>
 <div class="global-subsystem-header">
-<div class="scope">thrift-binary</div>
-<div class="scope-description"></div>
-</div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Advanced options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--thrift-binary-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
-<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]thrift-binary-fail-fast</span> <span class="option-default">(default: False)</span>
-<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-supportdir=&lt;str&gt;</span> <span class="option-default">(default: 'bin/thrift')</span>
-<br><span>Find thrift binaries under this dir.   Used as part of the path to lookup thetool with --binary-util-baseurls and --pants-bootstrapdir</span>
-</br></li>
-<li>
-<span class="option-args">--thrift-binary-version=&lt;str&gt;</span> <span class="option-default">(default: '0.9.2')</span>
-<br><span>Thrift compiler version.   Used as part of the path to lookup thetool with --binary-util-baseurls and --pants-bootstrapdir</span>
-</br></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="global-subsystem-header">
 <div class="scope">target-arguments</div>
 <div class="scope-description">Options relating to handling target arguments.</div>
 </div>
@@ -21446,10 +21364,6 @@ The UrlInfo struct is a 3-tuple with the following slots:
 <li>
 <span class="option-args">--target-arguments-ignored="{'key1':val1,'key2':val2,...}"</span> <span class="option-default">(default: {})</span>
 <br><span>Map of target name to a list of keyword arguments that should be ignored if a target receives them unexpectedly. Typically used to allow usage of arguments in BUILD files that are not yet available in the current version of pants.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]target-arguments-implicit-sources</span> <span class="option-default">(default: True)</span>
-<br><span>If True, Pants will infer the value of the sources argument for certain target types, if they do not have explicit sources specified. See http://www.pantsbuild.org/build_files.html#target-definitions</span>
 </br></li>
 <li>
 <span class="option-args">--target-arguments-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
@@ -21515,42 +21429,6 @@ The UrlInfo struct is a 3-tuple with the following slots:
 </li>
 </ul>
 </li>
-<li>
-<div class="global-subsystem-header">
-<div class="scope">pycheck-pyflakes</div>
-<div class="scope-description"></div>
-</div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Basic options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--pycheck-pyflakes-ignore=&lt;str&gt; (--pycheck-pyflakes-ignore=&lt;str&gt;) ..., --pycheck-pyflakes-ignore="[&lt;str&gt;, &lt;str&gt;, ...]", --pycheck-pyflakes-ignore="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: [])</span>
-<br><span>List of warning codes to ignore.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]pycheck-pyflakes-skip</span> <span class="option-default">(default: False)</span>
-<br><span>If enabled, skip this style checker.</span>
-</br></li>
-</ul>
-</li>
-<li class="collapsed options-group">Advanced options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--pycheck-pyflakes-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
-<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]pycheck-pyflakes-fail-fast</span> <span class="option-default">(default: False)</span>
-<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</br></li>
-<li>
-<span class="option-args">--pycheck-pyflakes-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</br></li>
-</ul>
-</li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>
@@ -21560,7 +21438,7 @@ The UrlInfo struct is a 3-tuple with the following slots:
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/reference/pants_reference_body.html 2018-03-15T12:50:04.305579
+              from dist/reference/pants_reference_body.html 2018-03-19T21:59:13.058255
             </div>
 
           </div> <!-- mainflow -->
