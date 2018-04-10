@@ -229,6 +229,14 @@
                     <li class="toc-h2"><a href="#depending-on-a-jar">Depending on a Jar</a></li>
                     <li class="toc-h1"><a href="#the-usual-commands-jvm">The Usual Commands: JVM</a></li>
                     <li class="toc-h1"><a href="#toolchain">Toolchain</a></li>
+                    <li class="toc-h2"><a href="#ivy">Ivy</a></li>
+                    <li class="toc-h2"><a href="#coursier">Coursier</a></li>
+                    <li class="toc-h3"><a href="#limitation">Limitation</a></li>
+                    <li class="toc-h3"><a href="#example-config-to-use-coursier">Example config to use coursier</a></li>
+                    <li class="toc-h4"><a href="#for-pants-17x">For Pants &gt;= 1.7.x</a></li>
+                    <li class="toc-h4"><a href="#for-pants-16x">For Pants &lt;= 1.6.x</a></li>
+                    <li class="toc-h2"><a href="#nailgun">Nailgun</a></li>
+                    <li class="toc-h2"><a href="#zinc">Zinc</a></li>
                     <li class="toc-h1"><a href="#java9-vs-java8-which-java">Java9 vs Java8, Which Java</a></li>
                     <li class="toc-h1"><a href="#bundles-deploy-able-runnable-file-trees">Bundles: Deploy-able Runnable File Trees</a></li>
                     <li class="toc-h2"><a href="#generating-a-bundle">Generating a Bundle</a></li>
@@ -457,7 +465,7 @@ The dependency on <code>junit</code> is a "third party" dependency, a pre-compil
 lives somewhere outside the workspace.</p>
 <h3 id="depending-on-a-jar">Depending on a Jar</h3>
 <p>The test example depends on a jar, <code>junit</code>. Instead of compiling from
-source, Pants invokes ivy to fetch such jars. To reduce the danger of
+source, Pants invokes the resolver to fetch such jars. To reduce the danger of
 version conflicts, we use the 3rdparty idiom: we keep references to
 these "third-party" jars together in <code>BUILD</code> files under the <code>3rdparty/</code>
 directory. Thus, the test has a <code>3rdparty</code> dependency:</p>
@@ -517,11 +525,86 @@ including helper files):</p>
 contents a directory tree, a giant jar, or something else.
 <a href="jvm_projects.html#jvm_bundles" pantsref="jvm_bundles">Learn more about bundles</a>.</p>
 <h2 id="toolchain">Toolchain</h2>
+<h3 id="ivy">Ivy</h3>
 <p>Pants uses <a href="http://ant.apache.org/ivy/">Ivy</a> to resolve <code>jar</code> dependencies. To change how Pants
 resolves these, configure <code>resolve.ivy</code>.</p>
+<h3 id="coursier">Coursier</h3>
+<p>Starting at release <code>1.4.0.dev26</code>, Pants added an option to pick <a href="https://github.com/coursier/coursier">coursier</a>
+as the JVM 3rdparty resolver, with performance improvement being the main motivation. The goal is to retire ivy
+eventually.</p>
+<h4 id="limitation">Limitation</h4>
+<ul>
+<li>Currently coursier only supports maven style repo resolves. <a href="https://github.com/coursier/coursier/issues/created_by/benjyw">Resolving with ivy settings is still not mature</a>.</li>
+<li>Coursier does not do publishing.</li>
+</ul>
+<h4 id="example-config-to-use-coursier">Example config to use coursier</h4>
+<h5 id="for-pants-17x">For Pants &gt;= 1.7.x</h5>
+<div class="codehilite"><pre><span class="c"># This will turn on coursier and turn off ivy.</span>
+<span class="k">[resolver]</span>
+<span class="err">resolver:</span> <span class="err">coursier</span>
+
+<span class="k">[resolve.coursier]</span>
+<span class="c"># jvm option in case of large resolves</span>
+<span class="na">jvm_options: ['-Xmx4g', '-XX:MaxMetaspaceSize</span><span class="o">=</span><span class="s">256m']</span>
+
+<span class="k">[export]</span>
+<span class="c"># Same if needed for large resolves</span>
+<span class="na">jvm_options: ['-Xmx4g', '-XX:MaxMetaspaceSize</span><span class="o">=</span><span class="s">256m']</span>
+
+<span class="k">[coursier]</span>
+<span class="err">repos:</span> <span class="k">['https://repo1.maven.org/maven2', 'https://dl.google.com/dl/android/maven2/']</span>
+
+<span class="c"># Change the following if you choose to [build coursier jar from scratch](https://github.com/coursier/coursier/blob/master/DEVELOPMENT.md#build-with-pants)</span>
+<span class="c"># or to fetch from different location.</span>
+<span class="err">bootstrap_jar_url:</span> <span class="err">&lt;url&gt;</span>
+<span class="err">version:</span> <span class="err">&lt;version&gt;</span>
+</pre></div>
+<ul>
+<li>To inspect the resolve result, specify <code>--resolver-coursier-report</code></li>
+<li>
+<p>To show coursier command line invocation, use <code>-ldebug</code></p>
+<div class="codehilite"><pre>./pants --resolver-resolver<span class="o">=</span>coursier resolve.coursier --report examples/tests/scala/org/pantsbuild/example/hello/welcome -ldebug
+</pre></div>
+</li>
+</ul>
+<h5 id="for-pants-16x">For Pants &lt;= 1.6.x</h5>
+<div class="codehilite"><pre><span class="c"># This will turn on coursier and turn off ivy.</span>
+<span class="k">[resolver]</span>
+<span class="err">resolver:</span> <span class="err">coursier</span>
+
+<span class="k">[export]</span>
+<span class="c"># Same if needed for large resolves</span>
+<span class="na">jvm_options: ['-Xmx4g', '-XX:MaxMetaspaceSize</span><span class="o">=</span><span class="s">256m']</span>
+
+<span class="k">[coursier]</span>
+<span class="c"># Change the following if you choose to [build coursier jar from scratch](https://github.com/coursier/coursier/blob/master/DEVELOPMENT.md#build-with-pants)</span>
+<span class="c"># or to fetch from different location.</span>
+<span class="err">bootstrap_jar_url:</span> <span class="err">&lt;url&gt;</span>
+<span class="err">version:</span> <span class="err">&lt;version&gt;</span>
+
+<span class="err">fetch_options:</span> <span class="err">[</span>
+    <span class="c"># Specify maven repos</span>
+    <span class="err">'-r',</span> <span class="err">'https://repo1.maven.org/maven2/',</span>
+    <span class="err">'-r',</span> <span class="err">'https://dl.google.com/dl/android/maven2/',</span>
+
+    <span class="c"># Quiet mode</span>
+    <span class="err">'-q',</span>
+
+    <span class="c"># Do not use default public maven repo.</span>
+    <span class="err">'--no-default',</span>
+
+    <span class="c"># Concurrent workers</span>
+    <span class="err">'-n',</span> <span class="err">'10',</span>
+
+    <span class="c"># Specify the type of artifacts to fetch</span>
+    <span class="err">'-A',</span> <span class="err">'jar,bundle,test-jar,maven-plugin,src,doc,aar'</span>
+  <span class="err">]</span>
+</pre></div>
+<h3 id="nailgun">Nailgun</h3>
 <p>Pants uses <a href="https://github.com/martylamb/nailgun">Nailgun</a> to speed up compiles. Nailgun is a
 JVM daemon that runs in the background. This means you don't need to start up a JVM and load
 classes for each JVM-based operation. Things go faster.</p>
+<h3 id="zinc">Zinc</h3>
 <p>Pants uses Zinc, a dependency tracking compiler facade that supports sub-target incremental
 compilation for Java and Scala.</p>
 <h2 id="java9-vs-java8-which-java">Java9 vs Java8, Which Java</h2>
@@ -890,7 +973,7 @@ javac and scalac.  For more details:</p>
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/examples/src/java/org/pantsbuild/example/README.html 2018-04-05T13:53:39.288139
+              from dist/markdown/html/examples/src/java/org/pantsbuild/example/README.html 2018-04-10T14:32:58.375457
             </div>
 
           </div> <!-- mainflow -->
