@@ -178,6 +178,9 @@
                   <a class="sidebar-nav-heading" class="toc-drop" data-toggle="collapse" href="#Release-Notes" aria-expanded="false" aria-controls="Release-Notes">Release Notes<span class="caret"></span></a>
                     <ul class="collapse sidebar-nav sidebar-submenu" id="Release-Notes">
                         <li class="toc-h1 toc-link ">
+                          <a href="notes-1.7.x.html">1.7.x Stable Releases</a>
+                        </li>
+                        <li class="toc-h1 toc-link ">
                           <a href="notes-1.6.x.html">1.6.x Stable Releases</a>
                         </li>
                         <li class="toc-h1 toc-link ">
@@ -225,6 +228,7 @@
                     <li class="toc-h1"><a href="#relevant-goals-and-targets">Relevant Goals and Targets</a></li>
                     <li class="toc-h1"><a href="#build-for-a-simple-binary">BUILD for a Simple Binary</a></li>
                     <li class="toc-h1"><a href="#build-for-tests">BUILD for Tests</a></li>
+                    <li class="toc-h1"><a href="#python-apps-for-deployment">Python Apps for Deployment</a></li>
                     <li class="toc-h1"><a href="#debugging-tests">Debugging Tests</a></li>
                     <li class="toc-h1"><a href="#handling-python_requirement">Handling python_requirement</a></li>
                     <li class="toc-h1"><a href="#pex-contents">PEX Contents</a></li>
@@ -489,6 +493,50 @@ with a <code>python_tests</code> target. It depends on the library:</p>
                SUCCESS
 <span class="err">$</span>
 </pre></div>
+<h2 id="python-apps-for-deployment">Python Apps for Deployment</h2>
+<p>For deploying your Python apps, Pants can create archives (e.g.: tar.gz, zip) that contain an
+executable pex along with other files it needs at runtime (e.g.: config files, data sets).
+These archives can be extracted and run on production machines as part of your deployment process.</p>
+<p>To create a Python app for deployment, define a <code>python_app</code> target. Notice how the <code>python_app</code>
+target combines an existing <code>python_binary</code> with <code>bundles</code> that describe the other files to
+include in the archive.</p>
+<p>
+<div class="md-included-snippet"><div class="codehilite"><pre><span class="n">python_binary</span><span class="p">(</span>
+  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
+    <span class="s">'examples/src/python/example/hello/greet:greet'</span><span class="p">,</span>
+  <span class="p">],</span>
+  <span class="n">source</span><span class="o">=</span><span class="s">'main.py'</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c"># An "app" is a binary plus other loose files bundled together in</span>
+<span class="c"># an archive (e.g.: tar.gz, zip). In this example, the archive includes</span>
+<span class="c"># both <code>main.pex</code> and <code>BUILD</code>.</span>
+<span class="n">python_app</span><span class="p">(</span>
+  <span class="n">name</span><span class="o">=</span><span class="s">'hello-app'</span><span class="p">,</span>
+  <span class="n">binary</span><span class="o">=</span><span class="s">':main'</span><span class="p">,</span>
+  <span class="n">bundles</span><span class="o">=</span><span class="p">[</span>
+    <span class="n">bundle</span><span class="p">(</span><span class="n">fileset</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s">'BUILD'</span><span class="p">)),</span>
+  <span class="p">],</span>
+<span class="p">)</span>
+</pre></div></div>
+</p>
+<p>Use <code>./pants bundle</code> to create the archive.</p>
+<div class="codehilite"><pre>$ ./pants bundle examples/src/python/example/hello/main/:hello-app --bundle-py-archive=tgz
+&lt;output omitted for brevity&gt;
+00:59:52 00:02   [bundle]
+00:59:52 00:02     [py]
+                   created bundle copy dist/examples.src.python.example.hello.main.hello-app-bundle
+                   created archive copy dist/examples.src.python.example.hello.main.hello-app.tar.gz
+00:59:53 00:03   [complete]
+</pre></div>
+<p>The archive contains an executable pex file, along with a loose file matched by the bundle glob.</p>
+<div class="codehilite"><pre>$ tar -tzvf dist/examples.src.python.example.hello.main.hello-app.tar.gz
+drwxr-xr-x root/root         0 2018-05-02 02:16 ./
+-rwxr-xr-x root/root    474997 2018-05-02 02:16 ./main.pex
+-rw-rw-r-- root/root       562 2018-05-01 13:34 ./BUILD
+</pre></div>
+<p>See <a href="build_dictionary.html#bdict_bundle" pantsref="bdict_bundle">bundle</a> in the BUILD dictionary for additional details about
+defining the layout of files in your archive.</p>
 <h2 id="debugging-tests">Debugging Tests</h2>
 <p>Pants scrubs the environment's <code>PYTHONPATH</code> when running tests, to ensure a hermetic, repeatable test run.</p>
 <p>However some Python debuggers require you to add the debugger's code to the <code>PYTHONPATH</code>.
@@ -791,7 +839,7 @@ produce coverage reports.</p>
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/examples/src/python/example/README.html 2018-05-11T11:33:28.195362
+              from dist/markdown/html/examples/src/python/example/README.html 2018-05-13T11:03:53.239111
             </div>
 
           </div> <!-- mainflow -->
