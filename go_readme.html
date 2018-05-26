@@ -234,6 +234,7 @@
                     <li class="toc-h1"><a href="#codebase-maintenance">Codebase maintenance</a></li>
                     <li class="toc-h1"><a href="#building">Building</a></li>
                     <li class="toc-h1"><a href="#testing">Testing</a></li>
+                    <li class="toc-h1"><a href="#protocol-buffers">Protocol Buffers</a></li>
                     <li class="toc-h1"><a href="#working-with-other-go-ecosystem-tools">Working with other Go ecosystem tools</a></li>
                     <li class="toc-h2"><a href="#go">go</a></li>
                     <li class="toc-h2"><a href="#go-env">go-env</a></li>
@@ -531,6 +532,63 @@ default.</p>
 <p>You can run your Go tests with <code>./pants test [go targets]</code>. Any 
 <a href="https://golang.org/pkg/testing/">standard Go tests</a> found amongst the targets will be compiled and 
 run with output sent to the console.</p>
+<h2 id="protocol-buffers">Protocol Buffers</h2>
+<p>Pants integrates <a href="https://github.com/golang/protobuf">Go support for protocol buffers</a> with the
+<code>go_protobuf_library</code> target.</p>
+<p>Go targets may depend on a <code>go_protobuf_library</code> targets as if it were a <code>go_library</code> target.
+Behind the scenes, Pants will generate Go code from the protobuf sources and exposes it as if it
+were a regular Go library.</p>
+<p>For example,
+<a href="https://github.com/pantsbuild/pants/blob/master/contrib/go/examples/src/protobuf/org/pantsbuild/example/route/BUILD"><code>contrib/go/examples/src/protobuf/org/pantsbuild/example/route/BUILD</code></a>
+defines a <code>go_protobuf_library</code> target. Notice how it depends on another <code>go_protobuf_library</code>
+to satisfy imports in the IDL file.</p>
+<p>
+<div class="md-included-snippet"><div class="codehilite"><pre><span class="n">go_protobuf_library</span><span class="p">(</span>
+  <span class="n">name</span><span class="o">=</span><span class="s">'route-go'</span><span class="p">,</span>
+  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
+    <span class="s">'contrib/go/examples/src/protobuf/org/pantsbuild/example/distance:distance-go'</span><span class="p">,</span>
+  <span class="p">],</span>
+<span class="p">)</span>
+</pre></div></div>
+</p>
+<p><a href="https://github.com/pantsbuild/pants/blob/master/contrib/go/examples/src/go/distance/BUILD"><code>contrib/go/examples/src/go/distance/BUILD</code></a>
+depends on the <code>go_protobuf_library</code>, which transitively depends on another protobuf library.</p>
+<p>
+<div class="md-included-snippet"><div class="codehilite"><pre><span class="n">go_binary</span><span class="p">(</span>
+  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
+    <span class="s">'contrib/go/examples/src/protobuf/org/pantsbuild/example/route:route-go'</span><span class="p">,</span>
+  <span class="p">]</span>
+<span class="p">)</span>
+</pre></div></div>
+</p>
+<p>In Go, we can import and use the protobuf generated code as it were regular Go code.</p>
+<p>
+<div class="md-included-snippet"><div class="codehilite"><pre><span class="k">package</span> <span class="n">main</span>
+
+<span class="k">import</span> <span class="p">(</span>
+	<span class="s">"github.com/golang/protobuf/proto"</span>
+	<span class="s">"pantsbuild/example/distance"</span>
+	<span class="s">"pantsbuild/example/route"</span>
+<span class="p">)</span>
+
+<span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="n">r</span> <span class="p">:=</span> <span class="p">&amp;</span><span class="n">route</span><span class="p">.</span><span class="n">Route</span><span class="p">{</span>
+		<span class="n">Name</span><span class="p">:</span> <span class="n">proto</span><span class="p">.</span><span class="n">String</span><span class="p">(</span><span class="s">"example_route"</span><span class="p">),</span>
+		<span class="n">Distances</span><span class="p">:</span> <span class="p">[]*</span><span class="n">distance</span><span class="p">.</span><span class="n">Distance</span><span class="p">{</span>
+			<span class="p">{</span>
+				<span class="n">Unit</span><span class="p">:</span>   <span class="n">proto</span><span class="p">.</span><span class="n">String</span><span class="p">(</span><span class="s">"parsecs"</span><span class="p">),</span>
+				<span class="n">Number</span><span class="p">:</span> <span class="n">proto</span><span class="p">.</span><span class="n">Int64</span><span class="p">(</span><span class="mi">27</span><span class="p">),</span>
+			<span class="p">},</span>
+			<span class="p">{</span>
+				<span class="n">Unit</span><span class="p">:</span>   <span class="n">proto</span><span class="p">.</span><span class="n">String</span><span class="p">(</span><span class="s">"mm"</span><span class="p">),</span>
+				<span class="n">Number</span><span class="p">:</span> <span class="n">proto</span><span class="p">.</span><span class="n">Int64</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span>
+			<span class="p">},</span>
+		<span class="p">},</span>
+	<span class="p">}</span>
+	<span class="n">println</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">String</span><span class="p">())</span>
+<span class="p">}</span>
+</pre></div></div>
+</p>
 <h2 id="working-with-other-go-ecosystem-tools">Working with other Go ecosystem tools</h2>
 <p>Go and the Go ecosystem provide rich tool support. From native Go tools like <code>go list</code> and <code>go vet</code>
 to editors like <code>vim</code> and <a href="https://www.sublimetext.com/">Sublime</a> that have plugins supporting Go
@@ -579,7 +637,7 @@ GOROOT=/home/jsirois/.cache/pants/bin/go/linux/x86_64/1.6.2/unpacked/go
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/contrib/go/README.html 2018-05-18T20:40:15.660831
+              from dist/markdown/html/contrib/go/README.html 2018-05-26T00:23:10.635104
             </div>
 
           </div> <!-- mainflow -->
