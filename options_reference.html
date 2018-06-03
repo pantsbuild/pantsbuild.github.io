@@ -619,6 +619,18 @@
 <br><span>Set whether log messages are displayed in color.</span>
 </br></li>
 <li>
+<span class="option-args">--glob-expansion-failure=&lt;str&gt;</span> <span class="option-default">(default: 'warn')</span>
+<br><span>Raise an exception if any targets declaring source files fail to match any glob provided in the 'sources' argument.</span>
+</br></li>
+<li>
+<span class="option-args">--remote-execution-server=&lt;str&gt;</span> <span class="option-default">(default: None)</span>
+<br><span>host:port of grpc server to use as remote execution scheduler</span>
+</br></li>
+<li>
+<span class="option-args">--remote-store-server=&lt;str&gt;</span> <span class="option-default">(default: None)</span>
+<br><span>host:port of grpc server to use as remote execution file store</span>
+</br></li>
+<li>
 <span class="option-args">--tag=[+-]tag1,tag2,... (--tag=[+-]tag1,tag2,...) ..., --tag="[[+-]tag1,tag2,..., [+-]tag1,tag2,..., ...]", --tag="+[[+-]tag1,tag2,..., [+-]tag1,tag2,..., ...]"</span> <span class="option-default">(default: [])</span>
 <br><span>Include only targets with these tags (optional '+' prefix) or without these tags ('-' prefix).  Useful with ::, to find subsets of targets (e.g., integration tests.)</span>
 </br></li>
@@ -731,7 +743,7 @@
 <br><span>Use support files from this dir.</span>
 </br></li>
 <li>
-<span class="option-args">--pants-version=&lt;str&gt;</span> <span class="option-default">(default: '1.8.0.dev1')</span>
+<span class="option-args">--pants-version=&lt;str&gt;</span> <span class="option-default">(default: '1.8.0.dev2')</span>
 <br><span>Use this pants version.</span>
 </br></li>
 <li>
@@ -13342,7 +13354,7 @@
 </br></li>
 <li>
 <span class="option-args">--lint-pythonstyle-suppress=&lt;file_option&gt;</span> <span class="option-default">(default: None)</span>
-<br><span>Takes a XML file where specific rules on specific files will be skipped.</span>
+<br><span>Takes a text file where specific rules on specific files will be skipped.</span>
 </br></li>
 </ul>
 </li>
@@ -20992,6 +21004,38 @@
 </li>
 <li>
 <div class="global-subsystem-header">
+<div class="scope">pycheck-future-compat</div>
+<div class="scope-description"></div>
+</div>
+<ul class="nobullets collapsible">
+<li class="collapsed options-group">Basic options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--[no-]pycheck-future-compat-skip</span> <span class="option-default">(default: False)</span>
+<br><span>If enabled, skip this style checker.</span>
+</br></li>
+</ul>
+</li>
+<li class="collapsed options-group">Advanced options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--pycheck-future-compat-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]pycheck-future-compat-fail-fast</span> <span class="option-default">(default: False)</span>
+<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
+</br></li>
+<li>
+<span class="option-args">--pycheck-future-compat-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<div class="global-subsystem-header">
 <div class="scope">jvm</div>
 <div class="scope-description">A JVM invocation.</div>
 </div>
@@ -21136,6 +21180,82 @@
 </br></li>
 <li>
 <span class="option-args">--npm-resolver-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<div class="global-subsystem-header">
+<div class="scope">jvm-platform</div>
+<div class="scope-description">Used to keep track of repo compile settings.</div>
+</div>
+<ul class="nobullets collapsible">
+<li class="collapsed options-group">Advanced options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--jvm-platform-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
+</br></li>
+<li>
+<span class="option-args">--jvm-platform-compiler=&lt;str&gt;</span> <span class="option-default">(default: 'zinc')</span>
+<br><span>Java compiler implementation to use.</span>
+</br></li>
+<li>
+<span class="option-args">--jvm-platform-default-platform=&lt;str&gt;</span> <span class="option-default">(default: 'java8')</span>
+<br><span>Name of the default platform to use if none are specified.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]jvm-platform-fail-fast</span> <span class="option-default">(default: False)</span>
+<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
+</br></li>
+<li>
+<span class="option-args">--jvm-platform-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+<li>
+<span class="option-args">--jvm-platform-platforms="{'key1':val1,'key2':val2,...}"</span> <span class="option-default">(default: { 'java7':'{u'source': u'7', u'args': [], u'target': u'7'}','java6':'{u'source': u'6', u'args': [], u'target': u'6'}','java8':'{u'source': u'8', u'args': [], u'target': u'8'}' })</span>
+<br><span>Compile settings that can be referred to by name in jvm_targets.</span>
+</br></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<div class="global-subsystem-header">
+<div class="scope">pycheck-pep8</div>
+<div class="scope-description"></div>
+</div>
+<ul class="nobullets collapsible">
+<li class="collapsed options-group">Basic options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--pycheck-pep8-ignore=&lt;str&gt; (--pycheck-pep8-ignore=&lt;str&gt;) ..., --pycheck-pep8-ignore="[&lt;str&gt;, &lt;str&gt;, ...]", --pycheck-pep8-ignore="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['E121','E124','E125','E127','E128','E401','E111','W291','W293','E701','E301','E302','W292'])</span>
+<br><span>Prevent test failure but still produce output for problems.</span>
+</br></li>
+<li>
+<span class="option-args">--pycheck-pep8-max-length=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Max line length to use for pycodestyle checks.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]pycheck-pep8-skip</span> <span class="option-default">(default: False)</span>
+<br><span>If enabled, skip this style checker.</span>
+</br></li>
+</ul>
+</li>
+<li class="collapsed options-group">Advanced options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--pycheck-pep8-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]pycheck-pep8-fail-fast</span> <span class="option-default">(default: False)</span>
+<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
+</br></li>
+<li>
+<span class="option-args">--pycheck-pep8-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
 <br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
 </br></li>
 </ul>
@@ -21292,87 +21412,31 @@
 </li>
 <li>
 <div class="global-subsystem-header">
-<div class="scope">cache</div>
-<div class="scope-description"></div>
+<div class="scope">resolver</div>
+<div class="scope-description">Used to keep track of global jvm resolver settings</div>
 </div>
 <ul class="nobullets collapsible">
 <li class="collapsed options-group">Basic options
               <ul class="nobullets">
 <li>
-<span class="option-args">--[no-]cache-dereference-symlinks</span> <span class="option-default">(default: True)</span>
-<br><span>Dereference symlinks when creating cache tarball.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]cache-ignore</span> <span class="option-default">(default: False)</span>
-<br><span>Ignore all other cache configuration and skip using the cache.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]cache-read</span> <span class="option-default">(default: True)</span>
-<br><span>Read build artifacts from cache, if available.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]cache-write</span> <span class="option-default">(default: True)</span>
-<br><span>Write build artifacts to cache, if available.</span>
+<span class="option-args">--resolver-resolver=&lt;str&gt;</span> <span class="option-default">(default: 'ivy')</span>
+<br><span>Resolver to use for external jvm dependencies.</span>
 </br></li>
 </ul>
 </li>
 <li class="collapsed options-group">Advanced options
               <ul class="nobullets">
 <li>
-<span class="option-args">--cache-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<span class="option-args">--resolver-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
 <br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
 </br></li>
 <li>
-<span class="option-args">--cache-compression-level=&lt;int&gt;</span> <span class="option-default">(default: 5)</span>
-<br><span>The gzip compression level (0-9) for created artifacts.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]cache-fail-fast</span> <span class="option-default">(default: False)</span>
+<span class="option-args">--[no-]resolver-fail-fast</span> <span class="option-default">(default: False)</span>
 <br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
 </br></li>
 <li>
-<span class="option-args">--cache-max-entries-per-target=&lt;int&gt;</span> <span class="option-default">(default: 8)</span>
-<br><span>Maximum number of old cache files to keep per task target pair</span>
-</br></li>
-<li>
-<span class="option-args">--cache-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<span class="option-args">--resolver-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
 <br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]cache-overwrite</span> <span class="option-default">(default: False)</span>
-<br><span>If writing build artifacts to cache, overwrite existing artifacts instead of skipping them.</span>
-</br></li>
-<li>
-<span class="option-args">--cache-pinger-timeout=&lt;float&gt;</span> <span class="option-default">(default: 0.5)</span>
-<br><span>number of seconds before pinger times out</span>
-</br></li>
-<li>
-<span class="option-args">--cache-pinger-tries=&lt;int&gt;</span> <span class="option-default">(default: 2)</span>
-<br><span>number of times pinger tries a cache</span>
-</br></li>
-<li>
-<span class="option-args">--cache-read-from=&lt;str&gt; (--cache-read-from=&lt;str&gt;) ..., --cache-read-from="[&lt;str&gt;, &lt;str&gt;, ...]", --cache-read-from="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: [])</span>
-<br><span>The URIs of artifact caches to read directly from. Each entry is a URL of a RESTful cache, a path of a filesystem cache, or a pipe-separated list of alternate caches to choose from. This list is also used as input to the resolver. When resolver is 'none' list is used as is.</span>
-</br></li>
-<li>
-<span class="option-args">--cache-read-timeout=&lt;float&gt;</span> <span class="option-default">(default: 4.0)</span>
-<br><span>The read timeout for any remote caches in use, in seconds.</span>
-</br></li>
-<li>
-<span class="option-args">--cache-resolver=&lt;str&gt;</span> <span class="option-default">(default: 'none')</span>
-<br><span>Select which resolver strategy to use for discovering URIs that access artifact caches. none: use URIs from static config options, i.e. --read-from, --write-to. rest: look up URIs by querying a RESTful URL, which is a remote address from --read-from, --write-to.</span>
-</br></li>
-<li>
-<span class="option-args">--cache-write-permissions=&lt;str&gt;</span> <span class="option-default">(default: None)</span>
-<br><span>Permissions to use when writing artifacts to a local cache, in octal.</span>
-</br></li>
-<li>
-<span class="option-args">--cache-write-timeout=&lt;float&gt;</span> <span class="option-default">(default: 4.0)</span>
-<br><span>The write timeout for any remote caches in use, in seconds.</span>
-</br></li>
-<li>
-<span class="option-args">--cache-write-to=&lt;str&gt; (--cache-write-to=&lt;str&gt;) ..., --cache-write-to="[&lt;str&gt;, &lt;str&gt;, ...]", --cache-write-to="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: [])</span>
-<br><span>The URIs of artifact caches to write directly to. Each entry is a URL ofa RESTful cache, a path of a filesystem cache, or a pipe-separated list of alternate caches to choose from. This list is also used as input to the resolver. When resolver is 'none' list is used as is.</span>
 </br></li>
 </ul>
 </li>
@@ -21504,70 +21568,6 @@
 </br></li>
 <li>
 <span class="option-args">--pycheck-context-manager-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</br></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="global-subsystem-header">
-<div class="scope">protoc-gen-go</div>
-<div class="scope-description">A compiled protobuf plugin that generates Go code.</div>
-</div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Basic options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--protoc-gen-go-version=&lt;str&gt;</span> <span class="option-default">(default: 'v1.1.0')</span>
-<br><span>Version of protoc-gen-go plugin to use when generating code</span>
-</br></li>
-</ul>
-</li>
-<li class="collapsed options-group">Advanced options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--protoc-gen-go-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
-<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]protoc-gen-go-fail-fast</span> <span class="option-default">(default: False)</span>
-<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</br></li>
-<li>
-<span class="option-args">--protoc-gen-go-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</br></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="global-subsystem-header">
-<div class="scope">protoc.protoc-gen-go</div>
-<div class="scope-description"></div>
-</div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Basic options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--protoc-protoc-gen-go-version=&lt;str&gt;</span> <span class="option-default">(default: '2.4.1')</span>
-<br><span>Version of the protoc binary to use</span>
-</br></li>
-</ul>
-</li>
-<li class="collapsed options-group">Advanced options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--protoc-protoc-gen-go-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
-<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]protoc-protoc-gen-go-fail-fast</span> <span class="option-default">(default: False)</span>
-<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</br></li>
-<li>
-<span class="option-args">--protoc-protoc-gen-go-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
 <br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
 </br></li>
 </ul>
@@ -21864,35 +21864,63 @@
 </li>
 <li>
 <div class="global-subsystem-header">
-<div class="scope">jvm-platform</div>
-<div class="scope-description">Used to keep track of repo compile settings.</div>
+<div class="scope">protoc-gen-go</div>
+<div class="scope-description">A compiled protobuf plugin that generates Go code.</div>
 </div>
 <ul class="nobullets collapsible">
+<li class="collapsed options-group">Basic options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--protoc-gen-go-version=&lt;str&gt;</span> <span class="option-default">(default: 'v1.1.0')</span>
+<br><span>Version of protoc-gen-go plugin to use when generating code</span>
+</br></li>
+</ul>
+</li>
 <li class="collapsed options-group">Advanced options
               <ul class="nobullets">
 <li>
-<span class="option-args">--jvm-platform-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<span class="option-args">--protoc-gen-go-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
 <br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
 </br></li>
 <li>
-<span class="option-args">--jvm-platform-compiler=&lt;str&gt;</span> <span class="option-default">(default: 'zinc')</span>
-<br><span>Java compiler implementation to use.</span>
-</br></li>
-<li>
-<span class="option-args">--jvm-platform-default-platform=&lt;str&gt;</span> <span class="option-default">(default: 'java8')</span>
-<br><span>Name of the default platform to use if none are specified.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]jvm-platform-fail-fast</span> <span class="option-default">(default: False)</span>
+<span class="option-args">--[no-]protoc-gen-go-fail-fast</span> <span class="option-default">(default: False)</span>
 <br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
 </br></li>
 <li>
-<span class="option-args">--jvm-platform-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<span class="option-args">--protoc-gen-go-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
 <br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
 </br></li>
+</ul>
+</li>
+</ul>
+</li>
 <li>
-<span class="option-args">--jvm-platform-platforms="{'key1':val1,'key2':val2,...}"</span> <span class="option-default">(default: { 'java7':'{u'source': u'7', u'args': [], u'target': u'7'}','java6':'{u'source': u'6', u'args': [], u'target': u'6'}','java8':'{u'source': u'8', u'args': [], u'target': u'8'}' })</span>
-<br><span>Compile settings that can be referred to by name in jvm_targets.</span>
+<div class="global-subsystem-header">
+<div class="scope">protoc.protoc-gen-go</div>
+<div class="scope-description"></div>
+</div>
+<ul class="nobullets collapsible">
+<li class="collapsed options-group">Basic options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--protoc-protoc-gen-go-version=&lt;str&gt;</span> <span class="option-default">(default: '2.4.1')</span>
+<br><span>Version of the protoc binary to use</span>
+</br></li>
+</ul>
+</li>
+<li class="collapsed options-group">Advanced options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--protoc-protoc-gen-go-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]protoc-protoc-gen-go-fail-fast</span> <span class="option-default">(default: False)</span>
+<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
+</br></li>
+<li>
+<span class="option-args">--protoc-protoc-gen-go-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
 </br></li>
 </ul>
 </li>
@@ -21932,6 +21960,62 @@
 </li>
 <li>
 <div class="global-subsystem-header">
+<div class="scope">coursier</div>
+<div class="scope-description">Common configuration items for coursier tasks.</div>
+</div>
+<ul class="nobullets collapsible">
+<li class="collapsed options-group">Basic options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--coursier-artifact-types=&lt;str&gt; (--coursier-artifact-types=&lt;str&gt;) ..., --coursier-artifact-types="[&lt;str&gt;, &lt;str&gt;, ...]", --coursier-artifact-types="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['jar','bundle','test-jar','maven-plugin','src','doc','aar'])</span>
+<br><span>Specify the type of artifacts to fetch. See `packaging` at https://maven.apache.org/pom.html#Maven_Coordinates, except `src` and `doc` being coursier specific terms for sources and javadoc.</span>
+</br></li>
+<li>
+<span class="option-args">--coursier-bootstrap-jar-url=&lt;str&gt;</span> <span class="option-default">(default: 'https://dl.dropboxusercontent.com/s/zwh074l9kxhqlwp/coursier-cli-1.1.0.cf365ea27a710d5f09db1f0a6feee129aa1fc417.jar?dl=0')</span>
+<br><span>Location to download a bootstrap version of Coursier.</span>
+</br></li>
+<li>
+<span class="option-args">--coursier-cache-dir=&lt;str&gt;</span> <span class="option-default">(default: '/Users/stuhood/.cache/pants/coursier')</span>
+<br><span>Version paired with --bootstrap-jar-url, in order to invalidate and fetch the new version.</span>
+</br></li>
+<li>
+<span class="option-args">--coursier-fetch-options=&lt;str&gt; (--coursier-fetch-options=&lt;str&gt;) ..., --coursier-fetch-options="[&lt;str&gt;, &lt;str&gt;, ...]", --coursier-fetch-options="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['-q','--no-default','-n','8'])</span>
+<br><span>Additional options to pass to coursier fetch. See `coursier fetch --help`</span>
+</br></li>
+<li>
+<span class="option-args">--coursier-repos=&lt;str&gt; (--coursier-repos=&lt;str&gt;) ..., --coursier-repos="[&lt;str&gt;, &lt;str&gt;, ...]", --coursier-repos="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['https://repo1.maven.org/maven2'])</span>
+<br><span>Maven style repos</span>
+</br></li>
+<li>
+<span class="option-args">--coursier-version=&lt;str&gt;</span> <span class="option-default">(default: '1.1.0.cf365ea27a710d5f09db1f0a6feee129aa1fc417')</span>
+<br><span>Version paired with --bootstrap-jar-url, in order to invalidate and fetch the new version.</span>
+</br></li>
+</ul>
+</li>
+<li class="collapsed options-group">Advanced options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--coursier-bootstrap-fetch-timeout-secs=&lt;int&gt;</span> <span class="option-default">(default: 10)</span>
+<br><span>Timeout the fetch if the connection is idle for longer than this value.</span>
+</br></li>
+<li>
+<span class="option-args">--coursier-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]coursier-fail-fast</span> <span class="option-default">(default: False)</span>
+<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
+</br></li>
+<li>
+<span class="option-args">--coursier-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<div class="global-subsystem-header">
 <div class="scope">build-invalidator</div>
 <div class="scope-description"></div>
 </div>
@@ -21948,30 +22032,6 @@
 </br></li>
 <li>
 <span class="option-args">--build-invalidator-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</br></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="global-subsystem-header">
-<div class="scope">cobertura</div>
-<div class="scope-description"></div>
-</div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Advanced options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--cobertura-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
-<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]cobertura-fail-fast</span> <span class="option-default">(default: False)</span>
-<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</br></li>
-<li>
-<span class="option-args">--cobertura-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
 <br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
 </br></li>
 </ul>
@@ -22277,6 +22337,94 @@ The UrlInfo struct is a 3-tuple with the following slots:
 </li>
 <li>
 <div class="global-subsystem-header">
+<div class="scope">cache</div>
+<div class="scope-description"></div>
+</div>
+<ul class="nobullets collapsible">
+<li class="collapsed options-group">Basic options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--[no-]cache-dereference-symlinks</span> <span class="option-default">(default: True)</span>
+<br><span>Dereference symlinks when creating cache tarball.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]cache-ignore</span> <span class="option-default">(default: False)</span>
+<br><span>Ignore all other cache configuration and skip using the cache.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]cache-read</span> <span class="option-default">(default: True)</span>
+<br><span>Read build artifacts from cache, if available.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]cache-write</span> <span class="option-default">(default: True)</span>
+<br><span>Write build artifacts to cache, if available.</span>
+</br></li>
+</ul>
+</li>
+<li class="collapsed options-group">Advanced options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--cache-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
+</br></li>
+<li>
+<span class="option-args">--cache-compression-level=&lt;int&gt;</span> <span class="option-default">(default: 5)</span>
+<br><span>The gzip compression level (0-9) for created artifacts.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]cache-fail-fast</span> <span class="option-default">(default: False)</span>
+<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
+</br></li>
+<li>
+<span class="option-args">--cache-max-entries-per-target=&lt;int&gt;</span> <span class="option-default">(default: 8)</span>
+<br><span>Maximum number of old cache files to keep per task target pair</span>
+</br></li>
+<li>
+<span class="option-args">--cache-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]cache-overwrite</span> <span class="option-default">(default: False)</span>
+<br><span>If writing build artifacts to cache, overwrite existing artifacts instead of skipping them.</span>
+</br></li>
+<li>
+<span class="option-args">--cache-pinger-timeout=&lt;float&gt;</span> <span class="option-default">(default: 0.5)</span>
+<br><span>number of seconds before pinger times out</span>
+</br></li>
+<li>
+<span class="option-args">--cache-pinger-tries=&lt;int&gt;</span> <span class="option-default">(default: 2)</span>
+<br><span>number of times pinger tries a cache</span>
+</br></li>
+<li>
+<span class="option-args">--cache-read-from=&lt;str&gt; (--cache-read-from=&lt;str&gt;) ..., --cache-read-from="[&lt;str&gt;, &lt;str&gt;, ...]", --cache-read-from="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: [])</span>
+<br><span>The URIs of artifact caches to read directly from. Each entry is a URL of a RESTful cache, a path of a filesystem cache, or a pipe-separated list of alternate caches to choose from. This list is also used as input to the resolver. When resolver is 'none' list is used as is.</span>
+</br></li>
+<li>
+<span class="option-args">--cache-read-timeout=&lt;float&gt;</span> <span class="option-default">(default: 4.0)</span>
+<br><span>The read timeout for any remote caches in use, in seconds.</span>
+</br></li>
+<li>
+<span class="option-args">--cache-resolver=&lt;str&gt;</span> <span class="option-default">(default: 'none')</span>
+<br><span>Select which resolver strategy to use for discovering URIs that access artifact caches. none: use URIs from static config options, i.e. --read-from, --write-to. rest: look up URIs by querying a RESTful URL, which is a remote address from --read-from, --write-to.</span>
+</br></li>
+<li>
+<span class="option-args">--cache-write-permissions=&lt;str&gt;</span> <span class="option-default">(default: None)</span>
+<br><span>Permissions to use when writing artifacts to a local cache, in octal.</span>
+</br></li>
+<li>
+<span class="option-args">--cache-write-timeout=&lt;float&gt;</span> <span class="option-default">(default: 4.0)</span>
+<br><span>The write timeout for any remote caches in use, in seconds.</span>
+</br></li>
+<li>
+<span class="option-args">--cache-write-to=&lt;str&gt; (--cache-write-to=&lt;str&gt;) ..., --cache-write-to="[&lt;str&gt;, &lt;str&gt;, ...]", --cache-write-to="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: [])</span>
+<br><span>The URIs of artifact caches to write directly to. Each entry is a URL ofa RESTful cache, a path of a filesystem cache, or a pipe-separated list of alternate caches to choose from. This list is also used as input to the resolver. When resolver is 'none' list is used as is.</span>
+</br></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<div class="global-subsystem-header">
 <div class="scope">pycheck-variable-names</div>
 <div class="scope-description"></div>
 </div>
@@ -22405,46 +22553,6 @@ The UrlInfo struct is a 3-tuple with the following slots:
 </li>
 <li>
 <div class="global-subsystem-header">
-<div class="scope">pycheck-pep8</div>
-<div class="scope-description"></div>
-</div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Basic options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--pycheck-pep8-ignore=&lt;str&gt; (--pycheck-pep8-ignore=&lt;str&gt;) ..., --pycheck-pep8-ignore="[&lt;str&gt;, &lt;str&gt;, ...]", --pycheck-pep8-ignore="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['E121','E124','E125','E127','E128','E401','E111','W291','W293','E701','E301','E302','W292'])</span>
-<br><span>Prevent test failure but still produce output for problems.</span>
-</br></li>
-<li>
-<span class="option-args">--pycheck-pep8-max-length=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Max line length to use for pycodestyle checks.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]pycheck-pep8-skip</span> <span class="option-default">(default: False)</span>
-<br><span>If enabled, skip this style checker.</span>
-</br></li>
-</ul>
-</li>
-<li class="collapsed options-group">Advanced options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--pycheck-pep8-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
-<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]pycheck-pep8-fail-fast</span> <span class="option-default">(default: False)</span>
-<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</br></li>
-<li>
-<span class="option-args">--pycheck-pep8-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</br></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="global-subsystem-header">
 <div class="scope">java</div>
 <div class="scope-description">A subsystem to encapsulate compile-time settings and features for the Java language.</div>
 </div>
@@ -22533,30 +22641,22 @@ The UrlInfo struct is a 3-tuple with the following slots:
 </li>
 <li>
 <div class="global-subsystem-header">
-<div class="scope">pycheck-future-compat</div>
+<div class="scope">cobertura</div>
 <div class="scope-description"></div>
 </div>
 <ul class="nobullets collapsible">
-<li class="collapsed options-group">Basic options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--[no-]pycheck-future-compat-skip</span> <span class="option-default">(default: False)</span>
-<br><span>If enabled, skip this style checker.</span>
-</br></li>
-</ul>
-</li>
 <li class="collapsed options-group">Advanced options
               <ul class="nobullets">
 <li>
-<span class="option-args">--pycheck-future-compat-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<span class="option-args">--cobertura-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
 <br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
 </br></li>
 <li>
-<span class="option-args">--[no-]pycheck-future-compat-fail-fast</span> <span class="option-default">(default: False)</span>
+<span class="option-args">--[no-]cobertura-fail-fast</span> <span class="option-default">(default: False)</span>
 <br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
 </br></li>
 <li>
-<span class="option-args">--pycheck-future-compat-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<span class="option-args">--cobertura-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
 <br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
 </br></li>
 </ul>
@@ -22654,38 +22754,6 @@ The UrlInfo struct is a 3-tuple with the following slots:
 <li>
 <span class="option-args">--pytest-unittest2-requirements=&lt;str&gt;</span> <span class="option-default">(default: 'unittest2&gt;=0.6.0,&lt;=1.9.0')</span>
 <br><span>Requirements string for the unittest2 library, which some python versions may need.</span>
-</br></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="global-subsystem-header">
-<div class="scope">pycheck-except-statement</div>
-<div class="scope-description"></div>
-</div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Basic options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--[no-]pycheck-except-statement-skip</span> <span class="option-default">(default: False)</span>
-<br><span>If enabled, skip this style checker.</span>
-</br></li>
-</ul>
-</li>
-<li class="collapsed options-group">Advanced options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--pycheck-except-statement-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
-<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]pycheck-except-statement-fail-fast</span> <span class="option-default">(default: False)</span>
-<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</br></li>
-<li>
-<span class="option-args">--pycheck-except-statement-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
 </br></li>
 </ul>
 </li>
@@ -22809,34 +22877,6 @@ The UrlInfo struct is a 3-tuple with the following slots:
 </li>
 <li>
 <div class="global-subsystem-header">
-<div class="scope">scala-js</div>
-<div class="scope-description">The scala.js platform.</div>
-</div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Advanced options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--scala-js-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
-<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]scala-js-fail-fast</span> <span class="option-default">(default: False)</span>
-<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</br></li>
-<li>
-<span class="option-args">--scala-js-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</br></li>
-<li>
-<span class="option-args">--scala-js-runtime=&lt;target_option&gt; (--scala-js-runtime=&lt;target_option&gt;) ..., --scala-js-runtime="[&lt;target_option&gt;, &lt;target_option&gt;, ...]", --scala-js-runtime="+[&lt;target_option&gt;, &lt;target_option&gt;, ...]"</span> <span class="option-default">(default: ['//:scala-js-library'])</span>
-<br><span>Target specs pointing to the scala-js runtime libraries.</span>
-</br></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="global-subsystem-header">
 <div class="scope">source</div>
 <div class="scope-description">Configuration for roots of source trees.</div>
 </div>
@@ -22893,31 +22933,27 @@ The UrlInfo struct is a 3-tuple with the following slots:
 </li>
 <li>
 <div class="global-subsystem-header">
-<div class="scope">resolver</div>
-<div class="scope-description">Used to keep track of global jvm resolver settings</div>
+<div class="scope">scala-js</div>
+<div class="scope-description">The scala.js platform.</div>
 </div>
 <ul class="nobullets collapsible">
-<li class="collapsed options-group">Basic options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--resolver-resolver=&lt;str&gt;</span> <span class="option-default">(default: 'ivy')</span>
-<br><span>Resolver to use for external jvm dependencies.</span>
-</br></li>
-</ul>
-</li>
 <li class="collapsed options-group">Advanced options
               <ul class="nobullets">
 <li>
-<span class="option-args">--resolver-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<span class="option-args">--scala-js-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
 <br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
 </br></li>
 <li>
-<span class="option-args">--[no-]resolver-fail-fast</span> <span class="option-default">(default: False)</span>
+<span class="option-args">--[no-]scala-js-fail-fast</span> <span class="option-default">(default: False)</span>
 <br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
 </br></li>
 <li>
-<span class="option-args">--resolver-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<span class="option-args">--scala-js-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
 <br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+<li>
+<span class="option-args">--scala-js-runtime=&lt;target_option&gt; (--scala-js-runtime=&lt;target_option&gt;) ..., --scala-js-runtime="[&lt;target_option&gt;, &lt;target_option&gt;, ...]", --scala-js-runtime="+[&lt;target_option&gt;, &lt;target_option&gt;, ...]"</span> <span class="option-default">(default: ['//:scala-js-library'])</span>
+<br><span>Target specs pointing to the scala-js runtime libraries.</span>
 </br></li>
 </ul>
 </li>
@@ -23473,62 +23509,6 @@ The UrlInfo struct is a 3-tuple with the following slots:
 </li>
 <li>
 <div class="global-subsystem-header">
-<div class="scope">coursier</div>
-<div class="scope-description">Common configuration items for coursier tasks.</div>
-</div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Basic options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--coursier-artifact-types=&lt;str&gt; (--coursier-artifact-types=&lt;str&gt;) ..., --coursier-artifact-types="[&lt;str&gt;, &lt;str&gt;, ...]", --coursier-artifact-types="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['jar','bundle','test-jar','maven-plugin','src','doc','aar'])</span>
-<br><span>Specify the type of artifacts to fetch. See `packaging` at https://maven.apache.org/pom.html#Maven_Coordinates, except `src` and `doc` being coursier specific terms for sources and javadoc.</span>
-</br></li>
-<li>
-<span class="option-args">--coursier-bootstrap-jar-url=&lt;str&gt;</span> <span class="option-default">(default: 'https://dl.dropboxusercontent.com/s/zwh074l9kxhqlwp/coursier-cli-1.1.0.cf365ea27a710d5f09db1f0a6feee129aa1fc417.jar?dl=0')</span>
-<br><span>Location to download a bootstrap version of Coursier.</span>
-</br></li>
-<li>
-<span class="option-args">--coursier-cache-dir=&lt;str&gt;</span> <span class="option-default">(default: '/Users/stuhood/.cache/pants/coursier')</span>
-<br><span>Version paired with --bootstrap-jar-url, in order to invalidate and fetch the new version.</span>
-</br></li>
-<li>
-<span class="option-args">--coursier-fetch-options=&lt;str&gt; (--coursier-fetch-options=&lt;str&gt;) ..., --coursier-fetch-options="[&lt;str&gt;, &lt;str&gt;, ...]", --coursier-fetch-options="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['-q','--no-default','-n','8'])</span>
-<br><span>Additional options to pass to coursier fetch. See `coursier fetch --help`</span>
-</br></li>
-<li>
-<span class="option-args">--coursier-repos=&lt;str&gt; (--coursier-repos=&lt;str&gt;) ..., --coursier-repos="[&lt;str&gt;, &lt;str&gt;, ...]", --coursier-repos="+[&lt;str&gt;, &lt;str&gt;, ...]"</span> <span class="option-default">(default: ['https://repo1.maven.org/maven2'])</span>
-<br><span>Maven style repos</span>
-</br></li>
-<li>
-<span class="option-args">--coursier-version=&lt;str&gt;</span> <span class="option-default">(default: '1.1.0.cf365ea27a710d5f09db1f0a6feee129aa1fc417')</span>
-<br><span>Version paired with --bootstrap-jar-url, in order to invalidate and fetch the new version.</span>
-</br></li>
-</ul>
-</li>
-<li class="collapsed options-group">Advanced options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--coursier-bootstrap-fetch-timeout-secs=&lt;int&gt;</span> <span class="option-default">(default: 10)</span>
-<br><span>Timeout the fetch if the connection is idle for longer than this value.</span>
-</br></li>
-<li>
-<span class="option-args">--coursier-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
-<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</br></li>
-<li>
-<span class="option-args">--[no-]coursier-fail-fast</span> <span class="option-default">(default: False)</span>
-<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</br></li>
-<li>
-<span class="option-args">--coursier-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</br></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="global-subsystem-header">
 <div class="scope">pycheck-newstyle-classes</div>
 <div class="scope-description"></div>
 </div>
@@ -23781,6 +23761,38 @@ The UrlInfo struct is a 3-tuple with the following slots:
 </li>
 <li>
 <div class="global-subsystem-header">
+<div class="scope">pycheck-except-statement</div>
+<div class="scope-description"></div>
+</div>
+<ul class="nobullets collapsible">
+<li class="collapsed options-group">Basic options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--[no-]pycheck-except-statement-skip</span> <span class="option-default">(default: False)</span>
+<br><span>If enabled, skip this style checker.</span>
+</br></li>
+</ul>
+</li>
+<li class="collapsed options-group">Advanced options
+              <ul class="nobullets">
+<li>
+<span class="option-args">--pycheck-except-statement-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: '200')</span>
+<br><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
+</br></li>
+<li>
+<span class="option-args">--[no-]pycheck-except-statement-fail-fast</span> <span class="option-default">(default: False)</span>
+<br><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
+</br></li>
+<li>
+<span class="option-args">--pycheck-except-statement-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
+<br><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
+</br></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<div class="global-subsystem-header">
 <div class="scope">coverage</div>
 <div class="scope-description">Manages setup and construction of JVM code coverage engines.</div>
 </div>
@@ -23848,7 +23860,7 @@ The UrlInfo struct is a 3-tuple with the following slots:
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/reference/pants_reference_body.html 2018-05-29T16:00:00.013109
+              from dist/reference/pants_reference_body.html 2018-06-03T12:27:31.714979
             </div>
 
           </div> <!-- mainflow -->
