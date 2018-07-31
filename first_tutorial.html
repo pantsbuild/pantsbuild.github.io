@@ -341,23 +341,23 @@ invocation looks like</p>
 <div class="codehilite"><pre><span class="nv">$ </span>./pants <span class="nb">test </span>examples/tests/java/org/pantsbuild/example/hello/greet:greet
 </pre></div>
 <p>Looking at the pieces of this we see</p>
-<p><code>./pants</code><br>
+<p><code>./pants</code><br/>
 That <code>./</code> isn't a typo. A source tree that's been set up with Pants
-build has a <code>pants</code> executable in its top-level directory.</br></p>
+build has a <code>pants</code> executable in its top-level directory.</p>
 <p>The first time you run <code>./pants</code>, it might take a while: it will probably auto-update by
 downloading the latest version.</p>
-<p><code>test</code><br>
-<code>test</code> is a <em>goal</em>, a "verb" that Pants knows about. The <code>test</code> goal runs tests and reports results.</br></p>
+<p><code>test</code><br/>
+<code>test</code> is a <em>goal</em>, a "verb" that Pants knows about. The <code>test</code> goal runs tests and reports results.</p>
 <p>Some goals are <code>gen</code> (generate code from Thrift, Antlr, Protocol
 Buffer), <code>compile</code>, <code>run</code> (run a binary), and <code>test</code> (run tests and report results). Pants
 knows that some of these goals depend on each other. E.g., in this
 example, before it run tests, it must compile the code.</p>
 <p>You can specify more than one goal on a command line. E.g., to run
 tests <em>and</em> run a binary, we could have said <code>./pants test run ...</code></p>
-<p><code>examples/tests/java/org/pantsbuild/example/hello/greet:greet</code><br>
+<p><code>examples/tests/java/org/pantsbuild/example/hello/greet:greet</code><br/>
 This is a <em>build target</em>, a "build-able" thing in your source code. To
 define these, you set up configuration files named <code>BUILD</code> in your
-source code file tree. (You'll see more about these later.)</br></p>
+source code file tree. (You'll see more about these later.)</p>
 <p>Targets can depend on other targets. E.g., a test target normally depends on another target
 containing "library" code to test; to build and run the test code, Pants also first builds the
 library code.</p>
@@ -368,17 +368,17 @@ to run a few directories' worth of tests.</p>
 <p>Pants produces files, both build outputs and intermediate files
 generated "along the way". These files live in directories under the
 top-level directory:</p>
-<p><code>dist/</code><br>
+<p><code>dist/</code><br/>
 By default, build outputs go in the <code>dist/</code> directory. So far, you've
 just run the <code>test</code> goal, which doesn't output a file. But if you'd
 instead invoked, for example, the <code>bundle</code> goal on a <code>jvm_app</code> target,
-Pants would have populated this directory with many JVM <code>.jar</code> files.</br></p>
-<p><code>.pants.d/</code><br>
+Pants would have populated this directory with many JVM <code>.jar</code> files.</p>
+<p><code>.pants.d/</code><br/>
 Intermediate files go in the <code>.pants.d/</code> directory. You don't want to
 rely on files in there; if the Pants implementation changes, it's likely
 to change how it uses intermediate files. You don't want to edit/delete
 files in there; you may confuse Pants. But if you want to peek at some
-generated code, the code is probably in here somewhere.</br></p>
+generated code, the code is probably in here somewhere.</p>
 <h3 id="multiple-goals-multiple-targets">Multiple Goals, Multiple Targets</h3>
 <p>You can specify multiple goals and multiple targets. Pants applies all
 the goals to all the targets, skipping things that wouldn't make sense.
@@ -555,20 +555,20 @@ they still work.</p>
 </pre></div>
 <p>Here, <code>java_library</code> is the target's <em>type</em>. Different target types
 support different arguments. The following arguments are pretty common:</p>
-<p><strong>name</strong><br>
+<p><strong>name</strong><br/>
 We use a target's name to refer to the target. If you omit the name,
-it defaults to the name of the directory the <code>BUILD</code> file is in.</br></p>
+it defaults to the name of the directory the <code>BUILD</code> file is in.</p>
 <p>You use names on the command line to specify which targets to operate on.
 You also use names in <code>BUILD</code> files when one target refers to another,
 e.g. in <code>dependencies</code>:</p>
-<p><strong>dependencies</strong><br>
+<p><strong>dependencies</strong><br/>
 List of things this target depends upon. If this target's code imports
 code that "lives" in other targets, list those targets here. If this
 target imports code that "lives" in <code>.jar</code>s/<code>.egg</code>s from elsewhere,
-refer to them here.</br></p>
-<p><strong>sources</strong><br>
+refer to them here.</p>
+<p><strong>sources</strong><br/>
 List of source files, which must be under the directory tree rooted
-at the BUILD file's directory.</br></p>
+at the BUILD file's directory.</p>
 <p>You can provide an explicit list, e.g.,
 <code>sources=['Foo.java', 'Bar.java']</code>, or use the <code>globs</code> function
 to glob over files, e.g., <code>sources=globs('*.java')</code>. Similarly,
@@ -580,19 +580,19 @@ E.g., <code>junit_tests</code> will default to globbing over <code>*Test.java</c
 <code>java_library</code> will default to globbing over <code>*.java</code>, minus the
 test files, and so on.</p>
 <h2 id="the-usual-commands">The Usual Commands</h2>
-<p><strong>Make sure code compiles and tests pass:</strong><br>
+<p><strong>Make sure code compiles and tests pass:</strong><br/>
 Use the <code>test</code> goal with the targets you're interested in. If they are
 test targets, Pants runs the tests. If they aren't test targets, Pants
 will still compile them since it knows it must compile before it can
-test.</br></p>
+test.</p>
 <div class="codehilite"><pre><span class="nv">$ </span>./pants <span class="nb">test </span>src/java/com/myorg/myproject tests/java/com/myorg/myproject
 </pre></div>
-<p><strong>Run a binary</strong><br>
-Use pants to execute a binary target.  Compiles the code first if it is not up to date.</br></p>
+<p><strong>Run a binary</strong><br/>
+Use pants to execute a binary target.  Compiles the code first if it is not up to date.</p>
 <div class="codehilite"><pre><span class="nv">$ </span>./pants run examples/src/java/org/pantsbuild/example/hello/simple
 </pre></div>
-<p><strong>Get Help</strong><br>
-Get the list of goals:</br></p>
+<p><strong>Get Help</strong><br/>
+Get the list of goals:</p>
 <div class="codehilite"><pre><span class="nv">$ </span>./pants goals
 </pre></div>
 <p>Get help for one goal, e.g., test:</p>
@@ -608,7 +608,7 @@ Get the list of goals:</br></p>
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/first_tutorial.html 2018-07-20T16:11:44.460024
+              from dist/markdown/html/src/docs/first_tutorial.html 2018-07-30T23:20:17.595195
             </div>
 
           </div> <!-- mainflow -->
