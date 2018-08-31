@@ -240,7 +240,9 @@
           <div class="mainflow">
               <nav class="pagetoc">
                 <ul>
-                    <li class="toc-h1"><a href="#meta-info">Meta Info</a></li>
+                    <li class="toc-h1"><a href="#dates">Dates</a></li>
+                    <li class="toc-h1"><a href="#authors-and-contributors">Authors and Contributors</a></li>
+                    <li class="toc-h1"><a href="#tldr">Tl;dr</a></li>
                     <li class="toc-h1"><a href="#background">Background</a></li>
                     <li class="toc-h1"><a href="#motivation-and-initial-investigation">Motivation and Initial Investigation</a></li>
                     <li class="toc-h1"><a href="#pre-migration-changes-made-to-coursier">Pre-Migration - Changes Made to Coursier</a></li>
@@ -268,6 +270,7 @@
                     <li class="toc-h2"><a href="#5-resolve-differenceserrors-between-ivy-and-coursier">5. Resolve differences/errors between Ivy and Coursier</a></li>
                     <li class="toc-h3"><a href="#platform-dependent-resolve">Platform dependent resolve</a></li>
                     <li class="toc-h3"><a href="#dependency-management-via-parent-pom">Dependency management via parent pom</a></li>
+                    <li class="toc-h1"><a href="#related-links">Related links</a></li>
                 </ul>
               </nav>
 
@@ -338,11 +341,13 @@
 .codehilite .il { color: #40a070 } /* Literal.Number.Integer.Long */
 </style>
 <h1 id="twitters-coursier-migration">Twitter's Coursier Migration</h1>
-<h2 id="meta-info">Meta Info</h2>
-<p>Author: Twitter Engineering Effectiveness - Build</p>
-<p>Abstract: This blog post discusses the motivation, preparation work, deployment processes, and results of replacing Ivy with Coursier in Pants.</p>
-<p>Dates: Twitter's Coursier migration happened during Q1 2018. This post is published in August 2018.</p>
-<p>Tags: 3rdparty, JVM, productivity</p>
+<h2 id="dates">Dates</h2>
+<p>Twitter's Coursier migration happened during Q1 2018.</p>
+<p>This post is published in August 2018.</p>
+<h2 id="authors-and-contributors">Authors and Contributors</h2>
+<p><a href="https://twitter.com/yidcheng">Yi Cheng</a>, <a href="https://twitter.com/baroquebobcat">Nora Howard</a>, and <a href="https://twitter.com/dordogh">Dorothy Ordogh</a> at Twitter Engineering Effectiveness - Build.</p>
+<h2 id="tldr">Tl;dr</h2>
+<p>This blog post discusses the motivation, preparation work, deployment processes, and results of replacing Ivy with Coursier in Pants.</p>
 <h2 id="background">Background</h2>
 <p>Twitter uses Pants as the build tool for the main repository which accounts for the majority of development. Inevitably, projects can get large with hundreds or thousands of source and binary (“3rdparty”) dependencies.</p>
 <p>At this scale, an IDE is also commonly used to help developer productivity. Regardless of which IDE is used, Pants will need to tell it where all the 3rdparty dependencies are located. For JVM projects specifically, that means resolving maven style 3rdparty artifacts.</p>
@@ -398,9 +403,7 @@
 <h3 id="visibility">Visibility</h3>
 <p>To better help with the migration, such as comparing the result with Ivy and sanity check, we needed Coursier to print out the resolve graph correctly. <a href="https://github.com/coursier/coursier/pull/671">https://github.com/coursier/coursier/pull/671</a></p>
 <h2 id="the-migration-process">The Migration Process</h2>
-<p>The actual migration was done in two major phases
-1) Coursier only for IDE project import
-2) Coursier for all Pants commands</p>
+<p>The actual migration was done in two major phases: 1) Coursier only for IDE project import, and then 2) Coursier for all Pants commands</p>
 <h3 id="phase-1-ide-only">Phase 1 - IDE Only</h3>
 <p>There are two reasons to use IDE as the initial testing ground.</p>
 <ul>
@@ -462,9 +465,11 @@
 <div class="codehilite"><pre>./coursier fetch org.specs2:specs2-junit_2.11:3.8.9
 </pre></div>
 <h3 id="2-why-3rdparty-resolve-caching-wasnt-too-great">2. Why 3rdparty resolve caching wasn’t too great?</h3>
-<p>Two major steps are involved when doing 3rdparty resolve
-Figure out what artifacts are needed
-Download them</p>
+<p>Two major steps are involved when doing 3rdparty resolve</p>
+<ul>
+<li>Figure out what artifacts are needed</li>
+<li>Download them</li>
+</ul>
 <p>The goal and benefit of caching 3rdparty resolve is to reuse the result from step 1, likely from another machine, thus only needing to do step 2 because not all artifacts are present.</p>
 <p>Currently Pants resolves 3rdparty dependencies per context. For example, with target A and target B
 resolve(A) =&gt; SetA jars
@@ -518,12 +523,15 @@ Ivy:</p>
 <ul>
 <li>org.apache.httpcomponents:httpcore:4.2.5 (Ivy) -&gt; org.apache.httpcomponents:httpcore:4.2.4 (Coursier). The difference is harmless, but the correct one should be 4.2.4.</li>
 </ul>
+<h2 id="related-links">Related links</h2>
+<p><a href="jvm_projects.html#toolchain">How to use Coursier in Pants</a></p>
+<p><a href="https://github.com/coursier/coursier">Coursier repo</a></p>
 
             <!-- main content end -->
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/blog/coursier_migration.html 2018-08-30T16:28:47.379930
+              from dist/markdown/html/src/docs/blog/coursier_migration.html 2018-08-31T15:33:11.955962
             </div>
 
           </div> <!-- mainflow -->
