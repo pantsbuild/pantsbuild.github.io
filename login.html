@@ -8,11 +8,11 @@
 
 <head>
   <meta charset="utf-8"/>
-  <title>Pants for Organizations</title>
+  <title>Authenticate to a Server</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" href="pants-logo.ico">
   <!-- In case this is a "test publish", tell search engines where real version lives: -->
-  <link rel="canonical" href="http://pantsbuild.org/orgs.html">
+  <link rel="canonical" href="http://pantsbuild.org/login.html">
 
   <link rel="stylesheet" href="bootstrap-custom.min.css">
   <link rel="stylesheet" href="bootstrap-custom-theme.min.css">
@@ -83,8 +83,8 @@
                   <li class="toc-h1 toc-link ">
                     <a href="common_tasks.html">Common Tasks</a>
                   </li>
-                  <li class="toc-h1 toc-link toc-here">
-                    Pants for Organizations
+                  <li class="toc-h1 toc-link ">
+                    <a href="orgs.html">Pants for Organizations</a>
                   </li>
                   <li class="toc-h1 toc-heading">
                     Pants Basics
@@ -243,8 +243,9 @@
           <div class="mainflow">
               <nav class="pagetoc">
                 <ul>
-                    <li class="toc-h1"><a href="#frontend-backend-example">Frontend &amp; Backend Example</a></li>
-                    <li class="toc-h1"><a href="#continuous-integration">Continuous Integration</a></li>
+                    <li class="toc-h1"><a href="#problem">Problem</a></li>
+                    <li class="toc-h1"><a href="#solution">Solution</a></li>
+                    <li class="toc-h1"><a href="#required-configuration">Required Configuration</a></li>
                 </ul>
               </nav>
 
@@ -314,58 +315,42 @@
 .codehilite .vi { color: #bb60d5 } /* Name.Variable.Instance */
 .codehilite .il { color: #40a070 } /* Literal.Number.Integer.Long */
 </style>
-<h1 id="pants-for-organizations">Pants for Organizations</h1>
-<p>Pants works well for organizations with a large number of developers working in a multi-tenant repo.
-Typically, repos become slower over time as more source and test files are added because most
-build systems build and test everything every time. Pants enables the benefits of a single repo
-with the speed of per-project repos by only operating on repo "slices".</p>
-<h2 id="frontend-backend-example">Frontend &amp; Backend Example</h2>
-<p>Imagine a simple repo that contains both a frontend and backend service, as illustrated by the
-following dependency graph.</p>
-<p><img alt="orgs" src="images/orgs.png"/></p>
-<p>Consider a frontend developer that only works on the frontend service. With most build systems, the
-developer would need to compile everything every time, slowing them down over time as more and more
-code is added to the repo. With Pants, the frontend developer only needs to compile the code directly
-used by their service. For example, consider building <code>org.pantsbuild.fe.service</code>. Regardless of
-how complex the backend code grows over time, the frontend build will not slow down.</p>
-<p><img alt="orgs_fe" src="images/orgs_fe.png"/></p>
-<p>Now consider a backend developer who only works on the backend service. When building the backend
-service, only the code required by the backend service is built, regardless of what other code
-is in the repo. The ability to build "slices" of the repo is fundamental to enabling multiple users
-and teams to work together in a single repo. Note how only the backend code would be built when
-building <code>org.pantsbuild.be.service</code>:</p>
-<p><img alt="orgs_be" src="images/orgs_be.png"/></p>
-<h2 id="continuous-integration">Continuous Integration</h2>
-<p>Most organizations require test pass before merging a change to master. Pants enables fast CI by
-only running tests <em>affected</em> by a change. That is, only targets that transitively depend on a
-changed target have their tests run. In practice, a change to <code>README.md</code> might not trigger <em>any</em>
-tests, a change to a top-level node such as <code>org.pantsbuild.fe.service</code> in the dependency graph
-would only trigger it's direct tests, and a change to a low-level node
-(e.g.: protobuf/thrift IDL file) might trigger most tests.</p>
-<p>For most users, the following script would work well for a pull-request builder type CI job:</p>
-<div class="codehilite"><pre><span class="c">#!/bin/bash</span>
-
-<span class="nb">set</span> -x
-<span class="nb">set</span> -o
-<span class="nb">set</span> -e
-
-<span class="c"># Disable Zinc incremental compilation to ensure no historical cruft pollutes the current build.</span>
-<span class="nb">export </span><span class="nv">PANTS_COMPILE_ZINC_INCREMENTAL</span><span class="o">=</span><span class="nb">false</span>
-
-<span class="nv">changed</span><span class="o">=</span><span class="k">$(</span>./pants --changed-parent<span class="o">=</span>origin/master list<span class="k">)</span>
-<span class="nv">dependees</span><span class="o">=</span><span class="k">$(</span>./pants dependees --dependees-transitive --dependees-closed <span class="nv">$changed</span><span class="k">)</span>
-<span class="nv">minimized</span><span class="o">=</span><span class="k">$(</span>./pants minimize <span class="nv">$dependees</span><span class="k">)</span>
-./pants filter --filter-type<span class="o">=</span>-jvm_binary <span class="nv">$minimized</span> | sort &gt; minimized.txt
-<span class="k">for </span>target in <span class="k">$(</span>cat minimized.txt<span class="k">)</span>; <span class="k">do</span>
-  ./pants <span class="nb">test</span> <span class="nv">$target</span>
-<span class="k">done</span>
+<h1 id="authenticate-to-a-server">Authenticate to a Server</h1>
+<h2 id="problem">Problem</h2>
+<p>Some Pants operations talk to remote servers. Examples include uploading build stats, querying remote caches 
+and resolving external dependencies.  But in some cases these servers may only allow access to authenticated users. </p>
+<h2 id="solution">Solution</h2>
+<p>Currently Pants only supports HTTP basic auth.  How you use this depends on what the server expects:</p>
+<p>If the endpoints you're accessing (e.g., the build stats upload endpoint or the remote cache query endpoint)
+accept HTTP basic auth credentials directly, you only need add those creds to a <code>.netrc</code> entry for 
+that server.</p>
+<p>However, in many cases the server expects you to provide credentials to an authentication endpoint, 
+in exchange for a session id, and then provide that session id in subsequent requests to the other endpoints.</p>
+<p>In the latter case, you can perform that authentication using the <code>login</code> goal, and specifying the 
+provider you're authenticating against, either with the <code>--to</code> option or with a passthru arg:</p>
+<div class="codehilite"><pre><span class="nv">$ </span>./pants login --to<span class="o">=</span>myauthprovider
+<span class="nv">$ </span>./pants login -- myauthprovider
+</pre></div>
+<p>This submits credentials from <code>.netrc</code> to the provider's authentication endpoint using HTTP basic auth, 
+and stores all returned cookies (which, presumably, include the session id), for future use with the other 
+endpoints.</p>
+<p>In the future the <code>login</code> goal will optionally prompt for a username and password, allowing you to
+bypass <code>.netrc</code> altogether.</p>
+<h2 id="required-configuration">Required Configuration</h2>
+<p>The named provider must be configured. E.g., in <code>pants.ini</code> you'd have:</p>
+<div class="codehilite"><pre><span class="k">[basic_auth]</span>
+<span class="na">providers</span> <span class="o">=</span> <span class="s">{</span>
+<span class="s">    'myauthprovider': {</span>
+<span class="s">      'url': 'https://myauthprovider.com/path/to/authentication/endpoint'</span>
+<span class="s">    }</span>
+<span class="s">  }</span>
 </pre></div>
 
             <!-- main content end -->
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/orgs.html 2018-10-04T13:24:56.415021
+              from dist/markdown/html/src/docs/common_tasks/login.html 2018-10-04T13:24:56.197924
             </div>
 
           </div> <!-- mainflow -->
