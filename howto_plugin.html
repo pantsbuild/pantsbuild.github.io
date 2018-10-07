@@ -243,7 +243,7 @@
           <div class="mainflow">
               <nav class="pagetoc">
                 <ul>
-                    <li class="toc-h1"><a href="#hello-world-plugin-with-its-own-goal">Hello world plugin with its own goal</a></li>
+                    <li class="toc-h1"><a href="#a-hello-world-plugin">A "Hello World" plugin</a></li>
                     <li class="toc-h1"><a href="#simple-configuration">Simple Configuration</a></li>
                     <li class="toc-h1"><a href="#examples-from-twittercommons">Examples from twitter/commons</a></li>
                 </ul>
@@ -330,75 +330,110 @@ Pants' <code>jvm</code> code registers in
 <a href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/backend/jvm/register.py">src/python/pants/backend/jvm/register.py</a>
 Pants' backend-loader code assumes your plugin has a <code>register.py</code> file
 there.</p>
-<h2 id="hello-world-plugin-with-its-own-goal">Hello world plugin with its own goal</h2>
-<p>The hello world plugin shows how to register your plugin to Pants and define its own <code>hello-world</code> goal which contains 2 tasks and 
-which can be executed by Pants. To achieve that, take a look at the following steps:
-- Create a new Pants project so you have pants.ini file in root of your repository</p>
+<h2 id="a-hello-world-plugin">A "Hello World" plugin</h2>
+<p>This "Hello World" plugin example shows how to register a plugin with Pants. It defines a new 
+<code>hello-world</code> goal with two tasks. Here's how to create it:</p>
 <ul>
 <li>
-<p>Create a home directory for your plugins. In this example we will use <code>plugins/</code> directory in root of repository,
-but the word "plugins" is not special for Pants.</p>
+<p>If you don't have an existing Pants project to work with, create one. Locate its config file,
+ typically <code>pants.ini</code> in the repo root.</p>
+</li>
+<li>
+<p>Create a directory for your plugins. In this example we will use the <code>plugins/</code> directory in 
+the repo root, but there is no convention, and you can put them wherever you like.</p>
 </li>
 <li>
 <p>In the <code>plugins/</code> directory, create following filesystem structure:</p>
-<p>hello/
-    <strong>init</strong>.py
-    register.py
-    tasks/
-       <strong>init</strong>.py
-       your_tasks.py</p>
+<div class="codehilite"><pre>hello/
+  __init__.py
+  register.py
+  tasks/
+     __init__.py
+     your_tasks.py
+</pre></div>
 </li>
 <li>
 <p><code>__init__.py</code> files can be empty - you're just saying to Python that you created modules.</p>
 </li>
 <li>
 <p>In <code>your_tasks.py</code> place the following content:</p>
-<p>from pants.task.task import Task</p>
-<p>class HelloTask(Task):
-      def execute(self):
-          print("Hello")</p>
-<p>class WorldTask(Task):
-      def execute(self):
-          print("world!")
-   <a href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/task/task.py">Task</a> is a simple base
-   class for your tasks - you need to implement an <code>execute</code> method which will be executed by Pants.</p>
-</li>
-<li>
-<p>In <code>register.py</code> place the following content:</p>
-<p>from pants.goal.goal import Goal
-  from pants.goal.task_registrar import TaskRegistrar as task
-  from hello.tasks.your_tasks import HelloTask, WorldTask</p>
-<p>def register_goals():
-      Goal.register(name="hello-world", description="Say hello to your world")
-      task(name='hello', action=HelloTask).install('hello-world')
-      task(name='world', action=WorldTask).install('hello-world')</p>
-<p>Here you register new Pants goal named <code>hello-world</code> and documented with a description,
- and then attach 2 tasks to the goal created in previous step.</p>
-</li>
-<li>
-<p>In <code>pants.ini</code> place the following content:</p>
-<p>[GLOBAL]
-  pants_version: 1.9.0
-  pythonpath: ["%(buildroot)s/plugins"]
-  backend_packages: ["hello"]</p>
-<p>You need to put your plugins on the <code>pythonpath</code> so Pants will know where to find them.
- <code>backend_packages</code> defines which plugins you want to use in your project.</p>
-</li>
-<li>
-<p>You are ready to use your plugin with the <code>hello-world</code> goal! First try to find your goal by typing <code>./pants goals</code>:</p>
-<p>...
-  hello-world: Say hello to your world
-  ...
-- Now you can use your plugin by typing <code>./pants hello-world</code>:</p>
-<p>...
-  Executing tasks in goals: hello-world
-  XX:XX:XX 00:00   [hello-world]
-  XX:XX:XX 00:00     [hello]Hello</p>
-<p>XX:XX:XX 00:00     [world]world!</p>
-<p>XX:XX:XX 00:00   [complete]
-                 SUCCESS</p>
+<div class="codehilite"><pre><span class="kn">from</span> <span class="nn">pants.task.task</span> <span class="kn">import</span> <span class="n">Task</span>
+
+<span class="k">class</span> <span class="nc">HelloTask</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"Hello"</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">WorldTask</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"world!"</span><span class="p">)</span>
+</pre></div>
 </li>
 </ul>
+<p><a href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/task/task.py">Task</a> is a simple base
+   class for your tasks - you must implement the <code>execute</code> method.</p>
+<ul>
+<li>
+<p>In <code>register.py</code> place the following content:</p>
+<div class="codehilite"><pre><span class="kn">from</span> <span class="nn">pants.goal.goal</span> <span class="kn">import</span> <span class="n">Goal</span>
+<span class="kn">from</span> <span class="nn">pants.goal.task_registrar</span> <span class="kn">import</span> <span class="n">TaskRegistrar</span> <span class="k">as</span> <span class="n">task</span>
+<span class="kn">from</span> <span class="nn">hello.tasks.your_tasks</span> <span class="kn">import</span> <span class="n">HelloTask</span><span class="p">,</span> <span class="n">WorldTask</span>
+
+<span class="k">def</span> <span class="nf">register_goals</span><span class="p">():</span>
+    <span class="n">Goal</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">"hello-world"</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s">"Say hello to your world"</span><span class="p">)</span>
+    <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'hello'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">HelloTask</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s">'hello-world'</span><span class="p">)</span>
+    <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'world'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">WorldTask</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s">'hello-world'</span><span class="p">)</span>
+</pre></div>
+</li>
+</ul>
+<p>This creates a new goal named <code>hello-world</code>, and registers the two tasks to it.</p>
+<ul>
+<li>
+<p>In <code>pants.ini</code> place the following content:</p>
+<div class="codehilite"><pre><span class="k">[GLOBAL]</span>
+<span class="err">pants_version:</span> <span class="err">1.9.0</span>
+<span class="err">pythonpath:</span> <span class="k">["%(buildroot)s/plugins"]</span>
+<span class="err">backend_packages:</span> <span class="k">["hello"]</span>
+</pre></div>
+</li>
+</ul>
+<p><code>backend_packages</code> defines which plugins you want to use in your project.</p>
+<p>If you want to use custom plugins directly from source when building in the same repo, you need 
+to put them on the <code>pythonpath</code> so Pants can find them. </p>
+<ul>
+<li>
+<p>You are ready to use your plugin! First try to find your goal by typing <code>./pants goals</code>:</p>
+<div class="codehilite"><pre>...
+hello-world: Say hello to your world
+...
+</pre></div>
+</li>
+</ul>
+<p>Now you can use your plugin by typing <code>./pants hello-world</code>:</p>
+<div class="codehilite"><pre>    ...
+    Executing tasks in goals: hello-world
+    XX:XX:XX 00:00   [hello-world]
+    XX:XX:XX 00:00     [hello]Hello
+
+    XX:XX:XX 00:00     [world]world!
+
+    XX:XX:XX 00:00   [complete]
+                   SUCCESS
+</pre></div>
+<p>Note that to consume the custom plugin as a published artifact (say on PyPI), instead of 
+directly from the repo, then instead of <code>backend_packages</code> and <code>pythonpath</code> you would set <code>plugins</code>:</p>
+<div class="codehilite"><pre>    <span class="k">[GLOBAL]</span>
+    <span class="err">pants_version:</span> <span class="err">1.9.0</span>
+    <span class="na">plugins: ["myorg.hello</span><span class="o">=</span><span class="s">=1.7.6"]</span>
+</pre></div>
+<p>Similarly, if your custom plugin is consumed directly from the repo, but has dependencies on 
+published artifacts, then you list those in <code>plugins</code>:</p>
+<div class="codehilite"><pre>    <span class="k">[GLOBAL]</span>
+    <span class="err">pants_version:</span> <span class="err">1.9.0</span>
+    <span class="err">pythonpath:</span> <span class="k">["%(buildroot)s/plugins"]</span>
+    <span class="err">backend_packages:</span> <span class="k">["hello"]</span>
+    <span class="na">plugins: ["some.dependency</span><span class="o">=</span><span class="s">=4.5.11"]</span>
+</pre></div>
+<p>See below for more details. </p>
 <h2 id="simple-configuration">Simple Configuration</h2>
 <p>If you want to extend Pants without adding any 3rd-party libraries that aren't already referenced by
 Pants, you can use the following technique using sources stored directly in your repo.
@@ -488,7 +523,7 @@ But other Pants workspaces can register it, as <code>twitter/commons</code> illu
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/howto_plugin.html 2018-10-04T13:24:56.157987
+              from dist/markdown/html/src/docs/howto_plugin.html 2018-10-07T19:08:13.285183
             </div>
 
           </div> <!-- mainflow -->
