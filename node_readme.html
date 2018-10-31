@@ -8,11 +8,11 @@
 
 <head>
   <meta charset="utf-8"/>
-  <title>Pants Concepts</title>
+  <title>Node.js Support</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" href="pants-logo.ico">
   <!-- In case this is a "test publish", tell search engines where real version lives: -->
-  <link rel="canonical" href="http://pantsbuild.org/first_concepts.html">
+  <link rel="canonical" href="http://pantsbuild.org/node_readme.html">
 
   <link rel="stylesheet" href="bootstrap-custom.min.css">
   <link rel="stylesheet" href="bootstrap-custom-theme.min.css">
@@ -92,8 +92,8 @@
                   <li class="toc-h1 toc-link ">
                     <a href="why_use_pants.html">Why Use Pants?</a>
                   </li>
-                  <li class="toc-h1 toc-link toc-here">
-                    Pants Concepts
+                  <li class="toc-h1 toc-link ">
+                    <a href="first_concepts.html">Pants Concepts</a>
                   </li>
                   <li class="toc-h1 toc-link ">
                     <a href="build_files.html">BUILD files</a>
@@ -150,8 +150,8 @@
                   <li class="toc-h1 toc-link ">
                     <a href="go_readme.html">Go support for Pants</a>
                   </li>
-                  <li class="toc-h1 toc-link ">
-                    <a href="node_readme.html">Node.js Support</a>
+                  <li class="toc-h1 toc-link toc-here">
+                    Node.js Support
                   </li>
                   <li class="toc-h1 toc-heading">
                     Code &amp; Doc Generation
@@ -249,12 +249,16 @@
           <div class="mainflow">
               <nav class="pagetoc">
                 <ul>
-                    <li class="toc-h1"><a href="#goals-and-tasks">Goals and Tasks</a></li>
+                    <li class="toc-h1"><a href="#nodejs-support">Node.js Support</a></li>
                     <li class="toc-h1"><a href="#targets">Targets</a></li>
-                    <li class="toc-h1"><a href="#target-types">Target Types</a></li>
-                    <li class="toc-h1"><a href="#addresses">Addresses</a></li>
-                    <li class="toc-h1"><a href="#what-pants-does">What Pants Does</a></li>
-                    <li class="toc-h1"><a href="#next-step">Next Step</a></li>
+                    <li class="toc-h1"><a href="#functionality">Functionality</a></li>
+                    <li class="toc-h2"><a href="#source-level-dependencies">Source level dependencies</a></li>
+                    <li class="toc-h2"><a href="#bootstrapping">Bootstrapping</a></li>
+                    <li class="toc-h2"><a href="#package-management">Package Management</a></li>
+                    <li class="toc-h2"><a href="#install">Install</a></li>
+                    <li class="toc-h2"><a href="#test">Test</a></li>
+                    <li class="toc-h2"><a href="#repl">REPL</a></li>
+                    <li class="toc-h1"><a href="#examples">Examples</a></li>
                 </ul>
               </nav>
 
@@ -324,149 +328,107 @@
 .codehilite .vi { color: #bb60d5 } /* Name.Variable.Instance */
 .codehilite .il { color: #40a070 } /* Literal.Number.Integer.Long */
 </style>
-<h1 id="pants-concepts">Pants Concepts</h1>
-<p>To use Pants effectively, it helps to understand a few concepts:</p>
+<h1 id="nodejs-support">Node.js Support</h1>
+<p>This is a plugin to integrate Node.js with Pants.</p>
+<h1 id="targets">Targets</h1>
+<p>Node.js targets in Pants are designed to work with existing Node.js package management tools and
+their configuration files. The node_module target type uses a package.json file in the same
+directory as its definition. It combines dependencies declared on the target in the BUILD
+file with the original package.json to form a complete package.json that can be used to run tasks
+on the target through Pants.</p>
 <ul>
-<li><strong>Goals</strong> help users tell pants what actions to take</li>
-<li><strong>Tasks</strong> are the pants modules that run actions</li>
-<li><strong>Targets</strong> describe what files to take those actions upon</li>
-<li><strong>Target types</strong> define the types of operations that can be performed on
-a target</li>
-<li><strong>Addresses</strong> describe the location of a target in the repo</li>
+<li><code>node_module</code>: A node module target.</li>
+<li><code>node_preinstalled_module</code>: A prebuilt node_module that will be downloaded during resolve step.</li>
+<li><code>node_bundle</code>: A bundle of node modules.</li>
+<li><code>node_remote_module</code>: Remote third party module. [Not recommended, instead specify dependencies in package.json with lock file]</li>
+<li><code>node_test</code>: Run Javascript tests defined in package.json.</li>
 </ul>
-<h2 id="goals-and-tasks">Goals and Tasks</h2>
-<p><strong>Goals</strong> are the "verbs" of Pants.  When you invoke Pants, you name
-goals on the command line to say what Pants should do. For example, to
-run tests, you would invoke Pants with the <code>test</code> goal. To create a
-bundle--an archive containing a runnable binary and resource
-files--you would invoke Pants with the <code>bundle</code> goal.</p>
-<p><strong>Tasks</strong> actually perform the work.  When you invoke a goal, it finds
-all the tasks needed to make that goal work. Sometimes, there is a one
-to one mapping between a task name and a goal name, but often multiple tasks
-are registered in a goal.  For example, the <code>junit</code>
-task runs tests for JVM projects.  It is registered in the <code>test</code>
-goal and sometimes referred to as <code>test.junit</code>.</p>
-<p>In a nutshell, goals are the way users specify tasks.  Sometimes goals
-are helpful groupings of tasks to make it easier for users to tell
-pants what they want to do.</p>
-<p>Tasks can depend on other tasks. When you invoke a goal in
-Pants, it builds a list of dependent tasks that need to be executed
-first.  So, when you invoke the <code>test</code> goal, it will also invoke the
-tasks in the <code>gen</code>, <code>resolve</code> and <code>compile</code> goals, because tasks for
-code generation, artifact resolution, and compilation need to occur
-before a test can be run.  To find out more about how task dependencies
-are computed, read about <em>product types</em> in
-<a href="dev_tasks.html">Developing a Pants Task</a>.</p>
-<h2 id="targets">Targets</h2>
-<p><strong>Targets</strong> are the "nouns" of Pants, things pants can act upon. You
-annotate your source code with <code>BUILD</code> files to define these
-targets. For example, if your <code>tests/com/twitter/mybird/</code> directory
-contains JUnit tests, you have a <code>tests/com/twitter/mybird/BUILD</code> file
-with a <code>junit_tests</code> target definition. As you change your source code,
-you'll occasionally change the set of Targets by editing <code>BUILD</code> files.
-E.g., if you refactor some code, moving part of it to a new directory,
-you'll probably set up a new <code>BUILD</code> file with a target to build that
-new directory's code.</p>
-<p>Targets can "depend" on other targets. For example, if your <code>foo</code> code
-imports code from another target <code>bar</code>, then <code>foo</code> depends on <code>bar</code>. You
-specify this dependency in <code>foo</code>'s target definition in its <code>BUILD</code>
-file. If you invoke Pants to compile <code>foo</code>, it "knows" it also needs to
-compile <code>bar</code>, and does so.</p>
-<h2 id="target-types">Target Types</h2>
-<p><strong>Target Types</strong> describe the kind of target to be operated on. Each
-Pants build target has a <em>type</em>, such as <code>java_library</code> or
-<code>python_binary</code>. Tasks choose to work on particular targets by
-selecting the target types they are interested in from the build
-graph.</p>
-<p>For a list of all Target types (and other things that can go in <code>BUILD</code>
-files), see the <a href="build_dictionary.html">BUILD Dictionary</a>.
-The following list describes the most common target types:</p>
-<p><strong>Library Targets</strong><br/>
-To define an "importable" thing, you want a library target type, such as
-<code>java_library</code> or <code>python_library</code>. Another target whose code imports a
-library target's code should list the library target in its
-<code>dependencies</code>.</p>
-<p><strong>Binary Targets</strong><br/>
-To define a "runnable" thing, you want a <code>jvm_binary</code> or <code>python_binary</code>
-target. A binary probably has a <code>main</code> and dependency libraries. (We encourage a
-binary's main to be separate from the libraries it uses to run, if any.)</p>
-<p><strong>External Dependencies</strong><br/>
-Not everything is source code is in your repository. Your targets can
-depend on <code>.jar</code>s or <code>.whl</code>s from elsewhere.</p>
-<p><strong>Test Targets</strong><br/>
-To define a collection of tests, you want a <code>junit_tests</code> or
-<code>python_tests</code> target. The test target depends upon the targets whose
-code it tests. This isn't just logical, it's handy, too: you can
-compute dependencies to figure out what tests to run if you change some
-target's code.</p>
-<h2 id="addresses">Addresses</h2>
-<p><strong>Addresses</strong>  describe the location of a target in the build
-graph.  The address has two parts:  the directory to the BUILD file
-and the name of the target within that BUILD file.</p>
-<p>For example, if you have a <code>tests/com/twitter/mybird/BUILD</code> file
-with a <code>junit_tests(name='test-flight)</code> target definition, you would
-write the address as:</p>
-<div class="codehilite"><pre>tests/com/twitter/mybird:test-flight
+<h1 id="functionality">Functionality</h1>
+<p>There is limited support for linting and formatting using the <code>lint</code> and <code>fmt</code> goals, which use <code>eslint</code>.
+<code>eslint</code> global rules will need to be configured by the repo owner</p>
+<h2 id="source-level-dependencies">Source level dependencies</h2>
+<p>Source-level dependencies are currently supported within the <code>yarn</code> package manager. To specify a target-level dependency on
+another node_module target, you must:</p>
+<ol>
+<li>
+<p>Specify the local dependency using the <code>file:</code> specifier following npm rules within the <code>package.json</code> with relative path
+to the target dependency</p>
+</li>
+<li>
+<p>The dependent target must have a valid target definition and package.json with the same package name as specified in the <code>file:</code> dependency</p>
+</li>
+<li>
+<p>In the BUILD definition, the node_module target must also specify the fully qualified pants target address for each <code>file:</code> dependency.
+(In the future, with dep inference, this step may no longer be necessary).</p>
+</li>
+<li>
+<p>Scopes normally defined in the the <code>name</code> field of the <code>package.json</code> file needs to be replicated in the BUILD definition in the <code>node_scope</code> option.</p>
+</li>
+</ol>
+<p>With some caveats,</p>
+<ul>
+<li>
+<p>Peer dependencies cannot be resolved within source dependencies. The source dependencies are symlinked and do not have a direct relationships with the parent
+target. There may be duplicate dependencies since there is no flattening of the dependency graph.</p>
+</li>
+<li>
+<p>Source dependencies can only be specified in the “dependencies” field.</p>
+</li>
+<li>
+<p>Source dependencies need to match 1:1 with package dependencies, but cannot currently express the node_scope within that context. The node_scope is assumed through the <code>node_scope</code> field in the BUILD definition.</p>
+</li>
+</ul>
+<p>See the examples directory for real examples.</p>
+<h2 id="bootstrapping">Bootstrapping</h2>
+<p>Pants will bootstrap itself with its own copy of Node.js, NPM, and Yarn package manager and use them to run commands.
+It runs those commands with the bootstrapped Node's bin directory at the front of the PATH.</p>
+<p>Distribution versions can be modified in <code>pants.ini</code>.</p>
+<h2 id="package-management">Package Management</h2>
+<p>There are two supported package management tools: NPM and Yarn. You can specify which package manager is used to <code>install</code>
+your dependencies in your BUILD target definition.</p>
+<p>NPM 5.0+ and Yarn both support locking dependencies to specific versions through the <code>package-lock.json</code> and <code>yarn.lock</code> files respectively.
+To ensure determinism and reproducibility within Pants, these files should be checked into your repository and included in the
+target definition's sources argument.</p>
+<h2 id="install">Install</h2>
+<p>Pants can install Node modules into the source definition directory with</p>
+<div class="codehilite"><pre>./pants node-install [target]
 </pre></div>
-<p>You use an address whenever you specify a target to build on the
-command line or when one target depends on another in a BUILD file.
-To find out more about addresses, see
-<a href="target_addresses.html">Target Addresses</a>.</p>
-<h2 id="what-pants-does">What Pants Does</h2>
-<p>When you invoke Pants, you specify goals (actions to take) and targets
-(things to act upon).</p>
-<p><strong>Pants plans a list of tasks.</strong> You specify one or more goals on the
-command line. Pants finds the tasks needed to complete that goal.
-Pants knows that some tasks depend on others. If you
-invoke Pants with, say, the <code>test</code> goal to test some code, Pants knows
-it must first compile code; before it can compile code, it needs to
-resolve artifact dependencies and generate code from IDL files (e.g.,
-Thrift). Pants thus generates a topologically-sorted list of goals and
-tasks to perform, a
-<em>build execution plan</em>. This plan might look something like</p>
-<div class="codehilite"><pre>./pants --explain <span class="nb">test </span>src/java::
-Goal Execution Order:
-
-bootstrap -&gt; imports -&gt; unpack-jars -&gt; deferred-sources -&gt; gen
-   -&gt; jvm-platform-validate -&gt; resolve -&gt; compile -&gt; resources -&gt; <span class="nb">test</span>
-</pre></div>
-<p>Pants does <em>not</em> consider targets while planning; some of these tasks
-might thus turn out to be no-ops. E.g., Pants might plan a <code>gen</code>
-(generate code) task even if you don't, in fact, use any generated code.</p>
-<p><strong>Pants computes a target dependencies graph.</strong> It starts with the
-target[s] you specify on the command line. It notes which targets they
-depend on, which targets those targets depend on, which targets <em>those</em>
-targets depend on, and so on.</p>
-<p><strong>Pants then attempts to carry out its planned tasks.</strong> It proceeds goal
-by goal. If it has a problem carrying out one task, it does not continue
-to the others. (Thus, if you attempt to test targets <em>A</em> and <em>B</em>,
-but there's a compilation error in <em>A</em>, then Pants won't test <em>B</em> even
-if it compiled fine.)</p>
-<p>For each task in the plan, Pants executes that task to all
-targets in its computed dependency tree[s]. It starts with
-depended-upon targets and works its way up to depending targets. Each
-Pants target has a type; Pants uses this to determine how to apply a
-task to that target. In many cases, applying a task to a target is a
-no-op. In the more interesting cases, Pants does something. It
-probably invokes other tools. For example, depending on the code in
-the relevant targets, that "compile" goal might invoke <code>javac</code> a few
-times and <code>scalac</code>.</p>
-<p>Pants caches things it builds. Thus, if you change one source file and
-re-build, Pants probably doesn't "build the world." It just builds a few
-things. Pants keys its cache on hashed file contents. This is a
-straightforward way to build the right things after some files' contents
-change. (It <em>can</em> surprise you if you <code>touch</code> a file, start a compile,
-and nothing happens. If you want to, e.g., see <code>Foo.java</code>'s compile
-warnings again, instead of using <code>touch</code>, you might append a newline.)</p>
-<h2 id="next-step">Next Step</h2>
-<p>If you're ready to give Pants a try, go to
-<a href="first_tutorial.html">First Tutorial</a>.</p>
+<p>You can install all types of node_module targets. Pants effectively walks forward from
+the edges of the dependency tree topological sort for a target and does an "install"
+for each target it encounters along the way. Pants then symlinks each of the source dependencies
+in the correct path under the <code>node_modules</code> directory.</p>
+<h2 id="test">Test</h2>
+<p>Pants can run tests defined in your <code>package.json</code> file similar to your vanilla package manager.
+The main difference is that the tests are executed within Pants' virtual environment.</p>
+<p><code>node_test</code> targets are able to run scripts defined in the <code>package.json</code> file.</p>
+<p>When Pants executes a <code>node_test</code> target, the target's sources are copied into place under the working directory. The
+sources are then <code>resolved</code> or <code>installed</code> into the pants working directory. The targets and paths are cached
+and passed into the Node.js runtime as NODE_PATH parameters to execute your test.</p>
+<p>Resolve is a task that helps Pants install and keep track of node_module targets.</p>
+<p><code>node_remote_module</code> dependencies are installed from the remote source, and <code>node_module</code> dependencies are installed via
+paths to previously-installed targets under the working directory.</p>
+<h2 id="repl">REPL</h2>
+<p><code>./pants repl [target]</code> lets you run Node in REPL mode from the resolved target's path under the
+working directory.</p>
+<p>REPL only works with npm package manager.</p>
+<h1 id="examples">Examples</h1>
+<p>The examples directory contains a few types of interdependent JS projects.</p>
+<ul>
+<li>A server project transpiled using Babel in its prepublish step</li>
+<li>A web build tool encapsulating Webpack and a set of loaders</li>
+<li>A web component (button) using React and CSS in a separate file, built with the web build tool,
+  containing its own test file</li>
+<li>A web project using React, built with the web build tool, depending on the server project and
+  button component, and containing its own test file</li>
+<li>A yarn workspace project using source-level dependencies in two ways. (Workspaces and pants).
+  Source-level dependencies does not need Yarn Workspaces.</li>
+</ul>
 
             <!-- main content end -->
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/first_concepts.html 2018-10-31T09:05:17.687216
+              from dist/markdown/html/contrib/node/README.html 2018-10-31T09:05:17.791606
             </div>
 
           </div> <!-- mainflow -->
