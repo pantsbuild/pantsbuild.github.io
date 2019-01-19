@@ -277,8 +277,10 @@
 .codehilite .err { border: 1px solid #FF0000 } /* Error */
 .codehilite .k { color: #007020; font-weight: bold } /* Keyword */
 .codehilite .o { color: #666666 } /* Operator */
+.codehilite .ch { color: #60a0b0; font-style: italic } /* Comment.Hashbang */
 .codehilite .cm { color: #60a0b0; font-style: italic } /* Comment.Multiline */
 .codehilite .cp { color: #007020 } /* Comment.Preproc */
+.codehilite .cpf { color: #60a0b0; font-style: italic } /* Comment.PreprocFile */
 .codehilite .c1 { color: #60a0b0; font-style: italic } /* Comment.Single */
 .codehilite .cs { color: #60a0b0; background-color: #fff0f0 } /* Comment.Special */
 .codehilite .gd { color: #A00000 } /* Generic.Deleted */
@@ -286,11 +288,11 @@
 .codehilite .gr { color: #FF0000 } /* Generic.Error */
 .codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
 .codehilite .gi { color: #00A000 } /* Generic.Inserted */
-.codehilite .go { color: #808080 } /* Generic.Output */
+.codehilite .go { color: #888888 } /* Generic.Output */
 .codehilite .gp { color: #c65d09; font-weight: bold } /* Generic.Prompt */
 .codehilite .gs { font-weight: bold } /* Generic.Strong */
 .codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-.codehilite .gt { color: #0040D0 } /* Generic.Traceback */
+.codehilite .gt { color: #0044DD } /* Generic.Traceback */
 .codehilite .kc { color: #007020; font-weight: bold } /* Keyword.Constant */
 .codehilite .kd { color: #007020; font-weight: bold } /* Keyword.Declaration */
 .codehilite .kn { color: #007020; font-weight: bold } /* Keyword.Namespace */
@@ -313,12 +315,15 @@
 .codehilite .nv { color: #bb60d5 } /* Name.Variable */
 .codehilite .ow { color: #007020; font-weight: bold } /* Operator.Word */
 .codehilite .w { color: #bbbbbb } /* Text.Whitespace */
+.codehilite .mb { color: #40a070 } /* Literal.Number.Bin */
 .codehilite .mf { color: #40a070 } /* Literal.Number.Float */
 .codehilite .mh { color: #40a070 } /* Literal.Number.Hex */
 .codehilite .mi { color: #40a070 } /* Literal.Number.Integer */
 .codehilite .mo { color: #40a070 } /* Literal.Number.Oct */
+.codehilite .sa { color: #4070a0 } /* Literal.String.Affix */
 .codehilite .sb { color: #4070a0 } /* Literal.String.Backtick */
 .codehilite .sc { color: #4070a0 } /* Literal.String.Char */
+.codehilite .dl { color: #4070a0 } /* Literal.String.Delimiter */
 .codehilite .sd { color: #4070a0; font-style: italic } /* Literal.String.Doc */
 .codehilite .s2 { color: #4070a0 } /* Literal.String.Double */
 .codehilite .se { color: #4070a0; font-weight: bold } /* Literal.String.Escape */
@@ -329,9 +334,11 @@
 .codehilite .s1 { color: #4070a0 } /* Literal.String.Single */
 .codehilite .ss { color: #517918 } /* Literal.String.Symbol */
 .codehilite .bp { color: #007020 } /* Name.Builtin.Pseudo */
+.codehilite .fm { color: #06287e } /* Name.Function.Magic */
 .codehilite .vc { color: #bb60d5 } /* Name.Variable.Class */
 .codehilite .vg { color: #bb60d5 } /* Name.Variable.Global */
 .codehilite .vi { color: #bb60d5 } /* Name.Variable.Instance */
+.codehilite .vm { color: #bb60d5 } /* Name.Variable.Magic */
 .codehilite .il { color: #40a070 } /* Literal.Number.Integer.Long */
 </style>
 <h1 id="tutorial">Tutorial</h1>
@@ -343,13 +350,13 @@ Pants's own repo:
 <a href="https://github.com/pantsbuild/pants">pantsbuild/pants</a>).</p>
 <p>The first time you run <code>pants</code>, try it without arguments. This makes
 Pants "bootstrap" itself, downloading and compiling things it needs:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants goals
+<div class="codehilite"><pre><span></span>$ ./pants goals
 </pre></div>
 <p>Now you're ready to invoke pants for more useful things.</p>
 <p>You invoke pants with <em>goals</em> (like <code>test</code> or <code>bundle</code>) and the <em>targets</em> to use (like
 <code>examples/tests/java/org/pantsbuild/example/hello/greet:greet</code>). For
 example,</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants <span class="nb">test </span>examples/tests/java/org/pantsbuild/example/hello/greet:greet
+<div class="codehilite"><pre><span></span>$ ./pants <span class="nb">test</span> examples/tests/java/org/pantsbuild/example/hello/greet:greet
 </pre></div>
 <p>Goals (the "verbs" of Pants) produce new files from targets (the "nouns").</p>
 <p>As a code author, you define your code's build targets in BUILD files. A
@@ -362,7 +369,7 @@ are files in that directory.</p>
 <p>Pants knows about goals ("verbs" like <code>bundle</code> and <code>test</code>) and targets
 (build-able things in your source code). A typical pants command-line
 invocation looks like</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants <span class="nb">test </span>examples/tests/java/org/pantsbuild/example/hello/greet:greet
+<div class="codehilite"><pre><span></span>$ ./pants <span class="nb">test</span> examples/tests/java/org/pantsbuild/example/hello/greet:greet
 </pre></div>
 <p>Looking at the pieces of this we see</p>
 <p><code>./pants</code><br/>
@@ -426,7 +433,7 @@ tests.</p>
 <p>You can specify some details of Pants' actions by means of command-line options. E.g., you could
 tell Pants to "fail fast" on the first <code>junit</code> test failure instead of running and reporting all
 <code>junit</code> tests like so:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants test.junit --fail-fast examples/tests/java/org/pantsbuild/example/hello/greet:greet
+<div class="codehilite"><pre><span></span>$ ./pants test.junit --fail-fast examples/tests/java/org/pantsbuild/example/hello/greet:greet
 </pre></div>
 <p>Here, <code>test</code> has become <code>test.junit</code>. The <code>test</code> goal is made up of parts, or <em>tasks</em>: <code>test.junit</code>,
 <code>test.pytest</code>, and <code>test.specs</code>. We want to specify a flag to the <code>test.junit</code> task, so we
@@ -435,18 +442,18 @@ The dotted notation tells Pants where to apply options.)</p>
 <p>We entered the <code>--fail-fast</code> flag after <code>test.junit</code> but before the target. Command-line flags
 for a goal or task go immediately after that goal or task.</p>
 <p>You can specify options for more than one part of a goal. For example,</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants test.junit --fail-fast test.pytest --options<span class="o">=</span><span class="s1">'-k seq'</span> examples/tests::
+<div class="codehilite"><pre><span></span>$ ./pants test.junit --fail-fast test.pytest --options<span class="o">=</span><span class="s1">'-k seq'</span> examples/tests::
 </pre></div>
 <p>Here, the <code>--fail-fast</code> flag affects <code>test.junit</code> and <code>--options</code> affects <code>test.pytest</code>.</p>
 <p>Pants has some global options, options not associated with just one goal. For example,
 If you pass the global <code>-ldebug</code> flag after the word <code>goal</code> but before any particular goal or
 task, you get verbose debug-level logging for all goals:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants -ldebug <span class="nb">test </span>examples/tests/java/org/pantsbuild/example/hello/greet:
-09:18:53 00:00 <span class="o">[</span>main<span class="o">]</span>
+<div class="codehilite"><pre><span></span>$ ./pants -ldebug <span class="nb">test</span> examples/tests/java/org/pantsbuild/example/hello/greet:
+<span class="m">09</span>:18:53 <span class="m">00</span>:00 <span class="o">[</span>main<span class="o">]</span>
                <span class="o">(</span>To run a reporting server: ./pants server<span class="o">)</span>
-09:18:53 00:00   <span class="o">[</span>bootstrap<span class="o">]</span>
-09:18:54 00:01   <span class="o">[</span>setup<span class="o">]</span>
-09:18:54 00:01     <span class="o">[</span>parse<span class="o">]</span>DEBUG<span class="o">]</span> Located Distribution<span class="o">(</span>u<span class="s1">'/Library/Java/JavaVirtualMachines/jdk1.7.0_60.jdk/Contents/Home/bin'</span>, <span class="nv">minimum_version</span><span class="o">=</span>None, <span class="nv">maximum_version</span><span class="o">=</span>None <span class="nv">jdk</span><span class="o">=</span>False<span class="o">)</span> <span class="k">for </span>constraints: minimum_version None, maximum_version None, jdk False
+<span class="m">09</span>:18:53 <span class="m">00</span>:00   <span class="o">[</span>bootstrap<span class="o">]</span>
+<span class="m">09</span>:18:54 <span class="m">00</span>:01   <span class="o">[</span>setup<span class="o">]</span>
+<span class="m">09</span>:18:54 <span class="m">00</span>:01     <span class="o">[</span>parse<span class="o">]</span>DEBUG<span class="o">]</span> Located Distribution<span class="o">(</span>u<span class="s1">'/Library/Java/JavaVirtualMachines/jdk1.7.0_60.jdk/Contents/Home/bin'</span>, <span class="nv">minimum_version</span><span class="o">=</span>None, <span class="nv">maximum_version</span><span class="o">=</span>None <span class="nv">jdk</span><span class="o">=</span>False<span class="o">)</span> <span class="k">for</span> constraints: minimum_version None, maximum_version None, jdk False
 DEBUG<span class="o">]</span> Selected protoc binary bootstrapped to: /Users/lhosken/.pants.d/bin/protobuf/mac/10.9/2.4.1/protoc
 DEBUG<span class="o">]</span> Selected thrift binary bootstrapped to: /Users/lhosken/.pants.d/bin/thrift/mac/10.9/0.5.0-finagle/thrift
    ...lots of build output...
@@ -455,41 +462,41 @@ DEBUG<span class="o">]</span> Selected thrift binary bootstrapped to: /Users/lho
 <h3 id="help">Help</h3>
 <p>To get help about a Pants goal, invoke <tt>./pants <em>goalname</em> -h</tt>. This lists
 command-line options for that goal. E.g.,</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants <span class="nb">test</span> -h
+<div class="codehilite"><pre><span></span>$ ./pants <span class="nb">test</span> -h
 
 cache.test options:
 
 --<span class="o">[</span>no-<span class="o">]</span>cache-test-read <span class="o">(</span>default: True<span class="o">)</span>
-    Read build artifacts from cache, <span class="k">if </span>available.
+    Read build artifacts from cache, <span class="k">if</span> available.
 --<span class="o">[</span>no-<span class="o">]</span>cache-test-write <span class="o">(</span>default: True<span class="o">)</span>
-    Write build artifacts to cache, <span class="k">if </span>available.
+    Write build artifacts to cache, <span class="k">if</span> available.
 
 test.go options:
 Runs <span class="sb">`</span>go <span class="nb">test</span><span class="sb">`</span> on Go packages.
 
---<span class="o">[</span>no-<span class="o">]</span><span class="nb">test</span>-go-remote <span class="o">(</span>default: False<span class="o">)</span>
+--<span class="o">[</span>no-<span class="o">]</span>test-go-remote <span class="o">(</span>default: False<span class="o">)</span>
     Enables running tests found in go_remote_libraries.
 --test-go-build-and-test-flags<span class="o">=</span>&lt;str&gt; <span class="o">(</span>default: <span class="o">)</span>
     Flags to pass in to <span class="sb">`</span>go <span class="nb">test</span><span class="sb">`</span> tool.
-...more <span class="nb">test </span>options...
+...more <span class="nb">test</span> options...
 
 test.junit options:
 
 --test-junit-confs<span class="o">=</span><span class="s2">"['str1','str2',...]"</span> <span class="o">(</span>--test-junit-confs<span class="o">=</span><span class="s2">"['str1','str2',...]"</span><span class="o">)</span> ... <span class="o">(</span>default: <span class="o">[</span><span class="s1">'default'</span><span class="o">])</span>
     Use only these Ivy configurations of external deps.
---<span class="o">[</span>no-<span class="o">]</span><span class="nb">test</span>-junit-skip <span class="o">(</span>default: False<span class="o">)</span>
+--<span class="o">[</span>no-<span class="o">]</span>test-junit-skip <span class="o">(</span>default: False<span class="o">)</span>
     Skip running junit.
---<span class="o">[</span>no-<span class="o">]</span><span class="nb">test</span>-junit-fail-fast <span class="o">(</span>default: False<span class="o">)</span>
-    Fail fast on the first <span class="nb">test </span>failure in a suite.
+--<span class="o">[</span>no-<span class="o">]</span>test-junit-fail-fast <span class="o">(</span>default: False<span class="o">)</span>
+    Fail fast on the first <span class="nb">test</span> failure in a suite.
 
-...many more <span class="nb">test </span>options...
+...many more <span class="nb">test</span> options...
 </pre></div>
 <p>The <code>test</code> goal is made up of parts, or <em>tasks</em> such as <code>test.junit</code> and <code>test.pytest</code>.
 Command-line options apply to those tasks. The goal's help groups options by task. E.g., here, it
 shows the <code>test.go</code> <code>--test-go-build-and-test-flags</code> option with <code>test.go</code>.</p>
 <p>For a list of available goals, <code>./pants goals</code>.</p>
 <p>For help with things that aren't goals (global options, other kinds of help), use</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants -h
+<div class="codehilite"><pre><span></span>$ ./pants -h
 </pre></div>
 <p>If you want help diagnosing some strange Pants behavior, you might want verbose output.
 To get this, instead of just invoking <code>./pants</code>, set some environment variables and request
@@ -497,11 +504,11 @@ more logging: <code>PEX_VERBOSE=5 ./pants -ldebug</code>.</p>
 <h3 id="pantsini">pants.ini</h3>
 <p>Pants allows you to also specify options in a config file. If you want to always run pants
 with a particular option, you can configure it in a file at the root of the repo named <code>pants.ini</code></p>
-<div class="codehilite"><pre><span class="k">[default]</span>
+<div class="codehilite"><pre><span></span><span class="k">[default]</span>
 <span class="na">jvm_options: ["-Xmx1g", "-Dfile.encoding</span><span class="o">=</span><span class="s">UTF8"]</span>
 
 <span class="k">[test.junit]</span>
-<span class="err">fail-fast:</span> <span class="err">True</span>
+<span class="na">fail-fast: True</span>
 </pre></div>
 <p>For more information on the <code>pants.ini</code> file format, see
 <a href="invoking.html">Invoking Pants</a>.</p>
@@ -512,28 +519,28 @@ define targets. For example, this code snippet of <code>java/org/pantsbuild/exam
 defines two targets: the app we ran and the binary that contains its code.
 These targets are named <code>main</code> (of type <code>jvm_app</code>) and and <code>main-bin</code> (of type <code>jvm_binary</code>):</p>
 <p>
-<div class="md-included-snippet"><div class="codehilite"><pre><span class="c"># Note that the target has no explicit name, so it defaults to the name</span>
-<span class="c"># of the directory, in this case 'main'.</span>
+<div class="md-included-snippet"><div class="codehilite"><pre><span></span><span class="c1"># Note that the target has no explicit name, so it defaults to the name</span>
+<span class="c1"># of the directory, in this case 'main'.</span>
 <span class="n">jvm_app</span><span class="p">(</span>
-  <span class="n">basename</span> <span class="o">=</span> <span class="s">'hello-example'</span><span class="p">,</span>
+  <span class="n">basename</span> <span class="o">=</span> <span class="s1">'hello-example'</span><span class="p">,</span>
   <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s">':main-bin'</span>
+    <span class="s1">':main-bin'</span>
   <span class="p">],</span>
   <span class="n">bundles</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">bundle</span><span class="p">(</span><span class="n">relative_to</span><span class="o">=</span><span class="s">'config'</span><span class="p">,</span> <span class="n">fileset</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s">'config/*'</span><span class="p">))</span>
+    <span class="n">bundle</span><span class="p">(</span><span class="n">relative_to</span><span class="o">=</span><span class="s1">'config'</span><span class="p">,</span> <span class="n">fileset</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s1">'config/*'</span><span class="p">))</span>
   <span class="p">]</span>
 <span class="p">)</span>
 
-<span class="c"># The binary, the "runnable" part:</span>
+<span class="c1"># The binary, the "runnable" part:</span>
 
-<span class="n">jvm_binary</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">'main-bin'</span><span class="p">,</span>
+<span class="n">jvm_binary</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s1">'main-bin'</span><span class="p">,</span>
   <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s">'examples/src/java/org/pantsbuild/example/hello/greet'</span><span class="p">,</span>
-    <span class="s">'examples/src/resources/org/pantsbuild/example/hello'</span><span class="p">,</span>
+    <span class="s1">'examples/src/java/org/pantsbuild/example/hello/greet'</span><span class="p">,</span>
+    <span class="s1">'examples/src/resources/org/pantsbuild/example/hello'</span><span class="p">,</span>
   <span class="p">],</span>
-  <span class="n">source</span> <span class="o">=</span> <span class="s">'HelloMain.java'</span><span class="p">,</span>
-  <span class="n">main</span> <span class="o">=</span> <span class="s">'org.pantsbuild.example.hello.main.HelloMain'</span><span class="p">,</span>
-  <span class="n">basename</span> <span class="o">=</span> <span class="s">'hello-example'</span><span class="p">,</span>
+  <span class="n">source</span> <span class="o">=</span> <span class="s1">'HelloMain.java'</span><span class="p">,</span>
+  <span class="n">main</span> <span class="o">=</span> <span class="s1">'org.pantsbuild.example.hello.main.HelloMain'</span><span class="p">,</span>
+  <span class="n">basename</span> <span class="o">=</span> <span class="s1">'hello-example'</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div></div>
 </p>
@@ -546,15 +553,15 @@ The <code>main-bin</code> binary's dependency,
 another target. Addresses look, roughly, like <code>path/to/dir:targetname</code>. We can see this build
 target in the <code>.../hello/greet/BUILD</code> file:</p>
 <p>
-<div class="md-included-snippet"><div class="codehilite"><pre><span class="c"># Note that the target has no explicit name, so it defaults to the name</span>
-<span class="c"># of the directory, in this case 'greet'.</span>
-<span class="c"># It also has no explicit sources, so it defaults to the sources implied</span>
-<span class="c"># by the target type, in this case "globs('*.java')".</span>
+<div class="md-included-snippet"><div class="codehilite"><pre><span></span><span class="c1"># Note that the target has no explicit name, so it defaults to the name</span>
+<span class="c1"># of the directory, in this case 'greet'.</span>
+<span class="c1"># It also has no explicit sources, so it defaults to the sources implied</span>
+<span class="c1"># by the target type, in this case "globs('*.java')".</span>
 <span class="n">java_library</span><span class="p">(</span>
-  <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[],</span> <span class="c"># A more realistic example would depend on other libs,</span>
-                     <span class="c"># but this "hello world" is pretty simple.</span>
-  <span class="n">provides</span> <span class="o">=</span> <span class="n">artifact</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s">'org.pantsbuild.example'</span><span class="p">,</span>
-                      <span class="n">name</span><span class="o">=</span><span class="s">'hello-greet'</span><span class="p">,</span>
+  <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[],</span> <span class="c1"># A more realistic example would depend on other libs,</span>
+                     <span class="c1"># but this "hello world" is pretty simple.</span>
+  <span class="n">provides</span> <span class="o">=</span> <span class="n">artifact</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s1">'org.pantsbuild.example'</span><span class="p">,</span>
+                      <span class="n">name</span><span class="o">=</span><span class="s1">'hello-greet'</span><span class="p">,</span>
                       <span class="n">repo</span><span class="o">=</span><span class="n">public</span><span class="p">,),</span>
 <span class="p">)</span>
 </pre></div></div>
@@ -566,15 +573,15 @@ depend on that library: you might want to run those tests to make sure
 they still work.</p>
 <h3 id="anatomy-of-a-build-target">Anatomy of a <code>BUILD</code> Target</h3>
 <p>A target definition in a <code>BUILD</code> file looks something like</p>
-<div class="codehilite"><pre><span class="n">java_library</span><span class="p">(</span>
-  <span class="n">name</span><span class="o">=</span><span class="s">'util'</span><span class="p">,</span>
+<div class="codehilite"><pre><span></span><span class="n">java_library</span><span class="p">(</span>
+  <span class="n">name</span><span class="o">=</span><span class="s1">'util'</span><span class="p">,</span>
   <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s">'3rdparty:commons-math'</span><span class="p">,</span>
-    <span class="s">'3rdparty:thrift'</span><span class="p">,</span>
-    <span class="s">'src/java/org/pantsbuild/auth'</span><span class="p">,</span>
-    <span class="s">':base'</span>
+    <span class="s1">'3rdparty:commons-math'</span><span class="p">,</span>
+    <span class="s1">'3rdparty:thrift'</span><span class="p">,</span>
+    <span class="s1">'src/java/org/pantsbuild/auth'</span><span class="p">,</span>
+    <span class="s1">':base'</span>
   <span class="p">],</span>
-  <span class="n">sources</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s">'*.java'</span><span class="p">),</span>
+  <span class="n">sources</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s1">'*.java'</span><span class="p">),</span>
 <span class="p">)</span>
 </pre></div>
 <p>Here, <code>java_library</code> is the target's <em>type</em>. Different target types
@@ -609,18 +616,18 @@ Use the <code>test</code> goal with the targets you're interested in. If they ar
 test targets, Pants runs the tests. If they aren't test targets, Pants
 will still compile them since it knows it must compile before it can
 test.</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants <span class="nb">test </span>src/java/com/myorg/myproject tests/java/com/myorg/myproject
+<div class="codehilite"><pre><span></span>$ ./pants <span class="nb">test</span> src/java/com/myorg/myproject tests/java/com/myorg/myproject
 </pre></div>
 <p><strong>Run a binary</strong><br/>
 Use pants to execute a binary target.  Compiles the code first if it is not up to date.</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants run examples/src/java/org/pantsbuild/example/hello/simple
+<div class="codehilite"><pre><span></span>$ ./pants run examples/src/java/org/pantsbuild/example/hello/simple
 </pre></div>
 <p><strong>Get Help</strong><br/>
 Get the list of goals:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants goals
+<div class="codehilite"><pre><span></span>$ ./pants goals
 </pre></div>
 <p>Get help for one goal, e.g., test:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants <span class="nb">test</span> -h
+<div class="codehilite"><pre><span></span>$ ./pants <span class="nb">test</span> -h
 </pre></div>
 <h2 id="next">Next</h2>
 <p>To learn more about working with Python projects, see the
@@ -632,7 +639,7 @@ Get the list of goals:</p>
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/first_tutorial.html 2019-01-08T13:09:38.361373
+              from dist/markdown/html/src/docs/first_tutorial.html 2019-01-19T22:51:26.183215
             </div>
 
           </div> <!-- mainflow -->

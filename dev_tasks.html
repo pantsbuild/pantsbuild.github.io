@@ -279,8 +279,10 @@
 .codehilite .err { border: 1px solid #FF0000 } /* Error */
 .codehilite .k { color: #007020; font-weight: bold } /* Keyword */
 .codehilite .o { color: #666666 } /* Operator */
+.codehilite .ch { color: #60a0b0; font-style: italic } /* Comment.Hashbang */
 .codehilite .cm { color: #60a0b0; font-style: italic } /* Comment.Multiline */
 .codehilite .cp { color: #007020 } /* Comment.Preproc */
+.codehilite .cpf { color: #60a0b0; font-style: italic } /* Comment.PreprocFile */
 .codehilite .c1 { color: #60a0b0; font-style: italic } /* Comment.Single */
 .codehilite .cs { color: #60a0b0; background-color: #fff0f0 } /* Comment.Special */
 .codehilite .gd { color: #A00000 } /* Generic.Deleted */
@@ -288,11 +290,11 @@
 .codehilite .gr { color: #FF0000 } /* Generic.Error */
 .codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
 .codehilite .gi { color: #00A000 } /* Generic.Inserted */
-.codehilite .go { color: #808080 } /* Generic.Output */
+.codehilite .go { color: #888888 } /* Generic.Output */
 .codehilite .gp { color: #c65d09; font-weight: bold } /* Generic.Prompt */
 .codehilite .gs { font-weight: bold } /* Generic.Strong */
 .codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-.codehilite .gt { color: #0040D0 } /* Generic.Traceback */
+.codehilite .gt { color: #0044DD } /* Generic.Traceback */
 .codehilite .kc { color: #007020; font-weight: bold } /* Keyword.Constant */
 .codehilite .kd { color: #007020; font-weight: bold } /* Keyword.Declaration */
 .codehilite .kn { color: #007020; font-weight: bold } /* Keyword.Namespace */
@@ -315,12 +317,15 @@
 .codehilite .nv { color: #bb60d5 } /* Name.Variable */
 .codehilite .ow { color: #007020; font-weight: bold } /* Operator.Word */
 .codehilite .w { color: #bbbbbb } /* Text.Whitespace */
+.codehilite .mb { color: #40a070 } /* Literal.Number.Bin */
 .codehilite .mf { color: #40a070 } /* Literal.Number.Float */
 .codehilite .mh { color: #40a070 } /* Literal.Number.Hex */
 .codehilite .mi { color: #40a070 } /* Literal.Number.Integer */
 .codehilite .mo { color: #40a070 } /* Literal.Number.Oct */
+.codehilite .sa { color: #4070a0 } /* Literal.String.Affix */
 .codehilite .sb { color: #4070a0 } /* Literal.String.Backtick */
 .codehilite .sc { color: #4070a0 } /* Literal.String.Char */
+.codehilite .dl { color: #4070a0 } /* Literal.String.Delimiter */
 .codehilite .sd { color: #4070a0; font-style: italic } /* Literal.String.Doc */
 .codehilite .s2 { color: #4070a0 } /* Literal.String.Double */
 .codehilite .se { color: #4070a0; font-weight: bold } /* Literal.String.Escape */
@@ -331,9 +336,11 @@
 .codehilite .s1 { color: #4070a0 } /* Literal.String.Single */
 .codehilite .ss { color: #517918 } /* Literal.String.Symbol */
 .codehilite .bp { color: #007020 } /* Name.Builtin.Pseudo */
+.codehilite .fm { color: #06287e } /* Name.Function.Magic */
 .codehilite .vc { color: #bb60d5 } /* Name.Variable.Class */
 .codehilite .vg { color: #bb60d5 } /* Name.Variable.Global */
 .codehilite .vi { color: #bb60d5 } /* Name.Variable.Instance */
+.codehilite .vm { color: #bb60d5 } /* Name.Variable.Magic */
 .codehilite .il { color: #40a070 } /* Literal.Number.Integer.Long */
 </style>
 <h1 id="task-developers-guide">Task Developer's Guide</h1>
@@ -370,21 +377,21 @@ registers goals in its <code>register_goals</code> function. Here's an excerpt f
 <a href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/backend/python/register.py">Pants' own Python
 backend</a>:</p>
 <p>
-<div class="md-included-snippet"><div class="codehilite"><pre><span class="k">def</span> <span class="nf">register_goals</span><span class="p">():</span>
-  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'interpreter'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">SelectInterpreter</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s">'pyprep'</span><span class="p">)</span>
-  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'build-local-dists'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">BuildLocalPythonDistributions</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s">'pyprep'</span><span class="p">)</span>
-  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'requirements'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">ResolveRequirements</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s">'pyprep'</span><span class="p">)</span>
-  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'sources'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">GatherSources</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s">'pyprep'</span><span class="p">)</span>
-  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'py'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">PythonRun</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s">'run'</span><span class="p">)</span>
-  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'pytest-prep'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">PytestPrep</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s">'test'</span><span class="p">)</span>
-  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'pytest'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">PytestRun</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s">'test'</span><span class="p">)</span>
-  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'py'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">PythonRepl</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s">'repl'</span><span class="p">)</span>
-  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'setup-py'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">SetupPy</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">()</span>
-  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'py'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">PythonBinaryCreate</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s">'binary'</span><span class="p">)</span>
-  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'py-wheels'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">LocalPythonDistributionArtifact</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s">'binary'</span><span class="p">)</span>
-  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'isort-prep'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">IsortPrep</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s">'fmt'</span><span class="p">)</span>
-  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'isort'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">IsortRun</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s">'fmt'</span><span class="p">)</span>
-  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'py'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">PythonBundle</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s">'bundle'</span><span class="p">)</span>
+<div class="md-included-snippet"><div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">register_goals</span><span class="p">():</span>
+  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'interpreter'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">SelectInterpreter</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s1">'pyprep'</span><span class="p">)</span>
+  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'build-local-dists'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">BuildLocalPythonDistributions</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s1">'pyprep'</span><span class="p">)</span>
+  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'requirements'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">ResolveRequirements</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s1">'pyprep'</span><span class="p">)</span>
+  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'sources'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">GatherSources</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s1">'pyprep'</span><span class="p">)</span>
+  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'py'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">PythonRun</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s1">'run'</span><span class="p">)</span>
+  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'pytest-prep'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">PytestPrep</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s1">'test'</span><span class="p">)</span>
+  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'pytest'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">PytestRun</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s1">'test'</span><span class="p">)</span>
+  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'py'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">PythonRepl</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s1">'repl'</span><span class="p">)</span>
+  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'setup-py'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">SetupPy</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">()</span>
+  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'py'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">PythonBinaryCreate</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s1">'binary'</span><span class="p">)</span>
+  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'py-wheels'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">LocalPythonDistributionArtifact</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s1">'binary'</span><span class="p">)</span>
+  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'isort-prep'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">IsortPrep</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s1">'fmt'</span><span class="p">)</span>
+  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'isort'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">IsortRun</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s1">'fmt'</span><span class="p">)</span>
+  <span class="n">task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'py'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">PythonBundle</span><span class="p">)</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s1">'bundle'</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">rules</span><span class="p">():</span>
@@ -425,16 +432,16 @@ tell Pants about these inter-task dependencies...</p>
 <p>The "early" task class defines a <code>product_types</code> class method that
 returns a list of strings:</p>
 <p>
-<div class="md-included-snippet"><div class="codehilite"><pre>  <span class="k">def</span> <span class="nf">product_types</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
-    <span class="k">return</span> <span class="p">[</span><span class="s">'runtime_classpath'</span><span class="p">]</span>
+<div class="md-included-snippet"><div class="codehilite"><pre><span></span>  <span class="k">def</span> <span class="nf">product_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="s1">'runtime_classpath'</span><span class="p">]</span>
 </pre></div></div>
 </p>
 <p>The "late" task defines a <code>prepare</code> method that calls
 <code>round_manager.require_data</code> to "require" one of those same strings:</p>
 <p>
-<div class="md-included-snippet"><div class="codehilite"><pre>  <span class="k">def</span> <span class="nf">prepare</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">round_manager</span><span class="p">):</span>
-    <span class="nb">super</span><span class="p">(</span><span class="n">DuplicateDetector</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">prepare</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">round_manager</span><span class="p">)</span>
-    <span class="n">round_manager</span><span class="o">.</span><span class="n">require_data</span><span class="p">(</span><span class="s">'runtime_classpath'</span><span class="p">)</span>
+<div class="md-included-snippet"><div class="codehilite"><pre><span></span>  <span class="k">def</span> <span class="nf">prepare</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">round_manager</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">DuplicateDetector</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="n">prepare</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">round_manager</span><span class="p">)</span>
+    <span class="n">round_manager</span><span class="o">.</span><span class="n">require_data</span><span class="p">(</span><span class="s1">'runtime_classpath'</span><span class="p">)</span>
 </pre></div></div>
 </p>
 <p>Pants uses this information to determine which tasks must run first to
@@ -445,10 +452,10 @@ by other tasks. If one product is especially "expensive" to make, perhaps your t
 do so if another task will use it. Use <code>self.context.products.isrequired</code> to find out if a task
 required a product type:</p>
 <p>
-<div class="md-included-snippet"><div class="codehilite"><pre>    <span class="n">catalog</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">isrequired</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jvmdoc</span><span class="p">()</span><span class="o">.</span><span class="n">product_type</span><span class="p">)</span>
+<div class="md-included-snippet"><div class="codehilite"><pre><span></span>    <span class="n">catalog</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">isrequired</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jvmdoc</span><span class="p">()</span><span class="o">.</span><span class="n">product_type</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">catalog</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">combined</span><span class="p">:</span>
       <span class="k">raise</span> <span class="n">TaskError</span><span class="p">(</span>
-          <span class="s">'Cannot provide {} target mappings for combined output'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jvmdoc</span><span class="p">()</span><span class="o">.</span><span class="n">product_type</span><span class="p">))</span>
+          <span class="s1">'Cannot provide {} target mappings for combined output'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jvmdoc</span><span class="p">()</span><span class="o">.</span><span class="n">product_type</span><span class="p">))</span>
 </pre></div></div>
 </p>
 <h2 id="task-implementation-versioning">Task Implementation Versioning</h2>
@@ -456,10 +463,10 @@ required a product type:</p>
 objects from previous runs of pants using an older version are not used.  If you change a task
 class in a way that will impact its outputs you should update the version.  Implementation
 versions are set with the class method implementation_version.</p>
-<div class="codehilite"><pre><span class="n">Class</span> <span class="n">FooTask</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+<div class="codehilite"><pre><span></span><span class="n">Class</span> <span class="n">FooTask</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
   <span class="nd">@classmethod</span>
-  <span class="k">def</span> <span class="nf">implementation_version</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
-    <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">FooTask</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">implementation_version</span><span class="p">()</span> <span class="o">+</span> <span class="p">[(</span><span class="s">'FooTask'</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+  <span class="k">def</span> <span class="nf">implementation_version</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">FooTask</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="n">implementation_version</span><span class="p">()</span> <span class="o">+</span> <span class="p">[(</span><span class="s1">'FooTask'</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
 </pre></div>
 <p>We store both a version number and the name of the class in order to disambiguate changes in
 different classes that have the same implementation version set.</p>
@@ -468,17 +475,17 @@ different classes that have the same implementation version set.</p>
 <p>To define an option, implement your Task's <code>register_options</code>
 class method and call the passed-in <code>register</code> function:</p>
 <p>
-<div class="md-included-snippet"><div class="codehilite"><pre>  <span class="k">def</span> <span class="nf">register_options</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">register</span><span class="p">):</span>
-    <span class="nb">super</span><span class="p">(</span><span class="n">Checkstyle</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">register_options</span><span class="p">(</span><span class="n">register</span><span class="p">)</span>
-    <span class="n">register</span><span class="p">(</span><span class="s">'--configuration'</span><span class="p">,</span> <span class="n">advanced</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">file_option</span><span class="p">,</span> <span class="n">fingerprint</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-             <span class="n">help</span><span class="o">=</span><span class="s">'Path to the checkstyle configuration file.'</span><span class="p">)</span>
-    <span class="n">register</span><span class="p">(</span><span class="s">'--properties'</span><span class="p">,</span> <span class="n">advanced</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">dict_with_files_option</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">{},</span>
+<div class="md-included-snippet"><div class="codehilite"><pre><span></span>  <span class="k">def</span> <span class="nf">register_options</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">register</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">Checkstyle</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="n">register_options</span><span class="p">(</span><span class="n">register</span><span class="p">)</span>
+    <span class="n">register</span><span class="p">(</span><span class="s1">'--configuration'</span><span class="p">,</span> <span class="n">advanced</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">file_option</span><span class="p">,</span> <span class="n">fingerprint</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+             <span class="n">help</span><span class="o">=</span><span class="s1">'Path to the checkstyle configuration file.'</span><span class="p">)</span>
+    <span class="n">register</span><span class="p">(</span><span class="s1">'--properties'</span><span class="p">,</span> <span class="n">advanced</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">dict_with_files_option</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">{},</span>
              <span class="n">fingerprint</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-             <span class="n">help</span><span class="o">=</span><span class="s">'Dictionary of property mappings to use for checkstyle.properties.'</span><span class="p">)</span>
+             <span class="n">help</span><span class="o">=</span><span class="s1">'Dictionary of property mappings to use for checkstyle.properties.'</span><span class="p">)</span>
 </pre></div></div>
 </p>
 <p>Option values are available via <code>self.get_options()</code>:</p>
-<div class="codehilite"><pre><span class="c"># Did user pass in the --my-option CLI flag (or set it in pants.ini)?</span>
+<div class="codehilite"><pre><span></span><span class="c1"># Did user pass in the --my-option CLI flag (or set it in pants.ini)?</span>
 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_options</span><span class="p">()</span><span class="o">.</span><span class="n">my_option</span><span class="p">:</span>
 </pre></div>
 <h3 id="scopes">Scopes</h3>
@@ -512,10 +519,10 @@ will affect the behaviour of the registered option. The most common parameters a
 <h2 id="grouptask">GroupTask</h2>
 <p><code>Task</code>s may be grouped together under a parent <code>GroupTask</code>.
 Specifically, the JVM compile tasks:</p>
-<div class="codehilite"><pre><span class="n">jvm_compile</span> <span class="o">=</span> <span class="n">GroupTask</span><span class="o">.</span><span class="n">named</span><span class="p">(</span>
-<span class="s">'jvm-compilers'</span><span class="p">,</span>
-<span class="n">product_type</span><span class="o">=</span><span class="p">[</span><span class="s">'compile_classpath'</span><span class="p">,</span> <span class="s">'classes_by_source'</span><span class="p">],</span>
-<span class="n">flag_namespace</span><span class="o">=</span><span class="p">[</span><span class="s">'compile'</span><span class="p">])</span>
+<div class="codehilite"><pre><span></span><span class="n">jvm_compile</span> <span class="o">=</span> <span class="n">GroupTask</span><span class="o">.</span><span class="n">named</span><span class="p">(</span>
+<span class="s1">'jvm-compilers'</span><span class="p">,</span>
+<span class="n">product_type</span><span class="o">=</span><span class="p">[</span><span class="s1">'compile_classpath'</span><span class="p">,</span> <span class="s1">'classes_by_source'</span><span class="p">],</span>
+<span class="n">flag_namespace</span><span class="o">=</span><span class="p">[</span><span class="s1">'compile'</span><span class="p">])</span>
 
 <span class="n">jvm_compile</span><span class="o">.</span><span class="n">add_member</span><span class="p">(</span><span class="n">AptCompile</span><span class="p">)</span>
 <span class="n">jvm_compile</span><span class="o">.</span><span class="n">add_member</span><span class="p">(</span><span class="n">ZincCompile</span><span class="p">)</span>
@@ -574,12 +581,12 @@ will be automatically uploaded to the artifact cache.</p>
 <p><strong>VersionedTargetSets</strong></p>
 <p>By default, Pants caching operates on (VT, artifacts) pairs. But certain tasks may need to write multiple targets and their artifacts together under a single cache key. For example, Ivy resolution, where the set of resolved 3rd party dependencies is a property of all targets taken together, not of each target individually.</p>
 <p>To implement caching for groupings of targets, you can override the <code>check_artifact_cache_for</code> method in your task to check for the collected <code>VersionedTarget</code>s as a <code>VersionedTargetSet</code>:</p>
-<div class="codehilite"><pre>def check_artifact_cache_for(self, invalidation_check):
+<div class="codehilite"><pre><span></span>def check_artifact_cache_for(self, invalidation_check):
   return [VersionedTargetSet.from_versioned_targets(invalidation_check.all_vts)]
 </pre></div>
 <p><strong>Manual caching</strong></p>
 <p>Pants allows more fine grained cache management, although it then becomes the responsibility of the task developer to manually upload VT / artifact pairs to the cache. Here is a template for how manual caching might be implemented:</p>
-<div class="codehilite"><pre>def execute(self):
+<div class="codehilite"><pre><span></span>def execute(self):
   targets = self.context.targets(lambda t: isinstance(t, YourTarget)):
   with self.invalidated(targets) as invalidation_check:
 
@@ -604,7 +611,7 @@ look at targets and their flakiness).</p>
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/dev_tasks.html 2019-01-08T13:09:34.106965
+              from dist/markdown/html/src/docs/dev_tasks.html 2019-01-19T22:51:24.104136
             </div>
 
           </div> <!-- mainflow -->

@@ -296,8 +296,10 @@
 .codehilite .err { border: 1px solid #FF0000 } /* Error */
 .codehilite .k { color: #007020; font-weight: bold } /* Keyword */
 .codehilite .o { color: #666666 } /* Operator */
+.codehilite .ch { color: #60a0b0; font-style: italic } /* Comment.Hashbang */
 .codehilite .cm { color: #60a0b0; font-style: italic } /* Comment.Multiline */
 .codehilite .cp { color: #007020 } /* Comment.Preproc */
+.codehilite .cpf { color: #60a0b0; font-style: italic } /* Comment.PreprocFile */
 .codehilite .c1 { color: #60a0b0; font-style: italic } /* Comment.Single */
 .codehilite .cs { color: #60a0b0; background-color: #fff0f0 } /* Comment.Special */
 .codehilite .gd { color: #A00000 } /* Generic.Deleted */
@@ -305,11 +307,11 @@
 .codehilite .gr { color: #FF0000 } /* Generic.Error */
 .codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
 .codehilite .gi { color: #00A000 } /* Generic.Inserted */
-.codehilite .go { color: #808080 } /* Generic.Output */
+.codehilite .go { color: #888888 } /* Generic.Output */
 .codehilite .gp { color: #c65d09; font-weight: bold } /* Generic.Prompt */
 .codehilite .gs { font-weight: bold } /* Generic.Strong */
 .codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-.codehilite .gt { color: #0040D0 } /* Generic.Traceback */
+.codehilite .gt { color: #0044DD } /* Generic.Traceback */
 .codehilite .kc { color: #007020; font-weight: bold } /* Keyword.Constant */
 .codehilite .kd { color: #007020; font-weight: bold } /* Keyword.Declaration */
 .codehilite .kn { color: #007020; font-weight: bold } /* Keyword.Namespace */
@@ -332,12 +334,15 @@
 .codehilite .nv { color: #bb60d5 } /* Name.Variable */
 .codehilite .ow { color: #007020; font-weight: bold } /* Operator.Word */
 .codehilite .w { color: #bbbbbb } /* Text.Whitespace */
+.codehilite .mb { color: #40a070 } /* Literal.Number.Bin */
 .codehilite .mf { color: #40a070 } /* Literal.Number.Float */
 .codehilite .mh { color: #40a070 } /* Literal.Number.Hex */
 .codehilite .mi { color: #40a070 } /* Literal.Number.Integer */
 .codehilite .mo { color: #40a070 } /* Literal.Number.Oct */
+.codehilite .sa { color: #4070a0 } /* Literal.String.Affix */
 .codehilite .sb { color: #4070a0 } /* Literal.String.Backtick */
 .codehilite .sc { color: #4070a0 } /* Literal.String.Char */
+.codehilite .dl { color: #4070a0 } /* Literal.String.Delimiter */
 .codehilite .sd { color: #4070a0; font-style: italic } /* Literal.String.Doc */
 .codehilite .s2 { color: #4070a0 } /* Literal.String.Double */
 .codehilite .se { color: #4070a0; font-weight: bold } /* Literal.String.Escape */
@@ -348,9 +353,11 @@
 .codehilite .s1 { color: #4070a0 } /* Literal.String.Single */
 .codehilite .ss { color: #517918 } /* Literal.String.Symbol */
 .codehilite .bp { color: #007020 } /* Name.Builtin.Pseudo */
+.codehilite .fm { color: #06287e } /* Name.Function.Magic */
 .codehilite .vc { color: #bb60d5 } /* Name.Variable.Class */
 .codehilite .vg { color: #bb60d5 } /* Name.Variable.Global */
 .codehilite .vi { color: #bb60d5 } /* Name.Variable.Instance */
+.codehilite .vm { color: #bb60d5 } /* Name.Variable.Magic */
 .codehilite .il { color: #40a070 } /* Literal.Number.Integer.Long */
 </style>
 <h1 id="twitters-coursier-migration">Twitter's Coursier Migration</h1>
@@ -462,7 +469,7 @@
 <p>Additional note: once caches are on disk, warm resolve is the same between Ivy and Coursier. Hence the improvement is mostly above the p90 range.</p>
 <h2 id="appendix">Appendix</h2>
 <h3 id="1-example-of-translation-for-pants-jar_library-target-to-coursier-command-line">1. Example of translation for Pants jar_library target to Coursier command line</h3>
-<div class="codehilite"><pre>jar_library(
+<div class="codehilite"><pre><span></span>jar_library(
   name='specs2-junit_2.11',
   jars=[
     jar(org='org.specs2', name='specs2-junit_2.11', rev='3.8.9'),
@@ -470,13 +477,13 @@
 )
 </pre></div>
 <p>Translation to Ivy-resolve.xml:</p>
-<div class="codehilite"><pre>&lt;dependency org="org.specs2" name="specs2-junit_2.11" rev="3.8.9"&gt;
+<div class="codehilite"><pre><span></span>&lt;dependency org="org.specs2" name="specs2-junit_2.11" rev="3.8.9"&gt;
    &lt;conf name="default" mapped="default" /&gt;
    &lt;artifact name="specs2-junit_2.11" type="jar" /&gt;
 &lt;/dependency&gt;
 </pre></div>
 <p>Translation to Coursier CLI:</p>
-<div class="codehilite"><pre>./coursier fetch org.specs2:specs2-junit_2.11:3.8.9
+<div class="codehilite"><pre><span></span>./coursier fetch org.specs2:specs2-junit_2.11:3.8.9
 </pre></div>
 <h3 id="2-why-3rdparty-resolve-caching-wasnt-too-great">2. Why 3rdparty resolve caching wasn’t too great?</h3>
 <p>Two major steps are involved when doing 3rdparty resolve</p>
@@ -495,7 +502,7 @@ resolve(A + B) is not necessarily (SetA union SetB) jars, because there may be c
 <p>Exclude jars imported into the project for IntelliJ Junit/Scala runner <a href="https://github.com/pantsbuild/intellij-pants-plugin/pull/331">https://github.com/pantsbuild/intellij-pants-plugin/pull/331</a></p>
 <h3 id="4-resolve-difference-investigation">4. Resolve difference investigation</h3>
 <p>This following script compares the resolves done by Ivy and Coursier on the same target.</p>
-<div class="codehilite"><pre>target=$1
+<div class="codehilite"><pre><span></span>target=$1
 
 echo "target: $target"
 ./pants --resolver-resolver=coursier export --output-file=a.out $target &amp;&gt; /dev/null \
@@ -508,7 +515,7 @@ diff coursier_libs ivy_libs
 <p>Gives a simpler version of the diff is captured below. For example:</p>
 <p><code>&lt;</code> means what Coursier has</p>
 <p><code>&gt;</code> means what Ivy has</p>
-<div class="codehilite"><pre>&lt;   "asm:asm:3.1",
+<div class="codehilite"><pre><span></span>&lt;   "asm:asm:3.1",
 ---
 &gt;   "asm:asm:3.2",
 128d127
@@ -520,10 +527,10 @@ diff coursier_libs ivy_libs
 </pre></div>
 <p>To examine the difference in detail, we need to obtain the reports from Ivy and Coursier, then compare them manually.
 Ivy:</p>
-<div class="codehilite"><pre>./pants --no-cache-resolve-ivy-read --resolver-resolver=ivy invalidate resolve.ivy --open --report &lt;target&gt;
+<div class="codehilite"><pre><span></span>./pants --no-cache-resolve-ivy-read --resolver-resolver=ivy invalidate resolve.ivy --open --report &lt;target&gt;
 </pre></div>
 <p>Coursier:</p>
-<div class="codehilite"><pre>./pants --resolver-resolver=coursier resolve.coursier --report &lt;target&gt;
+<div class="codehilite"><pre><span></span>./pants --resolver-resolver=coursier resolve.coursier --report &lt;target&gt;
 </pre></div>
 <h3 id="5-resolve-differenceserrors-between-ivy-and-coursier">5. Resolve differences/errors between Ivy and Coursier</h3>
 <h4 id="platform-dependent-resolve">Platform dependent resolve</h4>
@@ -545,7 +552,7 @@ Ivy:</p>
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/blog/coursier_migration.html 2019-01-08T13:09:35.054246
+              from dist/markdown/html/src/docs/blog/coursier_migration.html 2019-01-19T22:51:24.584266
             </div>
 
           </div> <!-- mainflow -->

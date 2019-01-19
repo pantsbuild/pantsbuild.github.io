@@ -273,8 +273,10 @@
 .codehilite .err { border: 1px solid #FF0000 } /* Error */
 .codehilite .k { color: #007020; font-weight: bold } /* Keyword */
 .codehilite .o { color: #666666 } /* Operator */
+.codehilite .ch { color: #60a0b0; font-style: italic } /* Comment.Hashbang */
 .codehilite .cm { color: #60a0b0; font-style: italic } /* Comment.Multiline */
 .codehilite .cp { color: #007020 } /* Comment.Preproc */
+.codehilite .cpf { color: #60a0b0; font-style: italic } /* Comment.PreprocFile */
 .codehilite .c1 { color: #60a0b0; font-style: italic } /* Comment.Single */
 .codehilite .cs { color: #60a0b0; background-color: #fff0f0 } /* Comment.Special */
 .codehilite .gd { color: #A00000 } /* Generic.Deleted */
@@ -282,11 +284,11 @@
 .codehilite .gr { color: #FF0000 } /* Generic.Error */
 .codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
 .codehilite .gi { color: #00A000 } /* Generic.Inserted */
-.codehilite .go { color: #808080 } /* Generic.Output */
+.codehilite .go { color: #888888 } /* Generic.Output */
 .codehilite .gp { color: #c65d09; font-weight: bold } /* Generic.Prompt */
 .codehilite .gs { font-weight: bold } /* Generic.Strong */
 .codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-.codehilite .gt { color: #0040D0 } /* Generic.Traceback */
+.codehilite .gt { color: #0044DD } /* Generic.Traceback */
 .codehilite .kc { color: #007020; font-weight: bold } /* Keyword.Constant */
 .codehilite .kd { color: #007020; font-weight: bold } /* Keyword.Declaration */
 .codehilite .kn { color: #007020; font-weight: bold } /* Keyword.Namespace */
@@ -309,12 +311,15 @@
 .codehilite .nv { color: #bb60d5 } /* Name.Variable */
 .codehilite .ow { color: #007020; font-weight: bold } /* Operator.Word */
 .codehilite .w { color: #bbbbbb } /* Text.Whitespace */
+.codehilite .mb { color: #40a070 } /* Literal.Number.Bin */
 .codehilite .mf { color: #40a070 } /* Literal.Number.Float */
 .codehilite .mh { color: #40a070 } /* Literal.Number.Hex */
 .codehilite .mi { color: #40a070 } /* Literal.Number.Integer */
 .codehilite .mo { color: #40a070 } /* Literal.Number.Oct */
+.codehilite .sa { color: #4070a0 } /* Literal.String.Affix */
 .codehilite .sb { color: #4070a0 } /* Literal.String.Backtick */
 .codehilite .sc { color: #4070a0 } /* Literal.String.Char */
+.codehilite .dl { color: #4070a0 } /* Literal.String.Delimiter */
 .codehilite .sd { color: #4070a0; font-style: italic } /* Literal.String.Doc */
 .codehilite .s2 { color: #4070a0 } /* Literal.String.Double */
 .codehilite .se { color: #4070a0; font-weight: bold } /* Literal.String.Escape */
@@ -325,9 +330,11 @@
 .codehilite .s1 { color: #4070a0 } /* Literal.String.Single */
 .codehilite .ss { color: #517918 } /* Literal.String.Symbol */
 .codehilite .bp { color: #007020 } /* Name.Builtin.Pseudo */
+.codehilite .fm { color: #06287e } /* Name.Function.Magic */
 .codehilite .vc { color: #bb60d5 } /* Name.Variable.Class */
 .codehilite .vg { color: #bb60d5 } /* Name.Variable.Global */
 .codehilite .vi { color: #bb60d5 } /* Name.Variable.Instance */
+.codehilite .vm { color: #bb60d5 } /* Name.Variable.Magic */
 .codehilite .il { color: #40a070 } /* Literal.Number.Integer.Long */
 </style>
 <h1 id="create-a-bundled-zip-or-other-archive">Create a Bundled zip or Other Archive</h1>
@@ -343,22 +350,22 @@
 <li><code>.tbz2</code></li>
 </ul>
 <p>In order to use the <code>bundle</code> goal, you need to target a <code>jvm_app</code> definition. Here's an example target:</p>
-<div class="codehilite"><pre><span class="n">jvm_app</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'bundle'</span><span class="p">,</span>
-  <span class="n">basename</span><span class="o">=</span><span class="s">'my-project-deployable-bundle'</span><span class="p">,</span>
-  <span class="n">binary</span><span class="o">=</span><span class="s">':my-project-binary-target'</span><span class="p">,</span> <span class="c"># should point to a jvm_binary target</span>
+<div class="codehilite"><pre><span></span><span class="n">jvm_app</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'bundle'</span><span class="p">,</span>
+  <span class="n">basename</span><span class="o">=</span><span class="s1">'my-project-deployable-bundle'</span><span class="p">,</span>
+  <span class="n">binary</span><span class="o">=</span><span class="s1">':my-project-binary-target'</span><span class="p">,</span> <span class="c1"># should point to a jvm_binary target</span>
 <span class="p">)</span>
 </pre></div>
 <p>There are two ways to specify the desired file format:</p>
 <h3 id="1-through-the-build-file-recommended">1. Through the <code>BUILD</code> file (recommended)</h3>
 <p>Add an <code>archive</code> parameter to your <code>jvm_app</code> target. Here's an example:</p>
-<div class="codehilite"><pre><span class="n">jvm_app</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'bundle'</span><span class="p">,</span>
-  <span class="n">archive</span><span class="o">=</span><span class="s">'zip'</span><span class="p">,</span>
-  <span class="c"># etc</span>
+<div class="codehilite"><pre><span></span><span class="n">jvm_app</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'bundle'</span><span class="p">,</span>
+  <span class="n">archive</span><span class="o">=</span><span class="s1">'zip'</span><span class="p">,</span>
+  <span class="c1"># etc</span>
 <span class="p">)</span>
 </pre></div>
 <h3 id="2-via-the-command-line-which-can-override-1">2. Via the command line (which can override #1)</h3>
 <p>Add a <code>--bundle-jvm-archive</code> option when invoking the Pants executable. Here's an example:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>./pants bundle myproject/subproject:bundle --bundle-jvm-archive<span class="o">=</span>zip
+<div class="codehilite"><pre><span></span>$ ./pants bundle myproject/subproject:bundle --bundle-jvm-archive<span class="o">=</span>zip
 </pre></div>
 <p><strong>Note</strong>: If you perform <em>neither</em> of the steps explained in #1 and #2, no bundle will be created.</p>
 <h2 id="discussion">Discussion</h2>
@@ -372,7 +379,7 @@
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/common_tasks/bundle.html 2019-01-08T13:09:38.594517
+              from dist/markdown/html/src/docs/common_tasks/bundle.html 2019-01-19T22:51:26.297137
             </div>
 
           </div> <!-- mainflow -->
