@@ -8,11 +8,11 @@
 
 <head>
   <meta charset="utf-8"/>
-  <title>Create an Alias for a Target</title>
+  <title>Python gRPC + protobufs</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" href="pants-logo.ico">
   <!-- In case this is a "test publish", tell search engines where real version lives: -->
-  <link rel="canonical" href="http://pantsbuild.org/alias.html">
+  <link rel="canonical" href="http://pantsbuild.org/grpcio_gen.html">
 
   <link rel="stylesheet" href="bootstrap-custom.min.css">
   <link rel="stylesheet" href="bootstrap-custom-theme.min.css">
@@ -159,8 +159,8 @@
                   <li class="toc-h1 toc-link ">
                     <a href="thrift_deps.html">Thrift</a>
                   </li>
-                  <li class="toc-h1 toc-link ">
-                    <a href="grpcio_gen.html">Python gRPC + protobufs</a>
+                  <li class="toc-h1 toc-link toc-here">
+                    Python gRPC + protobufs
                   </li>
                   <li class="toc-h1 toc-link ">
                     <a href="page.html">Markdown</a>
@@ -263,8 +263,8 @@
                 <ul>
                     <li class="toc-h1"><a href="#problem">Problem</a></li>
                     <li class="toc-h1"><a href="#solution">Solution</a></li>
-                    <li class="toc-h1"><a href="#discussion">Discussion</a></li>
-                    <li class="toc-h1"><a href="#see-also">See Also</a></li>
+                    <li class="toc-h1"><a href="#usage">Usage</a></li>
+                    <li class="toc-h1"><a href="#example">Example:</a></li>
                 </ul>
               </nav>
 
@@ -341,64 +341,46 @@
 .codehilite .vm { color: #bb60d5 } /* Name.Variable.Magic */
 .codehilite .il { color: #40a070 } /* Literal.Number.Integer.Long */
 </style>
-<h1 id="create-an-alias-for-a-target">Create an Alias for a Target</h1>
+<h1 id="python-grpc-protobufs">Python gRPC + protobufs</h1>
 <h2 id="problem">Problem</h2>
-<p>You have a library target definition buried deep within the directory structure
-of your project and want to make it easier for others to refer to that
-definition (for example when specifying dependencies).</p>
+<p>You have <code>.proto</code> files defining protobufs and grpc services and you want Pants to generate Python code from them that you can use from a Python application.</p>
 <h2 id="solution">Solution</h2>
-<p>Specify an <code>alias</code> definition that refers to a target deeper in the directory
-tree and acts as a proxy for it.</p>
-<h2 id="discussion">Discussion</h2>
-<p>Let's say that you have a project with a <code>BUILD</code> file specifying a Scala
-<code>scala_library</code> target that's deep in the directory tree, for example at
-<code>myproject/subproject/src/main/scala</code>. In order for other libraries to depend
-on that project, you'd need to add something like this to their dependencies:</p>
-<div class="codehilite"><pre><span></span><span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
-  <span class="c1"># ...</span>
-  <span class="s1">'myproject/src/main/scala/com/twitter/myproject:scala'</span><span class="p">,</span>
-  <span class="c1"># ...</span>
-<span class="p">]</span>
+<p>Create <code>python_grpc_library</code> targets and use the gen goal to generate code from the <code>.proto</code> files. There is a codegen task grpcio-run, that uses Python's grpcio library https://grpc.io/ and generates python code from .proto files.</p>
+<h2 id="usage">Usage</h2>
+<p>in a <code>BUILD</code> file near your proto files, create a <code>python_grpcio_library</code> target with your protos as a <code>sources</code>.</p>
+<div class="codehilite"><pre><span></span>python_grpcio_library(
+  sources=['service.proto'],
+  dependencies=[
+    '3rdparty/python:protobuf',
+  ]
+)
 </pre></div>
-<p>In addition, Pants commands would be similarly verbose:</p>
-<div class="codehilite"><pre><span></span>$ ./pants compile myproject/src/main/scala/com/twitter/myproject:scala
+<p>Then, you can add a dependency on this target in your python binary's <code>BUILD</code> file <code>dependencies</code> section:</p>
+<div class="codehilite"><pre><span></span>python_binary(
+  source='server.py',
+  dependencies=[
+#    [...]
+    'examples/src/protobuf/org/pantsbuild/example/grpcio/service'
+  ],
+)
 </pre></div>
-<p>You can simplify this by creating an <code>alias</code> definition in a <code>BUILD</code> file
-stored in a more convenient location in the directory tree, for example in the root directory. Here's an example:</p>
-<div class="codehilite"><pre><span></span><span class="p">::</span> <span class="n">python</span>
-<span class="c1"># myproject/BUILD</span>
-<span class="n">alias</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s1">'myproject'</span><span class="p">,</span>
-    <span class="n">target</span><span class="o">=</span><span class="s1">'myproject/src/main/scala/com/twitter/myproject/subproject/util:scala'</span>
-<span class="p">)</span>
+<h2 id="example">Example:</h2>
+<p>An example Python grpc client/server can be found in <a href="https://github.com/pantsbuild/pants/tree/master/examples/src/python/example/grpcio">/examples/src/python/example/grpcio</a></p>
+<p>to create a gRPC server execute</p>
+<div class="codehilite"><pre><span></span>./pants run examples/src/python/example/grpcio/server
 </pre></div>
-<p>Now, other projects can depend on the library target in a more concise manner:</p>
-<div class="codehilite"><pre><span></span><span class="p">::</span> <span class="n">python</span>
-<span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
-  <span class="c1"># ...</span>
-  <span class="s1">'myproject:myproject'</span><span class="p">,</span>
-  <span class="c1"># ...</span>
-<span class="p">]</span>
+<p>and when server is running, run client example:</p>
+<div class="codehilite"><pre><span></span>./pants run examples/src/python/example/grpcio/client
 </pre></div>
-<p>Pants commands involving the alias are simplified as well. Here's a comparison:</p>
-<div class="codehilite"><pre><span></span>:: bash
-
-<span class="c1"># Without an alias</span>
-$ ./pants compile myproject/src/main/scala/com/twitter/myproject/subproject/util:scala
-
-<span class="c1"># With an alias</span>
-$ ./pants compile myproject:myproject
+<p>generated code can be found as usual in pants output directory:</p>
+<div class="codehilite"><pre><span></span>./pants.d/gen/grpcio-run/current/examples.src.protobuf.org.pantsbuild.example.service.service/current/org/pantsbuild/example/service
 </pre></div>
-<h2 id="see-also">See Also</h2>
-<ul>
-<li><a href="dependencies.html">Add a Dependency on Another Target</a></li>
-</ul>
 
             <!-- main content end -->
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/common_tasks/alias.html 2019-02-05T16:58:39.805274
+              from dist/markdown/html/src/docs/common_tasks/python_proto_gen.html 2019-02-05T16:58:39.735332
             </div>
 
           </div> <!-- mainflow -->
