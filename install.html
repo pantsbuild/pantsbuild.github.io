@@ -348,51 +348,40 @@
 .codehilite .il { color: #40a070 } /* Literal.Number.Integer.Long */
 </style>
 <h1 id="installing-pants">Installing Pants</h1>
-<p>There are a few ways to get a runnable version of pants set up for your workspace. Before
-beginning, make sure your machine fits the requirements. At a minimum, pants requires the following to run properly:</p>
+<p>There are a few ways to get a runnable version of Pants set up for your workspace. Before
+beginning, make sure your machine fits the requirements. At a minimum, Pants requires the following to run properly:</p>
 <ul>
-<li>Linux or Mac OS X.</li>
-<li>Python 2.7.x (the latest stable version of 2.7 is recommended).</li>
+<li>Linux or macOS.</li>
+<li>Python 2.7 or 3.6.</li>
 <li>A C compiler, system headers, Python headers (to compile native Python modules) and the libffi
   library and headers (to compile and link modules that use CFFI to access native code).</li>
 <li>OpenJDK or Oracle JDK 7 or greater.</li>
-<li>Internet access (so that pants can fully bootstrap itself)</li>
+<li>Internet access (so that Pants can fully bootstrap itself)</li>
 </ul>
-<p>After you have pants installed, you'll need to
+<p>After you have Pants installed, you'll need to
 <a href="setup_repo.html">Set up your code workspace to work with Pants</a>.</p>
 <h2 id="recommended-installation">Recommended Installation</h2>
-<p>To set up pants in your repo, we recommend installing our self-contained <code>pants</code> bash script
-in the root (ie, "buildroot") of your repo:</p>
-<div class="codehilite"><pre><span></span>curl -L -O https://pantsbuild.github.io/setup/pants <span class="o">&amp;&amp;</span> chmod +x pants <span class="o">&amp;&amp;</span> touch pants.ini
+<p>To set up Pants in your repo, we recommend installing our self-contained <code>pants</code> bash script
+in the root (i.e. the "buildroot") of your repo:</p>
+<div class="codehilite"><pre><span></span>curl -L -O https://pantsbuild.github.io/setup/pants <span class="o">&amp;&amp;</span> chmod +x pants
 </pre></div>
-<p>The first time you run the new <code>./pants</code> script it will install the latest version of pants (using
-virtualenv) and then run it.  It's recommended though, that you pin the version of pants.  To do
-this, first find out the version of pants you just installed:</p>
-<div class="codehilite"><pre><span></span>./pants -V
-<span class="m">1</span>.0.0
+<p>Start by running the below command to auto-generate a <code>pants.ini</code> config file with sensible defaults.</p>
+<div class="codehilite"><pre><span></span>./pants generate-pants-ini
 </pre></div>
-<p>Then add an entry like so to <code>pants.ini</code> with that version:</p>
+<p>This command pins the <code>pants_version</code>. When you'd like to upgrade Pants, just edit the version in <code>pants.ini</code> and <code>./pants</code> will self-update on the next run.</p>
+<p>To use Pants plugins published to PyPi, add them to a <code>plugins</code> list, like so:</p>
 <div class="codehilite"><pre><span></span><span class="k">[GLOBAL]</span>
-<span class="na">pants_version: 1.0.0</span>
-</pre></div>
-<p>When you'd like to upgrade pants, just edit the version in <code>pants.ini</code> and pants will self-update on
-the next run.  This script stores the various pants versions you use centrally in
-<code>~/.cache/pants/setup</code>.  When you switch back and forth between branches pants will select the
-correct version from your local cache and use that.</p>
-<p>If you use pants plugins published to pypi you can configure them by adding a <code>plugins</code> list as
-follows:</p>
-<div class="codehilite"><pre><span></span><span class="k">[GLOBAL]</span>
-<span class="na">pants_version: 1.0.0</span>
+<span class="na">pants_version: 1.15.0</span>
 
 <span class="na">plugins: [</span>
     <span class="na">'pantsbuild.pants.contrib.go</span><span class="o">=</span><span class="s">=%(pants_version)s',</span>
 <span class="s">    'pantsbuild.pants.contrib.scrooge==%(pants_version)s',</span>
 <span class="s">  ]</span>
 </pre></div>
-<p>Pants notices you changed your plugins and it installs them.
-NB: The formatting of the plugins list is important; all lines below the <code>plugins:</code> line must be
-indented by at least one white space to form logical continuation lines. This is standard for python
-ini files, see <a href="options.html">Options</a>.</p>
+<p>Pants will notice you changed your plugins and will install them the next time you run <code>./pants</code>.</p>
+<p>Note that the formatting of the plugins list is important; all lines below the <code>plugins:</code> line must be
+indented by at least one white space to form logical continuation lines. This is standard for Python
+ini files. See <a href="options.html">Options</a> for a guide on modifying your <code>pants.ini</code>.</p>
 <h2 id="the-pants-runner-script">The ./pants Runner Script</h2>
 <p>We highly recommend invoking pants via a checked-in runner script named <code>pants</code> in the
 root of your workspace, as demonstrated above.  Pants uses the presence of such a file, in the
@@ -421,7 +410,7 @@ where you are attempting to bootstrap pants. In particular, if you see an error 
 Failed to install requirements from /Users/someuser/workspace/pants/3rdparty/python/requirements.txt.
 </pre></div>
 <p>This indicates that pants was attempting to <code>pip install</code> the <code>psutil</code> dependency into it's private
-virtualenv, and that install failed due to a compiler issue. On Mac OS X, we recommend running
+virtualenv, and that install failed due to a compiler issue. On macOS, we recommend running
 <code>xcode-select --install</code> to make sure you have the latest compiler infrastructure installed, and
 unset any compiler-related environment variables (i.e. run <code>unset CC</code>).</p>
 
@@ -429,7 +418,7 @@ unset any compiler-related environment variables (i.e. run <code>unset CC</code>
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/install.html 2019-04-12T20:15:20.825566
+              from dist/markdown/html/src/docs/install.html 2019-04-13T09:49:42.138080
             </div>
 
           </div> <!-- mainflow -->
