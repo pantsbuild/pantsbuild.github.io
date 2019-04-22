@@ -8,11 +8,11 @@
 
 <head>
   <meta charset="utf-8"/>
-  <title>Specify a Test Suite for Your Project</title>
+  <title>Create a Target Aggregate</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" href="pants-logo.ico">
   <!-- In case this is a "test publish", tell search engines where real version lives: -->
-  <link rel="canonical" href="http://pantsbuild.org/test_suite.html">
+  <link rel="canonical" href="http://pantsbuild.org/target_aggregate.html">
 
   <link rel="stylesheet" href="bootstrap-custom.min.css">
   <link rel="stylesheet" href="bootstrap-custom-theme.min.css">
@@ -269,6 +269,7 @@
                 <ul>
                     <li class="toc-h1"><a href="#problem">Problem</a></li>
                     <li class="toc-h1"><a href="#solution">Solution</a></li>
+                    <li class="toc-h1"><a href="#see-also">See Also</a></li>
                 </ul>
               </nav>
 
@@ -345,41 +346,33 @@
 .codehilite .vm { color: #bb60d5 } /* Name.Variable.Magic */
 .codehilite .il { color: #40a070 } /* Literal.Number.Integer.Long */
 </style>
-<h1 id="specify-a-test-suite-for-your-project">Specify a Test Suite for Your Project</h1>
+<h1 id="create-a-target-aggregate">Create a Target Aggregate</h1>
 <h2 id="problem">Problem</h2>
-<p>You need to create a suite of tests that you can run using Pants' <code>test</code> goal.</p>
+<p>You want to create a common target that when run in turn run several other targets</p>
 <h2 id="solution">Solution</h2>
-<p>For Scala or Java, create a <code>junit_tests</code> target definition that defines your suite; for Python, create a <code>python_tests</code> definition. For both target types, you need to specify:</p>
+<p>Use a literal <code>target</code> definition in your BUILD file to specify an aggregate target that depends on all the targets you wish to run</p>
+<p>Here's an example <code>target</code> definition that creates a target names <code>agg</code> dependent on two modules named <code>dep1</code> and <code>dep2</code>:</p>
+<div class="codehilite"><pre><span></span><span class="p">::</span> <span class="n">python</span>
+<span class="c1"># agg/BUILD</span>
+<span class="n">target</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'agg'</span><span class="p">,</span>
+  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
+    <span class="s1">'myproject/src/main/scala/com/twitter/myproject/subproject/dep1:scala'</span><span class="p">,</span>
+    <span class="s1">'myproject/src/main/scala/com/twitter/myproject/subproject/dep2:scala'</span>
+  <span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+<p>Triggering any goal for <code>agg</code> will trigger said goal for both <code>dep1</code> and <code>dep2</code></p>
+<p>If you wish to create an alias for an existing target see <a href="alias.html">Create an Alias for a Target</a></p>
+<h2 id="see-also">See Also</h2>
 <ul>
-<li>A <code>name</code> for the Pants target</li>
-<li>A list of <code>sources</code> specifying which files contain the tests themselves</li>
-<li>A list of <code>dependencies</code> (which in many cases will include only the library being tested but could include others)</li>
-<li>A list of <code>resources</code> (optional). More info can be found in <a href="resources.html">Create a Resource Bundle</a></li>
+<li><a href="alias.html">Create an Alias for a Target</a></li>
 </ul>
-<p>Below is an example <code>junit_tests</code> definition followed by a <code>python_tests</code> definition:</p>
-<div class="codehilite"><pre><span></span><span class="n">junit_tests</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'scala-tests'</span><span class="p">,</span>
-  <span class="n">sources</span><span class="o">=</span><span class="n">rglobs</span><span class="p">(</span><span class="s1">'*.scala'</span><span class="p">),</span>
-  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
-    <span class="s1">'myproject/src/main/scala'</span><span class="p">,</span>
-  <span class="p">]</span>
-<span class="p">)</span>
-
-<span class="n">python_tests</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'python-tests'</span><span class="p">,</span>
-  <span class="n">sources</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s1">'*.py'</span><span class="p">),</span>
-  <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
-    <span class="s1">'myproject/src/python'</span><span class="p">,</span>
-  <span class="p">]</span>
-<span class="p">)</span>
-</pre></div>
-<p>Now you can <a href="test.html">run the test</a> using the Pants <code>test</code> goal like this:</p>
-<div class="codehilite"><pre><span></span>$ ./pants <span class="nb">test</span> myproject/src/tests:scala-tests
-</pre></div>
 
             <!-- main content end -->
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/common_tasks/test_suite.html 2019-04-22T15:28:48.465580
+              from dist/markdown/html/src/docs/common_tasks/target_aggregate.html 2019-04-22T15:28:48.505440
             </div>
 
           </div> <!-- mainflow -->
