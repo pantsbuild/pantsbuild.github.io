@@ -187,6 +187,9 @@
                   <a class="sidebar-nav-heading" class="toc-drop" data-toggle="collapse" href="#Release-Notes" aria-expanded="false" aria-controls="Release-Notes">Release Notes<span class="caret"></span></a>
                     <ul class="collapse sidebar-nav sidebar-submenu" id="Release-Notes">
                         <li class="toc-h1 toc-link ">
+                          <a href="notes-1.23.x.html">1.23.x Stable Releases</a>
+                        </li>
+                        <li class="toc-h1 toc-link ">
                           <a href="notes-1.22.x.html">1.22.x Stable Releases</a>
                         </li>
                         <li class="toc-h1 toc-link ">
@@ -295,6 +298,8 @@
                     <li class="toc-h2"><a href="#benefits">Benefits</a></li>
                     <li class="toc-h2"><a href="#caveats">Caveats</a></li>
                     <li class="toc-h2"><a href="#usage">Usage</a></li>
+                    <li class="toc-h3"><a href="#killing-the-daemon">Killing the Daemon</a></li>
+                    <li class="toc-h3"><a href="#observation-tools">Observation Tools</a></li>
                     <li class="toc-h2"><a href="#rollout">Rollout</a></li>
                     <li class="toc-h1"><a href="#profiling-pants">Profiling Pants</a></li>
                 </ul>
@@ -464,50 +469,28 @@ cases where relatively small portions of the repo have changed since the previou
 <h3 id="caveats">Caveats</h3>
 <p>As of <code>1.4.0</code>, there is one remaining set of caveats to using the daemon:</p>
 <ul>
-<li>Although <code>./pants repl</code> works, it is missing some advanced TTY integrations which prevent
-  line editing and some control sequences from being propagated. See the
-  <a href="https://github.com/pantsbuild/pants/milestone/11">Daemon Beta milestone</a> for a summary.</li>
+<li>Although <code>./pants repl</code> works, it is missing some advanced TTY integrations which prevent line
+  editing and some control sequences from being propagated. Ammonite in particular has a known issue
+  -- see <a href="https://github.com/pantsbuild/pants/issues/5223">#5223</a>.</li>
 </ul>
 <h3 id="usage">Usage</h3>
-<p>To enable the daemon, see the example in <code>pants.daemon.ini</code> in the root of the pantsbuild repo:</p>
-<p>
-<div class="md-included-snippet"><div class="codehilite"><pre><span></span><span class="c1"># A config override that enables use of pantsd. This is currently recommended for beta testers.</span>
-<span class="c1">#</span>
-<span class="c1"># Usage:</span>
-<span class="c1">#</span>
-<span class="c1">#    In a shell that you want to use the daemon in:</span>
-<span class="c1">#</span>
-<span class="c1">#      $ export PANTS_CONFIG_FILES="$(pwd)/pants.daemon.ini"</span>
-<span class="c1">#</span>
-<span class="c1">#    And then use pants as you normally would:</span>
-<span class="c1">#</span>
-<span class="c1">#      $ ./pants ...</span>
-<span class="c1">#</span>
-<span class="c1">#    To kill the daemon, you can run either <code>clean-all</code> or <code>kill-pantsd</code>:</span>
-<span class="c1">#</span>
-<span class="c1">#      $ ./pants clean-all</span>
-<span class="c1">#      $ ./pants kill-pantsd</span>
-<span class="c1">#</span>
-<span class="c1">#</span>
-<span class="c1"># Observation Tools:</span>
-<span class="c1">#</span>
-<span class="c1">#  To see what's going on with the daemon, you can tail the pantsd log file in another window:</span>
-<span class="c1">#</span>
-<span class="c1">#    $ cd $SOURCE</span>
-<span class="c1">#    $ tail -F .pants.d/pantsd/pantsd.log</span>
-<span class="c1">#</span>
-<span class="c1">#  To see what's going on with the client, runner and daemon processes you can watch the process table:</span>
-<span class="c1">#</span>
-<span class="c1">#    $ watch -n.1 "ps -ef | grep -v grep | grep pants"</span>
-<span class="c1">#</span>
-
-<span class="k">[GLOBAL]</span>
-<span class="na">enable_pantsd: True</span>
-</pre></div></div>
-</p>
+<p>To enable the daemon, turn on the <code>--enable-pantsd</code> global option via CLI arg, environment variable, or <code>pants.ini</code> (see <a href="options.html">Options</a>).</p>
+<h4 id="killing-the-daemon">Killing the Daemon</h4>
+<p>To kill the daemon, you can run either <code>clean-all</code> or <code>kill-pantsd</code>:</p>
+<div class="codehilite"><pre><span></span>./pants clean-all
+./pants kill-pantsd
+</pre></div>
+<h4 id="observation-tools">Observation Tools</h4>
+<p>To see what's going on with the daemon, you can tail the pantsd log file in another window:</p>
+<div class="codehilite"><pre><span></span><span class="nb">cd</span> <span class="nv">$SOURCE</span>
+tail -F .pants.d/pantsd/pantsd.log
+</pre></div>
+<p>To see what's going on with the client and daemon processes, you can watch the process table:</p>
+<div class="codehilite"><pre><span></span>watch -n.1 <span class="s2">"ps -ef | grep -v grep | grep pants"</span>
+</pre></div>
 <h3 id="rollout">Rollout</h3>
 <p>The daemon will be in beta until the caveat mentioned above is addressed, but we hope to
-enable the daemon by default for the <a href="https://github.com/pantsbuild/pants/milestone/12"><code>1.5.0</code> release of pants</a>.</p>
+enable the daemon by default soon.</p>
 <h2 id="profiling-pants">Profiling Pants</h2>
 <p>There are three environment variables that profile various parts of a pants run.</p>
 <ul>
@@ -528,7 +511,7 @@ then run pants:</p>
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/invoking.html 2019-11-17T21:56:07.466503
+              from dist/markdown/html/src/docs/invoking.html 2019-11-22T14:15:46.336342
             </div>
 
           </div> <!-- mainflow -->
