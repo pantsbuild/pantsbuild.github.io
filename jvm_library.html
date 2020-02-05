@@ -187,6 +187,9 @@
                   <a class="sidebar-nav-heading" class="toc-drop" data-toggle="collapse" href="#Release-Notes" aria-expanded="false" aria-controls="Release-Notes">Release Notes<span class="caret"></span></a>
                     <ul class="collapse sidebar-nav sidebar-submenu" id="Release-Notes">
                         <li class="toc-h1 toc-link ">
+                          <a href="notes-1.25.x.html">1.25.x Stable Releases</a>
+                        </li>
+                        <li class="toc-h1 toc-link ">
                           <a href="notes-1.24.x.html">1.24.x Stable Releases</a>
                         </li>
                         <li class="toc-h1 toc-link ">
@@ -380,29 +383,29 @@
 <p><strong>Note</strong>: If you need to define a new Scala or Java <em>binary target</em>, see <a href="jvm_binary.html">Define a JVM Executable</a></p>
 <h2 id="solution">Solution</h2>
 <p>Add a <code>scala_library</code> or <code>java_library</code> target to a <code>BUILD</code> file in the appropriate directory. A <code>scala_library</code> or <code>java_library</code> target will enable you to compile the library using Pants' <code>compile</code> goal. Here's an example:</p>
-<div class="codehilite"><pre><span></span>$ ./pants compile myproject/src/main/scala
-<span class="c1"># Assuming there's a BUILD file with a scala_library definition named "scala" in that location</span>
+<div class="codehilite"><pre><span></span>$ ./pants compile src/scala/com/myorg/myproject/example:hello
 </pre></div>
 <h2 id="discussion">Discussion</h2>
 <p>A <code>scala_library</code> or <code>java_library</code> target should specify the following:</p>
 <ul>
 <li>A <code>name</code> for the library. This may be something like just <code>scala</code> if you have only one <code>scala_library</code> target in a project or something more specific like <code>client-lib</code>.</li>
-<li>Either a single <code>source</code> file or a list of <code>sources</code>. If you're including just a few files, you should consider specifying a sources list, e.g. <code>sources=['File1.scala', 'File2.scala']</code>; if you're including, you may want to specify a <code>globs</code> or <code>rglobs</code>, e.g. <code>sources=globs('*.scala')</code>. More info can be found in <a href="globs.html">Use globs and rglobs to Group Files</a>. The example further down use an <code>rglobs</code> definition.</li>
+<li>Either the <code>source</code> field with a single file or the <code>sources</code> field with a list of file names and globs.</li>
 <li>A list of <code>dependencies</code> (optional). More info on dependencies can be found in <a href="dependencies.html">Add a Dependency on Another Target</a>.</li>
 </ul>
 <p>Here's an example target definition:</p>
-<div class="codehilite"><pre><span></span><span class="c1"># myproject/src/main/scala/BUILD</span>
-<span class="n">scala_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'scala'</span><span class="p">,</span>
-  <span class="n">sources</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s1">'*.scala'</span><span class="p">),</span>
+<div class="codehilite"><pre><span></span><span class="c1"># src/scala/com/myorg/myproject/example/BUILD</span>
+<span class="n">scala_library</span><span class="p">(</span>
+  <span class="n">name</span><span class="o">=</span><span class="s1">'scala'</span><span class="p">,</span>
+  <span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="s1">'*.scala'</span><span class="p">],</span>
   <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
-    <span class="s1">'client-lib'</span><span class="p">,</span>
-    <span class="s1">'analytics-lib'</span><span class="p">,</span>
+    <span class="s1">'src/scala/com/myorg/myproject/client-lib'</span><span class="p">,</span>
+    <span class="s1">'src/scala/com/myorg/myproject/analytics-lib'</span><span class="p">,</span>
     <span class="s1">'static/resources/json:config'</span><span class="p">,</span>
   <span class="p">],</span>
 <span class="p">)</span>
 </pre></div>
-<p>That library can then be compiled (perhaps for debugging purposes):</p>
-<div class="codehilite"><pre><span></span><span class="err">$</span> <span class="o">./</span><span class="n">pants</span> <span class="nb">compile</span> <span class="n">myproject</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">/</span><span class="n">scala</span>
+<p>That library can then be compiled with:</p>
+<div class="codehilite"><pre><span></span><span class="err">$</span> <span class="o">./</span><span class="n">pants</span> <span class="nb">compile</span> <span class="n">src</span><span class="o">/</span><span class="n">scala</span><span class="o">/</span><span class="n">com</span><span class="o">/</span><span class="n">myorg</span><span class="o">/</span><span class="n">myproject</span><span class="o">/</span><span class="n">example</span>
 </pre></div>
 <p>You can combine library targets together into a single target using a <strong>target aggregate</strong>. More info can be found in <a href="target_aggregate.html">Create a Target Aggregate</a>.</p>
 <h2 id="see-also">See Also</h2>
@@ -417,7 +420,7 @@
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/common_tasks/jvm_library.html 2020-01-30T10:53:02.301857
+              from dist/markdown/html/src/docs/common_tasks/jvm_library.html 2020-02-05T14:12:28.636890
             </div>
 
           </div> <!-- mainflow -->

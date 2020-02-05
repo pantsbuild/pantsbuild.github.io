@@ -8,7 +8,7 @@
 
 <head>
   <meta charset="utf-8"/>
-  <title>Use globs and rglobs to Group Files</title>
+  <title>Use globs to group files</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" href="pants-logo.ico">
   <!-- In case this is a "test publish", tell search engines where real version lives: -->
@@ -186,6 +186,9 @@
                 <li class="toc-h1">
                   <a class="sidebar-nav-heading" class="toc-drop" data-toggle="collapse" href="#Release-Notes" aria-expanded="false" aria-controls="Release-Notes">Release Notes<span class="caret"></span></a>
                     <ul class="collapse sidebar-nav sidebar-submenu" id="Release-Notes">
+                        <li class="toc-h1 toc-link ">
+                          <a href="notes-1.25.x.html">1.25.x Stable Releases</a>
+                        </li>
                         <li class="toc-h1 toc-link ">
                           <a href="notes-1.24.x.html">1.24.x Stable Releases</a>
                         </li>
@@ -374,25 +377,29 @@
 .codehilite .vm { color: #bb60d5 } /* Name.Variable.Magic */
 .codehilite .il { color: #40a070 } /* Literal.Number.Integer.Long */
 </style>
-<h1 id="use-globs-and-rglobs-to-group-files">Use globs and rglobs to Group Files</h1>
+<h1 id="use-globs-to-group-files">Use globs to group files</h1>
 <h2 id="problem">Problem</h2>
 <p>You're creating a target definition for library, binary, or other target and want to easily group multiple files as source files.</p>
 <h2 id="solution">Solution</h2>
-<p>Instead of listing files one by one, e.g. <code>sources=['file1', 'file2', 'file3']</code>, you can specify either a <code>globs</code> or an <code>rglobs</code>.</p>
+<p>Instead of listing files one by one, e.g. <code>sources=['file1', 'file2', 'file3']</code>, you can directly 
+use globs like <code>*.java</code>. To exclude certain files or globs, you can prefix the value with <code>!</code>, like <code>!ignore.java</code>.</p>
 <h2 id="discussion">Discussion</h2>
 <p>Let's say that you're creating a <code>scala_library</code> target definition and you want to include, as sources, all of the <code>.scala</code> files contained in the same directory as your <code>BUILD</code> file. Here's an example target definition that would accomplish that using a <code>globs</code>:</p>
-<div class="codehilite"><pre><span></span><span class="n">scala_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'scala'</span><span class="p">,</span>
-  <span class="n">sources</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s1">'*.scala'</span><span class="p">),</span>
+<div class="codehilite"><pre><span></span><span class="n">scala_library</span><span class="p">(</span>
+  <span class="n">name</span><span class="o">=</span><span class="s1">'lib'</span><span class="p">,</span>
+  <span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="s1">'*.scala'</span><span class="p">],</span>
 <span class="p">)</span>
 </pre></div>
-<p>If you had Scala files in sub-directories that you wanted to include as well, you could use an <code>rglobs</code>:</p>
-<div class="codehilite"><pre><span></span><span class="n">scala_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'scala'</span><span class="p">,</span>
-  <span class="n">sources</span><span class="o">=</span><span class="n">rglobs</span><span class="p">(</span><span class="s1">'*.scala'</span><span class="p">),</span>
+<p>If you had Scala files in sub-directories that you wanted to include as well, you could use a recursive glob:</p>
+<div class="codehilite"><pre><span></span><span class="n">scala_library</span><span class="p">(</span>
+  <span class="n">name</span><span class="o">=</span><span class="s1">'lib'</span><span class="p">,</span>
+  <span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="s1">'**/*.scala'</span><span class="p">],</span>
 <span class="p">)</span>
 </pre></div>
 <p>You can also exclude files from a particular directory:</p>
-<div class="codehilite"><pre><span></span><span class="n">scala_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'scala'</span><span class="p">,</span>
-  <span class="n">sources</span><span class="o">=</span><span class="n">rglobs</span><span class="p">(</span><span class="s1">'*.scala'</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="n">rglobs</span><span class="p">(</span><span class="s1">'dir_to_exclude/*.scala'</span><span class="p">)]),</span>
+<div class="codehilite"><pre><span></span><span class="n">scala_library</span><span class="p">(</span>
+  <span class="n">name</span><span class="o">=</span><span class="s1">'lib'</span><span class="p">,</span>
+  <span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="s1">'**/*.scala'</span><span class="p">,</span> <span class="s1">'!dir_to_exclude/**/*.scala'</span><span class="p">],</span>
 <span class="p">)</span>
 </pre></div>
 <h2 id="see-also">See Also</h2>
@@ -405,7 +412,7 @@
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/common_tasks/globs.html 2020-01-30T10:53:02.254052
+              from dist/markdown/html/src/docs/common_tasks/globs.html 2020-02-05T14:12:28.504723
             </div>
 
           </div> <!-- mainflow -->

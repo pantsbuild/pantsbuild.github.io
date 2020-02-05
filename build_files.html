@@ -187,6 +187,9 @@
                   <a class="sidebar-nav-heading" class="toc-drop" data-toggle="collapse" href="#Release-Notes" aria-expanded="false" aria-controls="Release-Notes">Release Notes<span class="caret"></span></a>
                     <ul class="collapse sidebar-nav sidebar-submenu" id="Release-Notes">
                         <li class="toc-h1 toc-link ">
+                          <a href="notes-1.25.x.html">1.25.x Stable Releases</a>
+                        </li>
+                        <li class="toc-h1 toc-link ">
                           <a href="notes-1.24.x.html">1.24.x Stable Releases</a>
                         </li>
                         <li class="toc-h1 toc-link ">
@@ -415,7 +418,7 @@ you untangle the dependency "hairball".</p>
     <span class="s1">'src/java/org/pantsbuild/auth'</span><span class="p">,</span>
     <span class="s1">':base'</span>
   <span class="p">],</span>
-  <span class="n">sources</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s1">'*.java'</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[[</span><span class="s1">'Base.java'</span><span class="p">]]),</span>
+  <span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="s1">'*.java'</span><span class="p">,</span> <span class="s1">'!Base.java'</span><span class="p">],</span>
   <span class="n">tags</span><span class="o">=</span><span class="p">{</span><span class="s1">'common'</span><span class="p">},</span>
 <span class="p">)</span>
 </pre></div>
@@ -443,27 +446,21 @@ or otherwise depends on code in other targets, list those targets here.</p>
 <li><a href="target_addresses.html">More details</a> on how to address targets in a list of dependencies.</li>
 </ul>
 <h3 id="sources">sources</h3>
-<p>The source files in this target. These are usually defined in one of three ways:</p>
+<p>The source files in this target. These are defined in one of two ways:</p>
 <ul>
-<li>If the <code>sources</code> argument is <em>not</em> passed (and the <code>--target-arguments-implicit-sources</code> option is
-  set: enabled by default in <code>1.4.0.dev2</code>), many target types define a default ("implicit") source
-  glob to collect all relevant files in the current directory. When possible, this style is
+<li>If the <code>sources</code> argument is <em>not</em> passed, many target types define a sensible default <code>sources</code> value to collect all relevant files in the current directory. When possible, this style is
   recommended because it encourages 1:1:1 (see the
 <br>
 <a href="build_files.html">Target Granularity</a> section for more information).<ul>
-<li>As an example: <code>java_library</code> defaults to collecting <code>globs('*.java', exclude=[globs('*Test.java')])</code>.</li>
+<li>For example, <code>java_library</code> defaults to collecting <code>['*.java', '!*Test.java']</code>.</li>
 </ul>
 </br></li>
-<li>Explicitly globbing over the files in the BUILD file's directory: <code>sources=globs('*.java')</code>.</li>
-<li>Enumerating the files: <code>sources=['FileUtil.java', 'NetUtil.java']</code>.</li>
+<li>Explicitly providing file names and globs: <code>sources=['App.java', '*Util.java']</code>.</li>
 </ul>
-<p>You can exclude files from the results of a glob. For example, to glob over unit tests
+<p>You can exclude files by prefixing the file name or glob with <code>!</code>. For example, to collect unit tests
 but not integration tests you could use something like this:
-<br/><code>sources=globs('*.py', exclude=[globs('*_integration.py')])</code>.
-<br/>The value of <code>exclude=</code> is a list of things that evaluate to lists of source files,
-i.e., globs or literal lists. This is why there are double-brackets around <code>Base.java</code> in
-the example target above.</p>
-<p>You can also recursively glob over files in all subdirectories of the BUILD file's directory: <code>sources=rglobs('*.java')</code>.
+<br/><code>sources=['*_test.py', '!*_integration_test.py']</code>.</p>
+<p>You can also recursively glob over files in all subdirectories of the BUILD file's directory: <code>sources=['**/*.java']</code>.
 However this is discouraged as it tends to lead to coarse-grained dependencies, and Pants's
 advantages come into play when you have many fine-grained dependencies.</p>
 <h3 id="tags">tags</h3>
@@ -494,8 +491,8 @@ in <code>BUILD.internal</code> files and the latter in <code>BUILD.oss</code> fi
 <p>If you're curious to know how Pants interprets your <code>BUILD</code> files, these
 techniques can be especially helpful:</p>
 <p><em>What targets does a BUILD file define?</em> Use the <code>list</code> goal:</p>
-<div class="codehilite"><pre><span></span>$ ./pants list examples/src/java/org/pantsbuild/example/hello/greet
-examples/src/java/org/pantsbuild/example/hello/greet:greet
+<div class="codehilite"><pre><span></span>$ ./pants list src/python/myproject/example
+src/python/myproject/example:example
 </pre></div>
 <p><em>Are any BUILD files broken?</em>
 List <strong>every</strong> target to see if there are any errors:
@@ -538,7 +535,7 @@ internal-examples.tests.java.org.pantsbuild.example.hello.greet.greet
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/build_files.html 2020-01-30T10:53:02.181115
+              from dist/markdown/html/src/docs/build_files.html 2020-02-05T14:12:28.315979
             </div>
 
           </div> <!-- mainflow -->

@@ -187,6 +187,9 @@
                   <a class="sidebar-nav-heading" class="toc-drop" data-toggle="collapse" href="#Release-Notes" aria-expanded="false" aria-controls="Release-Notes">Release Notes<span class="caret"></span></a>
                     <ul class="collapse sidebar-nav sidebar-submenu" id="Release-Notes">
                         <li class="toc-h1 toc-link ">
+                          <a href="notes-1.25.x.html">1.25.x Stable Releases</a>
+                        </li>
+                        <li class="toc-h1 toc-link ">
                           <a href="notes-1.24.x.html">1.24.x Stable Releases</a>
                         </li>
                         <li class="toc-h1 toc-link ">
@@ -381,31 +384,35 @@
 <p>Create a <code>resources</code> target that tells Pants which files to include in the resource bundle.</p>
 <h2 id="discussion">Discussion</h2>
 <p>A <code>resources</code> target definition must include a <code>name</code> and a list of <code>sources</code>, which can consist of a simple list of file names, multiple <code>globs</code> or <code>rglobs</code> definitions (more on that in <a href="globs.html">Use globs and rglobs to Group Files</a>), or any combination thereof. This would create a resource bundle with two files:</p>
-<div class="codehilite"><pre><span></span><span class="n">resources</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'config'</span>
-  <span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="s1">'server-config.yaml'</span><span class="p">,</span> <span class="s1">'logging-config.xml'</span><span class="p">]</span>
+<div class="codehilite"><pre><span></span><span class="n">resources</span><span class="p">(</span>
+  <span class="n">name</span><span class="o">=</span><span class="s1">'config'</span>
+  <span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="s1">'server-config.yaml'</span><span class="p">,</span> <span class="s1">'logging-config.xml'</span><span class="p">],</span>
 <span class="p">)</span>
 </pre></div>
 <p>This would include a glob of files to a resource bundle:</p>
-<div class="codehilite"><pre><span></span><span class="n">resources</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'templates'</span><span class="p">,</span>
-  <span class="n">sources</span><span class="o">=</span><span class="n">rglobs</span><span class="p">(</span><span class="s1">'*.mustache'</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span><span class="n">resources</span><span class="p">(</span>
+  <span class="n">name</span><span class="o">=</span><span class="s1">'templates'</span><span class="p">,</span>
+  <span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="s1">'**/*.mustache'</span><span class="p">],</span>
 <span class="p">)</span>
 </pre></div>
 <p>This would include a mixture of globs, rglobs, and specific files:</p>
-<div class="codehilite"><pre><span></span><span class="n">resources</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'all'</span>
-  <span class="n">sources</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s1">'*.json'</span><span class="p">)</span> <span class="o">+</span> <span class="n">rglobs</span><span class="p">(</span><span class="s1">'templates/*'</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="s1">'logback.xml'</span><span class="p">]</span>
+<div class="codehilite"><pre><span></span><span class="n">resources</span><span class="p">(</span>
+  <span class="n">name</span><span class="o">=</span><span class="s1">'all'</span>
+  <span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="s1">'*.json'</span><span class="p">,</span> <span class="s1">'templates/**/*'</span><span class="p">,</span> <span class="s1">'logback.xml'</span><span class="p">],</span>
 <span class="p">)</span>
 </pre></div>
-<p>You can also exclude files, globs, or rglobs using the <code>-</code> operator:</p>
-<div class="codehilite"><pre><span></span><span class="n">resources</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'python-resources'</span><span class="p">,</span>
-  <span class="n">sources</span><span class="o">=</span><span class="n">rglobs</span><span class="p">(</span><span class="s1">'*'</span><span class="p">)</span> <span class="o">-</span> <span class="n">rglobs</span><span class="p">(</span><span class="s1">'*.pyc'</span><span class="p">)</span>
+<p>You can also exclude files and globs by prefixing them with <code>!</code>:</p>
+<div class="codehilite"><pre><span></span><span class="n">resources</span><span class="p">(</span>
+  <span class="n">name</span><span class="o">=</span><span class="s1">'python-resources'</span><span class="p">,</span>
+  <span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="s1">'**/*'</span><span class="p">,</span> <span class="s1">'!**/*.pyc'</span><span class="p">],</span>
 <span class="p">)</span>
 </pre></div>
 <p>Once your resource bundle has been specified, you can depend on it from the target that consumes the resources:</p>
-<div class="codehilite"><pre><span></span><span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'server'</span><span class="p">,</span>
-  <span class="n">sources</span><span class="o">=</span><span class="n">globs</span><span class="p">(</span><span class="s1">'*.java'</span><span class="p">),</span>
+<div class="codehilite"><pre><span></span><span class="n">java_library</span><span class="p">(</span>
+  <span class="n">name</span><span class="o">=</span><span class="s1">'server'</span><span class="p">,</span>
+  <span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="s1">'*.java'</span><span class="p">],</span>
   <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
-    <span class="o">...</span>
-    <span class="s1">'myproject/src/main/resources:config'</span>
+    <span class="s1">'src/resources:config'</span><span class="p">,</span>
   <span class="p">]</span>
 <span class="p">)</span>
 </pre></div>
@@ -420,7 +427,7 @@ for JVM binaries, they will be included on the runtime classpath).</p>
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/common_tasks/resources.html 2020-01-30T10:53:02.980036
+              from dist/markdown/html/src/docs/common_tasks/resources.html 2020-02-05T14:12:30.061238
             </div>
 
           </div> <!-- mainflow -->
