@@ -397,7 +397,7 @@ there.</p>
 <ul>
 <li>
 <p>If you don't have an existing Pants project to work with, create one. Locate its config file,
- typically <code>pants.ini</code> in the repo root.</p>
+ typically <code>pants.toml</code> in the repo root.</p>
 </li>
 <li>
 <p>Create a directory for your plugins. In this example we will use the <code>plugins/</code> directory in 
@@ -449,11 +449,11 @@ the repo root, but there is no convention, and you can put them wherever you lik
 <p>This creates a new goal named <code>hello-world</code>, and registers the two tasks to it.</p>
 <ul>
 <li>
-<p>In <code>pants.ini</code> place the following content:</p>
-<div class="codehilite"><pre><span></span><span class="k">[GLOBAL]</span>
-<span class="na">pants_version: 1.9.0</span>
-<span class="na">pythonpath: ["%(buildroot)s/plugins"]</span>
-<span class="na">backend_packages: ["hello"]</span>
+<p>In <code>pants.toml</code> place the following content:</p>
+<div class="codehilite"><pre><span></span>[GLOBAL]
+pants_version = "1.26.0"
+pythonpath = ["%(buildroot)s/plugins"]
+backend_packages = ["hello"]
 </pre></div>
 </li>
 </ul>
@@ -482,17 +482,17 @@ hello-world: Say hello to your world
 </pre></div>
 <p>Note that to consume the custom plugin as a published artifact (say on PyPI), instead of 
 directly from the repo, then instead of <code>backend_packages</code> and <code>pythonpath</code> you would set <code>plugins</code>:</p>
-<div class="codehilite"><pre><span></span>    <span class="k">[GLOBAL]</span>
-    <span class="na">pants_version: 1.9.0</span>
-    <span class="na">plugins: ["myorg.hello</span><span class="o">=</span><span class="s">=1.7.6"]</span>
+<div class="codehilite"><pre><span></span>    [GLOBAL]
+    pants_version = "1.26.0"
+    plugins = ["myorg.hello==1.7.6"]
 </pre></div>
 <p>Similarly, if your custom plugin is consumed directly from the repo, but has dependencies on 
 published artifacts, then you list those in <code>plugins</code>:</p>
-<div class="codehilite"><pre><span></span>    <span class="k">[GLOBAL]</span>
-    <span class="na">pants_version: 1.9.0</span>
-    <span class="na">pythonpath: ["%(buildroot)s/plugins"]</span>
-    <span class="na">backend_packages: ["hello"]</span>
-    <span class="na">plugins: ["some.dependency</span><span class="o">=</span><span class="s">=4.5.11"]</span>
+<div class="codehilite"><pre><span></span>    [GLOBAL]
+    pants_version = "1.26.0"
+    pythonpath = ["%(buildroot)s/plugins"]
+    backend_packages = ["hello"]
+    plugins = ["some.dependency==4.5.11"]
 </pre></div>
 <p>See below for more details. </p>
 <h2 id="simple-configuration">Simple Configuration</h2>
@@ -541,20 +541,16 @@ can consume it specifically but disregard regular <code>JvmBinary</code> instanc
 </pre></div>
 </li>
 <li>
-<p>In <code>pants.ini</code>, add your new plugin package to the list of backends to load when pants starts.
+<p>In <code>pants.toml</code>, add your new plugin package to the list of backends to load when pants starts.
   This instructs pants to load a module named <code>hadoop.register</code>.</p>
-<div class="codehilite"><pre><span></span><span class="k">[GLOBAL]</span>
-<span class="na">pythonpath: [</span>
-    <span class="na">'%(buildroot)s/plugins',</span>
-  <span class="na">]</span>
-<span class="na">backend_packages: [</span>
-    <span class="na">'hadoop',</span>
-  <span class="na">]</span>
+<div class="codehilite"><pre><span></span>[GLOBAL]
+pythonpath = ['%(buildroot)s/plugins']
+backend_packages = ['hadoop']
 </pre></div>
 </li>
 </ul>
 <p>Note that you can also set the PYTHONPATH in your <code>./pants</code> wrapper script, instead of in
-<code>pants.ini</code>, if you have other reasons to do so. Either way, pants will look for a <code>register.py</code>
+<code>pants.toml</code>, if you have other reasons to do so. Either way, pants will look for a <code>register.py</code>
 file for each backend package you list by prefixing that package with the python path; ie roughly
 <code>pythonpath + backend package + register.py</code> is tried for each pythonpath prefix until a
 <code>register.py</code> is found, in this example <code>plugins/hadoop/register.py</code>.</p>
@@ -562,7 +558,7 @@ file for each backend package you list by prefixing that package with the python
 <p>For an example of a code repo with plugins to add features to Pants when building in that repo,
 take a look at <a href="https://github.com/twitter/commons"><code>twitter/commons</code></a>, especially its
 <a href="https://github.com/twitter/commons/tree/32011ab5351fea23e8c70e24e752540b06d1389f/pants-plugins"><code>pants-plugins</code> directory</a>.</p>
-<p>The repo's <a href="https://github.com/twitter/commons/blob/32011ab5351fea23e8c70e24e752540b06d1389f/pants.ini"><code>pants.ini</code> file</a> has a
+<p>The repo's <a href="https://github.com/twitter/commons/blob/32011ab5351fea23e8c70e24e752540b06d1389f/pants.ini"><code>pants.ini</code> file</a> (the format used before <code>pants.toml</code>) has a
 <code>backend_packages</code> entry listing the plugin packages (packages with <code>register.py</code> files):</p>
 <div class="codehilite"><pre><span></span><span class="k">[GLOBAL]</span>
 <span class="na">pythonpath: [</span>
@@ -584,7 +580,7 @@ But other Pants workspaces can register it, as <code>twitter/commons</code> illu
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/howto_plugin.html 2020-02-24T15:17:29.412852
+              from dist/markdown/html/src/docs/howto_plugin.html 2020-02-27T21:41:50.956457
             </div>
 
           </div> <!-- mainflow -->

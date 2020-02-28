@@ -443,24 +443,26 @@ refers to the <code>public</code> repository defined above. (Notice it's a Pytho
 </p>
 <p>If you get an error that the repo name (here, <code>public</code>) isn't defined, your plugin didn't register
 with Pants successfully. Make sure you bootstrap Pants in a way that loads your <code>register.py</code>.</p>
-<p>In your <code>pants.ini</code> file, set up a <code>[publish.jar]</code> section. In that section,
+<p>In your <code>pants.toml</code> file, set up a <code>[publish.jar]</code> section. In that section,
 create a <code>dict</code> called <code>repos</code>. It should contain a section for each <code>Repository</code> object that you
 defined in your plugin:</p>
-<div class="codehilite"><pre><span></span><span class="k">[publish.jar]</span>
-<span class="na">repos: {</span>
-  <span class="na">'public': {  # must match the name of the `Repository` object that you defined in your plugin.</span>
-    <span class="na">'resolver': 'maven.example.com', # must match hostname in ~/.netrc and the &lt;url&gt; parameter</span>
-                                     <span class="c1"># in your custom ivysettings.xml.</span>
-    <span class="na">'auth': 'build-support:netrc',   # Pants spec to a 'credentials()' or</span>
-                                     <span class="c1"># 'netrc_credentials()' object.</span>
-    <span class="na">'help': 'Configure your ~/.netrc for maven.example.com access.'</span>
-  <span class="na">},</span>
-  <span class="na">'testing': {</span>
-    <span class="na">'resolver': 'artifactory.example.com',</span>
-    <span class="na">'auth': 'build-support:netrc',</span>
-    <span class="na">'help': 'Configure your ~/.netrc for artifactory.example.com access.'</span>
-  <span class="na">},</span>
-<span class="na">}</span>
+<div class="codehilite"><pre><span></span>[publish.jar]
+repos = """
+{
+  'public': {  # must match the name of the `Repository` object that you defined in your plugin.
+    'resolver': 'maven.example.com', # must match hostname in ~/.netrc and the &lt;url&gt; parameter
+                                     # in your custom ivysettings.xml.
+    'auth': 'build-support:netrc',   # Pants spec to a 'credentials()' or
+                                     # 'netrc_credentials()' object.
+    'help': 'Configure your ~/.netrc for maven.example.com access.'
+  },
+  'testing': {
+    'resolver': 'artifactory.example.com',
+    'auth': 'build-support:netrc',
+    'help': 'Configure your ~/.netrc for artifactory.example.com access.'
+  },
+}
+"""
 </pre></div>
 <p>If your repository requires authentication, add a <code>~/.netrc</code> file. Here is a sample file, that
 matches the <code>repos</code> specified above:</p>
@@ -484,7 +486,7 @@ with the additional information needed to publish artifacts. Here is an example 
   <span class="nt">&lt;settings</span> <span class="na">defaultResolver=</span><span class="s">"chain-repos"</span><span class="nt">/&gt;</span>
   <span class="c">&lt;!-- The ${login} and ${password} values come from a netrc_credentials() object in a BUILD</span>
 <span class="c">       file, which is fed by '~/.netrc'.  There must be a '~/.netrc' machine entry which</span>
-<span class="c">       matches a resolver in the "repos" object in 'pants.ini', which also matches the 'host' in</span>
+<span class="c">       matches a resolver in the "repos" object in 'pants.toml', which also matches the 'host' in</span>
 <span class="c">       this XML block.</span>
 
 <span class="c">       machine &lt;hostname&gt;</span>
@@ -515,17 +517,17 @@ with the additional information needed to publish artifacts. Here is an example 
   <span class="nt">&lt;/resolvers&gt;</span>
 <span class="nt">&lt;/ivysettings&gt;</span>
 </pre></div>
-<p>With this file in place, add a <code>[publish.jar]</code> section to <code>pants.ini</code>, and tell pants to use
+<p>With this file in place, add a <code>[publish.jar]</code> section to <code>pants.toml</code>, and tell pants to use
 the custom Ivy settings when publishing:</p>
-<div class="codehilite"><pre><span></span><span class="k">[publish.jar]</span>
-<span class="na">ivy_settings: %(pants_supportdir)s/ivy/ivysettings_for_publishing.xml</span>
+<div class="codehilite"><pre><span></span>[publish.jar]
+ivy_settings = "%(pants_supportdir)s/ivy/ivysettings_for_publishing.xml"
 </pre></div>
 <p><a id="setup_publish_restrict_branch" pantsmark="setup_publish_restrict_branch"> </a></p>
 <h3 id="restricting-publish-to-release-branch">Restricting Publish to "Release Branch"</h3>
 <p>Your organization might have a notion of a special "release branch": you want publishing
 to happen on this source control branch, which you maintain extra-carefully.
 You can set this branch using the <code>restrict_push_branches</code> option in the
-<code>[publish.jar]</code> section of your <code>pants.ini</code> file.</p>
+<code>[publish.jar]</code> section of your <code>pants.toml</code> file.</p>
 <h3 id="task-to-publish-extra-artifacts">Task to Publish "Extra" Artifacts</h3>
 <p>Pants supports "publish plugins", which allow end-users to add additional, arbitrary files to be
 published along with the primary artifact. For example, let's say that along with publishing your
@@ -761,7 +763,7 @@ version number.</p>
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/examples/src/java/org/pantsbuild/example/publish.html 2020-02-24T15:17:30.910264
+              from dist/markdown/html/examples/src/java/org/pantsbuild/example/publish.html 2020-02-27T21:41:52.354557
             </div>
 
           </div> <!-- mainflow -->

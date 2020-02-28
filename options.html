@@ -314,7 +314,7 @@
                     <li class="toc-h2"><a href="#overlaying-config-files">Overlaying Config Files</a></li>
                     <li class="toc-h1"><a href="#troubleshooting-config-files">Troubleshooting Config Files</a></li>
                     <li class="toc-h2"><a href="#use-the-right-section-name">Use the Right Section Name</a></li>
-                    <li class="toc-h2"><a href="#check-the-formatting">Check the Formatting</a></li>
+                    <li class="toc-h2"><a href="#validate-the-toml">Validate the TOML</a></li>
                 </ul>
               </nav>
 
@@ -430,46 +430,69 @@ all options for all scopes with <code>./pants --help-all --help-advanced</code>.
 can be overridden in each scope.  This allows you, for example, to set different logging verbosity
 levels in different tasks.</p>
 <h2 id="option-types">Option Types</h2>
-<p>Option value literal formats are the same on the command-line, environment variables and in <code>pants.ini</code>,
-with a couple of extra command-line conveniences.</p>
+<p>Option value formats are the same on the command-line, environment variables and in <code>pants.toml</code>, except for list options. There are also a couple of extra command-line conveniences.</p>
 <h3 id="boolean-options">Boolean Options</h3>
-<p>The boolean option values are: <code>false</code>, <code>False</code>, <code>true</code>, <code>True</code>.</p>
-<p>On the command line, you can omit the value thus: <code>--foo-bar</code> is the same as <code>--foo-bar=false</code>,
+<p>The boolean option values are <code>false</code> and <code>true</code>.</p>
+<p>With the command line and environment variables, you can omit the value thus: <code>--foo-bar</code> is the same as <code>--foo-bar=false</code>,
   and <code>--no-foo-bar</code> is the same as <code>--foo-bar=false</code>.</p>
 <h3 id="int-and-float-options">Int and Float Options</h3>
 <p>Specify values in decimal notation: <code>--foo=5</code>, <code>--bar=4.5</code>.</p>
+<div class="codehilite"><pre><span></span>foo = 5
+bar = 4.5
+</pre></div>
 <h3 id="string-options">String Options</h3>
-<p>Surround strings with single or double quotes if they contain embedded spaces: <code>--foo="hello, world"</code>.</p>
+<p>Surround strings with single or double quotes: <code>--foo="hello, world"</code>.</p>
+<div class="codehilite"><pre><span></span>foo = "hello world"
+</pre></div>
 <h3 id="list-options">List Options</h3>
-<p>List options can be appended to and filtered, as well as overridden.
-For example, for an option <code>--foo</code> whose default value is <code>[1, 2]</code>, then in <code>pants.ini</code>:</p>
+<p>List options can be added to and removed, as well as overridden.
+For example, for an option <code>--foo</code> whose default value is <code>[1, 2]</code>, then in <code>pants.toml</code>:</p>
 <ul>
-<li><code>foo: 3</code> will yield <code>[1, 2, 3]</code>.</li>
-<li><code>foo: +[3, 4]</code> will yield <code>[1, 2, 3, 4]</code>.</li>
-<li><code>foo: -[1]</code> will yield <code>[2]</code>.</li>
-<li><code>foo: [3, 4]</code> will yield <code>[3, 4]</code>.</li>
+<li><code>foo = 3</code> will yield <code>[1, 2, 3]</code>.</li>
+<li><code>foo.add = [3, 4]</code> will yield <code>[1, 2, 3, 4]</code>.</li>
+<li><code>foo.remove = [1]</code> will yield <code>[2]</code>.</li>
+<li><code>foo = [3, 4]</code> will yield <code>[3, 4]</code>.</li>
 </ul>
-<p>Multiple append and filter expressions may be delimited with commas,
-allowing you to append and filter simultaneously:</p>
+<p>In <code>pants.toml</code>, you may both add and remove simultaneously:</p>
+<div class="codehilite"><pre><span></span># This will yield [2, 3, 4]
+foo.add = [3, 4]
+foo.remove = [1]
+</pre></div>
+<p>Adding a single value and replacing a list works the same as <code>pants.toml</code> for the command line and environment variables.</p>
 <ul>
-<li><code>foo: +[3,4],-[1]</code> will yield <code>[2, 3, 4]</code>.</li>
+<li><code>--foo=3</code> will yield <code>[1, 2, 3]</code>.</li>
+<li><code>--foo='[3, 4]'</code> will yield <code>[3, 4]</code>.</li>
 </ul>
-<p>On the command line you can append single values multiple times:</p>
+<p>The syntax is a little different from <code>pants.toml</code>, however, when removing values or adding multiple values.</p>
+<ul>
+<li><code>--foo='+[3, 4]'</code> will yield <code>[1, 2, 3, 4]</code>.</li>
+<li><code>--foo='-[1]'</code> will yield <code>[2]</code>.</li>
+<li><code>--foo='+[3,4],-[1]'</code> will yield <code>[2, 3, 4]</code>.</li>
+</ul>
+<p>On the command line, you can also add single values multiple times:</p>
 <ul>
 <li><code>--foo=3 --foo=4</code> will yield the value <code>[1, 2, 3, 4]</code>.</li>
 </ul>
-<p>Note that these command line values will be appended to the value determined from the defaults
-plus the values in <code>pants.ini</code>. To override the value, use <code>--foo=[3, 4]</code>.</p>
-<p>Filters apply to the entire list constructed so far, and will filter all appearances of the value:</p>
+<p>Note that these command line values will be added to the list determined from the defaults
+plus the values in <code>pants.toml</code>. To instead override the list, use <code>--foo='[3, 4]'</code>.</p>
+<p>Removes apply to the entire list constructed so far, and will remove all appearances of the value:</p>
 <ul>
-<li><code>--foo=1 --foo=1 --foo=2 --foo=-[1]</code> will yield <code>[2, 2]</code>.</li>
+<li><code>--foo=1 --foo=1 --foo=2 --foo='-[1]'</code> will yield <code>[2, 2]</code>.</li>
 </ul>
-<p>Filters take precedence over appends, so you cannot "add something back in":</p>
+<p>Removes take precedence over adds, so you cannot "add something back in":</p>
 <ul>
 <li><code>--foo=-[2] --foo=2</code> will yield <code>[1]</code>.</li>
 </ul>
 <h3 id="dict-options">Dict Options</h3>
-<p>Dict option values are Python-style dict literals: <code>--foo={"a":1,"b":2}</code>.</p>
+<p>Dict option values are Python-style dict literals embedded in a string, e.g: <code>--foo='{"a": 1,"b": 2}'</code>.</p>
+<p>In <code>pants.toml</code>, it often helps to use multiline strings for readability, e.g.:</p>
+<div class="codehilite"><pre><span></span>foo = """
+{
+  "a": 1,
+  "b": 2,
+}
+"""
+</pre></div>
 <h3 id="available-options">Available Options</h3>
 <p>The options available in a given Pants-enabled codebase depend on which backends and plugins are activated.</p>
 <ul>
@@ -514,37 +537,38 @@ and use <code>PANTS_OPTION</code>. E.g., <code>PANTS_LEVEL=debug</code>.</p>
 <p>Environment variables are overridden by command line flags, but take
 precedence over settings in config files.</p>
 <h3 id="config-file">Config File</h3>
-<p>The main Pants config file location is <code>pants.ini</code> in your source tree's top-level directory.
-If you installed pants <a href="install.html">as recommended</a> this file should already exist.</p>
-<p>The <code>pants.ini</code> file is an INI file parsed by
-<a href="http://docs.python.org/library/configparser.html">ConfigParser</a>.  See
-<a href="http://tools.ietf.org/html/rfc822.html#section-3.1">RFC #822</a>
-section 3.1.1 for the full rules python uses to parse ini file
-entries.</p>
-<p>A <code>pants.ini</code> file looks something like:</p>
-<div class="codehilite"><pre><span></span><span class="k">[scope]</span>
-<span class="na">option1: value1</span>
-<span class="na">option2: value2</span>
+<p>The main Pants config file location is <code>pants.toml</code> in your source tree's top-level directory.
+If you installed Pants <a href="install.html">as recommended</a>, this file should already exist.</p>
+<p>The <code>pants.toml</code> file is <a href="https://github.com/toml-lang/toml/blob/master/README.md">a TOML file</a>, with some extra features like string interpolation added by Pants.</p>
+<p>A <code>pants.toml</code> file looks something like:</p>
+<div class="codehilite"><pre><span></span>[pytest]
+option1 = "value"
+option2 = true
+option3 = 10
+
+[cache.java]
+option1 = ["a", "b"]
 </pre></div>
-<p>Sections in the <code>.ini</code> file correspond to the task name or
+<p>Sections in the <code>.toml</code> file correspond to the task name or
 subsystem name, or a combination of both.</p>
-<p>The <code>[DEFAULT]</code> section is special: its values are available in all other sections. E.g.,</p>
-<div class="codehilite"><pre><span></span><span class="k">[DEFAULT]</span>
-<span class="na">thrift_workdir: %(pants_workdir)s/thrift</span>
+<p>The <code>[DEFAULT]</code> section is special: its values are available in all other sections by using <code>printf</code>-style string interpolation, e.g.</p>
+<div class="codehilite"><pre><span></span>[DEFAULT]
+thrift_workdir = "%(pants_workdir)s/thrift"
 
-<span class="k">[GLOBAL]</span>
-<span class="na">print_exception_stacktrace: True</span>
+[GLOBAL]
+print_exception_stacktrace = true
 
-<span class="k">[gen.thrift]</span>
-<span class="na">workdir: %(thrift_workdir)s</span>
+[gen.thrift]
+workdir = "%(thrift_workdir)s"
 
-<span class="k">[compile.rsc]</span>
-<span class="na">args: [</span>
-    <span class="na">'-C-Tnowarnprefixes', '-C%(thrift_workdir)s',</span>
-  <span class="na">]</span>
+[compile.rsc]
+args = ["-C-Tnowarnprefixes", "-C%(thrift_workdir)s"]
 </pre></div>
-<p>Note that continuation lines of multiple-line values must be indented. For example, the closing
-bracket in the multi-line list above.</p>
+<p>You may also interpolate values from within the same section:</p>
+<div class="codehilite"><pre><span></span>[GLOBAL]
+pants_version = "1.26.0"
+plugins = ["pantsbuild.pants.contrib.go==%(pants_version)s"]
+</pre></div>
 <p>Settings in config files are overridden by options specified in the
 environment or by command line flags.</p>
 <p>There are a few differences in using options in the config file compared to invoking them from the
@@ -553,30 +577,30 @@ command line:</p>
 <li>Omit the leading double dash (<code>--</code>)</li>
 <li>Dash characters (<code>-</code>) are transposed to underscores (<code>_</code>).</li>
 <li>Boolean flag values are enabled and disabled by setting the value
-    of the option to <code>True</code> or <code>False</code></li>
+    of the option to <code>true</code> or <code>false</code></li>
 <li>The prefix for long form options is not specified. Instead, you must organize the options
     into their appropriate sections.</li>
 </ul>
 <h3 id="overlaying-config-files">Overlaying Config Files</h3>
-<p>Sometimes it's convenient to keep <code>.ini</code> settings in more than one file. Perhaps you usually
+<p>Sometimes it's convenient to keep <code>.toml</code> settings in more than one file. Perhaps you usually
 operate Pants in one "mode", but occasionally need to use a tweaked set of settings.</p>
-<p>Use the <code>--pants-config-files</code> command-line option to specify a second <code>.ini</code> file. Each of
-this <code>.ini</code> file's values override the corresponding value in <code>pants.ini</code>, if any.
-For example, if your <code>pants.ini</code> contains the section</p>
+<p>Use the <code>--pants-config-files</code> command-line option to specify a second <code>.toml</code> file. Each of
+this <code>.toml</code> file's values override the corresponding value in <code>pants.toml</code>, if any.
+For example, if your <code>pants.toml</code> contains the section</p>
 <div class="codehilite"><pre><span></span>[test.junit]
-coverage_html_open: True
-debug: False
+coverage_html_open = true
+debug = false
 </pre></div>
-<p>...and you invoke <code>--pants-config-files=quick.ini</code> and your <code>quick.ini</code> says</p>
+<p>...and you invoke <code>--pants-config-files=quick.toml</code> and your <code>quick.toml</code> says</p>
 <div class="codehilite"><pre><span></span>[test.junit]
-coverage_html_open: False
-skip: True
+coverage_html_open = false
+skip = true
 </pre></div>
 <p>...then Pants will act as if you specified</p>
 <div class="codehilite"><pre><span></span>[test.junit]
-coverage_html_open: False
-skip: True
-debug: False
+coverage_html_open = false
+skip = true
+debug = false
 </pre></div>
 <p>Note that <code>--pants-config-files</code> is a list-valued option, so all the
 idioms of lists work. You can add a third file with another invocation
@@ -586,13 +610,13 @@ entirely with <code>--pants-config-files=[&lt;list&gt;]</code>.</p>
 <h3 id="use-the-right-section-name">Use the Right Section Name</h3>
 <p>Section names must correspond to actual option scopes.  Use the correct section name as specified
 in the help output:</p>
-<div class="codehilite"><pre><span></span><span class="c1"># Wrong</span>
-<span class="na">[compile]  # The correct scope for the 'warnings' option is compile.rsc</span>
-<span class="na">zinc_warnings: False</span>
+<div class="codehilite"><pre><span></span># Wrong
+[compile]  # The correct scope for the 'warnings' option is compile.rsc
+zinc_warnings = false
 
-<span class="c1"># Right</span>
-<span class="k">[compile.rsc]</span>
-<span class="na">warnings: False</span>
+# Right
+[compile.rsc]
+warnings = false
 </pre></div>
 <p>When in doubt, the scope is described in the heading for each option in the help output:</p>
 <div class="codehilite"><pre><span></span>$ ./pants compile.rsc --help
@@ -604,37 +628,15 @@ Compile Scala and Java code using Zinc.
     Compile with debug symbol enabled.
 ...
 </pre></div>
-<h3 id="check-the-formatting">Check the Formatting</h3>
-<p>Settings that span multiple lines should be indented.  To minimize problems, follow these
-conventions:</p>
-<ul>
-<li>Followon lines should be indented four spaces.</li>
-<li>The ending bracket for lists and dicts should be indented two spaces.</li>
-</ul>
-<p>Here are some examples of correctly and incorrectly formatted values:</p>
-<div class="codehilite"><pre><span></span><span class="c1"># Right</span>
-<span class="na">jvm_options: [ "foo", "bar" ]</span>
-
-<span class="c1"># Right</span>
-<span class="na">jvm_options: [</span>
-    <span class="na">"foo", "bar"</span>
-  <span class="na">]</span>
-
-<span class="c1"># Wrong</span>
-<span class="na">jvm_options: [ "foo",</span>
-<span class="na">"bar" ]  # Followon line must be indented</span>
-
-<span class="c1"># Wrong</span>
-<span class="na">jvm_options: [</span>
-    <span class="na">"foo", "bar"</span>
-<span class="na">] # closing bracket must be indented</span>
-</pre></div>
+<h3 id="validate-the-toml">Validate the TOML</h3>
+<p>Most editors will warn when you have invalid TOML. For many editors, such as IntelliJ/Pycharm, you must first install a TOML plugin. </p>
+<p>Pants will also provide a useful error message if it fails to parse the TOML file.</p>
 
             <!-- main content end -->
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/options.html 2020-02-24T15:17:30.296088
+              from dist/markdown/html/src/docs/options.html 2020-02-27T21:41:51.758725
             </div>
 
           </div> <!-- mainflow -->

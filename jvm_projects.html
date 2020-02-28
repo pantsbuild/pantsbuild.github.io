@@ -621,25 +621,25 @@ eventually.</p>
 </ul>
 <h4 id="example-config-to-use-coursier">Example config to use coursier</h4>
 <h5 id="for-pants-17x">For Pants &gt;= 1.7.x</h5>
-<div class="codehilite"><pre><span></span><span class="c1"># This will turn on coursier and turn off ivy.</span>
-<span class="k">[resolver]</span>
-<span class="na">resolver: coursier</span>
+<div class="codehilite"><pre><span></span># This will turn on coursier and turn off ivy.
+[resolver]
+resolver = "coursier"
 
-<span class="k">[resolve.coursier]</span>
-<span class="c1"># jvm option in case of large resolves</span>
-<span class="na">jvm_options: ['-Xmx4g', '-XX:MaxMetaspaceSize</span><span class="o">=</span><span class="s">256m']</span>
+[resolve.coursier]
+# jvm option in case of large resolves
+jvm_options = ['-Xmx4g', '-XX:MaxMetaspaceSize=256m']
 
-<span class="k">[export]</span>
-<span class="c1"># Same if needed for large resolves</span>
-<span class="na">jvm_options: ['-Xmx4g', '-XX:MaxMetaspaceSize</span><span class="o">=</span><span class="s">256m']</span>
+[export]
+# Same if needed for large resolves
+jvm_options = ['-Xmx4g', '-XX:MaxMetaspaceSize=256m']
 
-<span class="k">[coursier]</span>
-<span class="na">repos: ['https://repo1.maven.org/maven2', 'https://dl.google.com/dl/android/maven2/']</span>
+[coursier]
+repos = ['https://repo1.maven.org/maven2', 'https://dl.google.com/dl/android/maven2/']
 
-<span class="c1"># Change the following if you choose to [build coursier jar from scratch](https://github.com/coursier/coursier/blob/master/DEVELOPMENT.md#build-with-pants)</span>
-<span class="c1"># or to fetch from different location.</span>
-<span class="na">bootstrap_jar_url: &lt;url&gt;</span>
-<span class="na">version: &lt;version&gt;</span>
+# Change the following if you choose to [build coursier jar from scratch](https://github.com/coursier/coursier/blob/master/DEVELOPMENT.md#build-with-pants)
+# or to fetch from different location.
+bootstrap_jar_url = "&lt;url&gt;"
+version = "&lt;version&gt;"
 </pre></div>
 <ul>
 <li>To inspect the resolve result, specify <code>--resolver-coursier-report</code></li>
@@ -650,6 +650,7 @@ eventually.</p>
 </li>
 </ul>
 <h5 id="for-pants-16x">For Pants &lt;= 1.6.x</h5>
+<p>Note that this uses <code>pants.ini</code> rather than <code>pants.toml</code>.</p>
 <div class="codehilite"><pre><span></span><span class="c1"># This will turn on coursier and turn off ivy.</span>
 <span class="k">[resolver]</span>
 <span class="na">resolver: coursier</span>
@@ -690,32 +691,36 @@ classes for each JVM-based operation. Things go faster.</p>
 <p>Pants uses Zinc, a dependency tracking compiler facade that supports sub-target incremental
 compilation for Java and Scala.</p>
 <h2 id="java9-vs-java8-which-java">Java9 vs Java8, Which Java</h2>
-<p>Pants first looks through any JDKs specified by the <code>paths</code> map in pants.ini's jvm-distributions
+<p>Pants first looks through any JDKs specified by the <code>paths</code> map in pants.toml's jvm-distributions
 section, eg:</p>
-<div class="codehilite"><pre><span></span><span class="k">[jvm-distributions]</span>
-<span class="na">paths</span> <span class="o">=</span> <span class="s">{</span>
-<span class="s">    'macos': [</span>
-<span class="s">      '/Library/Java/JavaVirtualMachines/jdk-9.0.4.jdk',</span>
-<span class="s">      '/Library/Java/JavaVirtualMachines/jdk1.8.0_45.jdk',</span>
-<span class="s">    ],</span>
-<span class="s">    'linux': [</span>
-<span class="s">      '/usr/java/jdk1.8.0_152',</span>
-<span class="s">    ]</span>
-<span class="s">  }</span>
+<div class="codehilite"><pre><span></span>[jvm-distributions]
+paths = """
+{
+  'macos': [
+    '/Library/Java/JavaVirtualMachines/jdk-9.0.4.jdk',
+    '/Library/Java/JavaVirtualMachines/jdk1.8.0_45.jdk',
+  ],
+  'linux': [
+    '/usr/java/jdk1.8.0_152',
+  ]
+}
+"""
 </pre></div>
 <p>If no JVMs are found there, Pants uses the first Java it finds in <code>JDK_HOME</code>, <code>JAVA_HOME</code>,
-or <code>PATH</code>. If no <code>paths</code> are specified in pants.ini, you can use JDK_HOME to set the Java version
+or <code>PATH</code>. If no <code>paths</code> are specified in pants.toml, you can use JDK_HOME to set the Java version
 for just one pants invocation:</p>
 <div class="codehilite"><pre><span></span>$ <span class="nv">JDK_HOME</span><span class="o">=</span>/usr/lib/jvm/java-1.8.0-openjdk-amd64 ./pants ...
 </pre></div>
 <p>If you sometimes need to compile some code in Java 8 and sometimes Java 9, you can define
-jvm-platforms in pants.ini, and set what targets use which platforms. For example, in pants.ini:</p>
-<div class="codehilite"><pre><span></span><span class="k">[jvm-platform]</span>
-<span class="na">default_platform: java8</span>
-<span class="na">platforms: {</span>
-    <span class="na">'java8': {'source': '8', 'target': '8', 'args': [] },</span>
-    <span class="na">java9': {'source': '9', 'target': '9', 'args': [] },</span>
-  <span class="na">}</span>
+jvm-platforms in pants.toml, and set what targets use which platforms. For example, in pants.toml:</p>
+<div class="codehilite"><pre><span></span>[jvm-platform]
+default_platform = "java8"
+platforms = """
+{
+  'java8': {'source': '8', 'target': '8', 'args': [] },
+  'java9': {'source': '9', 'target': '9', 'args': [] },
+}
+"""
 </pre></div>
 <p>And then in a BUILD file:</p>
 <div class="codehilite"><pre><span></span><span class="n">java_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'my-library'</span><span class="p">,</span>
@@ -729,11 +734,12 @@ jvm-platforms in pants.ini, and set what targets use which platforms. For exampl
 <p>If you want to set the <code>-bootclasspath</code> (or <code>-Xbootclasspath</code>) to use the
 appropriate java distribution, you can use the <code>$JAVA_HOME</code> symbol in the
 <code>args</code> list. For example:</p>
-<div class="codehilite"><pre><span></span><span class="k">[jvm-platform]</span>
-<span class="na">default_platform: java8</span>
-<span class="na">platforms: {</span>
-    <span class="na">'java8': {'source': '8', 'target': '8', 'args': ["-C-bootclasspath:$JAVA_HOME/jre/lib/resources.jar:$JAVA_HOME/jre/lib/rt.jar:$JAVA_HOME/jre/lib/sunrsasign.jar:$JAVA_HOME/jre/lib/jsse.jar:$JAVA_HOME/jre/lib/jce.jar:$JAVA_HOME/jre/lib/charsets.jar:$JAVA_HOME/jre/lib/jfr.jar:$JAVA_HOME/jre/classes"] },</span>
-  <span class="na">}</span>
+<div class="codehilite"><pre><span></span>[jvm-platform]
+default_platform = "java8"
+platforms = """
+{
+  'java8': {'source': '8', 'target': '8', 'args': ["-C-bootclasspath:$JAVA_HOME/jre/lib/resources.jar:$JAVA_HOME/jre/lib/rt.jar:$JAVA_HOME/jre/lib/sunrsasign.jar:$JAVA_HOME/jre/lib/jsse.jar:$JAVA_HOME/jre/lib/jce.jar:$JAVA_HOME/jre/lib/charsets.jar:$JAVA_HOME/jre/lib/jfr.jar:$JAVA_HOME/jre/classes"] },
+}
 </pre></div>
 <p>Your <code>-bootclasspath</code> should be designed to work with any compatible version of
 the JVM that might be used. If you make use of <code>[jvm-distributions]</code> and have
@@ -1054,7 +1060,7 @@ javac and scalac.  For more details:</p>
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/examples/src/java/org/pantsbuild/example/README.html 2020-02-24T15:17:29.513627
+              from dist/markdown/html/examples/src/java/org/pantsbuild/example/README.html 2020-02-27T21:41:51.046464
             </div>
 
           </div> <!-- mainflow -->

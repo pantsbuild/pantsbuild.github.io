@@ -428,19 +428,19 @@ using the appropriate options. It's idiomatic, but not required, to set these op
 of targets in a special BUILD file named <code>BUILD.tools</code> in the repo root.</p>
 <p>Pants uses <code>Ivy</code> to fetch JVM-based tools.  Ivy requires an XML configuration file.
 By default, pants uses the configuration that ships with Ivy,
-but if you need to change Ivy settings you can specify your own in <code>pants.ini</code>:</p>
+but if you need to change Ivy settings you can specify your own in <code>pants.toml</code>:</p>
 <div class="codehilite"><pre><span></span>[ivy]
-ivy_settings: %(pants_supportdir)s/ivy/ivysettings.xml
-cache_dir: ~/.ivy2/pants
+ivy_settings = "%(pants_supportdir)s/ivy/ivysettings.xml"
+cache_dir = "~/.ivy2/pants"
 </pre></div>
 <p>For more information on Ivy settings, see the <a href="http://ant.apache.org/ivy/">Ivy documentation</a></p>
 <p><a id="setup_cache"></a></p>
 <h2 id="build-cache">Build Cache</h2>
 <p>Pants automatically caches its work locally. But most organizations will want to set up a shared
-remote build cache. To do so, set <code>cache</code> options in <code>pants.ini</code>:</p>
+remote build cache. To do so, set <code>cache</code> options in <code>pants.toml</code>:</p>
 <div class="codehilite"><pre><span></span>[cache]
-read_from: ['https://myserver.co/pantscache']
-write_to: ['https://myserver.co/pantscache']
+read_from = ['https://myserver.co/pantscache']
+write_to = ['https://myserver.co/pantscache']
 </pre></div>
 <p>Note that the read and write cache locations are separate options: you may, for example, only want
 your CI machines, not individual developer builds, to populate the shared cache.</p>
@@ -470,11 +470,9 @@ time various build operations take, cache hits, and more.
 If you you work with a large engineering organization, you might want to
 gather this information in one place, so it can inform decisions about how
 to improve everybody's build times.</p>
-<p>To upload these stats to a server for future analysis set the following option in <code>pants.ini</code>:</p>
-<div class="codehilite"><pre><span></span><span class="k">[run-tracker]</span>
-<span class="na">stats_upload_urls: {</span>
-  <span class="na">'http://myorg.org/pantsstats': 'authprovider'</span>
-<span class="na">}</span>
+<p>To upload these stats to a server for future analysis set the following option in <code>pants.toml</code>:</p>
+<div class="codehilite"><pre><span></span>[run-tracker]
+stats_upload_urls = "{'http://myorg.org/pantsstats': 'authprovider'}"
 </pre></div>
 <p>Pants will <code>POST</code> JSON data to each key URL.  The <code>authprovider</code> is the name of the provider the
 user must auth against in order to post to the corresponding URL.
@@ -525,9 +523,9 @@ This variable should point to a file containing trusted certificates:</p>
 <h3 id="bootstrapping-ivy">Bootstrapping Ivy</h3>
 <p>Pants fetches the Ivy tool with an initial manual bootstrapping step using the Python requests library.
 If you do not want to use <code>HTTP_PROXY</code> or <code>HTTPS_PROXY</code> as described above, you can re-redirect
-this initial download to another URL with a setting in <code>pants.ini</code>:</p>
-<div class="codehilite"><pre><span></span><span class="k">[ivy]</span>
-<span class="na">bootstrap_jar_url: https://proxy.corp.example.com/content/groups/public/org/apache/ivy/ivy/2.3.0/ivy-2.3.0.jar</span>
+this initial download to another URL with a setting in <code>pants.toml</code>:</p>
+<div class="codehilite"><pre><span></span>[ivy]
+bootstrap_jar_url = "https://proxy.corp.example.com/content/groups/public/org/apache/ivy/ivy/2.3.0/ivy-2.3.0.jar"
 </pre></div>
 <p>You may also encounter issues downloading this .jar file if you are using self-signed SSL certificates.
 See the section on Configuring the Python requests library above.</p>
@@ -535,7 +533,7 @@ See the section on Configuring the Python requests library above.</p>
 <p>If your site uses Sonatype Nexus or another reverse proxy for
 artifacts, you do not need to use a separate HTTP proxy.  Contact the
 reverse proxy administrator to setup a proxy for the sites listed in
-<code>build-support/ivy/settings.xml</code> and <code>pants.ini</code>.  By default these
+<code>build-support/ivy/settings.xml</code> and <code>pants.toml</code>.  By default these
 are <code>https://repo1.maven.org/maven2/</code> and <code>https://dl.bintray.com/pantsbuild/maven/</code>:</p>
 <p>Here is an excerpt of a modified ivysettings.xml with some possible configurations:</p>
 <div class="codehilite"><pre><span></span>&lt;macrodef name="_remote_resolvers"&gt;
@@ -555,34 +553,34 @@ are <code>https://repo1.maven.org/maven2/</code> and <code>https://dl.bintray.co
 <p>For the binary support tools like protoc, you will need to setup a
 proxy for the <code>dl.bintray.com</code> repo, or create your own repo of build
 tools:</p>
-<div class="codehilite"><pre><span></span><span class="na">binaries_baseurls</span> <span class="o">=</span> <span class="s">[</span>
-<span class="s">    "https://nexus.example.com/content/repositories/dl.bintray.com/pantsbuild/bin/build-support"</span>
-<span class="s">  ]</span>
+<div class="codehilite"><pre><span></span>binaries_baseurls = [
+  "https://nexus.example.com/content/repositories/dl.bintray.com/pantsbuild/bin/build-support",
+]
 </pre></div>
 <h3 id="redirecting-python-requirements-to-other-servers">Redirecting python requirements to other servers</h3>
-<p>For python repos, you need to override the following settings in pants.ini:</p>
-<div class="codehilite"><pre><span></span><span class="k">[python-repos]</span>
-<span class="na">repos: [</span>
-    <span class="na">"https://pantsbuild.github.io/cheeseshop/third_party/python/dist/index.html",</span>
-    <span class="na">"https://pantsbuild.github.io/cheeseshop/third_party/python/index.html"</span>
-  <span class="na">]</span>
+<p>For Python repos, you need to override the following settings in <code>pants.toml</code>:</p>
+<div class="codehilite"><pre><span></span>[python-repos]
+repos = [
+  "https://pantsbuild.github.io/cheeseshop/third_party/python/dist/index.html",
+  "https://pantsbuild.github.io/cheeseshop/third_party/python/index.html",
+]
 
-<span class="na">indexes: [</span>
-    <span class="na">"https://pypi.org/simple/"</span>
-  <span class="na">]</span>
+indexes = [
+  "https://pypi.org/simple/",
+]
 </pre></div>
 <p>You can also reference a local repo relative to your project's build root with this pattern:</p>
-<div class="codehilite"><pre><span></span><span class="k">[python-repos]</span>
-<span class="na">repos: [</span>
-    <span class="na">"%(buildroot)s/repo_path"</span>
-  <span class="na">]</span>
+<div class="codehilite"><pre><span></span>[python-repos]
+repos = [
+  "%(buildroot)s/repo_path",
+]
 </pre></div>
 
             <!-- main content end -->
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/setup_repo.html 2020-02-24T15:17:31.050938
+              from dist/markdown/html/src/docs/setup_repo.html 2020-02-27T21:41:52.482268
             </div>
 
           </div> <!-- mainflow -->

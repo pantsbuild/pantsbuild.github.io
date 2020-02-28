@@ -395,16 +395,16 @@ tooling easier.</p>
 <p>Go support is provided by a plugin distributed to
 <a href="https://pypi.org/pypi/pantsbuild.pants.contrib.go">pypi</a>.
 Assuming you have already <a href="http://www.pantsbuild.org/install.html">installed pants</a>, you'll need to
-add the Go plugin in your <code>pants.ini</code>, like so:</p>
-<div class="codehilite"><pre><span></span><span class="k">[GLOBAL]</span>
-<span class="na">pants_version: 1.0.0</span>
+add the Go plugin in your <code>pants.toml</code>, like so:</p>
+<div class="codehilite"><pre><span></span>[GLOBAL]
+pants_version = "1.26.0"
 
-<span class="na">plugins: [</span>
-    <span class="na">'pantsbuild.pants.contrib.go</span><span class="o">=</span><span class="s">=%(pants_version)s',</span>
-<span class="s">  ]</span>
+plugins = [
+  'pantsbuild.pants.contrib.go==%(pants_version)s',
+]
 
-<span class="k">[go-distribution]</span>
-<span class="na">version: 1.10</span>
+[go-distribution]
+version = "1.10"
 </pre></div>
 <p>On your next run of <code>./pants</code> the plugin will be installed and you'll find these new goals:</p>
 <div class="codehilite"><pre><span></span>./pants goals
@@ -444,11 +444,9 @@ standard multi-language repo layout, <code>src/go</code> is probably on the $GOP
 <p>Pants corrects for this in the case of its default patterns: It will correctly detect
 that <code>src/go/src</code> and <code>src/main/go/src</code> are the possible source roots for Go.</p>
 <p>But if your Go code does not live in one of these locations then you'll need to tell Pants where
-to find it, e.g., by adding this to <code>pants.ini</code>:</p>
-<div class="codehilite"><pre><span></span><span class="k">[source]</span>
-<span class="na">source_roots: {</span>
-    <span class="na">'my/custom/path/go/src': ['go']</span>
-  <span class="na">}</span>
+to find it, e.g., by adding this to <code>pants.toml</code>:</p>
+<div class="codehilite"><pre><span></span>[source]
+source_roots = "{'my/custom/path/go/src': ['go']}"
 </pre></div>
 <p>This tells pants that the <code>src/go/src</code> source root houses one type of code, Go code.</p>
 <p>You can inspect Pants' source root guesses with:</p>
@@ -588,15 +586,15 @@ At this point the generated BUILD files can be checked in.</p>
 <h2 id="codebase-maintenance">Codebase maintenance</h2>
 <p>When new packages are added or existing packages' dependencies are modified a similar seeding (only
 needed if the packages are new roots), buildgen and compilation can be cycled through. To simplify
-the process it's recommended the flags be made defaults for the repo by editing your pants init to
+the process it's recommended the flags be made defaults for the repo by editing your <code>pants.toml</code> to
 include the following section:</p>
-<div class="codehilite"><pre><span></span><span class="k">[buildgen.go]</span>
-<span class="c1"># We always want buildgen to materialize BUILD files on disk as well as handle seeding remotes</span>
-<span class="c1"># when new ones are encountered.  We also never want to allow FLOATING revs, they should be pinned</span>
-<span class="c1"># right away.</span>
-<span class="na">materialize: True</span>
-<span class="na">remote: True</span>
-<span class="na">fail_floating: True</span>
+<div class="codehilite"><pre><span></span>[buildgen.go]
+# We always want buildgen to materialize BUILD files on disk as well as handle seeding remotes
+# when new ones are encountered.  We also never want to allow FLOATING revs, they should be pinned
+# right away.
+materialize = true
+remote = true
+fail_floating = true
 </pre></div>
 <p>Now running buildgen is just <code>./pants buildgen</code>.</p>
 <h2 id="building">Building</h2>
@@ -671,8 +669,8 @@ depends on the <code>go_protobuf_library</code>, which transitively depends on a
 </p>
 <p>To select the version of the go protobuf runtime your generated code depends on, set option <code>import_target</code>
 in scope <code>gen.go-protobuf</code> to point to an appropriate target address. E.g.,</p>
-<div class="codehilite"><pre><span></span><span class="k">[gen.go-protobuf]</span>
-<span class="na">import_target: 3rdparty/go/github.com/golang/protobuf/proto</span>
+<div class="codehilite"><pre><span></span>[gen.go-protobuf]
+import_target = "3rdparty/go/github.com/golang/protobuf/proto"
 </pre></div>
 <p>(Where 3rdparty/go/github.com/golang/protobuf/proto was presumably created by the buildgen process
 described above.)</p>
@@ -681,10 +679,10 @@ described above.)</p>
 by adding  the <code>protoc_plugins=['grpc']</code> argument. See, e.g.,
 <a href="https://github.com/pantsbuild/pants/blob/master/contrib/go/examples/src/protobuf/org/pantsbuild/example/grpc/BUILD"><code>contrib/go/examples/src/protobuf/org/pantsbuild/example/grpc/BUILD</code></a></p>
 <p>You can also activate it for all <code>go_protobuf_library</code> targets in your repo, using the <code>protoc_plugins</code>
-option in scope <code>gen.go-protobuf</code>. E.g., add this to your <code>pants.ini</code>:</p>
-<div class="codehilite"><pre><span></span><span class="k">[gen.go-protobuf]</span>
-<span class="na">protoc_plugins</span><span class="o">=</span><span class="s">["grpc"]</span>
-<span class="na">import_target: src/protobuf:grpc-deps</span>
+option in scope <code>gen.go-protobuf</code>. E.g., add this to your <code>pants.toml</code>:</p>
+<div class="codehilite"><pre><span></span>[gen.go-protobuf]
+protoc_plugins = ["grpc"]
+import_target = "src/protobuf:grpc-deps"
 </pre></div>
 <p>Note that we also modify <code>import_target</code>, as your code must now depend on the gRPC runtime.
 See, e.g.,
@@ -738,7 +736,7 @@ GOROOT=/home/jsirois/.cache/pants/bin/go/linux/x86_64/1.6.2/unpacked/go
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/contrib/go/README.html 2020-02-24T15:17:29.368803
+              from dist/markdown/html/contrib/go/README.html 2020-02-27T21:41:50.919726
             </div>
 
           </div> <!-- mainflow -->
