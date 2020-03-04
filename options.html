@@ -312,6 +312,8 @@
                     <li class="toc-h2"><a href="#environment-variables">Environment Variables</a></li>
                     <li class="toc-h2"><a href="#config-file">Config File</a></li>
                     <li class="toc-h2"><a href="#overlaying-config-files">Overlaying Config Files</a></li>
+                    <li class="toc-h2"><a href="#legacy-ini-format">Legacy INI format</a></li>
+                    <li class="toc-h2"><a href="#migrating-from-ini-to-toml">Migrating from INI to TOML</a></li>
                     <li class="toc-h1"><a href="#troubleshooting-config-files">Troubleshooting Config Files</a></li>
                     <li class="toc-h2"><a href="#use-the-right-section-name">Use the Right Section Name</a></li>
                     <li class="toc-h2"><a href="#validate-the-toml">Validate the TOML</a></li>
@@ -606,6 +608,66 @@ debug = false
 idioms of lists work. You can add a third file with another invocation
 of <code>--pants-config-files=&lt;path&gt;</code>, or you can replace the standard one
 entirely with <code>--pants-config-files=[&lt;list&gt;]</code>.</p>
+<h3 id="legacy-ini-format">Legacy INI format</h3>
+<p>Pants also understands config files written in INI. You can safely intermix both TOML and INI config files.</p>
+<p>INI is very similar to TOML, but has some important differences.</p>
+<p>You may either use <code>:</code> or <code>=</code> as a delimiter, unlike TOML always using <code>=</code>.</p>
+<div class="codehilite"><pre><span></span><span class="k">[section-name]</span>
+<span class="na">val1</span> <span class="o">=</span> <span class="s">"a"</span>
+<span class="na">val2: "a"</span>
+</pre></div>
+<p>String values should not have quotes around them:</p>
+<div class="codehilite"><pre><span></span><span class="c1"># Bad</span>
+<span class="na">val</span> <span class="o">=</span> <span class="s">"a"</span>
+
+<span class="c1"># Good</span>
+<span class="na">val</span> <span class="o">=</span> <span class="s">a</span>
+</pre></div>
+<p>Dict options should not have quotes around the <code>{}</code> symbols, although the elements must still use quotes:</p>
+<div class="codehilite"><pre><span></span><span class="c1"># Bad</span>
+<span class="na">dict_option</span> <span class="o">=</span> <span class="s">"{'a': 0}"</span>
+<span class="na">dict_option</span> <span class="o">=</span> <span class="s">"""{'a': 0}"""</span>
+
+<span class="c1"># Good</span>
+<span class="na">dict_option</span> <span class="o">=</span> <span class="s">{'a': 0}</span>
+</pre></div>
+<p>Every line of list and dict values must be indented:</p>
+<div class="codehilite"><pre><span></span><span class="c1"># Bad</span>
+<span class="na">list_option</span> <span class="o">=</span> <span class="s">[</span>
+<span class="s">  'a',</span>
+<span class="s">  'b',</span>
+<span class="na">]</span>
+<span class="na">dict_option</span> <span class="o">=</span> <span class="s">{</span>
+<span class="s">  'a': 0,</span>
+<span class="s">  'b': 1,</span>
+<span class="na">}</span>
+
+<span class="c1"># Good</span>
+<span class="na">list_option</span> <span class="o">=</span> <span class="s">[</span>
+<span class="s">    'a',</span>
+<span class="s">    'b',</span>
+<span class="s">  ]</span>
+<span class="na">dict_option</span> <span class="o">=</span> <span class="s">{</span>
+<span class="s">    'a': 0,</span>
+<span class="s">    'b': 1,</span>
+<span class="s">  }</span>
+</pre></div>
+<p>To add or remove to a list option, use the same syntax as the command line:</p>
+<div class="codehilite"><pre><span></span><span class="c1"># Bad</span>
+<span class="na">list_option.add</span> <span class="o">=</span> <span class="s">["a", "b"]</span>
+<span class="na">list_option.remove</span> <span class="o">=</span> <span class="s">["c"]</span>
+
+<span class="c1"># Good</span>
+<span class="na">list_option</span> <span class="o">=</span> <span class="s">+["a", "b"],-["c"]</span>
+</pre></div>
+<h3 id="migrating-from-ini-to-toml">Migrating from INI to TOML</h3>
+<p>While Pants will support both INI and TOML config files for some time, we encourage you to write any new config files in TOML and to consider migrating any pre-existing config files to TOML. TOML removes many gotchas and has benefits like validation from your text editor.</p>
+<p>To migrate, you must be using a modern version of the <code>./pants</code> script that understands <code>pants.toml</code>. Run <code>curl -L -O https://pantsbuild.github.io/setup/pants</code> to pull the latest version of the script. </p>
+<p>We wrote a script to automate fixing the majority of issues:</p>
+<div class="codehilite"><pre><span></span>$ curl -L -o migrate_to_toml_config.py <span class="s1">'https://git.io/Jv02R'</span> <span class="o">&amp;&amp;</span> chmod +x migrate_to_toml_config.py <span class="o">&amp;&amp;</span> ./migrate_to_toml_config.py pants.ini
+</pre></div>
+<p>After running this script, open the generated TOML file in your editor to see if there are any issues. (You may need to install a TOML plugin for your editor). You will likely need to fix some issues, especially fixing any multi-line list or dict options.</p>
+<p>Then, remove the INI file and run <code>./pants</code> to validate that the file is read correctly.</p>
 <h2 id="troubleshooting-config-files">Troubleshooting Config Files</h2>
 <h3 id="use-the-right-section-name">Use the Right Section Name</h3>
 <p>Section names must correspond to actual option scopes.  Use the correct section name as specified
@@ -636,7 +698,7 @@ Compile Scala and Java code using Zinc.
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/options.html 2020-02-27T21:41:51.758725
+              from dist/markdown/html/src/docs/options.html 2020-03-04T07:21:43.115596
             </div>
 
           </div> <!-- mainflow -->
