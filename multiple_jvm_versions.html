@@ -8,11 +8,11 @@
 
 <head>
   <meta charset="utf-8"/>
-  <title>Specify a File Bundle</title>
+  <title>multiple_jvm_versions</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" href="pants-logo.ico">
   <!-- In case this is a "test publish", tell search engines where real version lives: -->
-  <link rel="canonical" href="http://pantsbuild.org/file_bundles.html">
+  <link rel="canonical" href="http://pantsbuild.org/multiple_jvm_versions.html">
 
   <link rel="stylesheet" href="bootstrap-custom.min.css">
   <link rel="stylesheet" href="bootstrap-custom-theme.min.css">
@@ -380,36 +380,62 @@
 .codehilite .vm { color: #bb60d5 } /* Name.Variable.Magic */
 .codehilite .il { color: #40a070 } /* Literal.Number.Integer.Long */
 </style>
-<h1 id="specify-a-file-bundle">Specify a File Bundle</h1>
 <h2 id="problem">Problem</h2>
-<p>You have created a <code>jvm_app</code> target definition for <a href="bundle.html">bundling</a> a Scala or Java project and you want to include assets such as config files or shell scripts in the bundle.</p>
+<p>You want to compile and/or run different test or binary targets using different JVMs.</p>
+<p>Or, you need to specify command-line options globally for the JVM on a per-JVM version basis. For
+example, using <code>--add-opens</code> flags, but only when running on JVMs that support it.</p>
 <h2 id="solution">Solution</h2>
-<p>Add a <code>bundles</code> list to your <code>jvm_app</code> target definition (more info on <code>jvm_app</code> definitions can be found in <a href="bundle.html">Define a Scala or Java Bundle Target</a>).</p>
-<h2 id="discussion">Discussion</h2>
-<p>Here is an example <code>jvm_app</code> definition that shows different possibilities for defining file bundles (and explains them below):</p>
-<div class="codehilite"><pre><span></span><span class="n">jvm_app</span><span class="p">(</span>
-  <span class="n">name</span><span class="o">=</span><span class="s1">'bundle'</span><span class="p">,</span>
-  <span class="n">bundle</span><span class="p">(</span><span class="n">fileset</span><span class="o">=</span><span class="p">[</span><span class="s1">'src/main/resources/**/*'</span><span class="p">)),</span> <span class="c1"># 1</span>
-  <span class="n">bundle</span><span class="p">(</span><span class="n">fileset</span><span class="o">=</span><span class="p">[</span><span class="s1">'config/*'</span><span class="p">,</span> <span class="s1">'!*.xml'</span><span class="p">]),</span> <span class="c1"># 2</span>
-  <span class="n">bundle</span><span class="p">(</span><span class="n">fileset</span><span class="o">=</span><span class="p">[</span><span class="s1">'src/scripts/*.sh'</span><span class="p">],</span> <span class="n">relative_to</span><span class="o">=</span><span class="s1">'src'</span><span class="p">)</span> <span class="c1"># 3</span>
-<span class="p">)</span>
+<p>In your global configuration (most likely <code>pants.toml</code>), declare JVM platforms using the
+<code>jvm-platform</code> configuration section to define the set of available platforms.</p>
+<p>On targets, add the named argument <code>runtime_platform</code> set to the name of one of the platforms
+defined in <code>jvm-platform</code>. That will tell pants to use that platform when running that target in a
+ JVM.</p>
+<div class="codehilite"><pre><span></span>runtime_platform="java8",
 </pre></div>
-<ol>
-<li>All files in the <code>src/main/resources</code> directory are recursively included.</li>
-<li>All files in the <code>config</code> directory are included, except any <code>.xml</code> files.</li>
-<li>All <code>.sh</code> files in the <code>src/scripts</code> directory will be included. The <code>relative_to</code> effectively strips away the specified directory, in this case <code>src</code>, which means that all files in <code>src/scripts</code> would end up in the root of the bundle. If you specified <code>relative_to='src/scripts'</code> instead, for example, all files would end up in the root directory.</li>
-</ol>
+<p>To compile with a specific platform, set the <code>platform</code> on the target.</p>
+<div class="codehilite"><pre><span></span>platform="java8",
+</pre></div>
+<p>To set the defaults for <code>platform</code> and <code>runtime_platform</code>, add <code>default_platform</code> and
+<code>default_runtime_platform</code> to your global config.</p>
+<h2 id="discussion">Discussion</h2>
+<p>Here are the different configurations that you can set when defining a JVM platform in your global
+configuration.</p>
+<p>For compile time configuration, there are three main attributes, <code>source</code>, <code>target</code> and <code>args</code>.
+* <code>source</code> and <code>target</code> map directly to the javac arguments of the same name, though they accept
+more aliases than javac. Up to JDK 8, you can use either <code>1.X</code> or <code>X</code>. For 9 and up, you can't
+include the <code>1.</code>.
+ * <code>args</code>, allows the platform to specify additional, global to that platform, compile arguments.</p>
+<p>For runtime configuration, <code>target</code> and <code>jvm_options</code> are used. <code>target</code> is used to determine the
+version of the JVM to use. <code>jvm_options</code> is used by some tasks to allow platforms to specify
+platform specific JVM options. These can make transitions between JVM versions smoother by
+allowing compatibility options to be provided globally.</p>
+<p>An example pants.toml config might look like this:</p>
+<div class="codehilite"><pre><span></span>[jvm-platform]
+default_platform: java8
+default_runtime_platform: java10
+platforms =
+"""
+ {
+    'java8': { 'source': '8', 'target': '8', 'args': [] },
+    'java10': {'source': '10', 'target': '10', 'args': [],
+               'jvm_options': [
+                   # --add-opens is a 9+ flag, that doesn't work with 8
+                   '--add-opens=java.base/java.lang.reflect=ALL-UNNAMED'
+               ] },
+  }
+</pre></div>
+<p>"""</p>
 <h2 id="see-also">See Also</h2>
 <ul>
-<li><a href="bundle.html">Create a Bundled zip or Other Archive</a></li>
-<li><a href="globs.html">Use globs to group files</a></li>
+<li><a href="jvm_options.html">Specify JVM Options</a></li>
+<li><a href="run.html">Run a Binary Target</a></li>
 </ul>
 
             <!-- main content end -->
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/common_tasks/file_bundles.html 2020-03-26T09:48:43.144146
+              from dist/markdown/html/src/docs/common_tasks/multiple_jvm_versions.html 2020-03-26T09:48:43.326565
             </div>
 
           </div> <!-- mainflow -->
