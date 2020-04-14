@@ -605,6 +605,7 @@
 <h2 id="heading_availablegoals_106">Available Goals</h2>
 <table>
 <tr><td><a href="#analysis" onclick="expandGoal('analysis')">analysis</a></td><td></td></tr>
+<tr><td><a href="#backends" onclick="expandGoal('backends')">backends</a></td><td></td></tr>
 <tr><td><a href="#bash-completion" onclick="expandGoal('bash-completion')">bash-completion</a></td><td>Generate a Bash shell script that teaches Bash how to autocomplete pants command lines.</td></tr>
 <tr><td><a href="#bench" onclick="expandGoal('bench')">bench</a></td><td>Run benchmarks.</td></tr>
 <tr><td><a href="#binary" onclick="expandGoal('binary')">binary</a></td><td>Create a runnable binary.</td></tr>
@@ -899,7 +900,7 @@
 <br/><span>What to do when files and globs specified in BUILD files, such as in the `sources` field, cannot be found. This happens when the files do not exist on your machine or when they are ignored by the `--pants-ignore` option.</span>
 </li>
 <li>
-<span class="option-args">--ignore-pants-warnings="['&lt;str&gt;', '&lt;str&gt;', ...]"</span> <span class="option-default">(default: [])</span>
+<span class="option-args">--ignore-pants-warnings="['&lt;str&gt;', '&lt;str&gt;', ...]"</span> <span class="option-default">(default: "['DEPRECATED: the pantsbuild.pants.contrib', 'DEPRECATED: the antlr, jaxb, ragel, and wire codegen backends']")</span>
 <br/><span>Regexps matching warning strings to ignore, e.g. ["DEPRECATED: scope some_scope will be removed"]. The regexps will be matched from the start of the warning string, and will always be case-insensitive. See the `warnings` module documentation for more background on these are used.</span>
 </li>
 <li>
@@ -951,8 +952,12 @@
 <br/><span>Write end-product artifacts to this dir.</span>
 </li>
 <li>
-<span class="option-args">--pants-ignore="['&lt;str&gt;', '&lt;str&gt;', ...]"</span> <span class="option-default">(default: "['.*/', '/dist/', '/build-support/virtualenvs/', '/build-support/*.venv/', '/build-support/bin/native/src', '/src/rust/engine/target']")</span>
-<br/><span>Paths to ignore for all filesystem operations performed by pants (e.g. BUILD file scanning, glob matching, etc). Patterns use the gitignore syntax (https://git-scm.com/docs/gitignore). The `--pants-distdir` and `--pants-workdir` locations are inherently ignored.</span>
+<span class="option-args">--pants-ignore="['&lt;str&gt;', '&lt;str&gt;', ...]"</span> <span class="option-default">(default: "['.*/', '/dist/', '/build-support/virtualenvs/', '/build-support/*.venv/', '/build-support/bin/native/src', '/src/rust/engine/target', '!*.class', '!/pants.pex']")</span>
+<br/><span>Paths to ignore for all filesystem operations performed by pants (e.g. BUILD file scanning, glob matching, etc). Patterns use the gitignore syntax (https://git-scm.com/docs/gitignore). The `--pants-distdir` and `--pants-workdir` locations are inherently ignored.--pants-ignore can be used in tandem with --pants-ignore-use-gitignore, and any rules specified here apply after rules specified in a .gitignore file.</span>
+</li>
+<li>
+<span class="option-args">--[no-]pants-ignore-use-gitignore</span> <span class="option-default">(default: True)</span>
+<br/><span>Make use of a root .gitignore file when determining whether to ignore filesystem operations performed by pants. If used together with `--pants-ignore`, any exclude/include patterns specified there apply after .gitignore rules.</span>
 </li>
 <li>
 <span class="option-args">--pants-physical-workdir-base=&lt;dir&gt;</span> <span class="option-default">(default: None)</span>
@@ -967,7 +972,7 @@
 <br/><span>Use support files from this dir.</span>
 </li>
 <li>
-<span class="option-args">--pants-version=&lt;str&gt;</span> <span class="option-default">(default: 1.27.0.dev2)</span>
+<span class="option-args">--pants-version=&lt;str&gt;</span> <span class="option-default">(default: 1.27.0.dev3)</span>
 <br/><span>Use this pants version. Note Pants code only uses this to verify that you are using the requested version, as Pants cannot dynamically change the version it is using once the program is already running. This option is useful to set in your pants.toml, however, and then you can grep the value to select which version to use for setup scripts (e.g. `./pants`), runner scripts, IDE plugins, etc. For example, the setup script we distribute at https://www.pantsbuild.org/install.html#recommended-installation uses this value to determine which Python version to run with. You may find the version of the pants instance you are running using -v, -V, or --version.</span>
 </li>
 <li>
@@ -1148,6 +1153,10 @@
 <li>
 <span class="option-args">--[no-]verify-config</span> <span class="option-default">(default: True)</span>
 <br/><span>Verify that all config file values correspond to known options.</span>
+</li>
+<li>
+<span class="option-args">--[no-]watchman-enable</span> <span class="option-default">(default: True)</span>
+<br/><span>Use the watchman daemon filesystem event watcher to watch for changes in the buildroot. Disable this to rely solely on the experimental pants engine filesystem watcher.</span>
 </li>
 <li>
 <span class="option-args">--watchman-socket-path=&lt;str&gt;</span> <span class="option-default">(default: None)</span>
@@ -1355,6 +1364,16 @@
 </li>
 </ul>
 </li>
+</ul>
+</li>
+<li class="goal-data" id="backends">
+<a id="oref_goal_backends" pantsmark="oref_goal_backends"></a>
+<a name="backends"></a>
+<div class="goal-header">
+<div class="goal-name">backends</div>
+<div class="goal-description"></div>
+</div>
+<ul class="nobullets collapsible">
 </ul>
 </li>
 <li class="goal-data" id="bash-completion">
@@ -32356,11 +32375,11 @@
 <li class="collapsed options-group">Basic options
               <ul class="nobullets">
 <li>
-<span class="option-args">--download-pex-bin-version=&lt;str&gt;</span> <span class="option-default">(default: v2.1.7)</span>
+<span class="option-args">--download-pex-bin-version=&lt;str&gt;</span> <span class="option-default">(default: v2.1.9)</span>
 <br/><span>Version of the pex script to use</span>
 </li>
 <li>
-<span class="option-args">--download-pex-bin-version-digest-mapping="{'key1': val1, 'key2': val2, ...}"</span> <span class="option-default">(default: { 'none': ('v2.1.7', '375ab4a405a6db57f3afd8d60eca666e61931b44f156dc78ac7d8e47bddc96d6', 2620451) })</span>
+<span class="option-args">--download-pex-bin-version-digest-mapping="{'key1': val1, 'key2': val2, ...}"</span> <span class="option-default">(default: { 'none': ('v2.1.9', '4e2677ce7270dd04d767e93e1904c90aa8c7f4f53b76f3615215970b45d100d7', 2624111) })</span>
 <br/><span>A dict mapping &lt;platform constraint&gt; -&gt; (&lt;version&gt;, &lt;fingerprint&gt;, &lt;size_bytes&gt;).A "platform constraint" is any of ['darwin', 'linux', 'none'], and is the platform to fetch the tool for. A platform-independent tool should use none, while a platform-dependent tool should specify all environments it needs to be used for. The "fingerprint" and "size_bytes" arguments are the result printed when running `sha256sum` and `wc -c` on the downloaded file, respectively.</span>
 </li>
 </ul>
@@ -34821,8 +34840,8 @@ The UrlInfo struct is a 3-tuple with the following slots:
 <br/><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
 </li>
 <li>
-<span class="option-args">--pex-builder-wrapper-pex-version=&lt;str&gt;</span> <span class="option-default">(default: 2.1.7)</span>
-<br/><span>The pex version to include in any generated ipex files. NOTE: This should ideally be the same as the pex version which pants itself depends on, which right now is 2.1.7.</span>
+<span class="option-args">--pex-builder-wrapper-pex-version=&lt;str&gt;</span> <span class="option-default">(default: 2.1.9)</span>
+<br/><span>The pex version to include in any generated ipex files. NOTE: This should ideally be the same as the pex version which pants itself depends on, which right now is 2.1.9.</span>
 </li>
 <li>
 <span class="option-args">--pex-builder-wrapper-setuptools-version=&lt;str&gt;</span> <span class="option-default">(default: 40.6.3)</span>
@@ -35659,7 +35678,7 @@ The UrlInfo struct is a 3-tuple with the following slots:
 <li>
 <div class="global-subsystem-header">
 <div class="scope">python-repos</div>
-<div class="scope-description">A python code repository.</div>
+<div class="scope-description">External Python code repositories, such as PyPI.</div>
 </div>
 <ul class="nobullets collapsible">
 <li class="collapsed options-group">Advanced options
@@ -35678,7 +35697,7 @@ The UrlInfo struct is a 3-tuple with the following slots:
 </li>
 <li>
 <span class="option-args">--python-repos-indexes="['&lt;str&gt;', '&lt;str&gt;', ...]"</span> <span class="option-default">(default: "['https://pypi.org/simple/']")</span>
-<br/><span>URLs of code repository indexes.</span>
+<br/><span>URLs of code repository indexes to look for requirements. If set to an empty list, then Pex will use no indices (meaning it will not use PyPI). The values should be compliant with PEP 503.</span>
 </li>
 <li>
 <span class="option-args">--python-repos-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
@@ -35686,7 +35705,7 @@ The UrlInfo struct is a 3-tuple with the following slots:
 </li>
 <li>
 <span class="option-args">--python-repos-repos="['&lt;str&gt;', '&lt;str&gt;', ...]"</span> <span class="option-default">(default: [])</span>
-<br/><span>URLs of code repositories.</span>
+<br/><span>URLs of code repositories to look for requirements. In Pip and Pex, this option corresponds to the `--find-links` option.</span>
 </li>
 <li>
 <span class="option-args">--python-repos-l=&lt;LogLevel&gt;, --python-repos-level=&lt;LogLevel&gt;</span> <span class="option-default">(default: info)</span>
@@ -35738,7 +35757,7 @@ The UrlInfo struct is a 3-tuple with the following slots:
 </li>
 <li>
 <span class="option-args">--python-setup-platforms="[&lt;platform&gt;, &lt;platform&gt;, ...]"</span> <span class="option-default">(default: "['current']")</span>
-<br/><span>A list of platforms to be supported by this python environment. Each platformis a string, as returned by pkg_resources.get_supported_platform().</span>
+<br/><span>A list of platforms to be supported by this Python environment. Each platformis a string, as returned by pkg_resources.get_supported_platform().</span>
 </li>
 <li>
 <span class="option-args">--python-setup-requirement-constraints=&lt;file_option&gt;</span> <span class="option-default">(default: None)</span>
@@ -37433,7 +37452,7 @@ The UrlInfo struct is a 3-tuple with the following slots:
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/reference/pants_reference_body.html 2020-04-03T17:19:15.771657
+              from dist/reference/pants_reference_body.html 2020-04-13T21:29:52.054279
             </div>
 
           </div> <!-- mainflow -->
