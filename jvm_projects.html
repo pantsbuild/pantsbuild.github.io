@@ -187,6 +187,9 @@
                   <a class="sidebar-nav-heading" class="toc-drop" data-toggle="collapse" href="#Release-Notes" aria-expanded="false" aria-controls="Release-Notes">Release Notes<span class="caret"></span></a>
                     <ul class="collapse sidebar-nav sidebar-submenu" id="Release-Notes">
                         <li class="toc-h1 toc-link ">
+                          <a href="notes-1.28.x.html">1.28.x Stable Releases</a>
+                        </li>
+                        <li class="toc-h1 toc-link ">
                           <a href="notes-1.27.x.html">1.27.x Stable Releases</a>
                         </li>
                         <li class="toc-h1 toc-link ">
@@ -627,25 +630,25 @@ eventually.</p>
 </ul>
 <h4 id="example-config-to-use-coursier">Example config to use coursier</h4>
 <h5 id="for-pants-17x">For Pants &gt;= 1.7.x</h5>
-<div class="codehilite"><pre><span></span># This will turn on coursier and turn off ivy.
-[resolver]
-resolver = "coursier"
+<div class="codehilite"><pre><span></span><span class="c1"># This will turn on coursier and turn off ivy.</span>
+<span class="k">[resolver]</span>
+<span class="n">resolver</span> <span class="o">=</span> <span class="s">"coursier"</span>
 
-[resolve.coursier]
-# jvm option in case of large resolves
-jvm_options = ['-Xmx4g', '-XX:MaxMetaspaceSize=256m']
+<span class="k">[resolve.coursier]</span>
+<span class="c1"># jvm option in case of large resolves</span>
+<span class="n">jvm_options</span> <span class="o">=</span> <span class="k">['-Xmx4g', '-XX:MaxMetaspaceSize=256m']</span>
 
-[export]
-# Same if needed for large resolves
-jvm_options = ['-Xmx4g', '-XX:MaxMetaspaceSize=256m']
+<span class="k">[export]</span>
+<span class="c1"># Same if needed for large resolves</span>
+<span class="n">jvm_options</span> <span class="o">=</span> <span class="k">['-Xmx4g', '-XX:MaxMetaspaceSize=256m']</span>
 
-[coursier]
-repos = ['https://repo1.maven.org/maven2', 'https://dl.google.com/dl/android/maven2/']
+<span class="k">[coursier]</span>
+<span class="n">repos</span> <span class="o">=</span> <span class="k">['https://repo1.maven.org/maven2', 'https://dl.google.com/dl/android/maven2/']</span>
 
-# Change the following if you choose to [build coursier jar from scratch](https://github.com/coursier/coursier/blob/master/DEVELOPMENT.md#build-with-pants)
-# or to fetch from different location.
-bootstrap_jar_url = "&lt;url&gt;"
-version = "&lt;version&gt;"
+<span class="c1"># Change the following if you choose to [build coursier jar from scratch](https://github.com/coursier/coursier/blob/master/DEVELOPMENT.md#build-with-pants)</span>
+<span class="c1"># or to fetch from different location.</span>
+<span class="n">bootstrap_jar_url</span> <span class="o">=</span> <span class="s">"&lt;url&gt;"</span>
+<span class="n">version</span> <span class="o">=</span> <span class="s">"&lt;version&gt;"</span>
 </pre></div>
 <ul>
 <li>To inspect the resolve result, specify <code>--resolver-coursier-report</code></li>
@@ -699,18 +702,18 @@ compilation for Java and Scala.</p>
 <h2 id="java9-vs-java8-which-java">Java9 vs Java8, Which Java</h2>
 <p>Pants first looks through any JDKs specified by the <code>paths</code> map in pants.toml's jvm-distributions
 section, eg:</p>
-<div class="codehilite"><pre><span></span>[jvm-distributions]
-paths = """
-{
-  'macos': [
-    '/Library/Java/JavaVirtualMachines/jdk-9.0.4.jdk',
-    '/Library/Java/JavaVirtualMachines/jdk1.8.0_45.jdk',
-  ],
-  'linux': [
-    '/usr/java/jdk1.8.0_152',
-  ]
-}
-"""
+<div class="codehilite"><pre><span></span><span class="k">[jvm-distributions]</span>
+<span class="n">paths</span> <span class="o">=</span> <span class="s">"""</span>
+<span class="s">{</span>
+<span class="s">  'macos': [</span>
+<span class="s">    '/Library/Java/JavaVirtualMachines/jdk-9.0.4.jdk',</span>
+<span class="s">    '/Library/Java/JavaVirtualMachines/jdk1.8.0_45.jdk',</span>
+<span class="s">  ],</span>
+<span class="s">  'linux': [</span>
+<span class="s">    '/usr/java/jdk1.8.0_152',</span>
+<span class="s">  ]</span>
+<span class="s">}</span>
+<span class="s">"""</span>
 </pre></div>
 <p>If no JVMs are found there, Pants uses the first Java it finds in <code>JDK_HOME</code>, <code>JAVA_HOME</code>,
 or <code>PATH</code>. If no <code>paths</code> are specified in pants.toml, you can use JDK_HOME to set the Java version
@@ -719,14 +722,14 @@ for just one pants invocation:</p>
 </pre></div>
 <p>If you sometimes need to compile some code in Java 8 and sometimes Java 9, you can define
 jvm-platforms in pants.toml, and set what targets use which platforms. For example, in pants.toml:</p>
-<div class="codehilite"><pre><span></span>[jvm-platform]
-default_platform = "java8"
-platforms = """
-{
-  'java8': {'source': '8', 'target': '8', 'args': [] },
-  'java9': {'source': '9', 'target': '9', 'args': [] },
-}
-"""
+<div class="codehilite"><pre><span></span><span class="k">[jvm-platform]</span>
+<span class="n">default_platform</span> <span class="o">=</span> <span class="s">"java8"</span>
+<span class="n">platforms</span> <span class="o">=</span> <span class="s">"""</span>
+<span class="s">{</span>
+<span class="s">  'java8': {'source': '8', 'target': '8', 'args': [] },</span>
+<span class="s">  'java9': {'source': '9', 'target': '9', 'args': [] },</span>
+<span class="s">}</span>
+<span class="s">"""</span>
 </pre></div>
 <p>And then in a BUILD file:</p>
 <div class="codehilite"><pre><span></span><span class="n">java_library</span><span class="p">(</span>
@@ -741,12 +744,12 @@ platforms = """
 <p>If you want to set the <code>-bootclasspath</code> (or <code>-Xbootclasspath</code>) to use the
 appropriate java distribution, you can use the <code>$JAVA_HOME</code> symbol in the
 <code>args</code> list. For example:</p>
-<div class="codehilite"><pre><span></span>[jvm-platform]
-default_platform = "java8"
-platforms = """
-{
-  'java8': {'source': '8', 'target': '8', 'args': ["-C-bootclasspath:$JAVA_HOME/jre/lib/resources.jar:$JAVA_HOME/jre/lib/rt.jar:$JAVA_HOME/jre/lib/sunrsasign.jar:$JAVA_HOME/jre/lib/jsse.jar:$JAVA_HOME/jre/lib/jce.jar:$JAVA_HOME/jre/lib/charsets.jar:$JAVA_HOME/jre/lib/jfr.jar:$JAVA_HOME/jre/classes"] },
-}
+<div class="codehilite"><pre><span></span><span class="k">[jvm-platform]</span>
+<span class="n">default_platform</span> <span class="o">=</span> <span class="s">"java8"</span>
+<span class="n">platforms</span> <span class="o">=</span> <span class="s">"""</span>
+<span class="s">{</span>
+<span class="s">  'java8': {'source': '8', 'target': '8', 'args': ["</span><span class="err">-</span><span class="n">C-bootclasspath</span><span class="p">:</span><span class="err">$</span><span class="n">JAVA_HOME</span><span class="err">/</span><span class="n">jre</span><span class="err">/</span><span class="n">lib</span><span class="err">/</span><span class="n">resources</span><span class="p">.</span><span class="n">jar</span><span class="p">:</span><span class="err">$</span><span class="n">JAVA_HOME</span><span class="err">/</span><span class="n">jre</span><span class="err">/</span><span class="n">lib</span><span class="err">/</span><span class="n">rt</span><span class="p">.</span><span class="n">jar</span><span class="p">:</span><span class="err">$</span><span class="n">JAVA_HOME</span><span class="err">/</span><span class="n">jre</span><span class="err">/</span><span class="n">lib</span><span class="err">/</span><span class="n">sunrsasign</span><span class="p">.</span><span class="n">jar</span><span class="p">:</span><span class="err">$</span><span class="n">JAVA_HOME</span><span class="err">/</span><span class="n">jre</span><span class="err">/</span><span class="n">lib</span><span class="err">/</span><span class="n">jsse</span><span class="p">.</span><span class="n">jar</span><span class="p">:</span><span class="err">$</span><span class="n">JAVA_HOME</span><span class="err">/</span><span class="n">jre</span><span class="err">/</span><span class="n">lib</span><span class="err">/</span><span class="n">jce</span><span class="p">.</span><span class="n">jar</span><span class="p">:</span><span class="err">$</span><span class="n">JAVA_HOME</span><span class="err">/</span><span class="n">jre</span><span class="err">/</span><span class="n">lib</span><span class="err">/</span><span class="n">charsets</span><span class="p">.</span><span class="n">jar</span><span class="p">:</span><span class="err">$</span><span class="n">JAVA_HOME</span><span class="err">/</span><span class="n">jre</span><span class="err">/</span><span class="n">lib</span><span class="err">/</span><span class="n">jfr</span><span class="p">.</span><span class="n">jar</span><span class="p">:</span><span class="err">$</span><span class="n">JAVA_HOME</span><span class="err">/</span><span class="n">jre</span><span class="err">/</span><span class="n">classes</span><span class="err">"</span><span class="p">]</span> <span class="p">},</span>
+<span class="p">}</span>
 </pre></div>
 <p>Your <code>-bootclasspath</code> should be designed to work with any compatible version of
 the JVM that might be used. If you make use of <code>[jvm-distributions]</code> and have
@@ -1067,7 +1070,7 @@ javac and scalac.  For more details:</p>
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/examples/src/java/org/pantsbuild/example/README.html 2020-05-09T16:29:33.685038
+              from dist/markdown/html/examples/src/java/org/pantsbuild/example/README.html 2020-05-13T16:14:05.652393
             </div>
 
           </div> <!-- mainflow -->

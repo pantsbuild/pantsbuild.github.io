@@ -187,6 +187,9 @@
                   <a class="sidebar-nav-heading" class="toc-drop" data-toggle="collapse" href="#Release-Notes" aria-expanded="false" aria-controls="Release-Notes">Release Notes<span class="caret"></span></a>
                     <ul class="collapse sidebar-nav sidebar-submenu" id="Release-Notes">
                         <li class="toc-h1 toc-link ">
+                          <a href="notes-1.28.x.html">1.28.x Stable Releases</a>
+                        </li>
+                        <li class="toc-h1 toc-link ">
                           <a href="notes-1.27.x.html">1.27.x Stable Releases</a>
                         </li>
                         <li class="toc-h1 toc-link ">
@@ -445,12 +448,12 @@ levels in different tasks.</p>
   and <code>--no-foo-bar</code> is the same as <code>--foo-bar=false</code>.</p>
 <h3 id="int-and-float-options">Int and Float Options</h3>
 <p>Specify values in decimal notation: <code>--foo=5</code>, <code>--bar=4.5</code>.</p>
-<div class="codehilite"><pre><span></span>foo = 5
-bar = 4.5
+<div class="codehilite"><pre><span></span><span class="n">foo</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">bar</span> <span class="o">=</span> <span class="mf">4.5</span>
 </pre></div>
 <h3 id="string-options">String Options</h3>
 <p>Surround strings with single or double quotes: <code>--foo="hello, world"</code>.</p>
-<div class="codehilite"><pre><span></span>foo = "hello world"
+<div class="codehilite"><pre><span></span><span class="n">foo</span> <span class="o">=</span> <span class="s">"hello world"</span>
 </pre></div>
 <h3 id="list-options">List Options</h3>
 <p>List options can be added to and removed, as well as overridden.
@@ -462,9 +465,9 @@ For example, for an option <code>--foo</code> whose default value is <code>[1, 2
 <li><code>foo = [3, 4]</code> will yield <code>[3, 4]</code>.</li>
 </ul>
 <p>In <code>pants.toml</code>, you may both add and remove simultaneously:</p>
-<div class="codehilite"><pre><span></span># This will yield [2, 3, 4]
-foo.add = [3, 4]
-foo.remove = [1]
+<div class="codehilite"><pre><span></span><span class="c1"># This will yield [2, 3, 4]</span>
+<span class="n">foo</span><span class="p">.</span><span class="n">add</span> <span class="o">=</span> <span class="k">[3, 4]</span>
+<span class="n">foo</span><span class="p">.</span><span class="n">remove</span> <span class="o">=</span> <span class="k">[1]</span>
 </pre></div>
 <p>Adding a single value and replacing a list works the same as <code>pants.toml</code> for the command line and environment variables.</p>
 <ul>
@@ -494,12 +497,12 @@ plus the values in <code>pants.toml</code>. To instead override the list, use <c
 <h3 id="dict-options">Dict Options</h3>
 <p>Dict option values are Python-style dict literals embedded in a string, e.g: <code>--foo='{"a": 1,"b": 2}'</code>.</p>
 <p>In <code>pants.toml</code>, it often helps to use multiline strings for readability, e.g.:</p>
-<div class="codehilite"><pre><span></span>foo = """
-{
-  "a": 1,
-  "b": 2,
-}
-"""
+<div class="codehilite"><pre><span></span><span class="n">foo</span> <span class="o">=</span> <span class="s">"""</span>
+<span class="s">{</span>
+<span class="s">  "</span><span class="n">a</span><span class="s">": 1,</span>
+<span class="s">  "</span><span class="n">b</span><span class="s">": 2,</span>
+<span class="s">}</span>
+<span class="s">"""</span>
 </pre></div>
 <h3 id="available-options">Available Options</h3>
 <p>The options available in a given Pants-enabled codebase depend on which backends and plugins are activated.</p>
@@ -549,33 +552,33 @@ precedence over settings in config files.</p>
 If you installed Pants <a href="install.html">as recommended</a>, this file should already exist.</p>
 <p>The <code>pants.toml</code> file is <a href="https://github.com/toml-lang/toml/blob/master/README.md">a TOML file</a>, with some extra features like string interpolation added by Pants.</p>
 <p>A <code>pants.toml</code> file looks something like:</p>
-<div class="codehilite"><pre><span></span>[pytest]
-option1 = "value"
-option2 = true
-option3 = 10
+<div class="codehilite"><pre><span></span><span class="k">[pytest]</span>
+<span class="n">option1</span> <span class="o">=</span> <span class="s">"value"</span>
+<span class="n">option2</span> <span class="o">=</span> <span class="kc">true</span>
+<span class="n">option3</span> <span class="o">=</span> <span class="mi">10</span>
 
-[cache.java]
-option1 = ["a", "b"]
+<span class="k">[cache.java]</span>
+<span class="n">option1</span> <span class="o">=</span> <span class="k">["a", "b"]</span>
 </pre></div>
 <p>Sections in the <code>.toml</code> file correspond to the task name or
 subsystem name, or a combination of both.</p>
 <p>The <code>[DEFAULT]</code> section is special: its values are available in all other sections by using <code>printf</code>-style string interpolation, e.g.</p>
-<div class="codehilite"><pre><span></span>[DEFAULT]
-thrift_workdir = "%(pants_workdir)s/thrift"
+<div class="codehilite"><pre><span></span><span class="k">[DEFAULT]</span>
+<span class="n">thrift_workdir</span> <span class="o">=</span> <span class="s">"%(pants_workdir)s/thrift"</span>
 
-[GLOBAL]
-print_exception_stacktrace = true
+<span class="k">[GLOBAL]</span>
+<span class="n">print_exception_stacktrace</span> <span class="o">=</span> <span class="kc">true</span>
 
-[gen.thrift]
-workdir = "%(thrift_workdir)s"
+<span class="k">[gen.thrift]</span>
+<span class="n">workdir</span> <span class="o">=</span> <span class="s">"%(thrift_workdir)s"</span>
 
-[compile.rsc]
-args = ["-C-Tnowarnprefixes", "-C%(thrift_workdir)s"]
+<span class="k">[compile.rsc]</span>
+<span class="n">args</span> <span class="o">=</span> <span class="k">["-C-Tnowarnprefixes", "-C%(thrift_workdir)s"]</span>
 </pre></div>
 <p>You may also interpolate values from within the same section:</p>
-<div class="codehilite"><pre><span></span>[GLOBAL]
-pants_version = "1.26.0"
-plugins = ["pantsbuild.pants.contrib.go==%(pants_version)s"]
+<div class="codehilite"><pre><span></span><span class="k">[GLOBAL]</span>
+<span class="n">pants_version</span> <span class="o">=</span> <span class="s">"1.26.0"</span>
+<span class="n">plugins</span> <span class="o">=</span> <span class="k">["pantsbuild.pants.contrib.go==%(pants_version)s"]</span>
 </pre></div>
 <p>Settings in config files are overridden by options specified in the
 environment or by command line flags.</p>
@@ -678,13 +681,13 @@ entirely with <code>--pants-config-files=[&lt;list&gt;]</code>.</p>
 <h3 id="use-the-right-section-name">Use the Right Section Name</h3>
 <p>Section names must correspond to actual option scopes.  Use the correct section name as specified
 in the help output:</p>
-<div class="codehilite"><pre><span></span># Wrong
-[compile]  # The correct scope for the 'warnings' option is compile.rsc
-zinc_warnings = false
+<div class="codehilite"><pre><span></span><span class="c1"># Wrong</span>
+<span class="p">[</span><span class="n">compile</span><span class="p">]</span>  <span class="c1"># The correct scope for the 'warnings' option is compile.rsc</span>
+<span class="n">zinc_warnings</span> <span class="o">=</span> <span class="kc">false</span>
 
-# Right
-[compile.rsc]
-warnings = false
+<span class="c1"># Right</span>
+<span class="k">[compile.rsc]</span>
+<span class="n">warnings</span> <span class="o">=</span> <span class="kc">false</span>
 </pre></div>
 <p>When in doubt, the scope is described in the heading for each option in the help output:</p>
 <div class="codehilite"><pre><span></span>$ ./pants compile.rsc --help
@@ -704,7 +707,7 @@ Compile Scala and Java code using Zinc.
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/options.html 2020-05-09T16:29:34.464680
+              from dist/markdown/html/src/docs/options.html 2020-05-13T16:14:06.515627
             </div>
 
           </div> <!-- mainflow -->
