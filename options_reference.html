@@ -704,7 +704,6 @@
     existing skeleton project into a Pants project as if user is importing these targets.
     </td></tr>
 <tr><td><a href="#imports" onclick="expandGoal('imports')">imports</a></td><td>Resolve external source dependencies.</td></tr>
-<tr><td><a href="#index" onclick="expandGoal('index')">index</a></td><td></td></tr>
 <tr><td><a href="#invalidate" onclick="expandGoal('invalidate')">invalidate</a></td><td></td></tr>
 <tr><td><a href="#jar" onclick="expandGoal('jar')">jar</a></td><td></td></tr>
 <tr><td><a href="#jvm-platform-explain" onclick="expandGoal('jvm-platform-explain')">jvm-platform-explain</a></td><td>Console task which provides helpful analysis about jvm platform dependencies.
@@ -859,7 +858,7 @@
 <br/><span>If False, require BinaryTool subclasses to download their contents from urls generated from --binaries-baseurls, even if the tool has an external url generator. This can be necessary if using Pants in an environment which cannot contact the wider Internet.</span>
 </li>
 <li>
-<span class="option-args">--backend-packages="['&lt;str&gt;', '&lt;str&gt;', ...]"</span> <span class="option-default">(default: "['pants.backend.graph_info', 'pants.backend.python', 'pants.backend.jvm', 'pants.backend.native', 'pants.backend.codegen.protobuf.java', 'pants.backend.codegen.thrift.java', 'pants.backend.codegen.thrift.python', 'pants.backend.codegen.grpcio.python', 'pants.backend.project_info', 'pants.cache', 'pants.backend.docgen', 'pants.contrib.buildrefactor', 'pants.contrib.codeanalysis', 'pants.contrib.confluence', 'pants.contrib.go', 'pants.contrib.node', 'pants.contrib.scrooge', 'internal_backend.repositories', 'internal_backend.sitegen', 'internal_backend.utilities']")</span>
+<span class="option-args">--backend-packages="['&lt;str&gt;', '&lt;str&gt;', ...]"</span> <span class="option-default">(default: "['pants.backend.graph_info', 'pants.backend.python', 'pants.backend.jvm', 'pants.backend.native', 'pants.backend.codegen.protobuf.java', 'pants.backend.codegen.thrift.java', 'pants.backend.codegen.thrift.python', 'pants.backend.codegen.grpcio.python', 'pants.backend.project_info', 'pants.cache', 'pants.backend.docgen', 'pants.contrib.buildrefactor', 'pants.contrib.confluence', 'pants.contrib.go', 'pants.contrib.node', 'pants.contrib.scrooge', 'internal_backend.repositories', 'internal_backend.sitegen', 'internal_backend.utilities']")</span>
 <br/><span>Register v1 tasks from these backends. The backend packages must be present on the PYTHONPATH, typically because they are in the Pants core dist, in a plugin dist, or available as sources in the repo.</span>
 </li>
 <li>
@@ -935,6 +934,10 @@
 <br/><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
 </li>
 <li>
+<span class="option-args">--named-caches-dir=&lt;str&gt;</span> <span class="option-default">(default: /Users/eric/.cache/pants/named_caches)</span>
+<br/><span>Directory to use as the base for named global caches for processes with trusted, concurrency-safe caches.</span>
+</li>
+<li>
 <span class="option-args">--native-engine-visualize-to=&lt;dir_option&gt;</span> <span class="option-default">(default: None)</span>
 <br/><span>A directory to write execution and rule graphs to as `dot` files. The contents of the directory will be overwritten if any filenames collide.</span>
 </li>
@@ -987,7 +990,7 @@
 <br/><span>Use support files from this dir.</span>
 </li>
 <li>
-<span class="option-args">--pants-version=&lt;str&gt;</span> <span class="option-default">(default: 1.29.0.dev1)</span>
+<span class="option-args">--pants-version=&lt;str&gt;</span> <span class="option-default">(default: 1.29.0rc0)</span>
 <br/><span>Use this pants version. Note Pants code only uses this to verify that you are using the requested version, as Pants cannot dynamically change the version it is using once the program is already running. This option is useful to set in your pants.toml, however, and then you can grep the value to select which version to use for setup scripts (e.g. `./pants`), runner scripts, IDE plugins, etc. For example, the setup script we distribute at https://www.pantsbuild.org/install.html#recommended-installation uses this value to determine which Python version to run with. You may find the version of the pants instance you are running using -v, -V, or --version.</span>
 </li>
 <li>
@@ -1020,7 +1023,7 @@
 </li>
 <li>
 <span class="option-args">--pantsrc-files="[&lt;path&gt;, &lt;path&gt;, ...]"</span> <span class="option-default">(default: "['/etc/pantsrc', '~/.pants.rc']")</span>
-<br/><span>Override config with values from these files. Later files override earlier ones.</span>
+<br/><span>Override config with values from these files, using syntax matching that of `--pants-config-files`.</span>
 </li>
 <li>
 <span class="option-args">--parent-build-id=&lt;str&gt;</span> <span class="option-default">(default: None)</span>
@@ -12717,492 +12720,6 @@
 </li>
 </ul>
 </li>
-<li class="goal-data" id="index">
-<a id="oref_goal_index" pantsmark="oref_goal_index"></a>
-<a name="index"></a>
-<div class="goal-header">
-<div class="goal-name">index</div>
-<div class="goal-description"></div>
-</div>
-<ul class="nobullets collapsible">
-<li>
-<div class="scope">index.bundle-entries</div>
-<div class="scope-description">None</div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Basic options
-                    <ul class="nobullets">
-<li>
-<span class="option-args">--index-bundle-entries-archive=&lt;str&gt;</span> <span class="option-default">(default: none)</span>
-<br/><span>Create an archive of this type.</span>
-</li>
-<li>
-<span class="option-args">--index-bundle-entries-execution-strategy=&lt;ExecutionStrategy&gt;</span> <span class="option-default">(default: nailgun)</span>
-<br/><span>If set to nailgun, nailgun will be enabled and repeated invocations of this task will be quicker. If set to subprocess, then the task will be run without nailgun. Hermetic execution is an experimental subprocess execution framework.</span>
-</li>
-</ul>
-</li>
-<li class="collapsed options-group">Advanced options
-                    <ul class="nobullets">
-<li>
-<span class="option-args">--index-bundle-entries-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: 200)</span>
-<br/><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</li>
-<li>
-<span class="option-args">--[no-]index-bundle-entries-colors</span> <span class="option-default">(default: True)</span>
-<br/><span>Set whether log messages are displayed in color.</span>
-</li>
-<li>
-<span class="option-args">--[no-]index-bundle-entries-fail-fast</span> <span class="option-default">(default: False)</span>
-<br/><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</li>
-<li>
-<span class="option-args">--index-bundle-entries-jvm-options="[&lt;option&gt;..., &lt;option&gt;..., ...]"</span> <span class="option-default">(default: "['-Xmx1g']")</span>
-<br/><span>Run with these JVM options.</span>
-</li>
-<li>
-<span class="option-args">--index-bundle-entries-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br/><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</li>
-<li>
-<span class="option-args">--index-bundle-entries-nailgun-connect-attempts=&lt;int&gt;</span> <span class="option-default">(default: 5)</span>
-<br/><span>Max attempts for nailgun connects.</span>
-</li>
-<li>
-<span class="option-args">--index-bundle-entries-nailgun-server=&lt;target_option&gt;</span> <span class="option-default">(default: //:nailgun-server)</span>
-<br/><span>Target address spec for overriding the classpath of the nailgun-server jvm tool which is, by default: [JarDependency(org='com.martiansoftware', base_name='nailgun-server', rev='0.9.1', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=False, intransitive=False, excludes=(), base_path='.')]</span>
-</li>
-<li>
-<span class="option-args">--index-bundle-entries-nailgun-subprocess-startup-timeout=&lt;float&gt;</span> <span class="option-default">(default: 10.0)</span>
-<br/><span>The time (secs) to wait for a nailgun subprocess to start.</span>
-</li>
-<li>
-<span class="option-args">--index-bundle-entries-nailgun-timeout-seconds=&lt;float&gt;</span> <span class="option-default">(default: 10.0)</span>
-<br/><span>The time (secs) to wait for a nailgun subprocess to start writing to stdout.</span>
-</li>
-<li>
-<span class="option-args">--index-bundle-entries-l=&lt;LogLevel&gt;, --index-bundle-entries-level=&lt;LogLevel&gt;</span> <span class="option-default">(default: info)</span>
-<br/><span>Set the logging level.</span>
-</li>
-<li>
-<span class="option-args">--index-bundle-entries-q, --[no-]index-bundle-entries-quiet</span> <span class="option-default">(default: False)</span>
-<br/><span>Squelches most console output. NOTE: Some tasks default to behaving quietly: inverting this option supports making them noisier than they would be otherwise.</span>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="scope">cache.index.bundle-entries</div>
-<div class="scope-description">None</div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Basic options
-                    <ul class="nobullets">
-<li>
-<span class="option-args">--[no-]cache-index-bundle-entries-dereference-symlinks</span> <span class="option-default">(default: True)</span>
-<br/><span>Dereference symlinks when creating cache tarball.</span>
-</li>
-<li>
-<span class="option-args">--[no-]cache-index-bundle-entries-ignore</span> <span class="option-default">(default: False)</span>
-<br/><span>Ignore all other cache configuration and skip using the cache.</span>
-</li>
-<li>
-<span class="option-args">--[no-]cache-index-bundle-entries-read</span> <span class="option-default">(default: True)</span>
-<br/><span>Read build artifacts from cache, if available.</span>
-</li>
-<li>
-<span class="option-args">--[no-]cache-index-bundle-entries-write</span> <span class="option-default">(default: True)</span>
-<br/><span>Write build artifacts to cache, if available.</span>
-</li>
-</ul>
-</li>
-<li class="collapsed options-group">Advanced options
-                    <ul class="nobullets">
-<li>
-<span class="option-args">--cache-index-bundle-entries-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: 200)</span>
-<br/><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</li>
-<li>
-<span class="option-args">--[no-]cache-index-bundle-entries-colors</span> <span class="option-default">(default: True)</span>
-<br/><span>Set whether log messages are displayed in color.</span>
-</li>
-<li>
-<span class="option-args">--cache-index-bundle-entries-compression-level=&lt;int&gt;</span> <span class="option-default">(default: 5)</span>
-<br/><span>The gzip compression level (0-9) for created artifacts.</span>
-</li>
-<li>
-<span class="option-args">--[no-]cache-index-bundle-entries-fail-fast</span> <span class="option-default">(default: False)</span>
-<br/><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</li>
-<li>
-<span class="option-args">--cache-index-bundle-entries-max-entries-per-target=&lt;int&gt;</span> <span class="option-default">(default: 8)</span>
-<br/><span>Maximum number of old cache files to keep per task target pair</span>
-</li>
-<li>
-<span class="option-args">--cache-index-bundle-entries-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br/><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</li>
-<li>
-<span class="option-args">--[no-]cache-index-bundle-entries-overwrite</span> <span class="option-default">(default: False)</span>
-<br/><span>If writing build artifacts to cache, overwrite existing artifacts instead of skipping them.</span>
-</li>
-<li>
-<span class="option-args">--cache-index-bundle-entries-pinger-timeout=&lt;float&gt;</span> <span class="option-default">(default: 0.5)</span>
-<br/><span>number of seconds before pinger times out</span>
-</li>
-<li>
-<span class="option-args">--cache-index-bundle-entries-pinger-tries=&lt;int&gt;</span> <span class="option-default">(default: 2)</span>
-<br/><span>number of times pinger tries a cache</span>
-</li>
-<li>
-<span class="option-args">--cache-index-bundle-entries-read-from="['&lt;str&gt;', '&lt;str&gt;', ...]"</span> <span class="option-default">(default: "['/Users/eric/DocsLocal/code/projects/pants/.cache']")</span>
-<br/><span>The URIs of artifact caches to read directly from. Each entry is a URL of a RESTful cache, a path of a filesystem cache, or a pipe-separated list of alternate caches to choose from. This list is also used as input to the resolver. When resolver is 'none' list is used as is.</span>
-</li>
-<li>
-<span class="option-args">--cache-index-bundle-entries-read-timeout=&lt;float&gt;</span> <span class="option-default">(default: 4.0)</span>
-<br/><span>The read timeout for any remote caches in use, in seconds.</span>
-</li>
-<li>
-<span class="option-args">--cache-index-bundle-entries-resolver=&lt;str&gt;</span> <span class="option-default">(default: none)</span>
-<br/><span>Select which resolver strategy to use for discovering URIs that access artifact caches. none: use URIs from static config options, i.e. --read-from, --write-to. rest: look up URIs by querying a RESTful URL, which is a remote address from --read-from, --write-to.</span>
-</li>
-<li>
-<span class="option-args">--cache-index-bundle-entries-write-permissions=&lt;str&gt;</span> <span class="option-default">(default: None)</span>
-<br/><span>Permissions to use when writing artifacts to a local cache, in octal.</span>
-</li>
-<li>
-<span class="option-args">--cache-index-bundle-entries-write-timeout=&lt;float&gt;</span> <span class="option-default">(default: 4.0)</span>
-<br/><span>The write timeout for any remote caches in use, in seconds.</span>
-</li>
-<li>
-<span class="option-args">--cache-index-bundle-entries-write-to="['&lt;str&gt;', '&lt;str&gt;', ...]"</span> <span class="option-default">(default: "['/Users/eric/DocsLocal/code/projects/pants/.cache']")</span>
-<br/><span>The URIs of artifact caches to write directly to. Each entry is a URL ofa RESTful cache, a path of a filesystem cache, or a pipe-separated list of alternate caches to choose from. This list is also used as input to the resolver. When resolver is 'none' list is used as is.</span>
-</li>
-<li>
-<span class="option-args">--cache-index-bundle-entries-l=&lt;LogLevel&gt;, --cache-index-bundle-entries-level=&lt;LogLevel&gt;</span> <span class="option-default">(default: info)</span>
-<br/><span>Set the logging level.</span>
-</li>
-<li>
-<span class="option-args">--cache-index-bundle-entries-q, --[no-]cache-index-bundle-entries-quiet</span> <span class="option-default">(default: False)</span>
-<br/><span>Squelches most console output. NOTE: Some tasks default to behaving quietly: inverting this option supports making them noisier than they would be otherwise.</span>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="scope">index.kythe-java-extract</div>
-<div class="scope-description">None</div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Advanced options
-                    <ul class="nobullets">
-<li>
-<span class="option-args">--index-kythe-java-extract-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: 200)</span>
-<br/><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</li>
-<li>
-<span class="option-args">--[no-]index-kythe-java-extract-colors</span> <span class="option-default">(default: True)</span>
-<br/><span>Set whether log messages are displayed in color.</span>
-</li>
-<li>
-<span class="option-args">--[no-]index-kythe-java-extract-fail-fast</span> <span class="option-default">(default: False)</span>
-<br/><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</li>
-<li>
-<span class="option-args">--index-kythe-java-extract-javac9=&lt;target_option&gt;</span> <span class="option-default">(default: //:javac9)</span>
-<br/><span>Target address spec for specifying the classpath of the javac9 jvm tool.</span>
-</li>
-<li>
-<span class="option-args">--index-kythe-java-extract-jvm-options="[&lt;option&gt;..., &lt;option&gt;..., ...]"</span> <span class="option-default">(default: "['-Xmx1g']")</span>
-<br/><span>Run with these JVM options.</span>
-</li>
-<li>
-<span class="option-args">--index-kythe-java-extract-kythe-java-extractor=&lt;target_option&gt;</span> <span class="option-default">(default: //:kythe-java-extractor)</span>
-<br/><span>Target address spec for specifying the classpath of the kythe-java-extractor jvm tool.</span>
-</li>
-<li>
-<span class="option-args">--index-kythe-java-extract-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br/><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</li>
-<li>
-<span class="option-args">--index-kythe-java-extract-l=&lt;LogLevel&gt;, --index-kythe-java-extract-level=&lt;LogLevel&gt;</span> <span class="option-default">(default: info)</span>
-<br/><span>Set the logging level.</span>
-</li>
-<li>
-<span class="option-args">--index-kythe-java-extract-q, --[no-]index-kythe-java-extract-quiet</span> <span class="option-default">(default: False)</span>
-<br/><span>Squelches most console output. NOTE: Some tasks default to behaving quietly: inverting this option supports making them noisier than they would be otherwise.</span>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="scope">cache.index.kythe-java-extract</div>
-<div class="scope-description">None</div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Basic options
-                    <ul class="nobullets">
-<li>
-<span class="option-args">--[no-]cache-index-kythe-java-extract-dereference-symlinks</span> <span class="option-default">(default: True)</span>
-<br/><span>Dereference symlinks when creating cache tarball.</span>
-</li>
-<li>
-<span class="option-args">--[no-]cache-index-kythe-java-extract-ignore</span> <span class="option-default">(default: False)</span>
-<br/><span>Ignore all other cache configuration and skip using the cache.</span>
-</li>
-<li>
-<span class="option-args">--[no-]cache-index-kythe-java-extract-read</span> <span class="option-default">(default: True)</span>
-<br/><span>Read build artifacts from cache, if available.</span>
-</li>
-<li>
-<span class="option-args">--[no-]cache-index-kythe-java-extract-write</span> <span class="option-default">(default: True)</span>
-<br/><span>Write build artifacts to cache, if available.</span>
-</li>
-</ul>
-</li>
-<li class="collapsed options-group">Advanced options
-                    <ul class="nobullets">
-<li>
-<span class="option-args">--cache-index-kythe-java-extract-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: 200)</span>
-<br/><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</li>
-<li>
-<span class="option-args">--[no-]cache-index-kythe-java-extract-colors</span> <span class="option-default">(default: True)</span>
-<br/><span>Set whether log messages are displayed in color.</span>
-</li>
-<li>
-<span class="option-args">--cache-index-kythe-java-extract-compression-level=&lt;int&gt;</span> <span class="option-default">(default: 5)</span>
-<br/><span>The gzip compression level (0-9) for created artifacts.</span>
-</li>
-<li>
-<span class="option-args">--[no-]cache-index-kythe-java-extract-fail-fast</span> <span class="option-default">(default: False)</span>
-<br/><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</li>
-<li>
-<span class="option-args">--cache-index-kythe-java-extract-max-entries-per-target=&lt;int&gt;</span> <span class="option-default">(default: 8)</span>
-<br/><span>Maximum number of old cache files to keep per task target pair</span>
-</li>
-<li>
-<span class="option-args">--cache-index-kythe-java-extract-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br/><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</li>
-<li>
-<span class="option-args">--[no-]cache-index-kythe-java-extract-overwrite</span> <span class="option-default">(default: False)</span>
-<br/><span>If writing build artifacts to cache, overwrite existing artifacts instead of skipping them.</span>
-</li>
-<li>
-<span class="option-args">--cache-index-kythe-java-extract-pinger-timeout=&lt;float&gt;</span> <span class="option-default">(default: 0.5)</span>
-<br/><span>number of seconds before pinger times out</span>
-</li>
-<li>
-<span class="option-args">--cache-index-kythe-java-extract-pinger-tries=&lt;int&gt;</span> <span class="option-default">(default: 2)</span>
-<br/><span>number of times pinger tries a cache</span>
-</li>
-<li>
-<span class="option-args">--cache-index-kythe-java-extract-read-from="['&lt;str&gt;', '&lt;str&gt;', ...]"</span> <span class="option-default">(default: "['/Users/eric/DocsLocal/code/projects/pants/.cache']")</span>
-<br/><span>The URIs of artifact caches to read directly from. Each entry is a URL of a RESTful cache, a path of a filesystem cache, or a pipe-separated list of alternate caches to choose from. This list is also used as input to the resolver. When resolver is 'none' list is used as is.</span>
-</li>
-<li>
-<span class="option-args">--cache-index-kythe-java-extract-read-timeout=&lt;float&gt;</span> <span class="option-default">(default: 4.0)</span>
-<br/><span>The read timeout for any remote caches in use, in seconds.</span>
-</li>
-<li>
-<span class="option-args">--cache-index-kythe-java-extract-resolver=&lt;str&gt;</span> <span class="option-default">(default: none)</span>
-<br/><span>Select which resolver strategy to use for discovering URIs that access artifact caches. none: use URIs from static config options, i.e. --read-from, --write-to. rest: look up URIs by querying a RESTful URL, which is a remote address from --read-from, --write-to.</span>
-</li>
-<li>
-<span class="option-args">--cache-index-kythe-java-extract-write-permissions=&lt;str&gt;</span> <span class="option-default">(default: None)</span>
-<br/><span>Permissions to use when writing artifacts to a local cache, in octal.</span>
-</li>
-<li>
-<span class="option-args">--cache-index-kythe-java-extract-write-timeout=&lt;float&gt;</span> <span class="option-default">(default: 4.0)</span>
-<br/><span>The write timeout for any remote caches in use, in seconds.</span>
-</li>
-<li>
-<span class="option-args">--cache-index-kythe-java-extract-write-to="['&lt;str&gt;', '&lt;str&gt;', ...]"</span> <span class="option-default">(default: "['/Users/eric/DocsLocal/code/projects/pants/.cache']")</span>
-<br/><span>The URIs of artifact caches to write directly to. Each entry is a URL ofa RESTful cache, a path of a filesystem cache, or a pipe-separated list of alternate caches to choose from. This list is also used as input to the resolver. When resolver is 'none' list is used as is.</span>
-</li>
-<li>
-<span class="option-args">--cache-index-kythe-java-extract-l=&lt;LogLevel&gt;, --cache-index-kythe-java-extract-level=&lt;LogLevel&gt;</span> <span class="option-default">(default: info)</span>
-<br/><span>Set the logging level.</span>
-</li>
-<li>
-<span class="option-args">--cache-index-kythe-java-extract-q, --[no-]cache-index-kythe-java-extract-quiet</span> <span class="option-default">(default: False)</span>
-<br/><span>Squelches most console output. NOTE: Some tasks default to behaving quietly: inverting this option supports making them noisier than they would be otherwise.</span>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="scope">index.kythe-java-index</div>
-<div class="scope-description">None</div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Basic options
-                    <ul class="nobullets">
-<li>
-<span class="option-args">--index-kythe-java-index-execution-strategy=&lt;ExecutionStrategy&gt;</span> <span class="option-default">(default: nailgun)</span>
-<br/><span>If set to nailgun, nailgun will be enabled and repeated invocations of this task will be quicker. If set to subprocess, then the task will be run without nailgun. Hermetic execution is an experimental subprocess execution framework.</span>
-</li>
-</ul>
-</li>
-<li class="collapsed options-group">Advanced options
-                    <ul class="nobullets">
-<li>
-<span class="option-args">--index-kythe-java-index-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: 200)</span>
-<br/><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</li>
-<li>
-<span class="option-args">--[no-]index-kythe-java-index-colors</span> <span class="option-default">(default: True)</span>
-<br/><span>Set whether log messages are displayed in color.</span>
-</li>
-<li>
-<span class="option-args">--[no-]index-kythe-java-index-fail-fast</span> <span class="option-default">(default: False)</span>
-<br/><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</li>
-<li>
-<span class="option-args">--index-kythe-java-index-javac9=&lt;target_option&gt;</span> <span class="option-default">(default: //:javac9)</span>
-<br/><span>Target address spec for specifying the classpath of the javac9 jvm tool.</span>
-</li>
-<li>
-<span class="option-args">--index-kythe-java-index-jvm-options="[&lt;option&gt;..., &lt;option&gt;..., ...]"</span> <span class="option-default">(default: "['-Xmx1g']")</span>
-<br/><span>Run with these JVM options.</span>
-</li>
-<li>
-<span class="option-args">--index-kythe-java-index-kythe-java-indexer=&lt;target_option&gt;</span> <span class="option-default">(default: //:kythe-java-indexer)</span>
-<br/><span>Target address spec for specifying the classpath of the kythe-java-indexer jvm tool.</span>
-</li>
-<li>
-<span class="option-args">--index-kythe-java-index-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br/><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</li>
-<li>
-<span class="option-args">--index-kythe-java-index-nailgun-connect-attempts=&lt;int&gt;</span> <span class="option-default">(default: 5)</span>
-<br/><span>Max attempts for nailgun connects.</span>
-</li>
-<li>
-<span class="option-args">--index-kythe-java-index-nailgun-server=&lt;target_option&gt;</span> <span class="option-default">(default: //:nailgun-server)</span>
-<br/><span>Target address spec for overriding the classpath of the nailgun-server jvm tool which is, by default: [JarDependency(org='com.martiansoftware', base_name='nailgun-server', rev='0.9.1', force=False, ext=None, url=None, apidocs=None, classifier=None, mutable=False, intransitive=False, excludes=(), base_path='.')]</span>
-</li>
-<li>
-<span class="option-args">--index-kythe-java-index-nailgun-subprocess-startup-timeout=&lt;float&gt;</span> <span class="option-default">(default: 10.0)</span>
-<br/><span>The time (secs) to wait for a nailgun subprocess to start.</span>
-</li>
-<li>
-<span class="option-args">--index-kythe-java-index-nailgun-timeout-seconds=&lt;float&gt;</span> <span class="option-default">(default: 10.0)</span>
-<br/><span>The time (secs) to wait for a nailgun subprocess to start writing to stdout.</span>
-</li>
-<li>
-<span class="option-args">--index-kythe-java-index-l=&lt;LogLevel&gt;, --index-kythe-java-index-level=&lt;LogLevel&gt;</span> <span class="option-default">(default: info)</span>
-<br/><span>Set the logging level.</span>
-</li>
-<li>
-<span class="option-args">--index-kythe-java-index-q, --[no-]index-kythe-java-index-quiet</span> <span class="option-default">(default: False)</span>
-<br/><span>Squelches most console output. NOTE: Some tasks default to behaving quietly: inverting this option supports making them noisier than they would be otherwise.</span>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="scope">cache.index.kythe-java-index</div>
-<div class="scope-description">None</div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Basic options
-                    <ul class="nobullets">
-<li>
-<span class="option-args">--[no-]cache-index-kythe-java-index-dereference-symlinks</span> <span class="option-default">(default: True)</span>
-<br/><span>Dereference symlinks when creating cache tarball.</span>
-</li>
-<li>
-<span class="option-args">--[no-]cache-index-kythe-java-index-ignore</span> <span class="option-default">(default: False)</span>
-<br/><span>Ignore all other cache configuration and skip using the cache.</span>
-</li>
-<li>
-<span class="option-args">--[no-]cache-index-kythe-java-index-read</span> <span class="option-default">(default: True)</span>
-<br/><span>Read build artifacts from cache, if available.</span>
-</li>
-<li>
-<span class="option-args">--[no-]cache-index-kythe-java-index-write</span> <span class="option-default">(default: True)</span>
-<br/><span>Write build artifacts to cache, if available.</span>
-</li>
-</ul>
-</li>
-<li class="collapsed options-group">Advanced options
-                    <ul class="nobullets">
-<li>
-<span class="option-args">--cache-index-kythe-java-index-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: 200)</span>
-<br/><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</li>
-<li>
-<span class="option-args">--[no-]cache-index-kythe-java-index-colors</span> <span class="option-default">(default: True)</span>
-<br/><span>Set whether log messages are displayed in color.</span>
-</li>
-<li>
-<span class="option-args">--cache-index-kythe-java-index-compression-level=&lt;int&gt;</span> <span class="option-default">(default: 5)</span>
-<br/><span>The gzip compression level (0-9) for created artifacts.</span>
-</li>
-<li>
-<span class="option-args">--[no-]cache-index-kythe-java-index-fail-fast</span> <span class="option-default">(default: False)</span>
-<br/><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</li>
-<li>
-<span class="option-args">--cache-index-kythe-java-index-max-entries-per-target=&lt;int&gt;</span> <span class="option-default">(default: 8)</span>
-<br/><span>Maximum number of old cache files to keep per task target pair</span>
-</li>
-<li>
-<span class="option-args">--cache-index-kythe-java-index-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br/><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</li>
-<li>
-<span class="option-args">--[no-]cache-index-kythe-java-index-overwrite</span> <span class="option-default">(default: False)</span>
-<br/><span>If writing build artifacts to cache, overwrite existing artifacts instead of skipping them.</span>
-</li>
-<li>
-<span class="option-args">--cache-index-kythe-java-index-pinger-timeout=&lt;float&gt;</span> <span class="option-default">(default: 0.5)</span>
-<br/><span>number of seconds before pinger times out</span>
-</li>
-<li>
-<span class="option-args">--cache-index-kythe-java-index-pinger-tries=&lt;int&gt;</span> <span class="option-default">(default: 2)</span>
-<br/><span>number of times pinger tries a cache</span>
-</li>
-<li>
-<span class="option-args">--cache-index-kythe-java-index-read-from="['&lt;str&gt;', '&lt;str&gt;', ...]"</span> <span class="option-default">(default: "['/Users/eric/DocsLocal/code/projects/pants/.cache']")</span>
-<br/><span>The URIs of artifact caches to read directly from. Each entry is a URL of a RESTful cache, a path of a filesystem cache, or a pipe-separated list of alternate caches to choose from. This list is also used as input to the resolver. When resolver is 'none' list is used as is.</span>
-</li>
-<li>
-<span class="option-args">--cache-index-kythe-java-index-read-timeout=&lt;float&gt;</span> <span class="option-default">(default: 4.0)</span>
-<br/><span>The read timeout for any remote caches in use, in seconds.</span>
-</li>
-<li>
-<span class="option-args">--cache-index-kythe-java-index-resolver=&lt;str&gt;</span> <span class="option-default">(default: none)</span>
-<br/><span>Select which resolver strategy to use for discovering URIs that access artifact caches. none: use URIs from static config options, i.e. --read-from, --write-to. rest: look up URIs by querying a RESTful URL, which is a remote address from --read-from, --write-to.</span>
-</li>
-<li>
-<span class="option-args">--cache-index-kythe-java-index-write-permissions=&lt;str&gt;</span> <span class="option-default">(default: None)</span>
-<br/><span>Permissions to use when writing artifacts to a local cache, in octal.</span>
-</li>
-<li>
-<span class="option-args">--cache-index-kythe-java-index-write-timeout=&lt;float&gt;</span> <span class="option-default">(default: 4.0)</span>
-<br/><span>The write timeout for any remote caches in use, in seconds.</span>
-</li>
-<li>
-<span class="option-args">--cache-index-kythe-java-index-write-to="['&lt;str&gt;', '&lt;str&gt;', ...]"</span> <span class="option-default">(default: "['/Users/eric/DocsLocal/code/projects/pants/.cache']")</span>
-<br/><span>The URIs of artifact caches to write directly to. Each entry is a URL ofa RESTful cache, a path of a filesystem cache, or a pipe-separated list of alternate caches to choose from. This list is also used as input to the resolver. When resolver is 'none' list is used as is.</span>
-</li>
-<li>
-<span class="option-args">--cache-index-kythe-java-index-l=&lt;LogLevel&gt;, --cache-index-kythe-java-index-level=&lt;LogLevel&gt;</span> <span class="option-default">(default: info)</span>
-<br/><span>Set the logging level.</span>
-</li>
-<li>
-<span class="option-args">--cache-index-kythe-java-index-q, --[no-]cache-index-kythe-java-index-quiet</span> <span class="option-default">(default: False)</span>
-<br/><span>Squelches most console output. NOTE: Some tasks default to behaving quietly: inverting this option supports making them noisier than they would be otherwise.</span>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
 <li class="goal-data" id="invalidate">
 <a id="oref_goal_invalidate" pantsmark="oref_goal_invalidate"></a>
 <a name="invalidate"></a>
@@ -20939,7 +20456,7 @@
 <br/><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
 </li>
 <li>
-<span class="option-args">--repl-node-passthrough-args="['&lt;str&gt;', '&lt;str&gt;', ...]"</span> <span class="option-default">(default: [])</span>
+<span class="option-args">--repl-node-passthrough-args="['&lt;str&gt;', '&lt;str&gt;', ...]", ... -- [&lt;str&gt; [&lt;str&gt; [...]]]</span> <span class="option-default">(default: [])</span>
 <br/><span>Pass these options as pass-through args; ie: as if by appending `-- &lt;passthrough arg&gt; ...` to the command line. Any passthrough args actuallysupplied on the command line will be used as well.</span>
 </li>
 <li>
@@ -23047,7 +22564,7 @@
 <br/><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
 </li>
 <li>
-<span class="option-args">--run-go-passthrough-args="['&lt;str&gt;', '&lt;str&gt;', ...]"</span> <span class="option-default">(default: [])</span>
+<span class="option-args">--run-go-passthrough-args="['&lt;str&gt;', '&lt;str&gt;', ...]", ... -- [&lt;str&gt; [&lt;str&gt; [...]]]</span> <span class="option-default">(default: [])</span>
 <br/><span>Pass these options as pass-through args; ie: as if by appending `-- &lt;passthrough arg&gt; ...` to the command line. Any passthrough args actuallysupplied on the command line will be used as well.</span>
 </li>
 <li>
@@ -23249,7 +22766,7 @@
 <br/><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
 </li>
 <li>
-<span class="option-args">--run-jvm-passthrough-args="['&lt;str&gt;', '&lt;str&gt;', ...]"</span> <span class="option-default">(default: [])</span>
+<span class="option-args">--run-jvm-passthrough-args="['&lt;str&gt;', '&lt;str&gt;', ...]", ... -- [&lt;str&gt; [&lt;str&gt; [...]]]</span> <span class="option-default">(default: [])</span>
 <br/><span>Pass these options as pass-through args; ie: as if by appending `-- &lt;passthrough arg&gt; ...` to the command line. Any passthrough args actuallysupplied on the command line will be used as well.</span>
 </li>
 <li>
@@ -23455,7 +22972,7 @@
 <br/><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
 </li>
 <li>
-<span class="option-args">--run-node-passthrough-args="['&lt;str&gt;', '&lt;str&gt;', ...]"</span> <span class="option-default">(default: [])</span>
+<span class="option-args">--run-node-passthrough-args="['&lt;str&gt;', '&lt;str&gt;', ...]", ... -- [&lt;str&gt; [&lt;str&gt; [...]]]</span> <span class="option-default">(default: [])</span>
 <br/><span>Pass these options as pass-through args; ie: as if by appending `-- &lt;passthrough arg&gt; ...` to the command line. Any passthrough args actuallysupplied on the command line will be used as well.</span>
 </li>
 <li>
@@ -23691,7 +23208,7 @@
 <br/><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
 </li>
 <li>
-<span class="option-args">--run-py-passthrough-args="['&lt;str&gt;', '&lt;str&gt;', ...]"</span> <span class="option-default">(default: [])</span>
+<span class="option-args">--run-py-passthrough-args="['&lt;str&gt;', '&lt;str&gt;', ...]", ... -- [&lt;str&gt; [&lt;str&gt; [...]]]</span> <span class="option-default">(default: [])</span>
 <br/><span>Pass these options as pass-through args; ie: as if by appending `-- &lt;passthrough arg&gt; ...` to the command line. Any passthrough args actuallysupplied on the command line will be used as well.</span>
 </li>
 <li>
@@ -24261,7 +23778,7 @@
 <br/><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
 </li>
 <li>
-<span class="option-args">--run-dirty-jvm-dirty-passthrough-args="['&lt;str&gt;', '&lt;str&gt;', ...]"</span> <span class="option-default">(default: [])</span>
+<span class="option-args">--run-dirty-jvm-dirty-passthrough-args="['&lt;str&gt;', '&lt;str&gt;', ...]", ... -- [&lt;str&gt; [&lt;str&gt; [...]]]</span> <span class="option-default">(default: [])</span>
 <br/><span>Pass these options as pass-through args; ie: as if by appending `-- &lt;passthrough arg&gt; ...` to the command line. Any passthrough args actuallysupplied on the command line will be used as well.</span>
 </li>
 <li>
@@ -25091,7 +24608,7 @@
 <br/><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
 </li>
 <li>
-<span class="option-args">--test-go-passthrough-args="['&lt;str&gt;', '&lt;str&gt;', ...]"</span> <span class="option-default">(default: [])</span>
+<span class="option-args">--test-go-passthrough-args="['&lt;str&gt;', '&lt;str&gt;', ...]", ... -- [&lt;str&gt; [&lt;str&gt; [...]]]</span> <span class="option-default">(default: [])</span>
 <br/><span>Pass these options as pass-through args; ie: as if by appending `-- &lt;passthrough arg&gt; ...` to the command line. Any passthrough args actuallysupplied on the command line will be used as well.</span>
 </li>
 <li>
@@ -25767,7 +25284,7 @@
 <br/><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
 </li>
 <li>
-<span class="option-args">--test-node-passthrough-args="['&lt;str&gt;', '&lt;str&gt;', ...]"</span> <span class="option-default">(default: [])</span>
+<span class="option-args">--test-node-passthrough-args="['&lt;str&gt;', '&lt;str&gt;', ...]", ... -- [&lt;str&gt; [&lt;str&gt; [...]]]</span> <span class="option-default">(default: [])</span>
 <br/><span>Pass these options as pass-through args; ie: as if by appending `-- &lt;passthrough arg&gt; ...` to the command line. Any passthrough args actuallysupplied on the command line will be used as well.</span>
 </li>
 <li>
@@ -26063,7 +25580,7 @@
 <br/><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
 </li>
 <li>
-<span class="option-args">--test-pytest-passthrough-args="['&lt;str&gt;', '&lt;str&gt;', ...]"</span> <span class="option-default">(default: [])</span>
+<span class="option-args">--test-pytest-passthrough-args="['&lt;str&gt;', '&lt;str&gt;', ...]", ... -- [&lt;str&gt; [&lt;str&gt; [...]]]</span> <span class="option-default">(default: [])</span>
 <br/><span>Pass these options as pass-through args; ie: as if by appending `-- &lt;passthrough arg&gt; ...` to the command line. Any passthrough args actuallysupplied on the command line will be used as well.</span>
 </li>
 <li>
@@ -29564,54 +29081,6 @@ The UrlInfo struct is a 3-tuple with the following slots:
 </li>
 <li>
 <div class="global-subsystem-header">
-<div class="scope">kythe-java-targets</div>
-<div class="scope-description">Determines which java targets Kythe should act on.</div>
-</div>
-<ul class="nobullets collapsible">
-<li class="collapsed options-group">Basic options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--kythe-java-targets-exclude-scopes="['&lt;str&gt;', '&lt;str&gt;', ...]"</span> <span class="option-default">(default: [])</span>
-<br/><span>Dependency scopes to exclude from indexing.</span>
-</li>
-<li>
-<span class="option-args">--[no-]kythe-java-targets-recursive</span> <span class="option-default">(default: False)</span>
-<br/><span>Index all dependencies. If false, process only target roots.</span>
-</li>
-</ul>
-</li>
-<li class="collapsed options-group">Advanced options
-              <ul class="nobullets">
-<li>
-<span class="option-args">--kythe-java-targets-cache-key-gen-version=&lt;str&gt;</span> <span class="option-default">(default: 200)</span>
-<br/><span>The cache key generation. Bump this to invalidate every artifact for a scope.</span>
-</li>
-<li>
-<span class="option-args">--[no-]kythe-java-targets-colors</span> <span class="option-default">(default: True)</span>
-<br/><span>Set whether log messages are displayed in color.</span>
-</li>
-<li>
-<span class="option-args">--[no-]kythe-java-targets-fail-fast</span> <span class="option-default">(default: False)</span>
-<br/><span>Exit as quickly as possible on error, rather than attempting to continue to process the non-erroneous subset of the input.</span>
-</li>
-<li>
-<span class="option-args">--kythe-java-targets-max-subprocess-args=&lt;int&gt;</span> <span class="option-default">(default: 100)</span>
-<br/><span>Used to limit the number of arguments passed to some subprocesses by breaking the command up into multiple invocations.</span>
-</li>
-<li>
-<span class="option-args">--kythe-java-targets-l=&lt;LogLevel&gt;, --kythe-java-targets-level=&lt;LogLevel&gt;</span> <span class="option-default">(default: info)</span>
-<br/><span>Set the logging level.</span>
-</li>
-<li>
-<span class="option-args">--kythe-java-targets-q, --[no-]kythe-java-targets-quiet</span> <span class="option-default">(default: False)</span>
-<br/><span>Squelches most console output. NOTE: Some tasks default to behaving quietly: inverting this option supports making them noisier than they would be otherwise.</span>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<div class="global-subsystem-header">
 <div class="scope">lambdex</div>
 <div class="scope-description">None</div>
 </div>
@@ -30779,7 +30248,7 @@ The UrlInfo struct is a 3-tuple with the following slots:
 <li class="collapsed options-group">Basic options
               <ul class="nobullets">
 <li>
-<span class="option-args">--pytest-args="[&lt;shell_str&gt;, &lt;shell_str&gt;, ...]"</span> <span class="option-default">(default: [])</span>
+<span class="option-args">--pytest-args="[&lt;shell_str&gt;, &lt;shell_str&gt;, ...]", ... -- [&lt;shell_str&gt; [&lt;shell_str&gt; [...]]]</span> <span class="option-default">(default: [])</span>
 <br/><span>Arguments to pass directly to Pytest, e.g. `--pytest-args="-k test_foo --quiet"`</span>
 </li>
 <li>
@@ -31475,7 +30944,7 @@ The UrlInfo struct is a 3-tuple with the following slots:
 <br/><span>The parent directory for the interpreter cache. If unspecified, a standard path under the workdir is used.</span>
 </li>
 <li>
-<span class="option-args">--python-setup-interpreter-constraints="[&lt;requirement&gt;, &lt;requirement&gt;, ...]"</span> <span class="option-default">(default: "['CPython==3.6.*']")</span>
+<span class="option-args">--python-setup-interpreter-constraints="[&lt;requirement&gt;, &lt;requirement&gt;, ...]"</span> <span class="option-default">(default: "['==3.6.*']")</span>
 <br/><span>Constrain the selected Python interpreter. Specify with requirement syntax, e.g. 'CPython&gt;=2.7,&lt;3' (A CPython interpreter with version &gt;=2.7 AND version &lt;3)or 'PyPy' (A pypy interpreter of any version). Multiple constraint strings will be ORed together. These constraints are applied in addition to any compatibilities required by the relevant targets.</span>
 </li>
 <li>
@@ -32979,7 +32448,7 @@ The UrlInfo struct is a 3-tuple with the following slots:
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/reference/pants_reference_body.html 2020-05-26T21:34:04.508296
+              from dist/reference/pants_reference_body.html 2020-05-29T21:33:47.085519
             </div>
 
           </div> <!-- mainflow -->
