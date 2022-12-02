@@ -35,7 +35,7 @@
           <img src="pants-logo.ico" alt="[pantsbuild logo]">
         </a>
         <a class="navbar-brand" href="index.html">
-          Pants v1
+          Pants
         </a>
       </div>
       <div id="navbar" class="navbar-collapse collapse">
@@ -54,7 +54,6 @@
         </ul>
       </div><!--/.nav-collapse -->
     </div>
-    <div class="deprecated">Pants v1 is no longer maintained. See <a href="https://www.pantsbuild.org/">here</a> for the Pants v2 documentation.</div>
   </nav>
 </div>
 
@@ -397,11 +396,11 @@ or target to add to Pants (or to
 override an existing part of Pants), a plugin gives you a way to
 register your code with Pants.</p>
 <p>Much of Pants' own functionality is organized in plugins; see them in
-<a href="https://github.com/pantsbuild/pants/tree/1.30.x/src/python/pants/backend"><code>src/python/pants/backend/*</code></a>.</p>
+<a href="https://github.com/pantsbuild/pants/tree/master/src/python/pants/backend"><code>src/python/pants/backend/*</code></a>.</p>
 <p>A plugin registers its functionality with Pants by defining some
 functions in a <code>register.py</code> file in its top directory. For example,
 Pants' <code>jvm</code> code registers in
-<a href="https://github.com/pantsbuild/pants/blob/1.30.x/src/python/pants/backend/jvm/register.py">src/python/pants/backend/jvm/register.py</a>
+<a href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/backend/jvm/register.py">src/python/pants/backend/jvm/register.py</a>
 Pants' backend-loader code assumes your plugin has a <code>register.py</code> file
 there.</p>
 <h2 id="a-hello-world-plugin">A "Hello World" plugin</h2>
@@ -443,12 +442,10 @@ the repo root, but there is no convention, and you can put them wherever you lik
 </pre></div>
 </li>
 </ul>
-<p><a href="https://github.com/pantsbuild/pants/blob/1.30.x/src/python/pants/task/task.py">Task</a> is a simple base
+<p><a href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/task/task.py">Task</a> is a simple base
    class for your tasks - you must implement the <code>execute</code> method.</p>
 <ul>
-<li>
-<p>In <code>register.py</code> place the following content:</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">pants.goal.goal</span> <span class="kn">import</span> <span class="n">Goal</span>
+<li>In <code>register.py</code> place the following content:<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">pants.goal.goal</span> <span class="kn">import</span> <span class="n">Goal</span>
 <span class="kn">from</span> <span class="nn">pants.goal.task_registrar</span> <span class="kn">import</span> <span class="n">TaskRegistrar</span> <span class="k">as</span> <span class="n">task</span>
 <span class="kn">from</span> <span class="nn">hello.tasks.your_tasks</span> <span class="kn">import</span> <span class="n">HelloTask</span><span class="p">,</span> <span class="n">WorldTask</span>
 
@@ -461,9 +458,7 @@ the repo root, but there is no convention, and you can put them wherever you lik
 </ul>
 <p>This creates a new goal named <code>hello-world</code>, and registers the two tasks to it.</p>
 <ul>
-<li>
-<p>In <code>pants.toml</code> place the following content:</p>
-<div class="codehilite"><pre><span></span><span class="k">[GLOBAL]</span>
+<li>In <code>pants.toml</code> place the following content:<div class="codehilite"><pre><span></span><span class="k">[GLOBAL]</span>
 <span class="n">pants_version</span> <span class="o">=</span> <span class="s">"1.26.0"</span>
 <span class="n">pythonpath</span> <span class="o">=</span> <span class="k">["%(buildroot)s/plugins"]</span>
 <span class="n">backend_packages</span> <span class="o">=</span> <span class="k">["hello"]</span>
@@ -474,16 +469,15 @@ the repo root, but there is no convention, and you can put them wherever you lik
 <p>If you want to use custom plugins directly from source when building in the same repo, you need 
 to put them on the <code>pythonpath</code> so Pants can find them. </p>
 <ul>
-<li>
-<p>You are ready to use your plugin! First try to find your goal by typing <code>./pants goals</code>:</p>
-<div class="codehilite"><pre><span></span>...
+<li>You are ready to use your plugin! First try to find your goal by typing <code>./pants goals</code>:<div class="codehilite"><pre><span></span>...
 hello-world: Say hello to your world
 ...
 </pre></div>
 </li>
 </ul>
 <p>Now you can use your plugin by typing <code>./pants hello-world</code>:</p>
-<div class="codehilite"><pre><span></span>    ...
+<div class="codehilite"><pre><span></span>    ::
+    ...
     Executing tasks in goals: hello-world
     XX:XX:XX 00:00   [hello-world]
     XX:XX:XX 00:00     [hello]Hello
@@ -495,17 +489,19 @@ hello-world: Say hello to your world
 </pre></div>
 <p>Note that to consume the custom plugin as a published artifact (say on PyPI), instead of 
 directly from the repo, then instead of <code>backend_packages</code> and <code>pythonpath</code> you would set <code>plugins</code>:</p>
-<div class="codehilite"><pre><span></span>    <span class="k">[GLOBAL]</span>
-    <span class="n">pants_version</span> <span class="o">=</span> <span class="s">"1.26.0"</span>
-    <span class="n">plugins</span> <span class="o">=</span> <span class="k">["myorg.hello==1.7.6"]</span>
+<div class="codehilite"><pre><span></span>    :::toml
+    [GLOBAL]
+    pants_version = "1.26.0"
+    plugins = ["myorg.hello==1.7.6"]
 </pre></div>
 <p>Similarly, if your custom plugin is consumed directly from the repo, but has dependencies on 
 published artifacts, then you list those in <code>plugins</code>:</p>
-<div class="codehilite"><pre><span></span>    <span class="k">[GLOBAL]</span>
-    <span class="n">pants_version</span> <span class="o">=</span> <span class="s">"1.26.0"</span>
-    <span class="n">pythonpath</span> <span class="o">=</span> <span class="k">["%(buildroot)s/plugins"]</span>
-    <span class="n">backend_packages</span> <span class="o">=</span> <span class="k">["hello"]</span>
-    <span class="n">plugins</span> <span class="o">=</span> <span class="k">["some.dependency==4.5.11"]</span>
+<div class="codehilite"><pre><span></span>    :::toml
+    [GLOBAL]
+    pants_version = "1.26.0"
+    pythonpath = ["%(buildroot)s/plugins"]
+    backend_packages = ["hello"]
+    plugins = ["some.dependency==4.5.11"]
 </pre></div>
 <p>See below for more details. </p>
 <h2 id="simple-configuration">Simple Configuration</h2>
@@ -583,17 +579,17 @@ take a look at <a href="https://github.com/twitter/commons"><code>twitter/common
     <span class="na">'pants.contrib.python.checks',</span>
   <span class="na">]</span>
 </pre></div>
-<p>The <a href="https://github.com/twitter/commons/blob/1.30.x/pants-plugins/src/python/twitter/common/pants/jvm/extras/register.py"><code>...jvm/extras/register.py</code></a>
+<p>The <a href="https://github.com/twitter/commons/blob/master/pants-plugins/src/python/twitter/common/pants/jvm/extras/register.py"><code>...jvm/extras/register.py</code></a>
 file registers a <code>checkstyle</code> goal. To find the code for this task, come back to the
 <code>pantsbuild/pants</code> repo: Pants defines the
-<a href="https://github.com/pantsbuild/pants/blob/1.30.x/src/python/pants/backend/jvm/tasks/checkstyle.py"><code>Checkstyle</code> task class</a> but doesn't register it. 
+<a href="https://github.com/pantsbuild/pants/blob/master/src/python/pants/backend/jvm/tasks/checkstyle.py"><code>Checkstyle</code> task class</a> but doesn't register it. 
 But other Pants workspaces can register it, as <code>twitter/commons</code> illustrates.</p>
 
             <!-- main content end -->
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/howto_plugin.html 2020-06-13T00:50:52.320894
+              from dist/markdown/html/src/docs/howto_plugin.html 2022-12-02T07:41:10.428167
             </div>
 
           </div> <!-- mainflow -->

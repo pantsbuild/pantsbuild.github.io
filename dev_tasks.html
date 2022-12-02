@@ -35,7 +35,7 @@
           <img src="pants-logo.ico" alt="[pantsbuild logo]">
         </a>
         <a class="navbar-brand" href="index.html">
-          Pants v1
+          Pants
         </a>
       </div>
       <div id="navbar" class="navbar-collapse collapse">
@@ -54,7 +54,6 @@
         </ul>
       </div><!--/.nav-collapse -->
     </div>
-    <div class="deprecated">Pants v1 is no longer maintained. See <a href="https://www.pantsbuild.org/">here</a> for the Pants v2 documentation.</div>
   </nav>
 </div>
 
@@ -450,14 +449,14 @@ backend</a>:</p>
 
 <span class="k">def</span> <span class="nf">rules</span><span class="p">():</span>
     <span class="k">return</span> <span class="p">(</span>
-        <span class="o"><em></em></span><span class="n">download_pex_bin</span><span class="o">.</span><span class="n">rules</span><span class="p">(),</span>
-        <span class="o"></span></pre></div></div></p><span class="n">inject_init</span><span class="o">.</span><span class="n">rules</span><span class="p">(),</span>
-<span class="o"><em></em></span><span class="n">importable_python_sources</span><span class="o">.</span><span class="n">rules</span><span class="p">(),</span>
-<span class="o"></span><span class="n">dependency_inference_rules</span><span class="o">.</span><span class="n">rules</span><span class="p">(),</span>
-<span class="o"><em></em></span><span class="n">module_mapper</span><span class="o">.</span><span class="n">rules</span><span class="p">(),</span>
-<span class="o"></span><span class="n">pex</span><span class="o">.</span><span class="n">rules</span><span class="p">(),</span>
-<span class="o"><em></em></span><span class="n">pex_from_targets</span><span class="o">.</span><span class="n">rules</span><span class="p">(),</span>
-<span class="o"></span><span class="n">pytest_coverage</span><span class="o">.</span><span class="n">rules</span><span class="p">(),</span>
+        <span class="o"><em></em></span><span class="n">coverage</span><span class="o">.</span><span class="n">rules</span><span class="p">(),</span>
+        <span class="o"></span></pre></div></div></p><span class="n">download_pex_bin</span><span class="o">.</span><span class="n">rules</span><span class="p">(),</span>
+<span class="o"><em></em></span><span class="n">inject_init</span><span class="o">.</span><span class="n">rules</span><span class="p">(),</span>
+<span class="o"></span><span class="n">importable_python_sources</span><span class="o">.</span><span class="n">rules</span><span class="p">(),</span>
+<span class="o"><em></em></span><span class="n">dependency_inference_rules</span><span class="o">.</span><span class="n">rules</span><span class="p">(),</span>
+<span class="o"></span><span class="n">module_mapper</span><span class="o">.</span><span class="n">rules</span><span class="p">(),</span>
+<span class="o"><em></em></span><span class="n">pex</span><span class="o">.</span><span class="n">rules</span><span class="p">(),</span>
+<span class="o"></span><span class="n">pex_from_targets</span><span class="o">.</span><span class="n">rules</span><span class="p">(),</span>
 <span class="o"><em></em></span><span class="n">pytest_runner</span><span class="o">.</span><span class="n">rules</span><span class="p">(),</span>
 <span class="o"></span><span class="n">python_create_binary</span><span class="o">.</span><span class="n">rules</span><span class="p">(),</span>
 <span class="o"><em></em></span><span class="n">python_native_code</span><span class="o">.</span><span class="n">rules</span><span class="p">(),</span>
@@ -476,6 +475,7 @@ backend</a>:</p>
 <span class="n">PythonTests</span><span class="p">,</span>
 <span class="n">UnpackedWheels</span><span class="p">,</span>
 <span class="p">]</span>
+
 
 
 <p>That <code>task(...)</code> is a name for
@@ -514,7 +514,8 @@ returns a list of strings:</p>
 <p>
 <div class="md-included-snippet"><div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">product_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[</span><span class="s2">"runtime_classpath"</span><span class="p">]</span>
-</pre></div></div>
+</pre></div>
+</div>
 </p>
 <p>The "late" task defines a <code>prepare</code> method that calls
 <code>round_manager.require_data</code> to "require" one of those same strings:</p>
@@ -522,7 +523,8 @@ returns a list of strings:</p>
 <div class="md-included-snippet"><div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">prepare</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">round_manager</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">prepare</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">round_manager</span><span class="p">)</span>
         <span class="n">round_manager</span><span class="o">.</span><span class="n">require_data</span><span class="p">(</span><span class="s2">"runtime_classpath"</span><span class="p">)</span>
-</pre></div></div>
+</pre></div>
+</div>
 </p>
 <p>Pants uses this information to determine which tasks must run first to
 prepare data required by other tasks. (If one task requires data that no
@@ -537,7 +539,8 @@ required a product type:</p>
             <span class="k">raise</span> <span class="n">TaskError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">"Cannot provide </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">jvmdoc</span><span class="p">()</span><span class="o">.</span><span class="n">product_type</span><span class="si">}</span><span class="s2"> target mappings for combined output"</span>
             <span class="p">)</span>
-</pre></div></div>
+</pre></div>
+</div>
 </p>
 <h2 id="task-implementation-versioning">Task Implementation Versioning</h2>
 <p>Tasks may optionally specify an implementation version.  This is useful to be sure that cached
@@ -567,7 +570,8 @@ class method and call the passed-in <code>register</code> function:</p>
             <span class="n">help</span><span class="o">=</span><span class="s2">"Dictionary of property mappings to use for checkstyle.properties."</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">register</span><span class="p">(</span>
-</pre></div></div>
+</pre></div>
+</div>
 </p>
 <p>Option values are available via <code>self.get_options()</code>:</p>
 <div class="codehilite"><pre><span></span><span class="c1"># Did user pass in the --my-option CLI flag (or set it in pants.toml)?</span>
@@ -696,7 +700,7 @@ look at targets and their flakiness).</p>
 
             <div class="generated">
               Generated by <a href="docs.html">publish_docs</a>
-              from dist/markdown/html/src/docs/dev_tasks.html 2020-06-13T00:50:52.221320
+              from dist/markdown/html/src/docs/dev_tasks.html 2022-12-02T07:41:10.363573
             </div>
 
           </div> <!-- mainflow -->
